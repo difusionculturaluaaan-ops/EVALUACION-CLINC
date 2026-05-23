@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Evaluación Clínica Psicológica PRO v2.0</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body data-theme="light">
+
+<!-- Barra superior -->
+<header class="app-header">
+  <div class="header-left">
+    <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Alternar menú">
+      <span class="hamburger">
+        <i></i><i></i><i></i>
+      </span>
+    </button>
+    <div class="brand">
+      <h1>EVALUACIÓN CLÍNICA</h1>
+      <span class="subtitle">Sistema de Evaluación Psicológica</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <span id="user-name" class="user-info" title="Usuario autenticado">👤</span>
+    <button id="theme-toggle" class="theme-toggle" title="Cambiar tema" aria-label="Cambiar tema">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+    </button>
+    <button id="logout-btn" class="logout-btn" title="Cerrar sesión" aria-label="Cerrar sesión">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- Sidebar -->
+<aside id="sidebar" class="sidebar">
+  <nav class="nav-menu">
+    <button class="nav-item active" data-page="expedientes" onclick="app.showPage('expedientes')">
+      <span class="icon">📋</span>
+      <span class="label">Expedientes</span>
+    </button>
+    <button class="nav-item" data-page="nuevo" onclick="app.showPage('nuevo')">
+      <span class="icon">➕</span>
+      <span class="label">Nueva Ficha</span>
+    </button>
+    <div class="nav-divider">Tests Disponibles</div>
+    <button class="nav-item" data-page="scl90r" onclick="app.showPage('scl90r')">
+      <span class="icon">📊</span>
+      <span class="label">SCL-90-R</span>
+    </button>
+    <button class="nav-item" data-page="hamilton" onclick="app.showPage('hamilton')">
+      <span class="icon">😔</span>
+      <span class="label">Hamilton (HAM-D)</span>
+    </button>
+    <button class="nav-item" data-page="mmpi2" onclick="app.showPage('mmpi2')">
+      <span class="icon">🧠</span>
+      <span class="label">MMPI-2</span>
+    </button>
+    <button class="nav-item" data-page="isra" onclick="app.showPage('isra')">
+      <span class="icon">😰</span>
+      <span class="label">ISRA (Ansiedad)</span>
+    </button>
+    <button class="nav-item" data-page="tds" onclick="app.showPage('tds')">
+      <span class="icon">😴</span>
+      <span class="label">TDS (Sueño)</span>
+    </button>
+    <button class="nav-item" data-page="pclr" onclick="app.showPage('pclr')">
+      <span class="icon">⚠️</span>
+      <span class="label">PCL-R (Psicopatía)</span>
+    </button>
+    <button class="nav-item" data-page="egep5" onclick="app.showPage('egep5')">
+      <span class="icon">🚨</span>
+      <span class="label">EGEP-5 (TEPT)</span>
+    </button>
+  </nav>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- Página: Expedientes -->
+  <section id="page-expedientes" class="page active">
+    <div class="page-header">
+      <h2>Expedientes Clínicos</h2>
+      <div class="search-bar">
+        <input type="text" id="search-input" placeholder="Buscar paciente por nombre..." aria-label="Buscar paciente">
+        <button class="btn btn-icon" title="Buscar">🔍</button>
+      </div>
+    </div>
+
+    <div class="filters">
+      <label>
+        <input type="radio" name="status-filter" value="all" checked> Todos
+      </label>
+      <label>
+        <input type="radio" name="status-filter" value="activo"> Activos
+      </label>
+      <label>
+        <input type="radio" name="status-filter" value="standby"> En pausa
+      </label>
+    </div>
+
+    <div id="expedientes-grid" class="expedientes-grid">
+      <!-- Se llena dinámicamente -->
+    </div>
+  </section>
+
+  <!-- Página: Nueva Ficha -->
+  <section id="page-nuevo" class="page">
+    <div class="card">
+      <h2>Crear Nueva Ficha de Paciente</h2>
+      <form id="form-paciente" onsubmit="return false;">
+        <div class="form-group">
+          <label for="f-nombre">Nombre Completo *</label>
+          <input type="text" id="f-nombre" placeholder="Nombre y apellidos" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="f-edad">Edad</label>
+            <input type="number" id="f-edad" placeholder="0" min="0" max="120">
+          </div>
+          <div class="form-group">
+            <label for="f-sexo">Sexo</label>
+            <select id="f-sexo">
+              <option value="">Seleccionar...</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Femenino">Femenino</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="f-civil">Estado Civil</label>
+            <select id="f-civil">
+              <option value="">Seleccionar...</option>
+              <option value="Soltero/a">Soltero/a</option>
+              <option value="Casado/a">Casado/a</option>
+              <option value="Unión Libre">Unión Libre</option>
+              <option value="Divorciado/a">Divorciado/a</option>
+              <option value="Viudo/a">Viudo/a</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="f-meds">Medicamentos / Sustancias</label>
+          <input type="text" id="f-meds" placeholder="Ej: Sertraline 100mg, Alprazolam PRN...">
+        </div>
+
+        <div class="form-group">
+          <label for="f-obs">Motivo de Consulta / Observaciones</label>
+          <textarea id="f-obs" rows="4" placeholder="Contexto clínico, antecedentes relevantes..."></textarea>
+        </div>
+
+        <button type="button" class="btn btn-primary btn-lg" onclick="app.crearPaciente()">
+          Registrar y Continuar
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Página: SCL-90-R -->
+  <section id="page-scl90r" class="page">
+    <div class="test-page">
+      <div class="test-header">
+        <h2>SCL-90-R (Symptom Checklist-90 Revised)</h2>
+        <div class="progress-bar">
+          <div id="scl-progress" class="progress-fill"></div>
+          <span id="scl-counter" class="progress-text">0 / 90</span>
+        </div>
+      </div>
+      <div id="scl-container" class="test-items"></div>
+      <button type="button" class="btn btn-primary btn-lg" onclick="app.guardarPrueba('SCL90R')">
+        Finalizar SCL-90-R
+      </button>
+    </div>
+  </section>
+
+  <!-- Página: Hamilton HAM-D -->
+  <section id="page-hamilton" class="page">
+    <div class="test-page">
+      <div class="test-header">
+        <h2>Escala Hamilton de Depresión (HAM-D 17)</h2>
+        <div class="progress-bar">
+          <div id="ham-progress" class="progress-fill"></div>
+          <span id="ham-counter" class="progress-text">0 / 17</span>
+        </div>
+      </div>
+      <div id="ham-container" class="test-items"></div>
+      <button type="button" class="btn btn-primary btn-lg" onclick="app.guardarPrueba('HAMILTON')">
+        Finalizar Hamilton
+      </button>
+    </div>
+  </section>
+
+  <!-- Página: MMPI-2 -->
+  <section id="page-mmpi2" class="page">
+    <div class="test-page">
+      <div class="test-header">
+        <h2>MMPI-2 (Inventario Multifásico de Personalidad de Minnesota)</h2>
+        <p class="help-text">Ingresa los T-scores para cada escala. El MMPI-2 completo debe administrarse en contexto clínico formal.</p>
+      </div>
+      <div id="mmpi-container" class="mmpi-grid"></div>
+      <button type="button" class="btn btn-primary btn-lg" onclick="app.guardarPrueba('MMPI2')">
+        Guardar Perfil MMPI-2
+      </button>
+    </div>
+  </section>
+
+  <!-- Página: ISRA -->
+  <section id="page-isra" class="page">
+    <div class="test-page">
+      <div class="test-header">
+        <h2>ISRA (Inventario de Situaciones y Respuestas de Ansiedad)</h2>
+        <div class="progress-bar">
+          <div id="isra-progress" class="progress-fill"></div>
+          <span id="isra-counter" class="progress-text">0 / 56</span>
+        </div>
+      </div>
+      <div id="isra-container" class="test-items"></div>
+      <button type="button" class="btn btn-primary btn-lg" onclick="app.guardarPrueba('ISRA')">
+        Finalizar ISRA
+      </button>
+    </div>
+  </section>
+
+  <!-- Página: TDS -->
+  <section id="page-tds" class="page">
+    <div class="test-page">
+      <div class="test-header">
+        <h2>TDS (Test de Trastornos del Sueño)</h2>
+        <div class="progress-bar">
+          <div id="tds-progress" class="progress-fill"></div>
+          <span id="tds-counter" class="progress-text">0 / 30</span>
+        </div>
+      </div>
+      <div id="tds-container" class="test-items"></div>
+      <button type="button" class="btn btn-primary btn-lg" onclick="app.guardarPrueba('TDS')">
+        Finalizar TDS
+      </button>
+    </div>
+  </section>
+
+  <!-- Página: PCL-R -->
+  <section id="page-pclr" class="page">
+    <div class="test-page">
+      <div class="test-header">
+        <h2>PCL-R (Hare Psychopathy Checklist - Revised)</h2>
+        <div class="warning-banner">
+          ⚠️ <strong>Nota importante:</strong> El PCL-R es una herramienta de uso restringido. Solo profesionales entrenados en la administración de esta escala deben completarla.
+        </div>
+        <div class="progress-bar">
+          <div id="pclr-progress" class="progress-fill"></div>
+          <span id="pclr-counter" class="progress-text">0 / 20</span>
+        </div>
+      </div>
+      <div id="pclr-container" class="test-items"></div>
+      <button type="button" class="btn btn-primary btn-lg" onclick="app.guardarPrueba('PCLR')">
+        Guardar Evaluación PCL-R
+      </button>
+    </div>
+  </section>
+
+  <!-- Página: EGEP-5 -->
+  <section id="page-egep5" class="page">
+    <div class="test-page">
+      <div class="test-header">
+        <h2>EGEP-5 (Escala de Gravedad de TEPT - DSM-5)</h2>
+        <div class="progress-bar">
+          <div id="egep5-progress" class="progress-fill"></div>
+          <span id="egep5-counter" class="progress-text">0 / 22</span>
+        </div>
+      </div>
+      <div id="egep5-container" class="test-items"></div>
+      <button type="button" class="btn btn-primary btn-lg" onclick="app.guardarPrueba('EGEP5')">
+        Finalizar EGEP-5
+      </button>
+    </div>
+  </section>
+
+</main>
+
+<!-- Modal de Reporte -->
+<div id="modal-reporte" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Reporte de Evaluación Clínica</h2>
+      <button class="modal-close" onclick="app.cerrarModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="reporte-contenido">
+        <!-- Se llena dinámicamente -->
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="app.descargarPDF()">⬇️ Descargar PDF</button>
+      <button class="btn btn-secondary" onclick="app.cerrarModal()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Container para PDF oculto -->
+<div id="pdf-print-area" style="display: none; position: absolute; left: -9999px;"></div>
+
+<!-- Toast de notificaciones -->
+<div id="toast" class="toast"></div>
+
+<!-- Scripts -->
+<script src="/js/notifications.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/interpretacion.js"></script>
+<script src="/js/chart-manager.js"></script>
+<script src="/js/tests/renderer.js"></script>
+<script src="/js/tests/scl90r.js"></script>
+<script src="/js/tests/hamilton.js"></script>
+<script src="/js/tests/mmpi2.js"></script>
+<script src="/js/tests/isra.js"></script>
+<script src="/js/tests/tds.js"></script>
+<script src="/js/tests/pclr.js"></script>
+<script src="/js/tests/egep5.js"></script>
+<script src="/js/expedientes.js"></script>
+<script src="/js/pdf.js"></script>
+<script src="/js/app.js"></script>
+
+</body>
+</html>

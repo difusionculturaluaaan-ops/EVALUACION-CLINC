@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prueba UTF-8</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f0f4f8;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #2c5aa0;
+    }
+    .paciente {
+      border: 1px solid #ddd;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      background: #f9f9f9;
+    }
+    .paciente strong {
+      color: #2c5aa0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧪 Prueba de UTF-8</h1>
+    <p>Cargando pacientes desde API...</p>
+    <div id="pacientes"></div>
+  </div>
+
+  <script>
+    fetch('/api/pacientes')
+      .then(res => res.json())
+      .then(datos => {
+        const html = datos.map(p => `
+          <div class="paciente">
+            <strong>Nombre:</strong> ${p.nombre} <br>
+            <strong>Edad:</strong> ${p.edad} años <br>
+            <strong>Medicamentos:</strong> ${p.medicamentos} <br>
+            <strong>Observaciones:</strong> ${p.observaciones}
+          </div>
+        `).join('');
+        document.getElementById('pacientes').innerHTML = html;
+      })
+      .catch(err => {
+        document.getElementById('pacientes').innerHTML = `<p style="color:red;">Error: ${err}</p>`;
+      });
+  </script>
+</body>
+</html>

@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Evaluación Clínica Pro - Autenticación</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .auth-container {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .auth-box {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      animation: slideUp 0.4s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .auth-header {
+      background: linear-gradient(135deg, #2c5aa0 0%, #1a3a5c 100%);
+      color: white;
+      padding: 40px 30px;
+      text-align: center;
+    }
+
+    .auth-header h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .auth-header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #e0e0e0;
+      background: #f9f9f9;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 16px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      color: #666;
+      transition: all 0.3s;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -1px;
+    }
+
+    .tab-btn:hover {
+      background: #f0f0f0;
+    }
+
+    .tab-btn.active {
+      color: #2c5aa0;
+      border-bottom-color: #2c5aa0;
+    }
+
+    .auth-content {
+      padding: 30px;
+    }
+
+    .auth-form {
+      display: none;
+    }
+
+    .auth-form.active {
+      display: block;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 6px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      font-family: inherit;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #2c5aa0;
+      box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+    }
+
+    .form-group input::placeholder {
+      color: #999;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #2c5aa0 0%, #1a3a5c 100%);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 8px;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(44, 90, 160, 0.3);
+    }
+
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .error {
+      color: #d32f2f;
+      font-size: 13px;
+      margin-top: 12px;
+      padding: 12px;
+      background: #ffebee;
+      border-radius: 6px;
+      display: none;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .error.show {
+      display: block;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .auth-footer {
+      text-align: center;
+      padding: 20px 30px;
+      border-top: 1px solid #e0e0e0;
+      background: #f9f9f9;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .auth-footer a {
+      color: #2c5aa0;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .auth-footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      .auth-box {
+        border-radius: 0;
+      }
+
+      .auth-header {
+        padding: 30px 20px;
+      }
+
+      .auth-header h1 {
+        font-size: 24px;
+      }
+
+      .auth-content {
+        padding: 20px;
+      }
+    }
+
+    /* ==================== NOTIFICACIONES ==================== */
+
+    #notifications-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+      max-width: 400px;
+      pointer-events: none;
+    }
+
+    .notification {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      margin-bottom: 12px;
+      overflow: hidden;
+      animation: slideInRight 0.4s ease-out;
+      pointer-events: all;
+      border-left: 4px solid #2196F3;
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(400px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .notification.show {
+      animation: slideInRight 0.4s ease-out;
+    }
+
+    .notification.notification-success {
+      border-left-color: #4caf50;
+    }
+
+    .notification.notification-error {
+      border-left-color: #f44336;
+    }
+
+    .notification.notification-warning {
+      border-left-color: #ff9800;
+    }
+
+    .notification.notification-info {
+      border-left-color: #2196f3;
+    }
+
+    .notification-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+    }
+
+    .notification-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      font-weight: bold;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .notification-success .notification-icon {
+      background: rgba(76, 175, 80, 0.2);
+      color: #4caf50;
+    }
+
+    .notification-error .notification-icon {
+      background: rgba(244, 67, 54, 0.2);
+      color: #f44336;
+    }
+
+    .notification-warning .notification-icon {
+      background: rgba(255, 152, 0, 0.2);
+      color: #ff9800;
+    }
+
+    .notification-info .notification-icon {
+      background: rgba(33, 150, 243, 0.2);
+      color: #2196f3;
+    }
+
+    .notification-message {
+      flex: 1;
+      font-size: 14px;
+      color: #333;
+      line-height: 1.4;
+    }
+
+    .notification-close {
+      background: none;
+      border: none;
+      color: #999;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 0;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .notification-close:hover {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    .notification-close:active {
+      transform: scale(0.9);
+    }
+
+    @media (max-width: 480px) {
+      #notifications-container {
+        left: 12px;
+        right: 12px;
+        max-width: none;
+        top: 12px;
+      }
+
+      .notification-content {
+        padding: 12px 14px;
+      }
+
+      .notification-message {
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-box">
+      <!-- Header -->
+      <div class="auth-header">
+        <h1>Evaluación Clínica</h1>
+        <p>Sistema de evaluación psicológica</p>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="login">
+          Entrar
+        </button>
+        <button class="tab-btn" data-tab="registro">
+          Crear Clínica
+        </button>
+      </div>
+
+      <!-- Content -->
+      <div class="auth-content">
+        <!-- Login Form -->
+        <form id="loginForm" class="auth-form active">
+          <div class="form-group">
+            <label for="loginEmail">Email</label>
+            <input
+              type="email"
+              id="loginEmail"
+              placeholder="admin@clinica.com"
+              required
+              autocomplete="email"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="loginPassword">Contraseña</label>
+            <input
+              type="password"
+              id="loginPassword"
+              placeholder="••••••••"
+              required
+              autocomplete="current-password"
+            >
+          </div>
+
+          <button type="submit" class="submit-btn">
+            <span id="loginBtnText">Entrar</span>
+          </button>
+
+          <div id="loginError" class="error"></div>
+        </form>
+
+        <!-- Registro Form -->
+        <form id="registroForm" class="auth-form">
+          <div class="form-group">
+            <label for="clinicaName">Nombre de Clínica</label>
+            <input
+              type="text"
+              id="clinicaName"
+              placeholder="Clínica Centro"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="adminEmail">Email Administrador</label>
+            <input
+              type="email"
+              id="adminEmail"
+              placeholder="admin@clinica.com"
+              required
+              autocomplete="email"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="adminPassword">Contraseña (mín. 6 caracteres)</label>
+            <input
+              type="password"
+              id="adminPassword"
+              placeholder="••••••••"
+              required
+              minlength="6"
+              autocomplete="new-password"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="adminName">Tu Nombre Completo</label>
+            <input
+              type="text"
+              id="adminName"
+              placeholder="Dr. Juan García"
+              required
+            >
+          </div>
+
+          <button type="submit" class="submit-btn">
+            <span id="registroBtnText">Crear Clínica</span>
+          </button>
+
+          <div id="registroError" class="error"></div>
+        </form>
+      </div>
+
+      <!-- Footer -->
+      <div class="auth-footer">
+        <p>🔒 Datos encriptados. SQLite local. Sin servidores externos.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/notifications.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

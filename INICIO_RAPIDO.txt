@@ -1,0 +1,159 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║              EVALUACIÓN CLÍNICA PSICOLÓGICA PRO v2.0 - INICIO RÁPIDO            ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+🚀 CÓMO INICIAR LA APLICACIÓN
+═══════════════════════════════════════════════════════════════════════════════════
+
+OPCIÓN 1: Desde la línea de comandos (recomendado)
+─────────────────────────────────────────────────────
+
+1. Abra PowerShell o CMD
+
+2. Navegue a la carpeta del proyecto:
+   cd "c:\Users\image\Developer\software\EVALUACIÓN CLÍNICA PSICO"
+
+3. Inicie el servidor:
+   npm start
+
+4. Verá este mensaje si todo funciona:
+   ✓ Base de datos inicializada
+   ✓ Servidor corriendo en http://localhost:3000
+   ✓ API disponible en http://localhost:3000/api
+
+5. Abra su navegador en:
+   http://localhost:3000
+
+6. ¡Listo! La aplicación está abierta.
+
+
+OPCIÓN 2: Crear un atajo (Windows)
+──────────────────────────────────
+
+1. Click derecho en el escritorio
+2. Crear nuevo > Acceso directo
+3. Pegue esta dirección:
+   cmd /k "cd 'c:\Users\image\Developer\software\EVALUACIÓN CLÍNICA PSICO' && npm start"
+4. Nombre: "Evaluación Clínica"
+5. Doble click para iniciar
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+📋 PRIMEROS PASOS EN LA APLICACIÓN
+═══════════════════════════════════════════════════════════════════════════════════
+
+1. CREAR UN PACIENTE
+   • Sidebar → "Nueva Ficha"
+   • Completar: Nombre*, Edad, Sexo, Estado Civil
+   • Medicamentos (opcional)
+   • Observaciones clínicas (opcional)
+   • Click: "Registrar y Continuar"
+
+2. APLICAR UN TEST
+   • Seleccionar test del sidebar (ej: "Hamilton")
+   • Responder TODOS los ítems
+   • La barra de progreso muestra avance
+   • Click: "Finalizar [Test]"
+
+3. VER REPORTE
+   • Se muestra automáticamente
+   • Incluye: Puntaje + Interpretación + Color
+   • Click: "⬇️ Descargar PDF" para exportar
+
+4. GESTIONAR EXPEDIENTES
+   • Sidebar → "Expedientes"
+   • Ver todos los pacientes
+   • Buscar por nombre
+   • ✏️ Editar / ⏸️ Pausar
+
+═══════════════════════════════════════════════════════════════════════════════════
+📊 TESTS DISPONIBLES
+═══════════════════════════════════════════════════════════════════════════════════
+
+1. SCL-90-R (Symptom Checklist-90)
+   📊 90 ítems | 9 subescalas | Evaluación general de síntomas
+
+2. Hamilton HAM-D (Depresión)
+   😔 17 ítems | Escala estándar para depresión
+
+3. MMPI-2 (Personalidad)
+   🧠 13 escalas | Perfil de personalidad
+
+4. ISRA (Ansiedad)
+   😰 56 ítems | Situaciones y respuestas de ansiedad
+
+5. TDS (Trastornos del Sueño)
+   😴 30 ítems | Evaluación de patrones de sueño
+
+6. PCL-R (Psicopatía - solo profesionales entrenados)
+   ⚠️ 20 ítems | Hare Psychopathy Checklist
+
+7. EGEP-5 (TEPT)
+   🚨 22 ítems | Escala de severidad del TEPT (DSM-5)
+
+═══════════════════════════════════════════════════════════════════════════════════
+⚙️ CONFIGURACIÓN
+═══════════════════════════════════════════════════════════════════════════════════
+
+CAMBIAR PUERTO (si 3000 está ocupado):
+  Abrir: server.js
+  Buscar: const PORT = process.env.PORT || 3000;
+  Cambiar: const PORT = process.env.PORT || 3001;
+
+CAMBIAR TEMA (claro/oscuro):
+  Click en el botón ☀️ en la esquina superior derecha
+
+ELIMINAR TODOS LOS DATOS:
+  1. Cerrar el servidor (Ctrl+C)
+  2. Eliminar: database/clinica.db
+  3. Iniciar: npm start
+  → Se recreará la BD vacía
+
+═══════════════════════════════════════════════════════════════════════════════════
+🔑 ATAJOS ÚTILES
+═══════════════════════════════════════════════════════════════════════════════════
+
+Navegador:
+  F12              → Abrir herramientas de desarrollo
+  Ctrl+Shift+Delete → Limpiar caché si hay problemas
+
+Servidor:
+  Ctrl+C           → Detener servidor
+  npm start        → Iniciar servidor
+
+═══════════════════════════════════════════════════════════════════════════════════
+📚 DOCUMENTACIÓN
+═══════════════════════════════════════════════════════════════════════════════════
+
+Ver más detalles en:
+  - README.md                      (Guía completa)
+  - IMPLEMENTACIÓN_COMPLETADA.md  (Resumen técnico)
+
+═══════════════════════════════════════════════════════════════════════════════════
+❓ SOLUCIÓN DE PROBLEMAS
+═══════════════════════════════════════════════════════════════════════════════════
+
+"No puedo acceder a http://localhost:3000"
+  → Verificar que el servidor está corriendo (npm start)
+  → Esperar 2-3 segundos después de npm start
+  → Ver si dice "✓ Servidor corriendo en http://localhost:3000"
+
+"Los tests no aparecen"
+  → Crear primero un paciente (Nueva Ficha)
+  → Pasar a la página del test
+  → Hacer F5 (reload)
+
+"No puedo guardar una evaluación"
+  → Verificar que TODOS los ítems tengan respuesta
+  → La app le mostrará cuáles faltan
+
+"La BD está corrupta"
+  → rm database/clinica.db
+  → npm start
+  → Se recreará nueva BD
+
+═══════════════════════════════════════════════════════════════════════════════════
+
+✨ ¡La aplicación está lista para usar!
+📧 Para soporte, ver archivos README.md y IMPLEMENTACIÓN_COMPLETADA.md
+

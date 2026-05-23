@@ -1,0 +1,31 @@
+{
+  "name": "evaluacion-clinica-psico",
+  "version": "2.0.0",
+  "description": "Sistema de evaluación clínica psicológica con interpretación automática",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "evaluación",
+    "psicología",
+    "clínica",
+    "tests",
+    "psicométricos"
+  ],
+  "author": "Psicólogo",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.11.3"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
