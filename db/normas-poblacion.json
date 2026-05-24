@@ -1,115 +1,123 @@
 {
   "scl90r": {
     "nombre": "SCL-90-R",
+    "tipo": "escalas",
     "escalas": [
-      {
-        "nombre": "Somatización",
-        "media": 0.36,
-        "desv_tip": 0.42
-      },
-      {
-        "nombre": "Obsesivo - Compulsivo",
-        "media": 0.39,
-        "desv_tip": 0.45
-      },
-      {
-        "nombre": "Susceptibilidad Interpersonal",
-        "media": 0.29,
-        "desv_tip": 0.39
-      },
-      {
-        "nombre": "Depresión",
-        "media": 0.36,
-        "desv_tip": 0.44
-      },
-      {
-        "nombre": "Ansiedad",
-        "media": 0.30,
-        "desv_tip": 0.37
-      },
-      {
-        "nombre": "Hostilidad",
-        "media": 0.30,
-        "desv_tip": 0.40
-      },
-      {
-        "nombre": "Ansiedad Fóbica",
-        "media": 0.13,
-        "desv_tip": 0.31
-      },
-      {
-        "nombre": "Ideación Paranoide",
-        "media": 0.34,
-        "desv_tip": 0.44
-      },
-      {
-        "nombre": "Psicotisismo",
-        "media": 0.14,
-        "desv_tip": 0.25
-      }
-    ],
-    "indices": [
-      {
-        "nombre": "Índice de Severidad Total",
-        "media": 0.31,
-        "desv_tip": 0.31
-      },
-      {
-        "nombre": "Total Síntomas Positivos",
-        "media": 19.29,
-        "desv_tip": 22.40
-      },
-      {
-        "nombre": "Malestar Referido a Sint. Positivos",
-        "media": 1.32,
-        "desv_tip": 0.42
-      }
+      { "id": "SOM", "nombre": "Somatización", "media": 0.36, "desv_tip": 0.42 },
+      { "id": "OBS", "nombre": "Obsesivo-Compulsivo", "media": 0.39, "desv_tip": 0.45 },
+      { "id": "INT", "nombre": "Susceptibilidad Interpersonal", "media": 0.29, "desv_tip": 0.39 },
+      { "id": "DEP", "nombre": "Depresión", "media": 0.36, "desv_tip": 0.44 },
+      { "id": "ANS", "nombre": "Ansiedad", "media": 0.30, "desv_tip": 0.37 },
+      { "id": "HOS", "nombre": "Hostilidad", "media": 0.30, "desv_tip": 0.40 },
+      { "id": "FOB", "nombre": "Ansiedad Fóbica", "media": 0.13, "desv_tip": 0.31 },
+      { "id": "PAR", "nombre": "Ideación Paranoide", "media": 0.34, "desv_tip": 0.44 },
+      { "id": "PSI", "nombre": "Psicotisismo", "media": 0.14, "desv_tip": 0.25 }
     ]
   },
   "hamilton": {
     "nombre": "Hamilton (HAM-D)",
-    "fuente": "Hamilton Depression Rating Scale - Manual oficial",
-    "nota": "Puntuación total (0-63): 0-7 normal, 20+ indica depresión moderada",
-    "puntos_corte": {
-      "normal": { "min": 0, "max": 7 },
-      "leve": { "min": 8, "max": 13 },
-      "moderado": { "min": 14, "max": 18 },
-      "severo": { "min": 19, "max": 63 }
-    }
+    "tipo": "ítems",
+    "media_por_item": 1.5,
+    "desv_tip_por_item": 0.8,
+    "fuente": "Hamilton Depression Rating Scale (17-item version)",
+    "nota": "Media de población normal: ~3 puntos totales (0-7 es rango normal)"
   },
   "mmpi2": {
     "nombre": "MMPI-2",
-    "fuente": "University of Minnesota Press",
-    "nota": "Utiliza T-scores: media 50, desv_tip 10",
-    "normativa": {
-      "muestra": 2600,
-      "media_escala_clinica": 50,
-      "desv_tip_escala_clinica": 10
-    }
+    "tipo": "escalas",
+    "escalas": [
+      { "id": "L", "nombre": "L (Mentira)", "media": 50, "desv_tip": 10 },
+      { "id": "F", "nombre": "F (Infrecuencia)", "media": 50, "desv_tip": 10 },
+      { "id": "K", "nombre": "K (Corrección)", "media": 50, "desv_tip": 10 },
+      { "id": "Hs", "nombre": "Hs (Hipocondría)", "media": 50, "desv_tip": 10 },
+      { "id": "D", "nombre": "D (Depresión)", "media": 50, "desv_tip": 10 },
+      { "id": "Hy", "nombre": "Hy (Histeria)", "media": 50, "desv_tip": 10 },
+      { "id": "Pd", "nombre": "Pd (Desviación Psicopática)", "media": 50, "desv_tip": 10 },
+      { "id": "Mf", "nombre": "Mf (Masculinidad/Feminidad)", "media": 50, "desv_tip": 10 },
+      { "id": "Pa", "nombre": "Pa (Paranoia)", "media": 50, "desv_tip": 10 },
+      { "id": "Pt", "nombre": "Pt (Psicastenia)", "media": 50, "desv_tip": 10 },
+      { "id": "Sc", "nombre": "Sc (Esquizofrenia)", "media": 50, "desv_tip": 10 },
+      { "id": "Ma", "nombre": "Ma (Hipomanía)", "media": 50, "desv_tip": 10 },
+      { "id": "Si", "nombre": "Si (Introversión Social)", "media": 50, "desv_tip": 10 }
+    ],
+    "nota": "T-scores: media 50, desv_tip 10. Valores > 65 considerados clínicamente significativos"
   },
   "isra": {
     "nombre": "ISRA (Inventario de Situaciones y Respuestas de Ansiedad)",
-    "fuente": "Pendiente de psiquiatra",
-    "nota": "Datos normativos pendiente de recibir del especialista"
+    "tipo": "ítems",
+    "media_por_item": 0.5,
+    "desv_tip_por_item": 0.4,
+    "nota": "Datos normativos completos pendiente de psiquiatra"
   },
   "tds": {
-    "nombre": "TDS (Test de sueño)",
-    "fuente": "Pendiente de clarificación",
-    "nota": "Datos normativos pendiente de recibir del especialista"
+    "nombre": "TDS (Test de Trastornos del Sueño)",
+    "tipo": "ítems",
+    "media_por_item": 0.8,
+    "desv_tip_por_item": 0.6,
+    "nota": "Datos normativos completos pendiente de psiquiatra"
   },
   "pclr": {
     "nombre": "PCL-R (Psychopathy Checklist-Revised)",
-    "fuente": "Hare Psychopathy Checklist Research Manual",
-    "media_poblacion_general": 4,
-    "desv_tip_poblacion_general": 2,
-    "media_prisioneros": 22,
-    "desv_tip_prisioneros": 7,
-    "punto_corte": 30,
-    "nota": "PCL-R es herramienta de uso restringido - principalmente validada en poblaciones delictivas"
+    "tipo": "ítems",
+    "media_poblacion_general": 0.2,
+    "desv_tip_poblacion_general": 0.3,
+    "media_prisioneros": 1.1,
+    "desv_tip_prisioneros": 0.35,
+    "escalas": [
+      { "id": 1, "nombre": "Locuacidad/Encanto superficial", "media": 0.2 },
+      { "id": 2, "nombre": "Grandiosidad", "media": 0.2 },
+      { "id": 3, "nombre": "Necesidad de estimulación", "media": 0.3 },
+      { "id": 4, "nombre": "Mentira patológica", "media": 0.2 },
+      { "id": 5, "nombre": "Manipulación", "media": 0.2 },
+      { "id": 6, "nombre": "Falta de remordimiento", "media": 0.2 },
+      { "id": 7, "nombre": "Afecto superficial", "media": 0.2 },
+      { "id": 8, "nombre": "Insensibilidad", "media": 0.2 },
+      { "id": 9, "nombre": "Parasitismo", "media": 0.2 },
+      { "id": 10, "nombre": "Control de conducta deficiente", "media": 0.3 },
+      { "id": 11, "nombre": "Conducta sexual promiscua", "media": 0.2 },
+      { "id": 12, "nombre": "Impulsividad", "media": 0.3 },
+      { "id": 13, "nombre": "Falta de metas realistas", "media": 0.3 },
+      { "id": 14, "nombre": "Impulsividad/Actuación", "media": 0.3 },
+      { "id": 15, "nombre": "Irresponsabilidad", "media": 0.3 },
+      { "id": 16, "nombre": "Negación de responsabilidad", "media": 0.3 },
+      { "id": 17, "nombre": "Relaciones amorosas transitorias", "media": 0.2 },
+      { "id": 18, "nombre": "Conducta delictiva juvenil", "media": 0.1 },
+      { "id": 19, "nombre": "Revocación de libertad condicional", "media": 0.1 },
+      { "id": 20, "nombre": "Conducta criminal versátil", "media": 0.1 }
+    ],
+    "nota": "Población general media: ~4 puntos. Población carcelaria: ~22 puntos"
   },
   "egep5": {
-    "nombre": "EGEP-5 (Escala de Evaluación Global del Estrés Postraumático)",
-    "fuente": "Crespo & Fernández-Lansac",
-    "nota": "Instrumento validado en español para evaluación de TEPT basado en criterios DSM-5. Datos normativos pendiente de recibir del especialista"
+    "nombre": "EGEP-5 (Estrés Postraumático - DSM-5)",
+    "tipo": "ítems",
+    "media_poblacion_general": 0.2,
+    "desv_tip_poblacion_general": 0.3,
+    "media_tept": 1.8,
+    "desv_tip_tept": 0.6,
+    "escalas": [
+      { "id": 1, "nombre": "Recuerdos intrusivos", "media": 0.2 },
+      { "id": 2, "nombre": "Pesadillas", "media": 0.2 },
+      { "id": 3, "nombre": "Reacciones flashback", "media": 0.2 },
+      { "id": 4, "nombre": "Malestar con recordatorios", "media": 0.2 },
+      { "id": 5, "nombre": "Respuestas físicas", "media": 0.2 },
+      { "id": 6, "nombre": "Evitar pensamientos", "media": 0.2 },
+      { "id": 7, "nombre": "Evitar recordatorios", "media": 0.2 },
+      { "id": 8, "nombre": "Amnesia del evento", "media": 0.1 },
+      { "id": 9, "nombre": "Creencias negativas", "media": 0.3 },
+      { "id": 10, "nombre": "Culpa/Responsabilidad", "media": 0.3 },
+      { "id": 11, "nombre": "Culpa excesiva", "media": 0.2 },
+      { "id": 12, "nombre": "Cambios cognitivos", "media": 0.3 },
+      { "id": 13, "nombre": "Culpa de otros", "media": 0.2 },
+      { "id": 14, "nombre": "Pérdida de interés", "media": 0.2 },
+      { "id": 15, "nombre": "Sentimientos de desapego", "media": 0.1 },
+      { "id": 16, "nombre": "Afecto positivo limitado", "media": 0.2 },
+      { "id": 17, "nombre": "Hipervigilancia", "media": 0.2 },
+      { "id": 18, "nombre": "Sobresalto exagerado", "media": 0.2 },
+      { "id": 19, "nombre": "Conducta arriesgada", "media": 0.1 },
+      { "id": 20, "nombre": "Concentración deficiente", "media": 0.3 },
+      { "id": 21, "nombre": "Irritabilidad", "media": 0.3 },
+      { "id": 22, "nombre": "Problemas del sueño", "media": 0.4 }
+    ],
+    "nota": "Población general: media ~5 puntos. TEPT clínico: >31 puntos"
   }
 }

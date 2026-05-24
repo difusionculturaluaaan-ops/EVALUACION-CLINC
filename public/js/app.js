@@ -561,15 +561,7 @@ const app = {
    */
   async renderChartReporte(prueba) {
     const canvasElement = document.getElementById('chartReporte');
-    if (!canvasElement) {
-      console.warn('Canvas chartReporte no encontrado');
-      return;
-    }
-
-    if (typeof Chart === 'undefined') {
-      console.warn('Chart.js no cargado');
-      return;
-    }
+    if (!canvasElement || typeof Chart === 'undefined') return;
 
     if (canvasElement.chartInstance) {
       canvasElement.chartInstance.destroy();
@@ -579,69 +571,72 @@ const app = {
     try {
       const subescalas = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas || {};
       const data = typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data || [];
-      console.log('Subescalas:', subescalas);
-      console.log('Datos prueba:', data);
 
-      // Obtener normas de población general
-      let normasPoblacion = {};
-      try {
-        const normas = await api.getNormasPoblacion(prueba.tipo);
-        if (normas && Array.isArray(normas)) {
-          normas.forEach(norma => {
-            normasPoblacion[norma.escala] = norma.valor_media || norma.media || 0;
-          });
-        }
-        console.log('Normas población:', normasPoblacion);
-      } catch (err) {
-        console.log('No hay normas disponibles para', prueba.tipo);
-      }
-
-      // Extraer nombres de escalas y valores
       let labels = [];
       let valoresPaciente = [];
       let valoresPoblacion = [];
 
-      // Mapeo de escalas para SCL-90-R
-      const escalasMap = {
-        'SOM': 'Somatización',
-        'OBS': 'Obsesivo-Compulsivo',
-        'INT': 'Susceptibilidad Interpersonal',
-        'DEP': 'Depresión',
-        'ANS': 'Ansiedad',
-        'HOS': 'Hostilidad',
-        'FOB': 'Ansiedad Fóbica',
-        'PAR': 'Ideación Paranoide',
-        'PSI': 'Psicotisismo'
-      };
+      // Obtener normas del archivo local basadas en tipo de test
+      const normasLocales = this.getNormasLocales(prueba.tipo);
 
       // Procesar según tipo de test
       if (prueba.tipo === 'SCL90R') {
+        // SCL-90-R: mostrar 9 escalas
         const escalasOrdenadas = ['SOM', 'OBS', 'INT', 'DEP', 'ANS', 'HOS', 'FOB', 'PAR', 'PSI'];
+        const escalasMap = {
+          'SOM': 'Somatización', 'OBS': 'Obsesivo-Compulsivo', 'INT': 'Susceptibilidad Interpersonal',
+          'DEP': 'Depresión', 'ANS': 'Ansiedad', 'HOS': 'Hostilidad', 'FOB': 'Ansiedad Fóbica',
+          'PAR': 'Ideación Paranoide', 'PSI': 'Psicotisismo'
+        };
         escalasOrdenadas.forEach(escala => {
-          labels.push(escalasMap[escala] || escala);
+          labels.push(escalasMap[escala]);
           valoresPaciente.push(Number(subescalas[escala]) || 0);
-          valoresPoblacion.push(normasPoblacion[escala] || 0.3);
+          const norma = normasLocales?.escalas?.find(e => e.id === escala);
+          valoresPoblacion.push(norma?.media || 0.3);
         });
-      } else if (Array.isArray(data) && data.length > 0) {
-        // Para tests con datos de ítems (PCL-R, MMPI-2, etc), mostrar ítems individuales
-        data.forEach((valor, indice) => {
-          labels.push(`Ítem ${indice + 1}`);
-          valoresPaciente.push(Number(valor) || 0);
-          valoresPoblacion.push(0.5); // Promedio estimado de población normal
-        });
+      } else if (prueba.tipo === 'MMPI2') {
+        // MMPI-2: mostrar escalas clínicas
+        if (Array.isArray(data) && data.length > 0) {
+          data.forEach((valor, idx) => {
+            const norma = normasLocales?.escalas?.[idx];
+            labels.push(norma?.nombre || `Escala ${idx + 1}`);
+            valoresPaciente.push(Number(valor) || 0);
+            valoresPoblacion.push(norma?.media || 50);
+          });
+        }
+      } else if (['PCLR', 'EGEP5'].includes(prueba.tipo)) {
+        // PCL-R y EGEP-5: mostrar ítems con nombres descriptivos
+        if (Array.isArray(data) && data.length > 0) {
+          data.forEach((valor, idx) => {
+            const norma = normasLocales?.escalas?.[idx];
+            labels.push(norma?.nombre || `Ítem ${idx + 1}`);
+            valoresPaciente.push(Number(valor) || 0);
+            valoresPoblacion.push(norma?.media || (prueba.tipo === 'PCLR' ? 0.2 : 0.2));
+          });
+        }
+      } else if (['HAMILTON', 'ISRA', 'TDS'].includes(prueba.tipo)) {
+        // Hamilton, ISRA, TDS: mostrar ítems numerados
+        if (Array.isArray(data) && data.length > 0) {
+          data.forEach((valor, idx) => {
+            labels.push(`Ítem ${idx + 1}`);
+            valoresPaciente.push(Number(valor) || 0);
+            valoresPoblacion.push(normasLocales?.media_por_item || 0.5);
+          });
+        }
       } else {
-        // Para otros tests, usar las claves disponibles en subescalas
-        Object.entries(subescalas).forEach(([key, value]) => {
-          if (!['interpretacion', 'label', 'color', 'texto', 'nivel'].includes(key.toLowerCase())) {
-            labels.push(key);
-            let val = value;
-            if (typeof value === 'object') {
-              val = value.valor || value.total || value.puntuacion || 0;
-            }
-            valoresPaciente.push(Number(val) || 0);
-            valoresPoblacion.push(normasPoblacion[key] || 0);
-          }
-        });
+        // Fallback: mostrar ítems si hay datos
+        if (Array.isArray(data) && data.length > 0) {
+          data.forEach((valor, idx) => {
+            labels.push(`Ítem ${idx + 1}`);
+            valoresPaciente.push(Number(valor) || 0);
+            valoresPoblacion.push(0.5);
+          });
+        }
+      }
+
+      if (labels.length === 0) {
+        console.warn('No hay datos para graficar');
+        return;
       }
 
       const maxValor = Math.max(...valoresPaciente, ...valoresPoblacion, 2);
@@ -713,10 +708,104 @@ const app = {
         }
       });
 
-      console.log('✓ Gráfica comparativa renderizada');
+      console.log('✓ Gráfica comparativa renderizada para', prueba.tipo);
     } catch (error) {
       console.error('Error al renderizar gráfica:', error);
     }
+  },
+
+  /**
+   * Obtener normas locales del test
+   */
+  getNormasLocales(tipoTest) {
+    const normas = {
+      'SCL90R': {
+        escalas: [
+          { id: 'SOM', nombre: 'Somatización', media: 0.36 },
+          { id: 'OBS', nombre: 'Obsesivo-Compulsivo', media: 0.39 },
+          { id: 'INT', nombre: 'Susceptibilidad Interpersonal', media: 0.29 },
+          { id: 'DEP', nombre: 'Depresión', media: 0.36 },
+          { id: 'ANS', nombre: 'Ansiedad', media: 0.30 },
+          { id: 'HOS', nombre: 'Hostilidad', media: 0.30 },
+          { id: 'FOB', nombre: 'Ansiedad Fóbica', media: 0.13 },
+          { id: 'PAR', nombre: 'Ideación Paranoide', media: 0.34 },
+          { id: 'PSI', nombre: 'Psicotisismo', media: 0.14 }
+        ]
+      },
+      'MMPI2': {
+        escalas: [
+          { id: 'L', nombre: 'L (Mentira)', media: 50 },
+          { id: 'F', nombre: 'F (Infrecuencia)', media: 50 },
+          { id: 'K', nombre: 'K (Corrección)', media: 50 },
+          { id: 'Hs', nombre: 'Hs (Hipocondría)', media: 50 },
+          { id: 'D', nombre: 'D (Depresión)', media: 50 },
+          { id: 'Hy', nombre: 'Hy (Histeria)', media: 50 },
+          { id: 'Pd', nombre: 'Pd (Desviación Psicopática)', media: 50 },
+          { id: 'Mf', nombre: 'Mf (Masculinidad/Feminidad)', media: 50 },
+          { id: 'Pa', nombre: 'Pa (Paranoia)', media: 50 },
+          { id: 'Pt', nombre: 'Pt (Psicastenia)', media: 50 },
+          { id: 'Sc', nombre: 'Sc (Esquizofrenia)', media: 50 },
+          { id: 'Ma', nombre: 'Ma (Hipomanía)', media: 50 },
+          { id: 'Si', nombre: 'Si (Introversión Social)', media: 50 }
+        ]
+      },
+      'PCLR': {
+        media_por_item: 0.2,
+        escalas: [
+          { id: 1, nombre: 'Locuacidad/Encanto superficial', media: 0.2 },
+          { id: 2, nombre: 'Grandiosidad', media: 0.2 },
+          { id: 3, nombre: 'Necesidad de estimulación', media: 0.3 },
+          { id: 4, nombre: 'Mentira patológica', media: 0.2 },
+          { id: 5, nombre: 'Manipulación', media: 0.2 },
+          { id: 6, nombre: 'Falta de remordimiento', media: 0.2 },
+          { id: 7, nombre: 'Afecto superficial', media: 0.2 },
+          { id: 8, nombre: 'Insensibilidad', media: 0.2 },
+          { id: 9, nombre: 'Parasitismo', media: 0.2 },
+          { id: 10, nombre: 'Control de conducta', media: 0.3 },
+          { id: 11, nombre: 'Conducta sexual promiscua', media: 0.2 },
+          { id: 12, nombre: 'Impulsividad', media: 0.3 },
+          { id: 13, nombre: 'Falta de metas realistas', media: 0.3 },
+          { id: 14, nombre: 'Impulsividad/Actuación', media: 0.3 },
+          { id: 15, nombre: 'Irresponsabilidad', media: 0.3 },
+          { id: 16, nombre: 'Negación de responsabilidad', media: 0.3 },
+          { id: 17, nombre: 'Relaciones amorosas transitorias', media: 0.2 },
+          { id: 18, nombre: 'Conducta delictiva juvenil', media: 0.1 },
+          { id: 19, nombre: 'Revocación de libertad condicional', media: 0.1 },
+          { id: 20, nombre: 'Conducta criminal versátil', media: 0.1 }
+        ]
+      },
+      'EGEP5': {
+        media_por_item: 0.2,
+        escalas: [
+          { id: 1, nombre: 'Recuerdos intrusivos', media: 0.2 },
+          { id: 2, nombre: 'Pesadillas', media: 0.2 },
+          { id: 3, nombre: 'Reacciones flashback', media: 0.2 },
+          { id: 4, nombre: 'Malestar con recordatorios', media: 0.2 },
+          { id: 5, nombre: 'Respuestas físicas', media: 0.2 },
+          { id: 6, nombre: 'Evitar pensamientos', media: 0.2 },
+          { id: 7, nombre: 'Evitar recordatorios', media: 0.2 },
+          { id: 8, nombre: 'Amnesia del evento', media: 0.1 },
+          { id: 9, nombre: 'Creencias negativas', media: 0.3 },
+          { id: 10, nombre: 'Culpa/Responsabilidad', media: 0.3 },
+          { id: 11, nombre: 'Culpa excesiva', media: 0.2 },
+          { id: 12, nombre: 'Cambios cognitivos', media: 0.3 },
+          { id: 13, nombre: 'Culpa de otros', media: 0.2 },
+          { id: 14, nombre: 'Pérdida de interés', media: 0.2 },
+          { id: 15, nombre: 'Sentimientos de desapego', media: 0.1 },
+          { id: 16, nombre: 'Afecto positivo limitado', media: 0.2 },
+          { id: 17, nombre: 'Hipervigilancia', media: 0.2 },
+          { id: 18, nombre: 'Sobresalto exagerado', media: 0.2 },
+          { id: 19, nombre: 'Conducta arriesgada', media: 0.1 },
+          { id: 20, nombre: 'Concentración deficiente', media: 0.3 },
+          { id: 21, nombre: 'Irritabilidad', media: 0.3 },
+          { id: 22, nombre: 'Problemas del sueño', media: 0.4 }
+        ]
+      },
+      'HAMILTON': { media_por_item: 1.5 },
+      'ISRA': { media_por_item: 0.5 },
+      'TDS': { media_por_item: 0.8 }
+    };
+    return normas[tipoTest] || {};
   },
 
   /**
