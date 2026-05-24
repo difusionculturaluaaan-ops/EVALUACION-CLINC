@@ -350,12 +350,45 @@ async function crearPrueba(datos) {
     const result = await pool.query(
       `INSERT INTO pruebas (tenant_id, paciente_id, tipo, data, total, subescalas)
        VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      [datos.tenant_id, datos.paciente_id, datos.tipo, datos.data, datos.total, datos.subescalas]
+      [datos.tenant_id, datos.paciente_id, datos.tipo, JSON.stringify(datos.data), datos.total, JSON.stringify(datos.subescalas)]
     );
     return result.rows[0] || null;
   } catch (err) {
     console.error('Error al crear prueba:', err);
     return null;
+  }
+}
+
+async function guardarPrueba(paciente_id, tipo, data, total, subescalas) {
+  try {
+    // Obtener tenant_id del paciente
+    const paciente = await getPacienteById(paciente_id);
+    if (!paciente) return null;
+
+    return crearPrueba({
+      tenant_id: paciente.tenant_id,
+      paciente_id,
+      tipo,
+      data,
+      total,
+      subescalas
+    });
+  } catch (err) {
+    console.error('Error al guardar prueba:', err);
+    return null;
+  }
+}
+
+async function obtenerPruebasRango(paciente_id, tipo) {
+  try {
+    const result = await pool.query(
+      'SELECT * FROM pruebas WHERE paciente_id = $1 AND tipo = $2 ORDER BY fecha DESC',
+      [paciente_id, tipo]
+    );
+    return result.rows || [];
+  } catch (err) {
+    console.error(err);
+    return [];
   }
 }
 
@@ -379,10 +412,13 @@ module.exports = {
   crearPacienteTenant,
   actualizarPaciente,
   toggleStatusPaciente,
-  obtenerPruebasPaciente: getPruebasByPaciente,
   getPruebas,
   getPruebasByTenant,
   getPruebasByPaciente,
+  obtenerPruebasPaciente: getPruebasByPaciente,
   getPruebaById,
-  crearPrueba
+  obtenerPruebaById: getPruebaById,
+  crearPrueba,
+  guardarPrueba,
+  obtenerPruebasRango
 };
