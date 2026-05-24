@@ -246,22 +246,25 @@ body {
 .nav-item {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--spacing-md);
-  width: 100%;
-  padding: 12px var(--spacing-lg);
-  margin: 4px var(--spacing-sm);
+  width: calc(100% - 16px);
+  padding: 14px var(--spacing-md);
+  margin: 8px var(--spacing-sm);
   border: none;
-  background: none;
+  background: var(--color-surface-alt);
   color: var(--color-text-secondary);
-  font-size: 14px;
-  font-weight: 500;
-  text-align: left;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
   cursor: pointer;
   transition: var(--transition);
-  white-space: nowrap;
+  white-space: normal;
   text-decoration: none;
   border-radius: var(--radius-lg);
   position: relative;
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(10px);
 }
 
 .nav-item::before {
@@ -278,35 +281,41 @@ body {
 }
 
 .nav-item:hover {
-  background: var(--color-surface-alt);
-  color: var(--color-text);
+  background: var(--color-surface);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .nav-item.active {
-  background: rgba(59, 130, 246, 0.1);
-  color: var(--color-primary);
+  background: var(--gradient-primary);
+  color: #ffffff;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
 }
 
 .nav-item.active::before {
-  height: 24px;
+  height: 0;
 }
 
 .nav-item .icon {
-  font-size: 16px;
-  flex-shrink: 0;
+  display: none;
 }
 
 .nav-item .label {
   white-space: normal;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
 }
 
 .nav-divider {
-  padding: var(--spacing-md) var(--spacing-lg);
-  font-size: 11px;
+  padding: 16px var(--spacing-lg) 12px;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   color: var(--color-text-muted);
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
 }
 
 /* ============================================
