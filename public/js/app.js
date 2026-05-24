@@ -201,7 +201,7 @@ const app = {
   },
 
   /**
-   * Crear nuevo paciente
+   * Crear o actualizar paciente
    */
   async crearPaciente() {
     const nombre = document.getElementById('f-nombre').value.trim();
@@ -217,19 +217,34 @@ const app = {
     }
 
     try {
-      const paciente = await api.crearPaciente({
-        nombre,
-        edad,
-        sexo,
-        estado_civil: civil,
-        medicamentos: meds,
-        observaciones: obs
-      });
+      let paciente;
+
+      // Si hay paciente activo con ID, es actualización
+      if (this.pacienteActivo && this.pacienteActivo.id) {
+        paciente = await api.actualizarPaciente(this.pacienteActivo.id, {
+          nombre,
+          edad,
+          sexo,
+          estado_civil: civil,
+          medicamentos: meds,
+          observaciones: obs
+        });
+        this.mostrarToast(`✓ Paciente ${nombre} actualizado correctamente`, 'success');
+      } else {
+        // Si no hay ID, es creación
+        paciente = await api.crearPaciente({
+          nombre,
+          edad,
+          sexo,
+          estado_civil: civil,
+          medicamentos: meds,
+          observaciones: obs
+        });
+        this.mostrarToast(`✓ Paciente ${nombre} registrado correctamente`, 'success');
+      }
 
       this.pacienteActivo = paciente;
       localStorage.setItem('pacienteActivo', JSON.stringify(paciente));
-
-      this.mostrarToast(`✓ Paciente ${nombre} registrado correctamente`, 'success');
       document.getElementById('form-paciente').reset();
       this.showPage('expedientes');
       await this.loadExpedientes();
