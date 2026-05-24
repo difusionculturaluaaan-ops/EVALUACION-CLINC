@@ -557,9 +557,9 @@ const app = {
   },
 
   /**
-   * Renderizar gráfica de la prueba con Chart.js
+   * Renderizar gráfica comparativa: Paciente vs Población Normal
    */
-  renderChartReporte(prueba) {
+  async renderChartReporte(prueba) {
     const canvasElement = document.getElementById('chartReporte');
     if (!canvasElement) {
       console.warn('Canvas chartReporte no encontrado');
@@ -571,115 +571,140 @@ const app = {
       return;
     }
 
-    // Destruir gráfica anterior si existe
     if (canvasElement.chartInstance) {
       canvasElement.chartInstance.destroy();
       canvasElement.chartInstance = null;
     }
 
     try {
-      const data = typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data || [];
+      const subescalas = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas || {};
+      console.log('Subescalas:', subescalas);
 
-      console.log('Datos de prueba:', prueba);
-      console.log('Datos parseados:', data);
-
-      let labels = [];
-      let valores = [];
-
-      if (Array.isArray(data) && data.length > 0) {
-        const maxItems = Math.min(data.length, 30);
-        for (let i = 0; i < maxItems; i++) {
-          labels.push(`Ítem ${i + 1}`);
-          valores.push(Number(data[i]) || 0);
+      // Obtener normas de población general
+      let normasPoblacion = {};
+      try {
+        const normas = await api.getNormasPoblacion(prueba.tipo);
+        if (normas && Array.isArray(normas)) {
+          normas.forEach(norma => {
+            normasPoblacion[norma.escala] = norma.valor_media || norma.media || 0;
+          });
         }
+        console.log('Normas población:', normasPoblacion);
+      } catch (err) {
+        console.log('No hay normas disponibles para', prueba.tipo);
+      }
+
+      // Extraer nombres de escalas y valores
+      let labels = [];
+      let valoresPaciente = [];
+      let valoresPoblacion = [];
+
+      // Mapeo de escalas para SCL-90-R
+      const escalasMap = {
+        'SOM': 'Somatización',
+        'OBS': 'Obsesivo-Compulsivo',
+        'INT': 'Susceptibilidad Interpersonal',
+        'DEP': 'Depresión',
+        'ANS': 'Ansiedad',
+        'HOS': 'Hostilidad',
+        'FOB': 'Ansiedad Fóbica',
+        'PAR': 'Ideación Paranoide',
+        'PSI': 'Psicotisismo'
+      };
+
+      // Procesar según tipo de test
+      if (prueba.tipo === 'SCL90R') {
+        const escalasOrdenadas = ['SOM', 'OBS', 'INT', 'DEP', 'ANS', 'HOS', 'FOB', 'PAR', 'PSI'];
+        escalasOrdenadas.forEach(escala => {
+          labels.push(escalasMap[escala] || escala);
+          valoresPaciente.push(Number(subescalas[escala]) || 0);
+          valoresPoblacion.push(normasPoblacion[escala] || 0.3);
+        });
       } else {
-        labels = ['Total'];
-        valores = [Number(prueba.total) || 0];
+        // Para otros tests, usar las claves disponibles en subescalas
+        Object.entries(subescalas).forEach(([key, value]) => {
+          if (!['interpretacion', 'label', 'color', 'texto', 'nivel'].includes(key.toLowerCase())) {
+            labels.push(key);
+            let val = value;
+            if (typeof value === 'object') {
+              val = value.valor || value.total || value.puntuacion || 0;
+            }
+            valoresPaciente.push(Number(val) || 0);
+            valoresPoblacion.push(normasPoblacion[key] || 0);
+          }
+        });
       }
 
-      console.log('Labels:', labels.length, 'Valores:', valores);
-
-      if (valores.length === 0) {
-        console.warn('No hay valores para graficar');
-        return;
-      }
-
+      const maxValor = Math.max(...valoresPaciente, ...valoresPoblacion, 2);
       const ctx = canvasElement.getContext('2d');
-      if (!ctx) {
-        console.error('No se pudo obtener contexto 2D del canvas');
-        return;
-      }
-
-      const maxValor = Math.max(...valores, 5);
 
       canvasElement.chartInstance = new Chart(ctx, {
         type: 'line',
         data: {
           labels: labels,
-          datasets: [{
-            label: 'Respuestas',
-            data: valores,
-            borderColor: '#e74c3c',
-            backgroundColor: 'rgba(231, 76, 60, 0.2)',
-            borderWidth: 3,
-            pointRadius: 5,
-            pointBackgroundColor: '#e74c3c',
-            pointBorderColor: '#fff',
-            pointBorderWidth: 2,
-            tension: 0.4,
-            fill: true,
-            spanGaps: true
-          }]
+          datasets: [
+            {
+              label: 'Paciente',
+              data: valoresPaciente,
+              borderColor: '#e74c3c',
+              backgroundColor: 'rgba(231, 76, 60, 0.1)',
+              borderWidth: 3,
+              pointRadius: 5,
+              pointBackgroundColor: '#e74c3c',
+              pointBorderColor: '#fff',
+              pointBorderWidth: 2,
+              tension: 0.4,
+              fill: true
+            },
+            {
+              label: 'Población Normal',
+              data: valoresPoblacion,
+              borderColor: '#3b82f6',
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              borderWidth: 2,
+              pointRadius: 4,
+              pointBackgroundColor: '#3b82f6',
+              pointBorderColor: '#fff',
+              pointBorderWidth: 1.5,
+              tension: 0.4,
+              fill: true,
+              borderDash: [5, 5]
+            }
+          ]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          interaction: {
-            intersect: false,
-            mode: 'index'
-          },
+          interaction: { intersect: false, mode: 'index' },
           plugins: {
             legend: {
               display: true,
               position: 'top',
-              labels: {
-                font: { size: 12 },
-                padding: 10,
-                usePointStyle: true
-              }
+              labels: { font: { size: 12 }, padding: 15, usePointStyle: true }
             },
             tooltip: {
-              enabled: true,
               backgroundColor: 'rgba(0,0,0,0.8)',
-              padding: 10,
-              titleFont: { size: 12 }
+              padding: 12,
+              titleFont: { size: 11 },
+              bodyFont: { size: 10 }
             }
           },
           scales: {
             y: {
               beginAtZero: true,
               max: maxValor,
-              ticks: {
-                stepSize: 1,
-                font: { size: 10 }
-              },
-              grid: {
-                color: 'rgba(0, 0, 0, 0.1)',
-                drawBorder: true
-              }
+              ticks: { stepSize: Math.ceil(maxValor / 5), font: { size: 10 } },
+              grid: { color: 'rgba(0, 0, 0, 0.1)' }
             },
             x: {
               grid: { display: false },
-              ticks: {
-                font: { size: 9 },
-                maxRotation: labels.length > 20 ? 45 : 0
-              }
+              ticks: { font: { size: 10 }, maxRotation: 45, minRotation: 0 }
             }
           }
         }
       });
 
-      console.log('✓ Gráfica renderizada exitosamente');
+      console.log('✓ Gráfica comparativa renderizada');
     } catch (error) {
       console.error('Error al renderizar gráfica:', error);
     }

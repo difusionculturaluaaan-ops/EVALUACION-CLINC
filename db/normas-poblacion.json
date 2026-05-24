@@ -1,0 +1,115 @@
+{
+  "scl90r": {
+    "nombre": "SCL-90-R",
+    "escalas": [
+      {
+        "nombre": "Somatización",
+        "media": 0.36,
+        "desv_tip": 0.42
+      },
+      {
+        "nombre": "Obsesivo - Compulsivo",
+        "media": 0.39,
+        "desv_tip": 0.45
+      },
+      {
+        "nombre": "Susceptibilidad Interpersonal",
+        "media": 0.29,
+        "desv_tip": 0.39
+      },
+      {
+        "nombre": "Depresión",
+        "media": 0.36,
+        "desv_tip": 0.44
+      },
+      {
+        "nombre": "Ansiedad",
+        "media": 0.30,
+        "desv_tip": 0.37
+      },
+      {
+        "nombre": "Hostilidad",
+        "media": 0.30,
+        "desv_tip": 0.40
+      },
+      {
+        "nombre": "Ansiedad Fóbica",
+        "media": 0.13,
+        "desv_tip": 0.31
+      },
+      {
+        "nombre": "Ideación Paranoide",
+        "media": 0.34,
+        "desv_tip": 0.44
+      },
+      {
+        "nombre": "Psicotisismo",
+        "media": 0.14,
+        "desv_tip": 0.25
+      }
+    ],
+    "indices": [
+      {
+        "nombre": "Índice de Severidad Total",
+        "media": 0.31,
+        "desv_tip": 0.31
+      },
+      {
+        "nombre": "Total Síntomas Positivos",
+        "media": 19.29,
+        "desv_tip": 22.40
+      },
+      {
+        "nombre": "Malestar Referido a Sint. Positivos",
+        "media": 1.32,
+        "desv_tip": 0.42
+      }
+    ]
+  },
+  "hamilton": {
+    "nombre": "Hamilton (HAM-D)",
+    "fuente": "Hamilton Depression Rating Scale - Manual oficial",
+    "nota": "Puntuación total (0-63): 0-7 normal, 20+ indica depresión moderada",
+    "puntos_corte": {
+      "normal": { "min": 0, "max": 7 },
+      "leve": { "min": 8, "max": 13 },
+      "moderado": { "min": 14, "max": 18 },
+      "severo": { "min": 19, "max": 63 }
+    }
+  },
+  "mmpi2": {
+    "nombre": "MMPI-2",
+    "fuente": "University of Minnesota Press",
+    "nota": "Utiliza T-scores: media 50, desv_tip 10",
+    "normativa": {
+      "muestra": 2600,
+      "media_escala_clinica": 50,
+      "desv_tip_escala_clinica": 10
+    }
+  },
+  "isra": {
+    "nombre": "ISRA (Inventario de Situaciones y Respuestas de Ansiedad)",
+    "fuente": "Pendiente de psiquiatra",
+    "nota": "Datos normativos pendiente de recibir del especialista"
+  },
+  "tds": {
+    "nombre": "TDS (Test de sueño)",
+    "fuente": "Pendiente de clarificación",
+    "nota": "Datos normativos pendiente de recibir del especialista"
+  },
+  "pclr": {
+    "nombre": "PCL-R (Psychopathy Checklist-Revised)",
+    "fuente": "Hare Psychopathy Checklist Research Manual",
+    "media_poblacion_general": 4,
+    "desv_tip_poblacion_general": 2,
+    "media_prisioneros": 22,
+    "desv_tip_prisioneros": 7,
+    "punto_corte": 30,
+    "nota": "PCL-R es herramienta de uso restringido - principalmente validada en poblaciones delictivas"
+  },
+  "egep5": {
+    "nombre": "EGEP-5 (Escala de Evaluación Global del Estrés Postraumático)",
+    "fuente": "Crespo & Fernández-Lansac",
+    "nota": "Instrumento validado en español para evaluación de TEPT basado en criterios DSM-5. Datos normativos pendiente de recibir del especialista"
+  }
+}
