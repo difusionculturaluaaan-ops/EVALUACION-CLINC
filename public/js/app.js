@@ -337,6 +337,7 @@ const app = {
       this.mostrarToast(`✓ ${test.nombre} guardado correctamente`, 'success');
 
       // Mostrar reporte detallado con datos del paciente
+      this.pruebaActual = pruebaGuardada;
       await this.mostrarReporteDetallado(pruebaGuardada, this.pacienteActivo);
 
       await this.loadExpedientes();
@@ -690,94 +691,36 @@ const app = {
   },
 
   /**
-   * Generar filas de tabla con datos de prueba
+   * Generar filas de tabla con datos de prueba (resumen solo)
    */
   generarFilasTabla(prueba, subescalas) {
     const data = typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data || [];
-    const normas = this.getNormasLocales(prueba.tipo);
     let filas = '';
 
     if (prueba.tipo === 'SCL90R') {
-      // SCL-90-R: mostrar escalas
-      const escalasMap = {
-        'SOM': 'Somatización', 'OBS': 'Obsesivo-Compulsivo', 'INT': 'Susceptibilidad Interpersonal',
-        'DEP': 'Depresión', 'ANS': 'Ansiedad', 'HOS': 'Hostilidad', 'FOB': 'Ansiedad Fóbica',
-        'PAR': 'Ideación Paranoide', 'PSI': 'Psicotisismo'
-      };
-      const escalasOrdenadas = ['SOM', 'OBS', 'INT', 'DEP', 'ANS', 'HOS', 'FOB', 'PAR', 'PSI'];
-      escalasOrdenadas.forEach(escala => {
-        const valor = Number(subescalas[escala]) || 0;
-        const norma = normas.escalas?.find(e => e.id === escala);
-        const mediaNormal = norma?.media?.toFixed(2) || '—';
+      // SCL-90-R: mostrar 3 índices principales
+      const indices = [
+        { label: 'Índice de Severidad Total', key: 'IST', valor: subescalas.IST || subescalas.total || 0 },
+        { label: 'Total Síntomas Positivos', key: 'TSP', valor: subescalas.TSP || 0 },
+        { label: 'Malestar Referido a Sint. Positivos', key: 'MRSP', valor: subescalas.MRSP || 0 }
+      ];
+      indices.forEach(idx => {
         filas += `<tr>
-          <td style="border: 1px solid #ddd; padding: 4px;">${escalasMap[escala]}</td>
-          <td style="border: 1px solid #ddd; padding: 4px; text-align: center; font-weight: bold;">${valor.toFixed(2)}</td>
-          <td style="border: 1px solid #ddd; padding: 4px; text-align: center; color: #666;">${mediaNormal}</td>
+          <td style="border: 1px solid #ddd; padding: 4px;">${idx.label}</td>
+          <td style="border: 1px solid #ddd; padding: 4px; text-align: center; font-weight: bold;">${Number(idx.valor).toFixed(2)}</td>
+          <td style="border: 1px solid #ddd; padding: 4px; text-align: center; color: #666;">—</td>
           <td style="border: 1px solid #ddd; padding: 4px; text-align: left; font-size: 9px;">—</td>
         </tr>`;
       });
-    } else if (['EGEP5', 'PCLR'].includes(prueba.tipo)) {
-      // EGEP5 y PCL-R: mostrar ítems con nombres
-      if (Array.isArray(data) && data.length > 0) {
-        data.forEach((valor, idx) => {
-          const escalaInfo = normas.escalas?.[idx];
-          const nombre = escalaInfo?.nombre || `Ítem ${idx + 1}`;
-          const mediaNormal = escalaInfo?.media?.toFixed(1) || '0.2';
-          filas += `<tr>
-            <td style="border: 1px solid #ddd; padding: 4px;">${nombre}</td>
-            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; font-weight: bold;">${valor}</td>
-            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; color: #666;">${mediaNormal}</td>
-            <td style="border: 1px solid #ddd; padding: 4px; text-align: left; font-size: 9px;">—</td>
-          </tr>`;
-        });
-      }
-    } else if (prueba.tipo === 'MMPI2') {
-      // MMPI-2: mostrar escalas clínicas
-      if (Array.isArray(data) && data.length > 0) {
-        data.forEach((valor, idx) => {
-          const escalaInfo = normas.escalas?.[idx];
-          const nombre = escalaInfo?.nombre || `Escala ${idx + 1}`;
-          const mediaNormal = escalaInfo?.media || 50;
-          filas += `<tr>
-            <td style="border: 1px solid #ddd; padding: 4px;">${nombre}</td>
-            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; font-weight: bold;">${valor}</td>
-            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; color: #666;">${mediaNormal}</td>
-            <td style="border: 1px solid #ddd; padding: 4px; text-align: left; font-size: 9px;">—</td>
-          </tr>`;
-        });
-      }
-    } else {
-      // Otros tests: mostrar ítems individuales
-      if (Array.isArray(data) && data.length > 0) {
-        const maxRows = 25;
-        data.slice(0, maxRows).forEach((valor, idx) => {
-          const nombre = `Ítem ${idx + 1}`;
-          const mediaNormal = (normas.media_por_item || 0.5).toFixed(1);
-          filas += `<tr>
-            <td style="border: 1px solid #ddd; padding: 4px;">${nombre}</td>
-            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; font-weight: bold;">${valor}</td>
-            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; color: #666;">${mediaNormal}</td>
-            <td style="border: 1px solid #ddd; padding: 4px; text-align: left; font-size: 9px;">—</td>
-          </tr>`;
-        });
-      } else if (subescalas && typeof subescalas === 'object') {
-        // Fallback: usar subescalas si están disponibles
-        Object.entries(subescalas)
-          .filter(([key]) => !['interpretacion', 'label', 'color', 'texto', 'nivel'].includes(key.toLowerCase()))
-          .slice(0, 12)
-          .forEach(([key, value]) => {
-            let val = value;
-            if (typeof value === 'object') {
-              val = value.valor || value.total || value.puntuacion || 0;
-            }
-            filas += `<tr>
-              <td style="border: 1px solid #ddd; padding: 4px;">${key}</td>
-              <td style="border: 1px solid #ddd; padding: 4px; text-align: center; font-weight: bold;">${val}</td>
-              <td style="border: 1px solid #ddd; padding: 4px; text-align: center; color: #666;">—</td>
-              <td style="border: 1px solid #ddd; padding: 4px; text-align: left; font-size: 9px;">—</td>
-            </tr>`;
-          });
-      }
+    } else if (['EGEP5', 'PCLR', 'HAMILTON', 'ISRA', 'TDS', 'MMPI2'].includes(prueba.tipo)) {
+      // Todos: mostrar solo TOTAL
+      const total = prueba.total || (Array.isArray(data) ? data.reduce((a, b) => a + (b || 0), 0) : 0);
+      filas += `<tr>
+        <td style="border: 1px solid #ddd; padding: 4px;">Total</td>
+        <td style="border: 1px solid #ddd; padding: 4px; text-align: center; font-weight: bold;">${total}</td>
+        <td style="border: 1px solid #ddd; padding: 4px; text-align: center; color: #666;">—</td>
+        <td style="border: 1px solid #ddd; padding: 4px; text-align: left; font-size: 9px;">—</td>
+      </tr>`;
     }
 
     return filas || '<tr><td colspan="4" style="border: 1px solid #ddd; padding: 4px; text-align: center; color: #999;">Sin datos disponibles</td></tr>';
@@ -882,6 +825,180 @@ const app = {
    */
   cerrarModal() {
     document.getElementById('modal-reporte')?.classList.remove('active');
+  },
+
+  /**
+   * Descargar reporte en diferentes formatos
+   */
+  async descargarReporte(formato) {
+    try {
+      const prueba = this.pruebaActual;
+      if (!prueba) {
+        this.mostrarToast('No hay prueba cargada', 'error');
+        return;
+      }
+
+      switch(formato) {
+        case 'png':
+          this.descargarGrafiaPNG();
+          break;
+        case 'jpg':
+          this.descargarGrafiaJPG();
+          break;
+        case 'excel':
+          this.descargarExcel();
+          break;
+        case 'word':
+          this.descargarWord();
+          break;
+        default:
+          this.mostrarToast('Formato no soportado', 'error');
+      }
+    } catch (error) {
+      this.mostrarToast(`Error: ${error.message}`, 'error');
+    }
+  },
+
+  /**
+   * Descargar gráfica como PNG
+   */
+  descargarGrafiaPNG() {
+    const canvas = document.getElementById('chartReporte');
+    if (!canvas) {
+      this.mostrarToast('No hay gráfica para descargar', 'error');
+      return;
+    }
+    const link = document.createElement('a');
+    link.href = canvas.toDataURL('image/png');
+    link.download = `grafica-${this.pruebaActual.tipo}-${Date.now()}.png`;
+    link.click();
+    this.mostrarToast('✓ Gráfica descargada como PNG', 'success');
+  },
+
+  /**
+   * Descargar gráfica como JPG
+   */
+  descargarGrafiaJPG() {
+    const canvas = document.getElementById('chartReporte');
+    if (!canvas) {
+      this.mostrarToast('No hay gráfica para descargar', 'error');
+      return;
+    }
+    const link = document.createElement('a');
+    link.href = canvas.toDataURL('image/jpeg', 0.95);
+    link.download = `grafica-${this.pruebaActual.tipo}-${Date.now()}.jpg`;
+    link.click();
+    this.mostrarToast('✓ Gráfica descargada como JPG', 'success');
+  },
+
+  /**
+   * Descargar datos como Excel
+   */
+  async descargarExcel() {
+    try {
+      const prueba = this.pruebaActual;
+      const paciente = this.pacienteActivo;
+      const data = typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data || [];
+
+      // Crear CSV (Excel compatible)
+      let csv = 'REPORTE DE EVALUACIÓN CLÍNICA - ' + prueba.tipo + '\n';
+      csv += 'Paciente,' + paciente.nombre + '\n';
+      csv += 'Edad,' + paciente.edad + '\n';
+      csv += 'Sexo,' + paciente.sexo + '\n';
+      csv += 'Fecha,' + new Date(prueba.fecha).toLocaleDateString('es-CO') + '\n\n';
+
+      csv += 'DATOS DE RESPUESTA POR ÍTEM\n';
+      csv += 'Ítem,Valor\n';
+      data.forEach((valor, idx) => {
+        csv += `Ítem ${idx + 1},${valor}\n`;
+      });
+
+      csv += '\n\nRESUMEN\n';
+      csv += 'Total,' + prueba.total + '\n';
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `evaluacion-${prueba.tipo}-${Date.now()}.csv`;
+      link.click();
+      this.mostrarToast('✓ Datos descargados como Excel', 'success');
+    } catch (error) {
+      this.mostrarToast(`Error: ${error.message}`, 'error');
+    }
+  },
+
+  /**
+   * Descargar como Word
+   */
+  async descargarWord() {
+    try {
+      const prueba = this.pruebaActual;
+      const paciente = this.pacienteActivo;
+
+      // Crear HTML para Word
+      let html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            h1 { color: #2c5aa0; border-bottom: 3px solid #2c5aa0; padding-bottom: 10px; }
+            table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+            th { background: #2c5aa0; color: white; padding: 8px; text-align: left; }
+            td { border: 1px solid #ddd; padding: 8px; }
+            .header { background: #f0f4f8; padding: 10px; margin: 10px 0; }
+          </style>
+        </head>
+        <body>
+          <h1>REPORTE DE EVALUACIÓN CLÍNICA PSICOLÓGICA</h1>
+
+          <div class="header">
+            <h3>DATOS DEL PACIENTE</h3>
+            <p><strong>Nombre:</strong> ${paciente.nombre}</p>
+            <p><strong>Edad:</strong> ${paciente.edad} años</p>
+            <p><strong>Sexo:</strong> ${paciente.sexo}</p>
+            <p><strong>Estado Civil:</strong> ${paciente.estado_civil || 'N/A'}</p>
+            <p><strong>Medicamentos:</strong> ${paciente.medicamentos || 'No especificado'}</p>
+            <p><strong>Fecha:</strong> ${new Date(prueba.fecha).toLocaleDateString('es-CO')}</p>
+          </div>
+
+          <div class="header">
+            <h3>PRUEBA: ${prueba.tipo}</h3>
+            <p><strong>Total:</strong> ${prueba.total}</p>
+          </div>
+
+          <h3>DATOS POR ÍTEM</h3>
+          <table>
+            <tr>
+              <th>Ítem</th>
+              <th>Valor</th>
+            </tr>
+      `;
+
+      const data = typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data || [];
+      data.forEach((valor, idx) => {
+        html += `<tr><td>Ítem ${idx + 1}</td><td>${valor}</td></tr>`;
+      });
+
+      html += `
+          </table>
+          <p style="margin-top: 20px; color: #999; font-size: 12px;">
+            Reporte generado por Evaluación Clínica - ${new Date().toLocaleDateString('es-CO')} ${new Date().toLocaleTimeString('es-CO')}
+          </p>
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob([html], { type: 'application/msword' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `evaluacion-${prueba.tipo}-${Date.now()}.doc`;
+      link.click();
+      this.mostrarToast('✓ Reporte descargado como Word', 'success');
+    } catch (error) {
+      this.mostrarToast(`Error: ${error.message}`, 'error');
+    }
   },
 
   /**

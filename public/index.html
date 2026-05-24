@@ -538,7 +538,13 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-primary" onclick="app.abrirValidacionProfesional()">⬇️ Descargar PDF</button>
+      <div style="flex: 1; display: flex; gap: 8px; flex-wrap: wrap;">
+        <button class="btn btn-primary" onclick="app.descargarReporte('png')" title="Descargar gráfica como PNG">📥 PNG</button>
+        <button class="btn btn-primary" onclick="app.descargarReporte('jpg')" title="Descargar gráfica como JPG">📥 JPG</button>
+        <button class="btn btn-primary" onclick="app.descargarReporte('excel')" title="Descargar datos como Excel">📊 Excel</button>
+        <button class="btn btn-primary" onclick="app.descargarReporte('word')" title="Descargar reporte como Word">📄 Word</button>
+        <button class="btn btn-primary" onclick="app.abrirValidacionProfesional()" title="Descargar reporte completo como PDF">📋 PDF</button>
+      </div>
       <button class="btn btn-secondary" onclick="app.cerrarModal()">Cerrar</button>
     </div>
   </div>
