@@ -932,15 +932,30 @@ const app = {
   },
 
   /**
-   * Descargar reporte en diferentes formatos
+   * Descargar reporte con validación profesional
    */
-  async descargarReporte(formato) {
+  async descargarConValidacion(formato) {
     try {
+      // Validar que los datos obligatorios estén completos
+      const nombre = document.getElementById('prof-nombre')?.value;
+      const cedula = document.getElementById('prof-cedula')?.value;
+      const especialidad = document.getElementById('prof-especialidad')?.value;
+      const diagnostico = document.getElementById('prof-diagnostico')?.value;
+
+      if (!nombre || !cedula || !especialidad || !diagnostico) {
+        this.mostrarToast('Complete todos los campos obligatorios', 'error');
+        return;
+      }
+
       const prueba = this.pruebaActual;
       if (!prueba) {
         this.mostrarToast('No hay prueba cargada', 'error');
         return;
       }
+
+      // Guardar datos de validación
+      const datosValidacion = { nombre, cedula, especialidad, diagnostico };
+      localStorage.setItem('validacion_profesional', JSON.stringify(datosValidacion));
 
       switch(formato) {
         case 'png':
@@ -950,10 +965,10 @@ const app = {
           this.descargarGrafiaJPG();
           break;
         case 'excel':
-          this.descargarExcel();
+          this.descargarExcelConValidacion(datosValidacion);
           break;
         case 'word':
-          this.descargarWord();
+          this.descargarWordConValidacion(datosValidacion);
           break;
         default:
           this.mostrarToast('Formato no soportado', 'error');
@@ -996,7 +1011,7 @@ const app = {
   },
 
   /**
-   * Descargar datos como Excel
+   * Descargar datos como Excel (sin validación)
    */
   async descargarExcel() {
     try {
@@ -1032,7 +1047,50 @@ const app = {
   },
 
   /**
-   * Descargar como Word
+   * Descargar Excel con validación profesional
+   */
+  async descargarExcelConValidacion(datosValidacion) {
+    try {
+      const prueba = this.pruebaActual;
+      const paciente = this.pacienteActivo;
+      const data = typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data || [];
+
+      let csv = 'REPORTE DE EVALUACIÓN CLÍNICA - ' + prueba.tipo + '\n\n';
+      csv += 'DATOS DEL PACIENTE\n';
+      csv += 'Paciente,' + paciente.nombre + '\n';
+      csv += 'Edad,' + paciente.edad + '\n';
+      csv += 'Sexo,' + paciente.sexo + '\n';
+      csv += 'Fecha,' + new Date(prueba.fecha).toLocaleDateString('es-CO') + '\n\n';
+
+      csv += 'DATOS DE RESPUESTA POR ÍTEM\n';
+      csv += 'Ítem,Valor\n';
+      data.forEach((valor, idx) => {
+        csv += `Ítem ${idx + 1},${valor}\n`;
+      });
+
+      csv += '\n\nRESUMEN\n';
+      csv += 'Total,' + prueba.total + '\n\n';
+
+      csv += 'VALIDACIÓN PROFESIONAL\n';
+      csv += 'Profesional,' + datosValidacion.nombre + '\n';
+      csv += 'Cédula,' + datosValidacion.cedula + '\n';
+      csv += 'Especialidad,' + datosValidacion.especialidad + '\n';
+      csv += 'Diagnóstico/Conclusiones,' + datosValidacion.diagnostico + '\n';
+      csv += 'Fecha de Validación,' + new Date().toLocaleDateString('es-CO') + '\n';
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `evaluacion-${prueba.tipo}-validada-${Date.now()}.csv`;
+      link.click();
+      this.mostrarToast('✓ Excel descargado con validación', 'success');
+    } catch (error) {
+      this.mostrarToast(`Error: ${error.message}`, 'error');
+    }
+  },
+
+  /**
+   * Descargar como Word (sin validación)
    */
   async descargarWord() {
     try {
@@ -1100,6 +1158,95 @@ const app = {
       link.download = `evaluacion-${prueba.tipo}-${Date.now()}.doc`;
       link.click();
       this.mostrarToast('✓ Reporte descargado como Word', 'success');
+    } catch (error) {
+      this.mostrarToast(`Error: ${error.message}`, 'error');
+    }
+  },
+
+  /**
+   * Descargar Word con validación profesional
+   */
+  async descargarWordConValidacion(datosValidacion) {
+    try {
+      const prueba = this.pruebaActual;
+      const paciente = this.pacienteActivo;
+
+      let html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            h1 { color: #2c5aa0; border-bottom: 3px solid #2c5aa0; padding-bottom: 10px; }
+            h3 { color: #2c5aa0; margin-top: 20px; }
+            table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+            th { background: #2c5aa0; color: white; padding: 8px; text-align: left; }
+            td { border: 1px solid #ddd; padding: 8px; }
+            .header { background: #f0f4f8; padding: 10px; margin: 10px 0; }
+            .validation { background: #e8f5e9; padding: 12px; margin-top: 20px; border-left: 4px solid #4caf50; }
+            .footer { margin-top: 30px; padding-top: 10px; border-top: 1px solid #ddd; font-size: 11px; color: #666; }
+          </style>
+        </head>
+        <body>
+          <h1>REPORTE DE EVALUACIÓN CLÍNICA PSICOLÓGICA</h1>
+
+          <div class="header">
+            <h3>DATOS DEL PACIENTE</h3>
+            <p><strong>Nombre:</strong> ${paciente.nombre}</p>
+            <p><strong>Edad:</strong> ${paciente.edad} años</p>
+            <p><strong>Sexo:</strong> ${paciente.sexo}</p>
+            <p><strong>Estado Civil:</strong> ${paciente.estado_civil || 'N/A'}</p>
+            <p><strong>Medicamentos:</strong> ${paciente.medicamentos || 'No especificado'}</p>
+            <p><strong>Fecha:</strong> ${new Date(prueba.fecha).toLocaleDateString('es-CO')}</p>
+          </div>
+
+          <div class="header">
+            <h3>PRUEBA: ${prueba.tipo}</h3>
+            <p><strong>Total:</strong> ${prueba.total}</p>
+          </div>
+
+          <h3>DATOS POR ÍTEM</h3>
+          <table>
+            <tr>
+              <th>Ítem</th>
+              <th>Valor</th>
+            </tr>
+      `;
+
+      const data = typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data || [];
+      data.forEach((valor, idx) => {
+        html += `<tr><td>Ítem ${idx + 1}</td><td>${valor}</td></tr>`;
+      });
+
+      html += `
+          </table>
+
+          <div class="validation">
+            <h3 style="margin-top: 0;">✓ VALIDACIÓN PROFESIONAL</h3>
+            <p><strong>Profesional:</strong> ${datosValidacion.nombre}</p>
+            <p><strong>Cédula/Licencia:</strong> ${datosValidacion.cedula}</p>
+            <p><strong>Especialidad:</strong> ${datosValidacion.especialidad}</p>
+            <p><strong>Diagnóstico/Conclusiones:</strong></p>
+            <p style="margin: 10px 0; padding: 10px; background: white; border-left: 2px solid #2c5aa0;">${datosValidacion.diagnostico}</p>
+            <p><strong>Fecha de Validación:</strong> ${new Date().toLocaleDateString('es-CO')} ${new Date().toLocaleTimeString('es-CO')}</p>
+          </div>
+
+          <div class="footer">
+            <p>Reporte profesional validado por Evaluación Clínica - Certificado por profesional autorizado</p>
+            <p>Este reporte es un documento oficial de evaluación clínica psicológica.</p>
+          </div>
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob([html], { type: 'application/msword' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `evaluacion-${prueba.tipo}-validada-${Date.now()}.doc`;
+      link.click();
+      this.mostrarToast('✓ Word validado descargado', 'success');
+      this.cerrarValidacionProfesional();
     } catch (error) {
       this.mostrarToast(`Error: ${error.message}`, 'error');
     }
