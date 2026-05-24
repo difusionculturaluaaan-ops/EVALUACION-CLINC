@@ -1195,6 +1195,50 @@ textarea {
     overflow-x: hidden;
   }
 
+  .reporte-carta {
+    max-width: 100%;
+    width: 100%;
+    padding: var(--spacing-md);
+    margin: var(--spacing-md) 0;
+  }
+
+  .reporte-carta h1 {
+    font-size: 13px;
+  }
+
+  .reporte-carta h3 {
+    font-size: 11px;
+  }
+
+  .reporte-carta h4 {
+    font-size: 10px;
+  }
+
+  .reporte-carta table {
+    font-size: 10px;
+  }
+
+  .reporte-carta td,
+  .reporte-carta th {
+    padding: 4px 2px;
+    font-size: 9px;
+    border: 1px solid #999;
+  }
+
+  #modal-reporte {
+    overflow-x: hidden;
+  }
+
+  #chartReporte {
+    max-width: 100%;
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  canvas {
+    max-width: 100%;
+  }
+
   .page-header {
     flex-direction: column;
     gap: var(--spacing-md);
@@ -1352,6 +1396,29 @@ textarea {
 
   .stat-value {
     font-size: 16px;
+  }
+
+  .reporte-carta {
+    padding: var(--spacing-sm);
+    margin: var(--spacing-sm) 0;
+  }
+
+  .reporte-carta h1 {
+    font-size: 12px;
+  }
+
+  .reporte-carta h3 {
+    font-size: 10px;
+  }
+
+  .reporte-carta table {
+    font-size: 9px;
+  }
+
+  .reporte-carta td,
+  .reporte-carta th {
+    padding: 2px 1px;
+    font-size: 8px;
   }
 }
 
