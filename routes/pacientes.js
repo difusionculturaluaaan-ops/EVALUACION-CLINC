@@ -124,7 +124,7 @@ router.get('/:id/pruebas', async (req, res) => {
       return res.status(404).json({ error: 'Paciente no encontrado' });
     }
 
-    const pruebas = await obtenerPruebasPaciente(req.params.id);
+    const pruebas = await obtenerPruebasPaciente(req.params.id, tenant_id);
     res.json(pruebas);
   } catch (error) {
     console.error('Error al obtener pruebas:', error);
