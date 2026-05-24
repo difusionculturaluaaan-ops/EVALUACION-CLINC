@@ -436,66 +436,70 @@ const app = {
     }
 
     let html = `
-      <div class="reporte" style="font-family: Arial, sans-serif; color: #333; line-height: 1.3;">
+      <div class="reporte-carta" style="font-family: Arial, sans-serif; color: #333; line-height: 1.2; max-width: 21.59cm; margin: 0 auto; padding: 1.27cm;">
         <!-- ENCABEZADO PROFESIONAL -->
-        <div style="border-bottom: 3px solid #2c5aa0; padding-bottom: 8px; margin-bottom: 10px;">
-          <h1 style="color: #2c5aa0; margin: 0; font-size: 18px;">REPORTE DE EVALUACIÓN CLÍNICA PSICOLÓGICA</h1>
+        <div style="border-bottom: 2px solid #2c5aa0; padding-bottom: 6px; margin-bottom: 8px;">
+          <h1 style="color: #2c5aa0; margin: 0; font-size: 14px; font-weight: bold;">REPORTE DE EVALUACIÓN PSICOLÓGICA</h1>
         </div>
 
         <!-- DATOS DEL PACIENTE -->
-        <div style="background: #f9f9f9; padding: 10px; margin-bottom: 10px; border-radius: 4px;">
-          <h3 style="margin: 0 0 8px 0; color: #2c5aa0; font-size: 12px;">DATOS DEL PACIENTE</h3>
-          <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
+        <div style="background: #f9f9f9; padding: 8px; margin-bottom: 10px; border-radius: 3px;">
+          <h3 style="margin: 0 0 6px 0; color: #2c5aa0; font-size: 11px; font-weight: bold;">DATOS DEL PACIENTE</h3>
+          <table style="width: 100%; font-size: 10px; border-collapse: collapse; line-height: 1.4;">
             <tr>
-              <td style="width: 20%; padding: 3px;"><strong>Nombre:</strong></td>
-              <td style="padding: 3px; width: 30%;">${paciente ? paciente.nombre : 'N/A'}</td>
-              <td style="width: 20%; padding: 3px;"><strong>Edad:</strong></td>
-              <td style="padding: 3px;">${paciente && paciente.edad ? paciente.edad + ' años' : 'N/A'}</td>
+              <td style="width: 18%; padding: 3px;"><strong>Nombre:</strong></td>
+              <td style="padding: 3px; width: 32%;">${paciente ? paciente.nombre : 'N/A'}</td>
+              <td style="width: 15%; padding: 3px;"><strong>Edad:</strong></td>
+              <td style="padding: 3px;">${paciente && paciente.edad ? paciente.edad : 'N/A'}</td>
             </tr>
             <tr>
               <td style="padding: 3px;"><strong>Sexo:</strong></td>
               <td style="padding: 3px;">${paciente && paciente.sexo ? paciente.sexo : 'N/A'}</td>
-              <td style="padding: 3px;"><strong>Estado Civil:</strong></td>
+              <td style="padding: 3px;"><strong>E. Civil:</strong></td>
               <td style="padding: 3px;">${paciente && paciente.estado_civil ? paciente.estado_civil : 'N/A'}</td>
             </tr>
             <tr>
               <td style="padding: 3px;"><strong>Medicamentos:</strong></td>
-              <td colspan="3" style="padding: 3px; font-size: 10px;">${paciente && paciente.medicamentos ? paciente.medicamentos : 'No especificado'}</td>
+              <td colspan="3" style="padding: 3px; font-size: 9px;">${paciente && paciente.medicamentos ? paciente.medicamentos : 'No especificado'}</td>
             </tr>
             <tr>
               <td style="padding: 3px;"><strong>Fecha:</strong></td>
-              <td colspan="3" style="padding: 3px; font-size: 10px;">${new Date(prueba.fecha).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
+              <td colspan="3" style="padding: 3px; font-size: 9px;">${new Date(prueba.fecha).toLocaleDateString('es-CO', { year: 'numeric', month: 'short', day: 'numeric' })}</td>
             </tr>
           </table>
         </div>
 
         <!-- PRUEBA REALIZADA -->
-        <div style="background: #f0f4f8; padding: 8px; margin-bottom: 10px; border-radius: 4px;">
-          <h3 style="margin: 0 0 5px 0; color: #2c5aa0; font-size: 12px;">PRUEBA: ${prueba.tipo}</h3>
+        <div style="background: #f0f4f8; padding: 6px; margin-bottom: 10px; border-radius: 3px;">
+          <h3 style="margin: 0; color: #2c5aa0; font-size: 10px; font-weight: bold;">PRUEBA: ${prueba.tipo}</h3>
         </div>
 
         <!-- RESULTADOS -->
-        <div style="margin-bottom: 10px;">
+        <div style="margin-bottom: 10px; font-size: 9px;">
           ${prueba.tipo === 'SCL90R' ? this.generarReporteSCL(prueba, subescalas) : this.generarReporteGenerico(prueba, subescalas)}
         </div>
 
         <!-- INTERPRETACIÓN -->
         ${subescalas && subescalas.interpretacion ? `
-        <div style="background: #f9f9f9; padding: 8px; border-left: 3px solid #2c5aa0; margin-bottom: 8px; border-radius: 4px;">
-          <h3 style="margin: 0 0 5px 0; color: #2c5aa0; font-size: 11px;">INTERPRETACIÓN</h3>
-          <p style="margin: 0; font-size: 10px; line-height: 1.4;">
+        <div style="background: #f9f9f9; padding: 8px; border-left: 3px solid #2c5aa0; margin-bottom: 10px; border-radius: 3px;">
+          <h3 style="margin: 0 0 4px 0; color: #2c5aa0; font-size: 9px; font-weight: bold;">INTERPRETACIÓN</h3>
+          <p style="margin: 0; font-size: 8px; line-height: 1.4;">
             ${typeof subescalas.interpretacion === 'object' ? (subescalas.interpretacion.label || subescalas.interpretacion.texto || '') : subescalas.interpretacion}
           </p>
         </div>
         ` : ''}
 
+        ${this.generarValidacionProfesional()}
+
         <!-- FOOTER -->
-        <div style="border-top: 1px solid #ddd; padding-top: 5px; margin-top: 8px; font-size: 9px; color: #999; text-align: center;">
-          <p style="margin: 0;">Reporte de evaluación psicológica generado por Evaluación Clínica.</p>
-          <p style="margin: 2px 0 0 0;">Generado: ${new Date().toLocaleDateString('es-CO')} ${new Date().toLocaleTimeString('es-CO')}</p>
+        <div style="border-top: 1px solid #ddd; padding-top: 6px; margin-top: 10px; font-size: 7px; color: #999; text-align: center;">
+          <p style="margin: 0;">Evaluación Clínica Psicológica | Generado: ${new Date().toLocaleDateString('es-CO')}</p>
         </div>
       </div>
     `;
+
+    // Agregar segunda página con detalle de ítems
+    html += this.generarDetalleItems(prueba, this.testsDisponibles[this.pageTestMap[prueba.tipo.toLowerCase()]]);
 
     contenido.innerHTML = html;
     modal.classList.add('active');
@@ -537,53 +541,52 @@ const app = {
 
       // Procesar según tipo de test
       if (prueba.tipo === 'SCL90R') {
-        // SCL-90-R: mostrar 9 escalas
+        // SCL-90-R: mostrar 9 escalas con nombres
         const escalasOrdenadas = ['SOM', 'OBS', 'INT', 'DEP', 'ANS', 'HOS', 'FOB', 'PAR', 'PSI'];
         const escalasMap = {
-          'SOM': 'Somatización', 'OBS': 'Obsesivo-Compulsivo', 'INT': 'Susceptibilidad Interpersonal',
+          'SOM': 'Somatización', 'OBS': 'Obsesivo-Compulsivo', 'INT': 'Susceptibilidad',
           'DEP': 'Depresión', 'ANS': 'Ansiedad', 'HOS': 'Hostilidad', 'FOB': 'Ansiedad Fóbica',
           'PAR': 'Ideación Paranoide', 'PSI': 'Psicotisismo'
         };
-        escalasOrdenadas.forEach(escala => {
+        escalasOrdenadas.forEach((escala, idx) => {
           labels.push(escalasMap[escala]);
           valoresPaciente.push(Number(subescalas[escala]) || 0);
           const norma = normasLocales?.escalas?.find(e => e.id === escala);
           valoresPoblacion.push(norma?.media || 0.3);
         });
       } else if (prueba.tipo === 'MMPI2') {
-        // MMPI-2: mostrar escalas clínicas
+        // MMPI-2: mostrar solo números (13 escalas)
         if (Array.isArray(data) && data.length > 0) {
           data.forEach((valor, idx) => {
-            const norma = normasLocales?.escalas?.[idx];
-            labels.push(norma?.nombre || `Escala ${idx + 1}`);
+            labels.push(`${idx + 1}`);
             valoresPaciente.push(Number(valor) || 0);
+            const norma = normasLocales?.escalas?.[idx];
             valoresPoblacion.push(norma?.media || 50);
           });
         }
       } else if (['PCLR', 'EGEP5'].includes(prueba.tipo)) {
-        // PCL-R y EGEP-5: mostrar ítems con nombres descriptivos
+        // PCL-R y EGEP-5: mostrar solo números
         if (Array.isArray(data) && data.length > 0) {
           data.forEach((valor, idx) => {
-            const norma = normasLocales?.escalas?.[idx];
-            labels.push(norma?.nombre || `Ítem ${idx + 1}`);
+            labels.push(`${idx + 1}`);
             valoresPaciente.push(Number(valor) || 0);
-            valoresPoblacion.push(norma?.media || (prueba.tipo === 'PCLR' ? 0.2 : 0.2));
+            valoresPoblacion.push(normasLocales?.escalas?.[idx]?.media || (prueba.tipo === 'PCLR' ? 0.2 : 0.2));
           });
         }
       } else if (['HAMILTON', 'ISRA', 'TDS'].includes(prueba.tipo)) {
-        // Hamilton, ISRA, TDS: mostrar ítems numerados
+        // Hamilton, ISRA, TDS: mostrar solo números
         if (Array.isArray(data) && data.length > 0) {
           data.forEach((valor, idx) => {
-            labels.push(`Ítem ${idx + 1}`);
+            labels.push(`${idx + 1}`);
             valoresPaciente.push(Number(valor) || 0);
             valoresPoblacion.push(normasLocales?.media_por_item || 0.5);
           });
         }
       } else {
-        // Fallback: mostrar ítems si hay datos
+        // Fallback: mostrar números
         if (Array.isArray(data) && data.length > 0) {
           data.forEach((valor, idx) => {
-            labels.push(`Ítem ${idx + 1}`);
+            labels.push(`${idx + 1}`);
             valoresPaciente.push(Number(valor) || 0);
             valoresPoblacion.push(0.5);
           });
@@ -595,7 +598,7 @@ const app = {
         return;
       }
 
-      const maxValor = Math.max(...valoresPaciente, ...valoresPoblacion, 2);
+      const maxValor = Math.max(...valoresPaciente, ...valoresPoblacion, 2) + 0.5;
       const ctx = canvasElement.getContext('2d');
 
       canvasElement.chartInstance = new Chart(ctx, {
@@ -681,16 +684,13 @@ const app = {
     };
 
     let html = `
-      <!-- TABLA 1: Escalas -->
-      <div style="margin: 8px 0;">
-        <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+      <div style="margin: 4px 0;">
+        <table style="width: 100%; border-collapse: collapse;">
           <tr style="background: #00bcd4; color: white;">
-            <th style="border: 1px solid #ddd; padding: 6px; text-align: left;">Escalas</th>
-            <th style="border: 1px solid #ddd; padding: 6px; text-align: center;">Síntomas positivos</th>
-            <th style="border: 1px solid #ddd; padding: 6px; text-align: center;">Suma</th>
-            <th style="border: 1px solid #ddd; padding: 6px; text-align: center;">Media paciente</th>
-            <th style="border: 1px solid #ddd; padding: 6px; text-align: center;">Media Normal</th>
-            <th style="border: 1px solid #ddd; padding: 6px; text-align: center;">Des. Tip Normal</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: left; font-size: 8px; font-weight: bold;">Escalas</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-size: 8px; font-weight: bold;">Paciente</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-size: 8px; font-weight: bold;">Media Norm.</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-size: 8px; font-weight: bold;">D. Est.</th>
           </tr>`;
 
     const escalasOrdenadas = ['SOM', 'OBS', 'INT', 'DEP', 'ANS', 'HOS', 'FOB', 'PAR', 'PSI'];
@@ -705,59 +705,47 @@ const app = {
     escalasOrdenadas.forEach((escala, idx) => {
       const valor = Number(subescalas[escala]) || 0;
       const norma = normas[escala];
-      const bgColor = idx % 2 === 0 ? '#ffeb3b' : 'white';
+      const bgColor = idx % 2 === 0 ? '#f0f0f0' : 'white';
       html += `<tr style="background: ${bgColor};">
-        <td style="border: 1px solid #ddd; padding: 4px; font-weight: bold;">${escalasMap[escala]}</td>
-        <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">0</td>
-        <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">0</td>
-        <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">${valor.toFixed(2)}</td>
-        <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">${norma.media.toFixed(2)}</td>
-        <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">${norma.ds.toFixed(2)}</td>
+        <td style="border: 1px solid #ddd; padding: 3px; font-weight: bold; font-size: 8px;">${escalasMap[escala]}</td>
+        <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${valor.toFixed(2)}</td>
+        <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${norma.media.toFixed(2)}</td>
+        <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${norma.ds.toFixed(2)}</td>
       </tr>`;
     });
 
     html += `</table>
       </div>
 
-      <!-- TABLA 2: Índices -->
-      <div style="margin: 8px 0;">
-        <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+      <div style="margin: 4px 0;">
+        <table style="width: 100%; border-collapse: collapse;">
           <tr style="background: #666; color: white;">
-            <th style="border: 1px solid #ddd; padding: 6px; text-align: left;"></th>
-            <th style="border: 1px solid #ddd; padding: 6px; text-align: center;">Paciente</th>
-            <th style="border: 1px solid #ddd; padding: 6px; text-align: center;">Media Normal (Ds)</th>
-            <th style="border: 1px solid #ddd; padding: 6px; text-align: center;">Med. P. Internos</th>
-            <th style="border: 1px solid #ddd; padding: 6px; text-align: center;">Med. P. Externos</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: left; font-size: 8px; font-weight: bold;">Índices</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-size: 8px; font-weight: bold;">Paciente</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-size: 8px; font-weight: bold;">Ref.</th>
           </tr>
           <tr>
-            <td style="border: 1px solid #ddd; padding: 4px;"><strong>Índice de Severidad Total</strong></td>
-            <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">${(subescalas.IST || 0).toFixed(2)}</td>
-            <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">0,31 (0,31)</td>
-            <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">1,30 (0,82)</td>
-            <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">1,26 (0,68)</td>
+            <td style="border: 1px solid #ddd; padding: 3px; font-size: 8px;"><strong>IST</strong></td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${(subescalas.IST || 0).toFixed(2)}</td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">0.31</td>
           </tr>
           <tr>
-            <td style="border: 1px solid #ddd; padding: 4px;"><strong>Total Síntomas Positivos</strong></td>
-            <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">${prueba.total || 0}</td>
-            <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">19.29</td>
-            <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">50,03 (22,40)</td>
-            <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">50,17 (18,98)</td>
+            <td style="border: 1px solid #ddd; padding: 3px; font-size: 8px;"><strong>TSP</strong></td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${prueba.total || 0}</td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">19.29</td>
           </tr>
           <tr>
-            <td style="border: 1px solid #ddd; padding: 4px;"><strong>Malestar Referido a Sint. Positivos</strong></td>
-            <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">${(subescalas.MRSP || 0).toFixed(2)}</td>
-            <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">1,32 (0,42)</td>
-            <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">2,15 (0,73)</td>
-            <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">2,14 (0,58)</td>
+            <td style="border: 1px solid #ddd; padding: 3px; font-size: 8px;"><strong>MRSP</strong></td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${(subescalas.MRSP || 0).toFixed(2)}</td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">1.32</td>
           </tr>
         </table>
       </div>
 
-      <!-- GRÁFICA -->
-      <div style="margin: 12px 0; padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 4px;">
-        <h4 style="color: #333; font-size: 11px; margin: 0 0 8px 0;">Puntuaciones comparativas</h4>
-        <div style="position: relative; width: 100%; height: 300px; overflow-x: auto;">
-          <canvas id="chartReporte" style="width: 100%; height: 100%; min-width: 600px;"></canvas>
+      <div style="margin: 4px 0; padding: 4px; background: #fff; border: 1px solid #ddd; border-radius: 3px;">
+        <h4 style="color: #333; font-size: 9px; margin: 0 0 3px 0; font-weight: bold;">Puntuaciones comparativas</h4>
+        <div style="position: relative; width: 100%; height: 180px;">
+          <canvas id="chartReporte" style="width: 100%; height: 100%;"></canvas>
         </div>
       </div>
     `;
@@ -770,23 +758,20 @@ const app = {
    */
   generarReporteGenerico(prueba, subescalas) {
     return `
-      <!-- GRÁFICA -->
-      <div style="margin: 8px 0; padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 4px;">
-        <h4 style="color: #333; font-size: 11px; margin: 0 0 8px 0;">ANÁLISIS: ${prueba.tipo}</h4>
-        <div style="position: relative; width: 100%; height: 320px; overflow-x: auto;">
-          <canvas id="chartReporte" style="width: 100%; height: 100%; min-width: 600px;"></canvas>
+      <div style="margin: 4px 0; padding: 4px; background: #fff; border: 1px solid #ddd; border-radius: 3px;">
+        <h4 style="color: #333; font-size: 9px; margin: 0 0 3px 0; font-weight: bold;">ANÁLISIS: ${prueba.tipo}</h4>
+        <div style="position: relative; width: 100%; height: 180px;">
+          <canvas id="chartReporte" style="width: 100%; height: 100%;"></canvas>
         </div>
       </div>
 
-      <!-- TABLA DE DATOS -->
-      <div style="margin-top: 8px;">
-        <h4 style="color: #333; font-size: 11px; margin: 0 0 5px 0;">Detalles por Escala</h4>
-        <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+      <div style="margin-top: 4px;">
+        <table style="width: 100%; border-collapse: collapse;">
           <tr style="background: #2c5aa0; color: white;">
-            <th style="border: 1px solid #ddd; padding: 4px; text-align: left;">Escala</th>
-            <th style="border: 1px solid #ddd; padding: 4px; text-align: center;">Valor</th>
-            <th style="border: 1px solid #ddd; padding: 4px; text-align: center;">Media Normal</th>
-            <th style="border: 1px solid #ddd; padding: 4px; text-align: center;">Interpretación</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: left; font-size: 8px; font-weight: bold;">Métrica</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-size: 8px; font-weight: bold;">Valor</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-size: 8px; font-weight: bold;">Ref.</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-size: 8px; font-weight: bold;">Estado</th>
           </tr>
           ${this.generarFilasTabla(prueba, subescalas)}
         </table>
@@ -799,35 +784,224 @@ const app = {
    */
   generarFilasTabla(prueba, subescalas) {
     const data = typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data || [];
+    const normasLocales = this.getNormasLocales(prueba.tipo);
     let filas = '';
 
     if (prueba.tipo === 'SCL90R') {
-      // SCL-90-R: mostrar 3 índices principales
       const indices = [
-        { label: 'Índice de Severidad Total', key: 'IST', valor: subescalas.IST || subescalas.total || 0 },
-        { label: 'Total Síntomas Positivos', key: 'TSP', valor: subescalas.TSP || 0 },
-        { label: 'Malestar Referido a Sint. Positivos', key: 'MRSP', valor: subescalas.MRSP || 0 }
+        { label: 'IST', valor: subescalas.IST || subescalas.total || 0, ref: 0.31 },
+        { label: 'TSP', valor: subescalas.TSP || 0, ref: 19.29 },
+        { label: 'MRSP', valor: subescalas.MRSP || 0, ref: 1.32 }
       ];
       indices.forEach(idx => {
+        const estado = this.compararConReferencia(idx.valor, idx.ref);
         filas += `<tr>
-          <td style="border: 1px solid #ddd; padding: 4px;">${idx.label}</td>
-          <td style="border: 1px solid #ddd; padding: 4px; text-align: center; font-weight: bold;">${Number(idx.valor).toFixed(2)}</td>
-          <td style="border: 1px solid #ddd; padding: 4px; text-align: center; color: #666;">—</td>
-          <td style="border: 1px solid #ddd; padding: 4px; text-align: left; font-size: 9px;">—</td>
+          <td style="border: 1px solid #ddd; padding: 3px; font-size: 8px;">${idx.label}</td>
+          <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-weight: bold; font-size: 8px;">${Number(idx.valor).toFixed(2)}</td>
+          <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${Number(idx.ref).toFixed(2)}</td>
+          <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 7px; ${estado.color}">${estado.texto}</td>
         </tr>`;
       });
-    } else if (['EGEP5', 'PCLR', 'HAMILTON', 'ISRA', 'TDS', 'MMPI2'].includes(prueba.tipo)) {
-      // Todos: mostrar solo TOTAL
+    } else if (['PCLR', 'EGEP5'].includes(prueba.tipo)) {
       const total = prueba.total || (Array.isArray(data) ? data.reduce((a, b) => a + (b || 0), 0) : 0);
+      const mediaRef = data.length * (prueba.tipo === 'PCLR' ? 0.2 : 0.2);
+      const estado = this.compararConReferencia(total, mediaRef);
       filas += `<tr>
-        <td style="border: 1px solid #ddd; padding: 4px;">Total</td>
-        <td style="border: 1px solid #ddd; padding: 4px; text-align: center; font-weight: bold;">${total}</td>
-        <td style="border: 1px solid #ddd; padding: 4px; text-align: center; color: #666;">—</td>
-        <td style="border: 1px solid #ddd; padding: 4px; text-align: left; font-size: 9px;">—</td>
+        <td style="border: 1px solid #ddd; padding: 3px; font-size: 8px;">Total</td>
+        <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-weight: bold; font-size: 8px;">${total}</td>
+        <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${Number(mediaRef).toFixed(1)}</td>
+        <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 7px; ${estado.color}">${estado.texto}</td>
+      </tr>`;
+    } else if (['HAMILTON', 'ISRA', 'TDS'].includes(prueba.tipo)) {
+      const total = prueba.total || (Array.isArray(data) ? data.reduce((a, b) => a + (b || 0), 0) : 0);
+      const mediaRef = data.length * (normasLocales?.media_por_item || 0.5);
+      const estado = this.compararConReferencia(total, mediaRef);
+      filas += `<tr>
+        <td style="border: 1px solid #ddd; padding: 3px; font-size: 8px;">Total</td>
+        <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-weight: bold; font-size: 8px;">${total}</td>
+        <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${Number(mediaRef).toFixed(1)}</td>
+        <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 7px; ${estado.color}">${estado.texto}</td>
+      </tr>`;
+    } else if (prueba.tipo === 'MMPI2') {
+      const total = prueba.total || (Array.isArray(data) ? data.reduce((a, b) => a + (b || 0), 0) : 0);
+      const refTotal = data.length * 50;
+      const estado = this.compararConReferencia(total, refTotal);
+      filas += `<tr>
+        <td style="border: 1px solid #ddd; padding: 3px; font-size: 8px;">Total</td>
+        <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-weight: bold; font-size: 8px;">${total}</td>
+        <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${Number(refTotal).toFixed(0)}</td>
+        <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 7px; ${estado.color}">${estado.texto}</td>
       </tr>`;
     }
 
-    return filas || '<tr><td colspan="4" style="border: 1px solid #ddd; padding: 4px; text-align: center; color: #999;">Sin datos disponibles</td></tr>';
+    return filas || '<tr><td colspan="4" style="border: 1px solid #ddd; padding: 3px; text-align: center; color: #999; font-size: 8px;">Sin datos</td></tr>';
+  },
+
+  /**
+   * Generar sección de validación profesional
+   */
+  generarValidacionProfesional() {
+    // Primero intentar obtener de this.datosValidacionProfesional (datos actuales del modal)
+    let datosValidacion = this.datosValidacionProfesional;
+
+    // Si no está disponible, intentar obtener de localStorage
+    if (!datosValidacion) {
+      const datosGuardados = localStorage.getItem('datos_profesional') || localStorage.getItem('validacion_profesional');
+      if (!datosGuardados) return '';
+      datosValidacion = JSON.parse(datosGuardados);
+    }
+
+    try {
+      const { nombre, cedula, especialidad, diagnostico } = datosValidacion;
+
+      return `
+        <!-- VALIDACIÓN PROFESIONAL -->
+        <div id="validacion-profesional-section" style="background: #f0f4f8; padding: 8px; margin-bottom: 10px; border: 1px solid #2c5aa0; border-radius: 3px;">
+          <h3 style="margin: 0 0 6px 0; color: #2c5aa0; font-size: 9px; font-weight: bold; border-bottom: 1px solid #2c5aa0; padding-bottom: 4px;">VALIDACIÓN PROFESIONAL</h3>
+
+          <table style="width: 100%; font-size: 8px; border-collapse: collapse; line-height: 1.4;">
+            <tr>
+              <td style="width: 30%; padding: 3px;"><strong>Profesional:</strong></td>
+              <td style="padding: 3px;">${nombre || '—'}</td>
+              <td style="width: 20%; padding: 3px;"><strong>Cédula:</strong></td>
+              <td style="padding: 3px;">${cedula || '—'}</td>
+            </tr>
+            <tr>
+              <td style="padding: 3px;"><strong>Especialidad:</strong></td>
+              <td colspan="3" style="padding: 3px;">${especialidad || '—'}</td>
+            </tr>
+            <tr>
+              <td style="padding: 3px; vertical-align: top;"><strong>Diagnóstico:</strong></td>
+              <td colspan="3" style="padding: 3px; font-size: 7px;">${diagnostico || '—'}</td>
+            </tr>
+          </table>
+
+          <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid #ddd; text-align: center;">
+            <p style="margin: 0; font-size: 7px; color: #666;">Firmado digitalmente</p>
+            <p style="margin: 2px 0 0 0; font-size: 6px; color: #999;">El profesional se responsabiliza profesionalmente del contenido de este reporte</p>
+          </div>
+        </div>
+      `;
+    } catch (error) {
+      return '';
+    }
+  },
+
+  /**
+   * Comparar valor del paciente con la referencia (media normal)
+   */
+  compararConReferencia(valor, referencia) {
+    const diferencia = valor - referencia;
+    const porcentajeDif = Math.abs(diferencia / referencia) * 100;
+
+    let texto = '';
+    let color = '';
+
+    if (porcentajeDif < 10) {
+      // Dentro del rango normal (±10%)
+      texto = 'Normal';
+      color = 'color: #2ecc71;'; // Verde
+    } else if (diferencia > 0) {
+      // Por encima de la referencia
+      if (porcentajeDif < 30) {
+        texto = 'Ligeramente Elevado';
+        color = 'color: #f39c12;'; // Naranja
+      } else {
+        texto = 'Elevado';
+        color = 'color: #e74c3c;'; // Rojo
+      }
+    } else {
+      // Por debajo de la referencia
+      if (porcentajeDif < 30) {
+        texto = 'Ligeramente Bajo';
+        color = 'color: #3498db;'; // Azul
+      } else {
+        texto = 'Bajo';
+        color = 'color: #2980b9;'; // Azul oscuro
+      }
+    }
+
+    return { texto, color };
+  },
+
+  /**
+   * Generar segunda página con detalle de todos los ítems
+   */
+  generarDetalleItems(prueba, testObj) {
+    if (!testObj) return '';
+
+    // Obtener items según la estructura del test
+    let items = [];
+    let data = typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data || [];
+
+    if (testObj.items && Array.isArray(testObj.items)) {
+      items = testObj.items;
+    } else if (testObj.escalas && Array.isArray(testObj.escalas)) {
+      // Para MMPI2 que usa 'escalas' en lugar de 'items'
+      items = testObj.escalas;
+      // Para MMPI2, los datos están en objeto keyed por ID
+      if (typeof data === 'object' && !Array.isArray(data)) {
+        const escalasObj = testObj.escalas;
+        data = escalasObj.map(escala => data[escala.id] || 0);
+      }
+    }
+
+    if (!items || items.length === 0) {
+      return '';
+    }
+
+    let html = `
+      <div style="page-break-before: always; font-family: Arial, sans-serif; color: #333; line-height: 1.2; max-width: 21.59cm; margin: 0 auto; padding: 1.27cm;">
+        <!-- ENCABEZADO SEGUNDA PÁGINA -->
+        <div style="border-bottom: 2px solid #2c5aa0; padding-bottom: 6px; margin-bottom: 8px;">
+          <h2 style="color: #2c5aa0; margin: 0; font-size: 12px; font-weight: bold;">DETALLE DE ÍTEMS - ${prueba.tipo}</h2>
+        </div>
+
+        <!-- TABLA DE ÍTEMS -->
+        <table style="width: 100%; border-collapse: collapse; font-size: 8px;">
+          <tr style="background: #2c5aa0; color: white;">
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-size: 8px; font-weight: bold; width: 5%;">N°</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: left; font-size: 8px; font-weight: bold;">Ítem</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-size: 8px; font-weight: bold; width: 12%;">Puntuación</th>
+          </tr>`;
+
+    // Generar filas según el tipo de test
+    items.forEach((item, idx) => {
+      let itemText = '';
+
+      // Extraer el texto del ítem según su formato
+      if (typeof item === 'string') {
+        itemText = item;
+      } else if (item.q) {
+        itemText = item.q; // Hamilton
+      } else if (item.texto) {
+        itemText = item.texto; // PCL-R
+      } else if (item.nombre) {
+        itemText = item.nombre; // MMPI2 escalas
+      } else {
+        itemText = `Ítem ${idx + 1}`;
+      }
+
+      const puntuacion = data[idx] !== undefined ? data[idx] : '—';
+      const bgColor = idx % 2 === 0 ? '#f9f9f9' : 'white';
+
+      html += `<tr style="background: ${bgColor};">
+        <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-weight: bold; font-size: 8px;">${idx + 1}</td>
+        <td style="border: 1px solid #ddd; padding: 3px; font-size: 8px;">${itemText}</td>
+        <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-weight: bold; font-size: 8px;">${puntuacion}</td>
+      </tr>`;
+    });
+
+    html += `</table>
+
+        <!-- FOOTER -->
+        <div style="border-top: 1px solid #ddd; padding-top: 6px; margin-top: 10px; font-size: 7px; color: #999; text-align: center;">
+          <p style="margin: 0;">Evaluación Clínica Psicológica | Detalle de ítems</p>
+        </div>
+      </div>
+    `;
+
+    return html;
   },
 
   /**
@@ -966,13 +1140,19 @@ const app = {
           break;
         case 'excel':
           this.descargarExcelConValidacion(datosValidacion);
-          break;
+          return; // Excel cierra el modal por sí solo
         case 'word':
           this.descargarWordConValidacion(datosValidacion);
-          break;
+          return; // Word cierra el modal por sí solo
         default:
           this.mostrarToast('Formato no soportado', 'error');
+          return;
       }
+
+      // Cerrar modal después de descargar (para PNG y JPG)
+      setTimeout(() => {
+        this.cerrarValidacionProfesional();
+      }, 500);
     } catch (error) {
       this.mostrarToast(`Error: ${error.message}`, 'error');
     }
@@ -1284,6 +1464,18 @@ const app = {
       const elemento = contenido.cloneNode(true);
       console.log('Contenido clonado');
 
+      // Actualizar la sección de validación profesional si hay datos disponibles
+      if (this.datosValidacionProfesional) {
+        const validacionDiv = elemento.querySelector('#validacion-profesional-section');
+        if (validacionDiv) {
+          const validacionHTML = this.generarValidacionProfesional();
+          if (validacionHTML) {
+            validacionDiv.outerHTML = validacionHTML;
+            console.log('✓ Sección de validación actualizada');
+          }
+        }
+      }
+
       // Intentar convertir canvas a imagen
       try {
         const canvasOriginal = document.querySelector('canvas#chartReporte');
@@ -1353,6 +1545,11 @@ const app = {
     const modal = document.getElementById('modal-validacion-profesional');
     if (modal) {
       modal.classList.remove('active');
+    }
+    // Cerrar también el modal de reporte de atrás
+    const modalReporte = document.getElementById('modal-reporte');
+    if (modalReporte) {
+      modalReporte.classList.remove('active');
     }
   },
 
