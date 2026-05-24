@@ -434,26 +434,31 @@ const app = {
         return;
       }
 
-      // Obtener los datos que están en el modal (último reporte mostrado)
+      // Obtener los datos que están en el modal
       const contenido = document.getElementById('reporte-contenido');
       if (!contenido || !contenido.innerHTML) {
         this.mostrarToast('No hay reporte para descargar', 'error');
         return;
       }
 
-      // Usar html2pdf directamente para el contenido del modal
+      this.mostrarToast('Generando PDF...', 'info');
+
+      // Esperar a que html2pdf esté disponible
+      if (typeof window.html2pdf === 'undefined') {
+        throw new Error('html2pdf no está disponible');
+      }
+
       const elemento = contenido.cloneNode(true);
 
-      const opciones = {
-        margin: 10,
-        filename: `Reporte_${this.pacienteActivo.nombre}_${new Date().toISOString().split('T')[0]}.pdf`,
+      const config = {
+        margin: [10, 10, 10, 10],
+        filename: `Reporte_${this.pacienteActivo.nombre}_${new Date().getTime()}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+        html2canvas: { scale: 2 },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
       };
 
-      this.mostrarToast('Generando PDF...', 'info');
-      await html2pdf().set(opciones).from(elemento).save();
+      await window.html2pdf().set(config).from(elemento).save();
       this.mostrarToast('✓ PDF descargado correctamente', 'success');
     } catch (error) {
       console.error('Error al generar PDF:', error);
