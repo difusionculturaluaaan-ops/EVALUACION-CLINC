@@ -79,11 +79,27 @@ async function createTables() {
       )
     `);
 
+    // Tabla de normas de población
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS normas (
+        id SERIAL PRIMARY KEY,
+        test_tipo TEXT NOT NULL,
+        escala TEXT NOT NULL,
+        poblacion TEXT NOT NULL,
+        valor_media REAL,
+        desviacion_tipica REAL,
+        minimo REAL,
+        maximo REAL,
+        interpretacion TEXT
+      )
+    `);
+
     // Crear índices
     await pool.query('CREATE INDEX IF NOT EXISTS idx_pacientes_tenant ON pacientes(tenant_id)');
     await pool.query('CREATE INDEX IF NOT EXISTS idx_pruebas_tenant ON pruebas(tenant_id)');
     await pool.query('CREATE INDEX IF NOT EXISTS idx_usuarios_tenant ON usuarios(tenant_id)');
     await pool.query('CREATE INDEX IF NOT EXISTS idx_usuarios_email ON usuarios(email)');
+    await pool.query('CREATE INDEX IF NOT EXISTS idx_normas_test ON normas(test_tipo, escala)');
   } catch (err) {
     console.error('Error al crear tablas:', err);
     throw err;
@@ -392,6 +408,53 @@ async function obtenerPruebasRango(paciente_id, tipo) {
   }
 }
 
+// ==================== FUNCIONES NORMAS ====================
+
+async function getNormasByTest(test_tipo, escala = null) {
+  try {
+    let query = 'SELECT * FROM normas WHERE test_tipo = $1';
+    let params = [test_tipo];
+
+    if (escala) {
+      query += ' AND escala = $2';
+      params.push(escala);
+    }
+
+    const result = await pool.query(query, params);
+    return result.rows || [];
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+}
+
+async function getNormasPoblacionGeneral(test_tipo) {
+  try {
+    const result = await pool.query(
+      'SELECT * FROM normas WHERE test_tipo = $1 AND poblacion = $2 ORDER BY escala',
+      [test_tipo, 'población normal']
+    );
+    return result.rows || [];
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+}
+
+async function insertarNormas(datos) {
+  try {
+    const result = await pool.query(
+      `INSERT INTO normas (test_tipo, escala, poblacion, valor_media, desviacion_tipica, minimo, maximo, interpretacion)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+      [datos.test_tipo, datos.escala, datos.poblacion, datos.valor_media, datos.desviacion_tipica, datos.minimo, datos.maximo, datos.interpretacion]
+    );
+    return result.rows[0] || null;
+  } catch (err) {
+    console.error('Error al insertar norma:', err);
+    return null;
+  }
+}
+
 module.exports = {
   initDb,
   pool,
@@ -420,5 +483,8 @@ module.exports = {
   obtenerPruebaById: getPruebaById,
   crearPrueba,
   guardarPrueba,
-  obtenerPruebasRango
+  obtenerPruebasRango,
+  getNormasByTest,
+  getNormasPoblacionGeneral,
+  insertarNormas
 };

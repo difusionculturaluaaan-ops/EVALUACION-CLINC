@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 const { initDb } = require('./db/schema');
+const { seedNormas } = require('./db/seed-normas');
 const authRoutes = require('./routes/auth');
 const pacientesRoutes = require('./routes/pacientes');
 const pruebasRoutes = require('./routes/pruebas');
@@ -49,6 +50,7 @@ app.use((err, req, res, next) => {
 async function start() {
   try {
     await initDb();
+    await seedNormas();
     app.listen(PORT, () => {
       console.log(`\n╔═══════════════════════════════════════════════╗`);
       console.log(`║  EVALUACIÓN CLÍNICA PSICO v2.0 - SERVIDOR     ║`);

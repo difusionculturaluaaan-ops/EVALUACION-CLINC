@@ -5,7 +5,9 @@ const {
   guardarPrueba,
   obtenerPruebaById,
   obtenerPruebasPaciente,
-  obtenerPruebasRango
+  obtenerPruebasRango,
+  getNormasByTest,
+  getNormasPoblacionGeneral
 } = require('../db/schema');
 
 // POST: Guardar una nueva prueba (solo del tenant autenticado)
@@ -73,6 +75,38 @@ router.get('/comparativo/:paciente_id/:tipo', async (req, res) => {
     res.json(pruebas);
   } catch (error) {
     console.error('Error al obtener historial:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET: Obtener normas de un test
+// /pruebas/normas/:tipo_test
+router.get('/normas/:tipo_test', async (req, res) => {
+  try {
+    const { tipo_test } = req.params;
+    const normas = await getNormasByTest(tipo_test);
+
+    if (!normas || normas.length === 0) {
+      return res.status(404).json({ error: 'No hay normas disponibles para este test' });
+    }
+
+    res.json(normas);
+  } catch (error) {
+    console.error('Error al obtener normas:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET: Obtener normas de población general para un test
+// /pruebas/normas-poblacion/:tipo_test
+router.get('/normas-poblacion/:tipo_test', async (req, res) => {
+  try {
+    const { tipo_test } = req.params;
+    const normas = await getNormasPoblacionGeneral(tipo_test);
+
+    res.json(normas);
+  } catch (error) {
+    console.error('Error al obtener normas de población:', error);
     res.status(500).json({ error: error.message });
   }
 });
