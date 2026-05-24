@@ -45,6 +45,42 @@ const expedientes = {
         }
       });
     });
+
+    // Cargar pruebas para cada paciente
+    for (const paciente of pacientes) {
+      this.cargarPruebasPaciente(paciente.id);
+    }
+  },
+
+  /**
+   * Cargar pruebas de un paciente en su tarjeta
+   */
+  async cargarPruebasPaciente(pacienteId) {
+    try {
+      const pruebas = await api.getPruebasPaciente(pacienteId);
+      const card = document.querySelector(`[data-id="${pacienteId}"]`);
+      if (!card) return;
+
+      const testContainer = card.querySelector('.expediente-tests');
+      if (!testContainer) return;
+
+      if (pruebas.length === 0) {
+        testContainer.innerHTML = '<span style="font-size: 12px; color: var(--color-text-muted);">Sin evaluaciones</span>';
+        return;
+      }
+
+      const testsByType = {};
+      pruebas.forEach(p => {
+        if (!testsByType[p.tipo]) testsByType[p.tipo] = [];
+        testsByType[p.tipo].push(p);
+      });
+
+      testContainer.innerHTML = Object.entries(testsByType)
+        .map(([tipo, items]) => `<span class="test-badge">${tipo} (${items.length})</span>`)
+        .join('');
+    } catch (error) {
+      console.error(`Error cargando pruebas del paciente ${pacienteId}:`, error);
+    }
   },
 
   /**
