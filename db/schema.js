@@ -261,13 +261,17 @@ async function crearPaciente(datos) {
   }
 }
 
-async function actualizarPaciente(id, tenant_id, datos) {
+async function crearPacienteTenant(tenant_id, datos) {
+  return crearPaciente({ tenant_id, ...datos });
+}
+
+async function actualizarPaciente(id, datos) {
   try {
     const result = await pool.query(
       `UPDATE pacientes SET nombre = $1, edad = $2, sexo = $3, estado_civil = $4,
        medicamentos = $5, observaciones = $6, actualizado_en = CURRENT_TIMESTAMP
-       WHERE id = $7 AND tenant_id = $8 RETURNING *`,
-      [datos.nombre, datos.edad, datos.sexo, datos.estado_civil, datos.medicamentos, datos.observaciones, id, tenant_id]
+       WHERE id = $7 RETURNING *`,
+      [datos.nombre, datos.edad, datos.sexo, datos.estado_civil, datos.medicamentos, datos.observaciones, id]
     );
     return result.rows[0] || null;
   } catch (err) {
@@ -276,15 +280,15 @@ async function actualizarPaciente(id, tenant_id, datos) {
   }
 }
 
-async function toggleStatusPaciente(id, tenant_id) {
+async function toggleStatusPaciente(id) {
   try {
-    const paciente = await getPacienteByIdTenant(id, tenant_id);
+    const paciente = await getPacienteById(id);
     if (!paciente) return null;
 
     const nuevoStatus = paciente.status === 'activo' ? 'standby' : 'activo';
     const result = await pool.query(
-      'UPDATE pacientes SET status = $1, actualizado_en = CURRENT_TIMESTAMP WHERE id = $2 AND tenant_id = $3 RETURNING *',
-      [nuevoStatus, id, tenant_id]
+      'UPDATE pacientes SET status = $1, actualizado_en = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *',
+      [nuevoStatus, id]
     );
     return result.rows[0] || null;
   } catch (err) {
@@ -372,8 +376,10 @@ module.exports = {
   buscarPacientes,
   buscarPacientesPorTenant,
   crearPaciente,
+  crearPacienteTenant,
   actualizarPaciente,
   toggleStatusPaciente,
+  obtenerPruebasPaciente: getPruebasByPaciente,
   getPruebas,
   getPruebasByTenant,
   getPruebasByPaciente,
