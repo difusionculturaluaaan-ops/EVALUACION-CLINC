@@ -346,6 +346,78 @@ const app = {
   },
 
   /**
+   * Mostrar reporte detallado de una prueba guardada
+   */
+  mostrarReporteDetallado(prueba) {
+    const modal = document.getElementById('modal-reporte');
+    const contenido = document.getElementById('reporte-contenido');
+
+    if (!modal || !contenido) return;
+
+    // Parsear datos si están en JSON
+    const datos = typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data;
+    const subescalas = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas;
+
+    let html = `
+      <div class="reporte">
+        <div class="reporte-header">
+          <h2>${prueba.tipo}</h2>
+          <p class="reporte-fecha">${new Date(prueba.fecha).toLocaleDateString('es-CO')}</p>
+        </div>
+
+        <div class="reporte-seccion">
+          <div style="text-align: center; margin: 20px 0;">
+            <div class="reporte-badge" style="border-color: #2c5aa0; color: #2c5aa0; font-size: 24px; padding: 15px 30px;">
+              ${prueba.total || 'Evaluación Completada'}
+            </div>
+          </div>
+        </div>
+    `;
+
+    // Mostrar subescalas si existen
+    if (subescalas && typeof subescalas === 'object' && Object.keys(subescalas).length > 0) {
+      html += `
+        <div class="reporte-seccion">
+          <div class="reporte-titulo">Resultados por Escala</div>
+          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+            <tr style="background: #f5f5f5;">
+              <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Escala</th>
+              <th style="border: 1px solid #ddd; padding: 10px; text-align: right;">Valor</th>
+            </tr>
+      `;
+
+      for (const [key, value] of Object.entries(subescalas)) {
+        html += `
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 10px;">${key}</td>
+            <td style="border: 1px solid #ddd; padding: 10px; text-align: right; font-weight: bold;">${typeof value === 'object' ? value.valor || value.total || '-' : value}</td>
+          </tr>
+        `;
+      }
+      html += `</table></div>`;
+    }
+
+    // Mostrar interpretación si existe
+    if (subescalas && subescalas.interpretacion) {
+      html += `
+        <div class="reporte-seccion" style="margin-top: 20px;">
+          <div class="reporte-titulo">Interpretación</div>
+          <p class="reporte-contenido">${subescalas.interpretacion.label || subescalas.interpretacion}</p>
+        </div>
+      `;
+    }
+
+    html += `
+      <div style="text-align: center; margin-top: 20px; color: #666; font-size: 12px;">
+        <p>📊 Evaluación completada y guardada correctamente</p>
+      </div>
+    </div>`;
+
+    contenido.innerHTML = html;
+    modal.classList.add('active');
+  },
+
+  /**
    * Cerrar modal
    */
   cerrarModal() {
