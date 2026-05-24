@@ -1,18 +1,9 @@
 {
   "version": 2,
-  "env": {
-    "JWT_SECRET": "@jwt_secret",
-    "JWT_EXPIRY": "7d",
-    "NODE_ENV": "production"
-  },
   "builds": [
     {
       "src": "server.js",
       "use": "@vercel/node"
-    },
-    {
-      "src": "public/**",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -21,16 +12,8 @@
       "dest": "server.js"
     },
     {
-      "src": "/auth.html",
-      "dest": "/auth.html"
-    },
-    {
-      "src": "/index.html",
-      "dest": "/index.html"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "server.js"
     }
   ]
 }
