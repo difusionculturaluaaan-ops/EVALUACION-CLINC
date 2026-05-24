@@ -478,8 +478,8 @@ const app = {
           <!-- GRÁFICA -->
           <div style="margin: 8px 0; padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 4px;">
             <h4 style="color: #333; font-size: 11px; margin: 0 0 8px 0;">ANÁLISIS: ${prueba.tipo}</h4>
-            <div style="position: relative; width: 100%; height: 180px;">
-              <canvas id="chartReporte" style="width: 100%; height: 100%;"></canvas>
+            <div style="position: relative; width: 100%; height: 320px; overflow-x: auto;">
+              <canvas id="chartReporte" style="width: 100%; height: 100%; min-width: 600px;"></canvas>
             </div>
           </div>
 

@@ -905,8 +905,8 @@ textarea {
 .modal-content {
   background: var(--color-card);
   border-radius: var(--radius-2xl);
-  max-width: 800px;
-  width: 100%;
+  max-width: 1400px;
+  width: 95%;
   box-shadow: var(--shadow-xl);
   max-height: 90vh;
   display: flex;
