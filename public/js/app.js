@@ -857,9 +857,9 @@ const app = {
       return `
         <!-- VALIDACIÓN PROFESIONAL -->
         <div id="validacion-profesional-section" style="background: #f0f4f8; padding: 8px; margin-bottom: 10px; border: 1px solid #2c5aa0; border-radius: 3px;">
-          <h3 style="margin: 0 0 6px 0; color: #2c5aa0; font-size: 9px; font-weight: bold; border-bottom: 1px solid #2c5aa0; padding-bottom: 4px;">VALIDACIÓN PROFESIONAL</h3>
+          <h3 style="margin: 0 0 6px 0; color: #2c5aa0; font-size: 11px; font-weight: bold; border-bottom: 1px solid #2c5aa0; padding-bottom: 4px;">VALIDACIÓN PROFESIONAL</h3>
 
-          <table style="width: 100%; font-size: 8px; border-collapse: collapse; line-height: 1.4;">
+          <table style="width: 100%; font-size: 10px; border-collapse: collapse; line-height: 1.4;">
             <tr>
               <td style="width: 30%; padding: 3px;"><strong>Profesional:</strong></td>
               <td style="padding: 3px;">${nombre || '—'}</td>
@@ -872,13 +872,13 @@ const app = {
             </tr>
             <tr>
               <td style="padding: 3px; vertical-align: top;"><strong>Diagnóstico:</strong></td>
-              <td colspan="3" style="padding: 3px; font-size: 7px;">${diagnostico || '—'}</td>
+              <td colspan="3" style="padding: 3px; font-size: 9px;">${diagnostico || '—'}</td>
             </tr>
           </table>
 
           <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid #ddd; text-align: center;">
-            <p style="margin: 0; font-size: 7px; color: #666;">Firmado digitalmente</p>
-            <p style="margin: 2px 0 0 0; font-size: 6px; color: #999;">El profesional se responsabiliza profesionalmente del contenido de este reporte</p>
+            <p style="margin: 0; font-size: 9px; color: #666;">Validado profesionalmente</p>
+            <p style="margin: 2px 0 0 0; font-size: 8px; color: #999;">El profesional se responsabiliza profesionalmente del contenido de este reporte</p>
           </div>
         </div>
       `;
