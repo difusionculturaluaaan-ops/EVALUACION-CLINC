@@ -158,6 +158,44 @@ const api = {
   },
 
   /**
+   * Obtener todas las pruebas de un paciente
+   */
+  async getPruebasDelPaciente(pacienteId) {
+    try {
+      return this.request(`/pacientes/${pacienteId}/pruebas`);
+    } catch (error) {
+      console.warn(`No hay pruebas para paciente ${pacienteId}`);
+      return [];
+    }
+  },
+
+  // ===== NORMAS =====
+
+  /**
+   * Obtener todas las normas de un test
+   */
+  async getNormasTest(tipoTest) {
+    try {
+      return await this.request(`/pruebas/normas/${tipoTest}`);
+    } catch (error) {
+      console.warn(`No hay normas disponibles para ${tipoTest}`);
+      return [];
+    }
+  },
+
+  /**
+   * Obtener normas de población general para un test
+   */
+  async getNormasPoblacion(tipoTest) {
+    try {
+      return await this.request(`/pruebas/normas-poblacion/${tipoTest}`);
+    } catch (error) {
+      console.warn(`No hay normas de población disponibles para ${tipoTest}`);
+      return [];
+    }
+  },
+
+  /**
    * Comprobar salud del servidor
    */
   async health() {
