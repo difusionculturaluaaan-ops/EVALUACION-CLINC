@@ -483,7 +483,7 @@ const app = {
             </div>
           </div>
 
-          ${subescalas && typeof subescalas === 'object' && Object.keys(subescalas).length > 0 ? `
+          <!-- TABLA DE DATOS -->
           <div style="margin-top: 8px;">
             <h4 style="color: #333; font-size: 11px; margin: 0 0 5px 0;">Detalles por Escala</h4>
             <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
@@ -493,34 +493,9 @@ const app = {
                 <th style="border: 1px solid #ddd; padding: 4px; text-align: center;">Media Normal</th>
                 <th style="border: 1px solid #ddd; padding: 4px; text-align: center;">Interpretación</th>
               </tr>
-              ${Object.entries(subescalas)
-                .filter(([key]) => !['interpretacion', 'label', 'color', 'texto', 'nivel'].includes(key.toLowerCase()))
-                .map(([key, value]) => {
-                  let val = value;
-                  let interp = '';
-                  if (typeof value === 'object') {
-                    val = value.valor || value.total || value.puntuacion;
-                    interp = value.label || value.interpretacion || '';
-                  }
-                  return { key, val, interp };
-                })
-                .filter(({ val }) => val !== undefined && val !== null && val !== '')
-                .slice(0, 12)
-                .map(({ key, val, interp }) => {
-                  const norma = normasMap[key];
-                  const mediaNormal = norma ? (norma.valor_media !== null ? norma.valor_media.toFixed(2) : '—') : '—';
-                  return `
-                <tr>
-                  <td style="border: 1px solid #ddd; padding: 4px;">${key}</td>
-                  <td style="border: 1px solid #ddd; padding: 4px; text-align: center; font-weight: bold;">${val}</td>
-                  <td style="border: 1px solid #ddd; padding: 4px; text-align: center; color: #666;">${mediaNormal}</td>
-                  <td style="border: 1px solid #ddd; padding: 4px; text-align: left; font-size: 9px;">${interp}</td>
-                </tr>
-              `;
-                }).join('')}
+              ${this.generarFilasTabla(prueba, subescalas)}
             </table>
           </div>
-          ` : ''}
         </div>
 
         <!-- INTERPRETACIÓN -->
@@ -712,6 +687,100 @@ const app = {
     } catch (error) {
       console.error('Error al renderizar gráfica:', error);
     }
+  },
+
+  /**
+   * Generar filas de tabla con datos de prueba
+   */
+  generarFilasTabla(prueba, subescalas) {
+    const data = typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data || [];
+    const normas = this.getNormasLocales(prueba.tipo);
+    let filas = '';
+
+    if (prueba.tipo === 'SCL90R') {
+      // SCL-90-R: mostrar escalas
+      const escalasMap = {
+        'SOM': 'Somatización', 'OBS': 'Obsesivo-Compulsivo', 'INT': 'Susceptibilidad Interpersonal',
+        'DEP': 'Depresión', 'ANS': 'Ansiedad', 'HOS': 'Hostilidad', 'FOB': 'Ansiedad Fóbica',
+        'PAR': 'Ideación Paranoide', 'PSI': 'Psicotisismo'
+      };
+      const escalasOrdenadas = ['SOM', 'OBS', 'INT', 'DEP', 'ANS', 'HOS', 'FOB', 'PAR', 'PSI'];
+      escalasOrdenadas.forEach(escala => {
+        const valor = Number(subescalas[escala]) || 0;
+        const norma = normas.escalas?.find(e => e.id === escala);
+        const mediaNormal = norma?.media?.toFixed(2) || '—';
+        filas += `<tr>
+          <td style="border: 1px solid #ddd; padding: 4px;">${escalasMap[escala]}</td>
+          <td style="border: 1px solid #ddd; padding: 4px; text-align: center; font-weight: bold;">${valor.toFixed(2)}</td>
+          <td style="border: 1px solid #ddd; padding: 4px; text-align: center; color: #666;">${mediaNormal}</td>
+          <td style="border: 1px solid #ddd; padding: 4px; text-align: left; font-size: 9px;">—</td>
+        </tr>`;
+      });
+    } else if (['EGEP5', 'PCLR'].includes(prueba.tipo)) {
+      // EGEP5 y PCL-R: mostrar ítems con nombres
+      if (Array.isArray(data) && data.length > 0) {
+        data.forEach((valor, idx) => {
+          const escalaInfo = normas.escalas?.[idx];
+          const nombre = escalaInfo?.nombre || `Ítem ${idx + 1}`;
+          const mediaNormal = escalaInfo?.media?.toFixed(1) || '0.2';
+          filas += `<tr>
+            <td style="border: 1px solid #ddd; padding: 4px;">${nombre}</td>
+            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; font-weight: bold;">${valor}</td>
+            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; color: #666;">${mediaNormal}</td>
+            <td style="border: 1px solid #ddd; padding: 4px; text-align: left; font-size: 9px;">—</td>
+          </tr>`;
+        });
+      }
+    } else if (prueba.tipo === 'MMPI2') {
+      // MMPI-2: mostrar escalas clínicas
+      if (Array.isArray(data) && data.length > 0) {
+        data.forEach((valor, idx) => {
+          const escalaInfo = normas.escalas?.[idx];
+          const nombre = escalaInfo?.nombre || `Escala ${idx + 1}`;
+          const mediaNormal = escalaInfo?.media || 50;
+          filas += `<tr>
+            <td style="border: 1px solid #ddd; padding: 4px;">${nombre}</td>
+            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; font-weight: bold;">${valor}</td>
+            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; color: #666;">${mediaNormal}</td>
+            <td style="border: 1px solid #ddd; padding: 4px; text-align: left; font-size: 9px;">—</td>
+          </tr>`;
+        });
+      }
+    } else {
+      // Otros tests: mostrar ítems individuales
+      if (Array.isArray(data) && data.length > 0) {
+        const maxRows = 25;
+        data.slice(0, maxRows).forEach((valor, idx) => {
+          const nombre = `Ítem ${idx + 1}`;
+          const mediaNormal = (normas.media_por_item || 0.5).toFixed(1);
+          filas += `<tr>
+            <td style="border: 1px solid #ddd; padding: 4px;">${nombre}</td>
+            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; font-weight: bold;">${valor}</td>
+            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; color: #666;">${mediaNormal}</td>
+            <td style="border: 1px solid #ddd; padding: 4px; text-align: left; font-size: 9px;">—</td>
+          </tr>`;
+        });
+      } else if (subescalas && typeof subescalas === 'object') {
+        // Fallback: usar subescalas si están disponibles
+        Object.entries(subescalas)
+          .filter(([key]) => !['interpretacion', 'label', 'color', 'texto', 'nivel'].includes(key.toLowerCase()))
+          .slice(0, 12)
+          .forEach(([key, value]) => {
+            let val = value;
+            if (typeof value === 'object') {
+              val = value.valor || value.total || value.puntuacion || 0;
+            }
+            filas += `<tr>
+              <td style="border: 1px solid #ddd; padding: 4px;">${key}</td>
+              <td style="border: 1px solid #ddd; padding: 4px; text-align: center; font-weight: bold;">${val}</td>
+              <td style="border: 1px solid #ddd; padding: 4px; text-align: center; color: #666;">—</td>
+              <td style="border: 1px solid #ddd; padding: 4px; text-align: left; font-size: 9px;">—</td>
+            </tr>`;
+          });
+      }
+    }
+
+    return filas || '<tr><td colspan="4" style="border: 1px solid #ddd; padding: 4px; text-align: center; color: #999;">Sin datos disponibles</td></tr>';
   },
 
   /**
