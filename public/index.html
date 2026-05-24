@@ -42,40 +42,40 @@
 <!-- Sidebar -->
 <aside id="sidebar" class="sidebar">
   <nav class="nav-menu">
-    <button class="nav-item active" data-page="expedientes" onclick="app.showPage('expedientes')">
+    <button class="nav-item active" data-page="inicio" onclick="app.showPage('inicio')">
+      <span class="icon">🏠</span>
+      <span class="label">Inicio</span>
+    </button>
+    <button class="nav-item" data-page="expedientes" onclick="app.showPage('expedientes')">
       <span class="icon">📋</span>
       <span class="label">Expedientes</span>
     </button>
-    <button class="nav-item" data-page="nuevo" onclick="app.showPage('nuevo')">
-      <span class="icon">➕</span>
-      <span class="label">Nueva Ficha</span>
-    </button>
     <div class="nav-divider">Tests Disponibles</div>
-    <button class="nav-item" data-page="scl90r" onclick="app.showPage('scl90r')">
+    <button class="nav-item" data-page="scl90r" onclick="app.iniciarTestConPaciente('scl90r')">
       <span class="icon">📊</span>
       <span class="label">SCL-90-R</span>
     </button>
-    <button class="nav-item" data-page="hamilton" onclick="app.showPage('hamilton')">
+    <button class="nav-item" data-page="hamilton" onclick="app.iniciarTestConPaciente('hamilton')">
       <span class="icon">😔</span>
       <span class="label">Hamilton (HAM-D)</span>
     </button>
-    <button class="nav-item" data-page="mmpi2" onclick="app.showPage('mmpi2')">
+    <button class="nav-item" data-page="mmpi2" onclick="app.iniciarTestConPaciente('mmpi2')">
       <span class="icon">🧠</span>
       <span class="label">MMPI-2</span>
     </button>
-    <button class="nav-item" data-page="isra" onclick="app.showPage('isra')">
+    <button class="nav-item" data-page="isra" onclick="app.iniciarTestConPaciente('isra')">
       <span class="icon">😰</span>
       <span class="label">ISRA (Ansiedad)</span>
     </button>
-    <button class="nav-item" data-page="tds" onclick="app.showPage('tds')">
+    <button class="nav-item" data-page="tds" onclick="app.iniciarTestConPaciente('tds')">
       <span class="icon">😴</span>
       <span class="label">TDS (Sueño)</span>
     </button>
-    <button class="nav-item" data-page="pclr" onclick="app.showPage('pclr')">
+    <button class="nav-item" data-page="pclr" onclick="app.iniciarTestConPaciente('pclr')">
       <span class="icon">⚠️</span>
       <span class="label">PCL-R (Psicopatía)</span>
     </button>
-    <button class="nav-item" data-page="egep5" onclick="app.showPage('egep5')">
+    <button class="nav-item" data-page="egep5" onclick="app.iniciarTestConPaciente('egep5')">
       <span class="icon">🚨</span>
       <span class="label">EGEP-5 (TEPT)</span>
     </button>
@@ -84,6 +84,129 @@
 
 <!-- Main Content -->
 <main class="main-content">
+
+  <!-- Página: Inicio / Dashboard -->
+  <section id="page-inicio" class="page active">
+    <div class="dashboard-container">
+      <!-- Saludo -->
+      <div class="dashboard-header">
+        <h2>Bienvenido</h2>
+        <p id="dashboard-subtitle" class="dashboard-subtitle">Cargando información...</p>
+      </div>
+
+      <!-- Grid de tarjetas -->
+      <div class="dashboard-grid">
+        <!-- Pacientes Recientes -->
+        <div class="dashboard-card">
+          <div class="card-header">
+            <span class="card-title">Pacientes Recientes</span>
+            <span class="card-icon">👥</span>
+          </div>
+          <div id="pacientes-recientes" class="pacientes-list">
+            <p class="empty-state">Cargando pacientes...</p>
+          </div>
+        </div>
+
+        <!-- Próxima Sesión / Estadísticas -->
+        <div class="dashboard-card">
+          <div class="card-header">
+            <span class="card-title">Resumen General</span>
+            <span class="card-icon">📊</span>
+          </div>
+          <div id="dashboard-stats" class="dashboard-stats">
+            <div class="stat-item">
+              <div class="stat-label">Pacientes Activos</div>
+              <div id="stat-activos" class="stat-value">0</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Evaluaciones Pendientes</div>
+              <div id="stat-pendientes" class="stat-value">0</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Tests Completados</div>
+              <div id="stat-completados" class="stat-value">0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráfica Comparativa (se muestra si hay datos) -->
+      <div id="dashboard-chart-section" class="dashboard-card" style="display: none;">
+        <div class="card-header">
+          <div>
+            <div class="card-title" id="chart-title">Comparativa SCL-90-R</div>
+            <p class="chart-subtitle" id="chart-subtitle">vs. Norma poblacional</p>
+          </div>
+          <span class="card-icon">📈</span>
+        </div>
+        <div id="dashboard-chart-container" class="chart-container">
+          <!-- Se llena dinámicamente -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Página: Detalle de Expediente -->
+  <section id="page-detalle-expediente" class="page">
+    <div class="expediente-detail-container">
+      <!-- Botón de regreso en la parte superior -->
+      <div class="expediente-top-bar">
+        <button class="btn-back" onclick="app.showPage('expedientes')">← Volver a Expedientes</button>
+      </div>
+
+      <!-- Encabezado con datos del paciente horizontal -->
+      <div class="expediente-header">
+        <div class="paciente-header-info">
+          <div class="paciente-header-top">
+            <div>
+              <h1 id="detail-nombre" class="paciente-title"></h1>
+              <p class="paciente-subtitle">Expediente Clínico</p>
+            </div>
+            <button class="btn btn-secondary" id="btn-editar-paciente" onclick="app.abrirEdicionPaciente()">
+              ✏️ Editar
+            </button>
+          </div>
+          <div class="paciente-data-grid-horizontal">
+            <div class="data-item">
+              <span class="data-label">Edad</span>
+              <span id="detail-edad" class="data-value">-</span>
+            </div>
+            <div class="data-item">
+              <span class="data-label">Sexo</span>
+              <span id="detail-sexo" class="data-value">-</span>
+            </div>
+            <div class="data-item">
+              <span class="data-label">Estado Civil</span>
+              <span id="detail-civil" class="data-value">-</span>
+            </div>
+            <div class="data-item">
+              <span class="data-label">Medicamentos</span>
+              <span id="detail-meds" class="data-value">-</span>
+            </div>
+          </div>
+          <div class="observaciones-section">
+            <h3>Observaciones</h3>
+            <p id="detail-obs" class="observaciones-text">-</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección de Estudios Realizados -->
+      <div class="estudios-section">
+        <h2>Estudios Realizados</h2>
+        <div id="estudios-container" class="estudios-grid">
+          <!-- Se llena dinámicamente -->
+        </div>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="expediente-actions">
+        <button class="btn btn-primary" onclick="app.iniciarTestConPaciente('scl90r')">
+          ➕ Realizar Nuevo Test
+        </button>
+      </div>
+    </div>
+  </section>
 
   <!-- Página: Expedientes -->
   <section id="page-expedientes" class="page active">
@@ -115,7 +238,7 @@
   <!-- Página: Nueva Ficha -->
   <section id="page-nuevo" class="page">
     <div class="card">
-      <h2>Crear Nueva Ficha de Paciente</h2>
+      <h2 id="form-titulo">Crear Nueva Ficha de Paciente</h2>
       <form id="form-paciente" onsubmit="return false;">
         <div class="form-group">
           <label for="f-nombre">Nombre Completo *</label>
@@ -159,7 +282,7 @@
           <textarea id="f-obs" rows="4" placeholder="Contexto clínico, antecedentes relevantes..."></textarea>
         </div>
 
-        <button type="button" class="btn btn-primary btn-lg" onclick="app.crearPaciente()">
+        <button type="button" class="btn btn-primary btn-lg" id="btn-continuar" onclick="app.crearPaciente()">
           Registrar y Continuar
         </button>
       </form>
@@ -287,6 +410,121 @@
 
 </main>
 
+<!-- Modal de Editar Paciente -->
+<div id="modal-editar-paciente" class="modal">
+  <div class="modal-content modal-medium">
+    <div class="modal-header">
+      <h2>Editar Datos del Paciente</h2>
+      <button class="modal-close" onclick="app.cerrarModalEdicion()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="form-editar-paciente" onsubmit="return false;">
+        <div class="form-group">
+          <label for="edit-nombre">Nombre Completo *</label>
+          <input type="text" id="edit-nombre" placeholder="Nombre y apellidos" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="edit-edad">Edad</label>
+            <input type="number" id="edit-edad" placeholder="0" min="0" max="120">
+          </div>
+          <div class="form-group">
+            <label for="edit-sexo">Sexo</label>
+            <select id="edit-sexo">
+              <option value="">Seleccionar...</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Femenino">Femenino</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="edit-civil">Estado Civil</label>
+            <select id="edit-civil">
+              <option value="">Seleccionar...</option>
+              <option value="Soltero/a">Soltero/a</option>
+              <option value="Casado/a">Casado/a</option>
+              <option value="Unión Libre">Unión Libre</option>
+              <option value="Divorciado/a">Divorciado/a</option>
+              <option value="Viudo/a">Viudo/a</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="edit-meds">Medicamentos / Sustancias</label>
+          <input type="text" id="edit-meds" placeholder="Ej: Sertraline 100mg, Alprazolam PRN...">
+        </div>
+
+        <div class="form-group">
+          <label for="edit-obs">Motivo de Consulta / Observaciones</label>
+          <textarea id="edit-obs" rows="4" placeholder="Contexto clínico, antecedentes relevantes..."></textarea>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="app.cerrarModalEdicion()">Cancelar</button>
+      <button class="btn btn-primary" onclick="app.guardarEdicionPaciente()">Guardar Cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Validación Profesional -->
+<div id="modal-validacion-profesional" class="modal">
+  <div class="modal-content modal-medium">
+    <div class="modal-header">
+      <h2>Validación Profesional del Reporte</h2>
+      <button class="modal-close" onclick="app.cerrarValidacionProfesional()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-lg);">
+        ⚠️ Complete esta sección para dar validez oficial al reporte. Esta información aparecerá en el documento PDF.
+      </p>
+
+      <form id="form-validacion-profesional">
+        <div class="form-group">
+          <label for="prof-nombre">Nombre Profesional *</label>
+          <input type="text" id="prof-nombre" placeholder="Nombre y apellidos" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="prof-cedula">Cédula / Licencia *</label>
+            <input type="text" id="prof-cedula" placeholder="Número de cédula o licencia" required>
+          </div>
+          <div class="form-group">
+            <label for="prof-especialidad">Especialidad *</label>
+            <input type="text" id="prof-especialidad" placeholder="Ej: Psicología Clínica" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="prof-diagnostico">Diagnóstico / Conclusiones Profesionales *</label>
+          <textarea id="prof-diagnostico" rows="6" placeholder="Escriba aquí su diagnóstico, conclusiones clínicas y recomendaciones profesionales..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="prof-firma">Firma Digital / Iniciales</label>
+          <input type="text" id="prof-firma" placeholder="Escriba sus iniciales o nombre para firmar">
+        </div>
+
+        <div style="background: var(--color-surface-alt); padding: var(--spacing-md); border-radius: var(--radius-lg); margin-top: var(--spacing-lg);">
+          <p style="margin: 0; font-size: 12px; color: var(--color-text-muted);">
+            <strong>Nota Importante:</strong> Al completar este formulario y descargar el PDF, usted certifica que:
+            <br>✓ Ha revisado completamente el reporte
+            <br>✓ Los datos del paciente son correctos
+            <br>✓ Se responsabiliza profesionalmente del contenido
+          </p>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="app.cerrarValidacionProfesional()">Cancelar</button>
+      <button class="btn btn-primary" onclick="app.descargarPDFConValidacion()">✓ Validar y Descargar PDF</button>
+    </div>
+  </div>
+</div>
+
 <!-- Modal de Reporte -->
 <div id="modal-reporte" class="modal">
   <div class="modal-content">
@@ -300,7 +538,7 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-primary" onclick="app.descargarPDF()">⬇️ Descargar PDF</button>
+      <button class="btn btn-primary" onclick="app.abrirValidacionProfesional()">⬇️ Descargar PDF</button>
       <button class="btn btn-secondary" onclick="app.cerrarModal()">Cerrar</button>
     </div>
   </div>

@@ -4,6 +4,7 @@
 
 const app = {
   pacienteActivo: null,
+  testEnEspera: null,
   testsDisponibles: {
     'SCL90R': tests_scl90r,
     'HAMILTON': tests_hamilton,
@@ -39,7 +40,9 @@ const app = {
     this.setupTheme();
     this.setupEventListeners();
     this.setupAuth();
-    await this.loadExpedientes();
+
+    // Mostrar dashboard por defecto
+    this.showPage('inicio');
 
     // Inicializar los módulos de tests (sin renderizar aún)
     console.log('✓ Aplicación inicializada correctamente');
@@ -172,8 +175,10 @@ const app = {
 
     page.classList.add('active');
 
-    // Si es una página de test, renderizar el test
-    if (this.pageTestMap[pageId]) {
+    // Cargar contenido específico
+    if (pageId === 'inicio') {
+      this.loadDashboard();
+    } else if (this.pageTestMap[pageId]) {
       this.initTest(pageId);
     }
   },
@@ -246,10 +251,52 @@ const app = {
       this.pacienteActivo = paciente;
       localStorage.setItem('pacienteActivo', JSON.stringify(paciente));
       document.getElementById('form-paciente').reset();
-      this.showPage('expedientes');
-      await this.loadExpedientes();
+
+      // Si hay un test en espera, ir a ese test
+      if (this.testEnEspera) {
+        const testPendiente = this.testEnEspera;
+        this.testEnEspera = null;
+        this.showPage(testPendiente);
+      } else {
+        this.showPage('expedientes');
+        await this.loadExpedientes();
+      }
     } catch (error) {
       this.mostrarToast(`Error al crear paciente: ${error.message}`, 'error');
+    }
+  },
+
+  /**
+   * Iniciar un test - crear/seleccionar paciente primero
+   */
+  iniciarTestConPaciente(pageId) {
+    if (this.pacienteActivo) {
+      // Si hay paciente activo, ir directamente al test
+      this.showPage(pageId);
+    } else {
+      // Si no hay paciente, guardar el test y abrir formulario de nueva ficha
+      this.testEnEspera = pageId;
+
+      // Obtener nombre del test
+      const testType = this.pageTestMap[pageId];
+      const test = this.testsDisponibles[testType];
+      const testNombre = test?.nombre || pageId;
+
+      // Actualizar título y botón del formulario
+      const formTitulo = document.getElementById('form-titulo');
+      const btnContinuar = document.getElementById('btn-continuar');
+      if (formTitulo) {
+        formTitulo.textContent = `Registrar Paciente para ${testNombre}`;
+      }
+      if (btnContinuar) {
+        btnContinuar.textContent = `Registrar y Comenzar ${testNombre}`;
+      }
+
+      this.showPage('nuevo');
+      // Enfocar en el campo de nombre para mejor UX
+      setTimeout(() => {
+        document.getElementById('f-nombre')?.focus();
+      }, 300);
     }
   },
 
@@ -276,20 +323,25 @@ const app = {
     }
 
     try {
+      const data = test.obtenerRespuestas();
       const resultado = test.calcular();
 
-      await api.guardarPrueba(
+      const pruebaGuardada = await api.guardarPrueba(
         this.pacienteActivo.id,
         testType,
-        resultado.data || [],
+        data,
         resultado.total,
         resultado
       );
 
       this.mostrarToast(`✓ ${test.nombre} guardado correctamente`, 'success');
-      this.mostrarReporte(resultado, testType);
+
+      // Mostrar reporte detallado con datos del paciente
+      await this.mostrarReporteDetallado(pruebaGuardada, this.pacienteActivo);
+
       await this.loadExpedientes();
     } catch (error) {
+      console.error('Error en guardarPrueba:', error);
       this.mostrarToast(`Error al guardar: ${error.message}`, 'error');
     }
   },
@@ -331,12 +383,18 @@ const app = {
     }
 
     if (resultado.interpretacion) {
-      html += `
-        <div class="reporte-seccion">
-          <div class="reporte-titulo">Interpretación</div>
-          <p class="reporte-contenido">${resultado.interpretacion.label}</p>
-        </div>
-      `;
+      const interpretacionText = typeof resultado.interpretacion === 'object'
+        ? (resultado.interpretacion.label || resultado.interpretacion.texto || '')
+        : resultado.interpretacion;
+
+      if (interpretacionText) {
+        html += `
+          <div class="reporte-seccion">
+            <div class="reporte-titulo">Interpretación</div>
+            <p class="reporte-contenido">${interpretacionText}</p>
+          </div>
+        `;
+      }
     }
 
     html += '</div>';
@@ -348,81 +406,118 @@ const app = {
   /**
    * Mostrar reporte detallado de una prueba guardada (válido legalmente)
    */
-  mostrarReporteDetallado(prueba, paciente) {
-    const modal = document.getElementById('modal-reporte');
-    const contenido = document.getElementById('reporte-contenido');
+  async mostrarReporteDetallado(prueba, paciente) {
+    try {
+      console.log('Mostrando reporte detallado:', { prueba, paciente });
 
-    if (!modal || !contenido) return;
+      const modal = document.getElementById('modal-reporte');
+      const contenido = document.getElementById('reporte-contenido');
+
+      if (!modal || !contenido) {
+        console.error('Modal o contenido no encontrado');
+        return;
+      }
 
     // Parsear datos si están en JSON
     const subescalas = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas;
 
+    // Obtener normas de población general para este test
+    let normasMap = {};
+    try {
+      const normas = await api.getNormasPoblacion(prueba.tipo);
+      if (normas && Array.isArray(normas)) {
+        normas.forEach(norma => {
+          normasMap[norma.escala] = norma;
+        });
+      }
+    } catch (error) {
+      console.log('No hay normas disponibles para', prueba.tipo);
+    }
+
     let html = `
-      <div class="reporte" style="font-family: Arial, sans-serif; color: #333;">
+      <div class="reporte" style="font-family: Arial, sans-serif; color: #333; line-height: 1.3;">
         <!-- ENCABEZADO PROFESIONAL -->
-        <div style="border-bottom: 3px solid #2c5aa0; padding-bottom: 15px; margin-bottom: 20px;">
-          <h1 style="color: #2c5aa0; margin: 0; font-size: 20px;">REPORTE DE EVALUACIÓN CLÍNICA PSICOLÓGICA</h1>
-          <p style="margin: 5px 0; color: #666; font-size: 12px;">Evaluación Clínica - Sistema de Evaluación Psicológica</p>
+        <div style="border-bottom: 3px solid #2c5aa0; padding-bottom: 8px; margin-bottom: 10px;">
+          <h1 style="color: #2c5aa0; margin: 0; font-size: 18px;">REPORTE DE EVALUACIÓN CLÍNICA PSICOLÓGICA</h1>
         </div>
 
         <!-- DATOS DEL PACIENTE -->
-        <div style="background: #f9f9f9; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
-          <h3 style="margin-top: 0; color: #2c5aa0; font-size: 14px;">DATOS DEL PACIENTE</h3>
-          <table style="width: 100%; font-size: 13px;">
+        <div style="background: #f9f9f9; padding: 10px; margin-bottom: 10px; border-radius: 4px;">
+          <h3 style="margin: 0 0 8px 0; color: #2c5aa0; font-size: 12px;">DATOS DEL PACIENTE</h3>
+          <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
             <tr>
-              <td style="width: 30%; padding: 5px;"><strong>Nombre:</strong></td>
-              <td style="padding: 5px;">${paciente ? paciente.nombre : 'N/A'}</td>
-              <td style="width: 30%; padding: 5px;"><strong>Edad:</strong></td>
-              <td style="padding: 5px;">${paciente && paciente.edad ? paciente.edad + ' años' : 'N/A'}</td>
+              <td style="width: 20%; padding: 3px;"><strong>Nombre:</strong></td>
+              <td style="padding: 3px; width: 30%;">${paciente ? paciente.nombre : 'N/A'}</td>
+              <td style="width: 20%; padding: 3px;"><strong>Edad:</strong></td>
+              <td style="padding: 3px;">${paciente && paciente.edad ? paciente.edad + ' años' : 'N/A'}</td>
             </tr>
             <tr>
-              <td style="padding: 5px;"><strong>Sexo:</strong></td>
-              <td style="padding: 5px;">${paciente && paciente.sexo ? paciente.sexo : 'N/A'}</td>
-              <td style="padding: 5px;"><strong>Estado Civil:</strong></td>
-              <td style="padding: 5px;">${paciente && paciente.estado_civil ? paciente.estado_civil : 'N/A'}</td>
+              <td style="padding: 3px;"><strong>Sexo:</strong></td>
+              <td style="padding: 3px;">${paciente && paciente.sexo ? paciente.sexo : 'N/A'}</td>
+              <td style="padding: 3px;"><strong>Estado Civil:</strong></td>
+              <td style="padding: 3px;">${paciente && paciente.estado_civil ? paciente.estado_civil : 'N/A'}</td>
             </tr>
             <tr>
-              <td style="padding: 5px;"><strong>Fecha Evaluación:</strong></td>
-              <td colspan="3" style="padding: 5px;">${new Date(prueba.fecha).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
+              <td style="padding: 3px;"><strong>Medicamentos:</strong></td>
+              <td colspan="3" style="padding: 3px; font-size: 10px;">${paciente && paciente.medicamentos ? paciente.medicamentos : 'No especificado'}</td>
+            </tr>
+            <tr>
+              <td style="padding: 3px;"><strong>Fecha:</strong></td>
+              <td colspan="3" style="padding: 3px; font-size: 10px;">${new Date(prueba.fecha).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
             </tr>
           </table>
         </div>
 
         <!-- PRUEBA REALIZADA -->
-        <div style="background: #f0f4f8; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
-          <h3 style="margin-top: 0; color: #2c5aa0; font-size: 14px;">PRUEBA APLICADA</h3>
-          <p style="margin: 0; font-size: 13px;"><strong>${prueba.tipo}</strong></p>
+        <div style="background: #f0f4f8; padding: 8px; margin-bottom: 10px; border-radius: 4px;">
+          <h3 style="margin: 0 0 5px 0; color: #2c5aa0; font-size: 12px;">PRUEBA: ${prueba.tipo}</h3>
         </div>
 
         <!-- RESULTADOS -->
-        <div style="margin-bottom: 20px;">
-          <h3 style="color: #2c5aa0; font-size: 14px; margin-top: 0;">RESULTADOS</h3>
-
-          <div style="text-align: center; margin: 20px 0;">
-            <div style="display: inline-block; border: 3px solid #2c5aa0; border-radius: 8px; padding: 20px 40px;">
-              <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Puntuación Total</div>
-              <div style="font-size: 36px; color: #2c5aa0; font-weight: bold;">${prueba.total || '—'}</div>
+        <div style="margin-bottom: 10px;">
+          <!-- GRÁFICA -->
+          <div style="margin: 8px 0; padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 4px;">
+            <h4 style="color: #333; font-size: 11px; margin: 0 0 8px 0;">ANÁLISIS: ${prueba.tipo}</h4>
+            <div style="position: relative; width: 100%; height: 180px;">
+              <canvas id="chartReporte" style="width: 100%; height: 100%;"></canvas>
             </div>
           </div>
 
           ${subescalas && typeof subescalas === 'object' && Object.keys(subescalas).length > 0 ? `
-          <div style="margin-top: 20px;">
-            <h4 style="color: #333; font-size: 13px; margin-bottom: 10px;">Detalles por Escala</h4>
-            <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+          <div style="margin-top: 8px;">
+            <h4 style="color: #333; font-size: 11px; margin: 0 0 5px 0;">Detalles por Escala</h4>
+            <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
               <tr style="background: #2c5aa0; color: white;">
-                <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Escala</th>
-                <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Valor</th>
+                <th style="border: 1px solid #ddd; padding: 4px; text-align: left;">Escala</th>
+                <th style="border: 1px solid #ddd; padding: 4px; text-align: center;">Valor</th>
+                <th style="border: 1px solid #ddd; padding: 4px; text-align: center;">Media Normal</th>
+                <th style="border: 1px solid #ddd; padding: 4px; text-align: center;">Interpretación</th>
               </tr>
               ${Object.entries(subescalas)
-                .filter(([key]) => !['interpretacion', 'label', 'color'].includes(key.toLowerCase()))
-                .map(([key, value]) => `
+                .filter(([key]) => !['interpretacion', 'label', 'color', 'texto', 'nivel'].includes(key.toLowerCase()))
+                .map(([key, value]) => {
+                  let val = value;
+                  let interp = '';
+                  if (typeof value === 'object') {
+                    val = value.valor || value.total || value.puntuacion;
+                    interp = value.label || value.interpretacion || '';
+                  }
+                  return { key, val, interp };
+                })
+                .filter(({ val }) => val !== undefined && val !== null && val !== '')
+                .slice(0, 12)
+                .map(({ key, val, interp }) => {
+                  const norma = normasMap[key];
+                  const mediaNormal = norma ? (norma.valor_media !== null ? norma.valor_media.toFixed(2) : '—') : '—';
+                  return `
                 <tr>
-                  <td style="border: 1px solid #ddd; padding: 10px;">${key}</td>
-                  <td style="border: 1px solid #ddd; padding: 10px; text-align: center; font-weight: bold;">
-                    ${typeof value === 'object' ? (value.valor || value.total || '—') : value}
-                  </td>
+                  <td style="border: 1px solid #ddd; padding: 4px;">${key}</td>
+                  <td style="border: 1px solid #ddd; padding: 4px; text-align: center; font-weight: bold;">${val}</td>
+                  <td style="border: 1px solid #ddd; padding: 4px; text-align: center; color: #666;">${mediaNormal}</td>
+                  <td style="border: 1px solid #ddd; padding: 4px; text-align: left; font-size: 9px;">${interp}</td>
                 </tr>
-              `).join('')}
+              `;
+                }).join('')}
             </table>
           </div>
           ` : ''}
@@ -430,24 +525,164 @@ const app = {
 
         <!-- INTERPRETACIÓN -->
         ${subescalas && subescalas.interpretacion ? `
-        <div style="background: #f9f9f9; padding: 15px; border-left: 4px solid #2c5aa0; margin-bottom: 20px; border-radius: 4px;">
-          <h3 style="margin-top: 0; color: #2c5aa0; font-size: 14px;">INTERPRETACIÓN CLÍNICA</h3>
-          <p style="margin: 0; font-size: 13px; line-height: 1.6;">
-            ${subescalas.interpretacion.label || subescalas.interpretacion}
+        <div style="background: #f9f9f9; padding: 8px; border-left: 3px solid #2c5aa0; margin-bottom: 8px; border-radius: 4px;">
+          <h3 style="margin: 0 0 5px 0; color: #2c5aa0; font-size: 11px;">INTERPRETACIÓN</h3>
+          <p style="margin: 0; font-size: 10px; line-height: 1.4;">
+            ${typeof subescalas.interpretacion === 'object' ? (subescalas.interpretacion.label || subescalas.interpretacion.texto || '') : subescalas.interpretacion}
           </p>
         </div>
         ` : ''}
 
         <!-- FOOTER -->
-        <div style="border-top: 1px solid #ddd; padding-top: 15px; margin-top: 20px; font-size: 11px; color: #999; text-align: center;">
-          <p style="margin: 0;">Este documento es un reporte de evaluación psicológica generado por el sistema de Evaluación Clínica.</p>
-          <p style="margin: 5px 0 0 0;">Fecha de generación: ${new Date().toLocaleDateString('es-CO')} a las ${new Date().toLocaleTimeString('es-CO')}</p>
+        <div style="border-top: 1px solid #ddd; padding-top: 5px; margin-top: 8px; font-size: 9px; color: #999; text-align: center;">
+          <p style="margin: 0;">Reporte de evaluación psicológica generado por Evaluación Clínica.</p>
+          <p style="margin: 2px 0 0 0;">Generado: ${new Date().toLocaleDateString('es-CO')} ${new Date().toLocaleTimeString('es-CO')}</p>
         </div>
       </div>
     `;
 
     contenido.innerHTML = html;
     modal.classList.add('active');
+
+    // Renderizar gráfica después de que el DOM esté actualizado
+    setTimeout(() => {
+      this.renderChartReporte(prueba);
+    }, 300);
+
+    console.log('✓ Reporte detallado renderizado');
+    } catch (error) {
+      console.error('❌ Error en mostrarReporteDetallado:', error);
+      this.mostrarToast(`Error al mostrar reporte: ${error.message}`, 'error');
+    }
+  },
+
+  /**
+   * Renderizar gráfica de la prueba con Chart.js
+   */
+  renderChartReporte(prueba) {
+    const canvasElement = document.getElementById('chartReporte');
+    if (!canvasElement) {
+      console.warn('Canvas chartReporte no encontrado');
+      return;
+    }
+
+    if (typeof Chart === 'undefined') {
+      console.warn('Chart.js no cargado');
+      return;
+    }
+
+    // Destruir gráfica anterior si existe
+    if (canvasElement.chartInstance) {
+      canvasElement.chartInstance.destroy();
+      canvasElement.chartInstance = null;
+    }
+
+    try {
+      const data = typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data || [];
+
+      console.log('Datos de prueba:', prueba);
+      console.log('Datos parseados:', data);
+
+      let labels = [];
+      let valores = [];
+
+      if (Array.isArray(data) && data.length > 0) {
+        const maxItems = Math.min(data.length, 30);
+        for (let i = 0; i < maxItems; i++) {
+          labels.push(`Ítem ${i + 1}`);
+          valores.push(Number(data[i]) || 0);
+        }
+      } else {
+        labels = ['Total'];
+        valores = [Number(prueba.total) || 0];
+      }
+
+      console.log('Labels:', labels.length, 'Valores:', valores);
+
+      if (valores.length === 0) {
+        console.warn('No hay valores para graficar');
+        return;
+      }
+
+      const ctx = canvasElement.getContext('2d');
+      if (!ctx) {
+        console.error('No se pudo obtener contexto 2D del canvas');
+        return;
+      }
+
+      const maxValor = Math.max(...valores, 5);
+
+      canvasElement.chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Respuestas',
+            data: valores,
+            borderColor: '#e74c3c',
+            backgroundColor: 'rgba(231, 76, 60, 0.2)',
+            borderWidth: 3,
+            pointRadius: 5,
+            pointBackgroundColor: '#e74c3c',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            tension: 0.4,
+            fill: true,
+            spanGaps: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            intersect: false,
+            mode: 'index'
+          },
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              labels: {
+                font: { size: 12 },
+                padding: 10,
+                usePointStyle: true
+              }
+            },
+            tooltip: {
+              enabled: true,
+              backgroundColor: 'rgba(0,0,0,0.8)',
+              padding: 10,
+              titleFont: { size: 12 }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: maxValor,
+              ticks: {
+                stepSize: 1,
+                font: { size: 10 }
+              },
+              grid: {
+                color: 'rgba(0, 0, 0, 0.1)',
+                drawBorder: true
+              }
+            },
+            x: {
+              grid: { display: false },
+              ticks: {
+                font: { size: 9 },
+                maxRotation: labels.length > 20 ? 45 : 0
+              }
+            }
+          }
+        }
+      });
+
+      console.log('✓ Gráfica renderizada exitosamente');
+    } catch (error) {
+      console.error('Error al renderizar gráfica:', error);
+    }
   },
 
   /**
@@ -462,46 +697,560 @@ const app = {
    */
   async descargarPDF() {
     try {
-      if (!this.pacienteActivo) {
-        this.mostrarToast('No hay paciente seleccionado', 'error');
-        return;
-      }
+      console.log('Iniciando descarga de PDF...');
 
-      // Obtener los datos que están en el modal
       const contenido = document.getElementById('reporte-contenido');
       if (!contenido || !contenido.innerHTML) {
         this.mostrarToast('No hay reporte para descargar', 'error');
         return;
       }
 
-      this.mostrarToast('Generando PDF...', 'info');
-
-      // Esperar a que html2pdf esté disponible
-      if (typeof window.html2pdf === 'undefined') {
-        throw new Error('html2pdf no está disponible');
+      // Obtener nombre del paciente del reporte
+      let nombrePaciente = 'Reporte';
+      const tablaTexto = contenido.innerText;
+      const nombreMatch = tablaTexto.match(/Nombre:\s*([^\n]+)/);
+      if (nombreMatch) {
+        nombrePaciente = nombreMatch[1].trim();
       }
 
-      const elemento = contenido.cloneNode(true);
+      console.log('Verificando html2pdf...');
+      if (typeof window.html2pdf === 'undefined') {
+        throw new Error('html2pdf no está cargado');
+      }
 
-      const config = {
-        margin: [10, 10, 10, 10],
-        filename: `Reporte_${this.pacienteActivo.nombre}_${new Date().getTime()}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
+      this.mostrarToast('Generando PDF...', 'info');
+
+      // Clonar el contenido
+      const elemento = contenido.cloneNode(true);
+      console.log('Contenido clonado');
+
+      // Intentar convertir canvas a imagen
+      try {
+        const canvasOriginal = document.querySelector('canvas#chartReporte');
+        const canvasClonado = elemento.querySelector('canvas#chartReporte');
+
+        if (canvasOriginal && canvasClonado) {
+          const imagenDataUrl = canvasOriginal.toDataURL('image/png');
+          console.log('Canvas convertido a imagen');
+
+          const img = document.createElement('img');
+          img.src = imagenDataUrl;
+          img.style.width = '100%';
+          img.style.height = '180px';
+
+          canvasClonado.parentNode.replaceChild(img, canvasClonado);
+          console.log('Canvas reemplazado por imagen');
+        }
+      } catch (canvasError) {
+        console.warn('Advertencia: no se pudo procesar el canvas:', canvasError.message);
+      }
+
+      const filename = `Reporte_${nombrePaciente.replace(/\s+/g, '_')}_${new Date().getTime()}.pdf`;
+      console.log('Generando PDF:', filename);
+
+      const opt = {
+        margin: [5, 8, 5, 8],
+        filename: filename,
+        image: { type: 'jpeg', quality: 0.95 },
+        html2canvas: { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff' },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
       };
 
-      await window.html2pdf().set(config).from(elemento).save();
+      const html2pdf = window.html2pdf;
+      await html2pdf().set(opt).from(elemento).save();
+
+      console.log('✓ PDF generado exitosamente');
       this.mostrarToast('✓ PDF descargado correctamente', 'success');
     } catch (error) {
-      console.error('Error al generar PDF:', error);
+      console.error('❌ Error al generar PDF:', error);
       this.mostrarToast(`Error: ${error.message}`, 'error');
     }
   },
 
   /**
+   * Abrir modal de validación profesional
+   */
+  abrirValidacionProfesional() {
+    const modal = document.getElementById('modal-validacion-profesional');
+    if (modal) {
+      // Cargar datos del profesional guardados si existen
+      const profesional = localStorage.getItem('datos_profesional');
+      if (profesional) {
+        const datos = JSON.parse(profesional);
+        document.getElementById('prof-nombre').value = datos.nombre || '';
+        document.getElementById('prof-cedula').value = datos.cedula || '';
+        document.getElementById('prof-especialidad').value = datos.especialidad || '';
+        document.getElementById('prof-firma').value = datos.firma || '';
+      }
+      modal.classList.add('active');
+    }
+  },
+
+  /**
+   * Cerrar modal de validación
+   */
+  cerrarValidacionProfesional() {
+    const modal = document.getElementById('modal-validacion-profesional');
+    if (modal) {
+      modal.classList.remove('active');
+    }
+  },
+
+  /**
+   * Descargar PDF con validación profesional
+   */
+  async descargarPDFConValidacion() {
+    const nombre = document.getElementById('prof-nombre').value.trim();
+    const cedula = document.getElementById('prof-cedula').value.trim();
+    const especialidad = document.getElementById('prof-especialidad').value.trim();
+    const diagnostico = document.getElementById('prof-diagnostico').value.trim();
+    const firma = document.getElementById('prof-firma').value.trim();
+
+    if (!nombre || !cedula || !especialidad || !diagnostico) {
+      this.mostrarToast('Complete todos los campos obligatorios', 'warning');
+      return;
+    }
+
+    // Guardar datos del profesional para futuras descargas
+    localStorage.setItem('datos_profesional', JSON.stringify({
+      nombre,
+      cedula,
+      especialidad,
+      firma
+    }));
+
+    // Guardar datos en el contexto de la prueba actual
+    this.datosValidacionProfesional = {
+      nombre,
+      cedula,
+      especialidad,
+      diagnostico,
+      firma,
+      fecha: new Date().toLocaleDateString('es-CO')
+    };
+
+    this.mostrarToast('✓ Datos profesionales registrados. Generando PDF...', 'success');
+    this.cerrarValidacionProfesional();
+
+    // Generar PDF con los datos de validación
+    setTimeout(() => this.descargarPDF(), 500);
+  },
+
+  /**
    * Cargar expedientes
    */
+  /**
+   * Cargar datos del dashboard
+   */
+  async loadDashboard() {
+    try {
+      const pacientes = await api.getPacientes();
+
+      // Pacientes recientes (últimos 5)
+      const recientes = pacientes.slice(0, 5);
+      this.renderPacientesRecientes(recientes);
+
+      // Estadísticas
+      const activos = pacientes.filter(p => p.status === 'activo').length;
+      const pendientes = pacientes.filter(p => !p.completado).length;
+      const completados = pacientes.filter(p => p.completado).length;
+
+      document.getElementById('stat-activos').textContent = activos;
+      document.getElementById('stat-pendientes').textContent = pendientes;
+      document.getElementById('stat-completados').textContent = completados;
+
+      // Saludo personalizado
+      const usuario = JSON.parse(localStorage.getItem('auth_usuario') || '{}');
+      const nombre = usuario.nombre || 'Psicólogo/a';
+      const subtitle = `${activos} pacientes activos · ${pendientes} evaluaciones pendientes esta semana`;
+      document.getElementById('dashboard-subtitle').textContent = subtitle;
+
+      // Si hay pacientes, mostrar gráfica del más reciente con SCL-90-R
+      if (recientes.length > 0) {
+        await this.mostrarGraficaDashboard(recientes[0]);
+      }
+    } catch (error) {
+      console.error('Error al cargar dashboard:', error);
+      document.getElementById('dashboard-subtitle').textContent = 'Error al cargar los datos';
+    }
+  },
+
+  /**
+   * Renderizar pacientes recientes
+   */
+  async renderPacientesRecientes(pacientes) {
+    const container = document.getElementById('pacientes-recientes');
+    if (!container) return;
+
+    if (pacientes.length === 0) {
+      container.innerHTML = '<p class="empty-state">No hay pacientes registrados</p>';
+      return;
+    }
+
+    container.innerHTML = pacientes.map(p => {
+      const initials = p.nombre.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+      const colorBg = ['#6366f1', '#3b82f6', '#10b981', '#f59e0b', '#ef4444'][pacientes.indexOf(p) % 5];
+      const statusBadge = p.status === 'activo' ? '🟢 Activo' : '⏸️ En pausa';
+
+      return `
+        <div class="paciente-item-wrapper">
+          <div class="paciente-item" onclick="app.selectPacienteDesde('${p.id}')">
+            <div class="paciente-avatar" style="background: linear-gradient(135deg, ${colorBg}, ${colorBg}dd);">
+              ${initials}
+            </div>
+            <div class="paciente-info">
+              <p class="paciente-nombre">${p.nombre}</p>
+              <p class="paciente-status">${statusBadge}</p>
+            </div>
+            <button class="btn-expand" onclick="app.toggleDetallesPaciente('${p.id}'); event.stopPropagation();" title="Ver detalles">
+              ▼
+            </button>
+          </div>
+          <div class="paciente-detalles" id="detalles-${p.id}" style="display: none;">
+            <div class="detalles-contenido">
+              <div class="detalle-fila">
+                <span class="detalle-label">Edad:</span>
+                <span class="detalle-valor">${p.edad || '-'} años</span>
+              </div>
+              <div class="detalle-fila">
+                <span class="detalle-label">Sexo:</span>
+                <span class="detalle-valor">${p.sexo || '-'}</span>
+              </div>
+              <div class="detalle-fila">
+                <span class="detalle-label">Estado:</span>
+                <span class="detalle-valor">${p.status === 'activo' ? '🟢 Activo' : '⏸️ En pausa'}</span>
+              </div>
+              <div class="detalle-fila">
+                <span class="detalle-label">Medicamentos:</span>
+                <span class="detalle-valor">${p.medicamentos || 'No registrados'}</span>
+              </div>
+              <div class="detalle-fila">
+                <span class="detalle-label">Observaciones:</span>
+                <span class="detalle-valor">${p.observaciones || 'Sin observaciones'}</span>
+              </div>
+              <div class="detalle-divider"></div>
+              <button class="btn btn-primary btn-sm" onclick="app.selectPacienteDesde('${p.id}')" style="width: 100%; margin-top: 8px;">
+                📋 Ver expediente completo
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  /**
+   * Alternar detalles del paciente
+   */
+  toggleDetallesPaciente(pacienteId) {
+    const detalles = document.getElementById(`detalles-${pacienteId}`);
+    if (detalles) {
+      const isVisible = detalles.style.display !== 'none';
+      detalles.style.display = isVisible ? 'none' : 'block';
+    }
+  },
+
+  /**
+   * Mostrar gráfica comparativa en dashboard
+   */
+  async mostrarGraficaDashboard(paciente) {
+    try {
+      const pruebas = await api.getPruebasDelPaciente(paciente.id);
+      const pruebaSCL = pruebas.find(p => p.tipo === 'SCL90R');
+
+      if (!pruebaSCL) {
+        document.getElementById('dashboard-chart-section').style.display = 'none';
+        return;
+      }
+
+      document.getElementById('dashboard-chart-section').style.display = 'block';
+      document.getElementById('chart-title').textContent = `${paciente.nombre} · SCL-90-R`;
+      document.getElementById('chart-subtitle').textContent = 'Comparativa contra norma poblacional';
+
+      // Crear gráfica SVG simple
+      const container = document.getElementById('dashboard-chart-container');
+      const subescalas = typeof pruebaSCL.subescalas === 'string'
+        ? JSON.parse(pruebaSCL.subescalas)
+        : pruebaSCL.subescalas;
+
+      const chartHTML = this.generarGraficaSCL(subescalas);
+      container.innerHTML = chartHTML;
+    } catch (error) {
+      console.log('No hay datos SCL-90-R para mostrar:', error);
+      document.getElementById('dashboard-chart-section').style.display = 'none';
+    }
+  },
+
+  /**
+   * Generar gráfica SVG de SCL-90-R
+   */
+  generarGraficaSCL(subescalas) {
+    const escalas = ['SOM', 'OBS', 'INT', 'DEP', 'ANS', 'HOS', 'FOB', 'PAR', 'PSI'];
+    const valores = escalas.map(e => subescalas[e] || 0);
+    const maxAltura = 130;
+
+    let svg = `
+      <svg viewBox="0 0 600 200" style="width: 100%; height: auto; min-height: 250px;" role="img" aria-label="Gráfica SCL-90-R">
+        <line x1="40" y1="20" x2="40" y2="150" stroke="#d3d1c7" stroke-width="0.5"/>
+        <line x1="40" y1="150" x2="590" y2="150" stroke="#d3d1c7" stroke-width="0.5"/>
+
+        <text x="35" y="153" font-size="9" fill="#888780" text-anchor="end">0</text>
+        <text x="35" y="120" font-size="9" fill="#888780" text-anchor="end">0.5</text>
+        <text x="35" y="88" font-size="9" fill="#888780" text-anchor="end">1.0</text>
+        <text x="35" y="56" font-size="9" fill="#888780" text-anchor="end">1.5</text>
+    `;
+
+    valores.forEach((valor, i) => {
+      const x = 55 + (i * 60);
+      const altura = (valor / 1.5) * maxAltura;
+      const y = 150 - altura;
+
+      svg += `
+        <g transform="translate(${x},0)">
+          <rect x="0" y="${y}" width="18" height="${altura}" fill="#2c5aa0" rx="2" opacity="0.8"/>
+          <text x="9" y="165" font-size="9" fill="#5f5e5a" text-anchor="middle">${escalas[i]}</text>
+        </g>
+      `;
+    });
+
+    svg += '</svg>';
+    return svg;
+  },
+
+  /**
+   * Seleccionar paciente y mostrar detalle
+   */
+  async selectPaciente(pacienteId) {
+    try {
+      const paciente = await api.getPaciente(pacienteId);
+      if (paciente) {
+        this.pacienteActivo = paciente;
+        localStorage.setItem('pacienteActivo', JSON.stringify(paciente));
+        await this.mostrarDetallePaciente(paciente);
+      }
+    } catch (error) {
+      this.mostrarToast(`Error al cargar paciente: ${error.message}`, 'error');
+    }
+  },
+
+  /**
+   * Seleccionar paciente desde el dashboard
+   */
+  selectPacienteDesde(pacienteId) {
+    this.selectPaciente(pacienteId);
+  },
+
+  /**
+   * Mostrar detalle del expediente del paciente
+   */
+  async mostrarDetallePaciente(paciente) {
+    try {
+      // Llenar datos del paciente
+      document.getElementById('detail-nombre').textContent = paciente.nombre;
+      document.getElementById('detail-edad').textContent = paciente.edad || '-';
+      document.getElementById('detail-sexo').textContent = paciente.sexo || '-';
+      document.getElementById('detail-civil').textContent = paciente.estado_civil || '-';
+      document.getElementById('detail-meds').textContent = paciente.medicamentos || 'No registrados';
+      document.getElementById('detail-obs').textContent = paciente.observaciones || 'Sin observaciones';
+
+      // Cargar pruebas del paciente
+      const pruebas = await api.getPruebasDelPaciente(paciente.id);
+      this.renderizarEstudios(pruebas);
+
+      // Mostrar página de detalle
+      this.showPage('detalle-expediente');
+    } catch (error) {
+      console.error('Error al mostrar detalle:', error);
+      this.mostrarToast(`Error: ${error.message}`, 'error');
+    }
+  },
+
+  /**
+   * Abrir modal de edición de paciente
+   */
+  abrirEdicionPaciente() {
+    if (!this.pacienteActivo) {
+      this.mostrarToast('No hay paciente seleccionado', 'error');
+      return;
+    }
+
+    // Llenar formulario con datos del paciente
+    document.getElementById('edit-nombre').value = this.pacienteActivo.nombre || '';
+    document.getElementById('edit-edad').value = this.pacienteActivo.edad || '';
+    document.getElementById('edit-sexo').value = this.pacienteActivo.sexo || '';
+    document.getElementById('edit-civil').value = this.pacienteActivo.estado_civil || '';
+    document.getElementById('edit-meds').value = this.pacienteActivo.medicamentos || '';
+    document.getElementById('edit-obs').value = this.pacienteActivo.observaciones || '';
+
+    // Mostrar modal
+    const modal = document.getElementById('modal-editar-paciente');
+    if (modal) {
+      modal.classList.add('active');
+    }
+  },
+
+  /**
+   * Cerrar modal de edición
+   */
+  cerrarModalEdicion() {
+    const modal = document.getElementById('modal-editar-paciente');
+    if (modal) {
+      modal.classList.remove('active');
+    }
+  },
+
+  /**
+   * Guardar cambios del paciente
+   */
+  async guardarEdicionPaciente() {
+    const nombre = document.getElementById('edit-nombre').value.trim();
+    const edad = parseInt(document.getElementById('edit-edad').value) || null;
+    const sexo = document.getElementById('edit-sexo').value;
+    const civil = document.getElementById('edit-civil').value;
+    const meds = document.getElementById('edit-meds').value;
+    const obs = document.getElementById('edit-obs').value;
+
+    if (!nombre) {
+      this.mostrarToast('El nombre es requerido', 'error');
+      return;
+    }
+
+    try {
+      const pacienteActualizado = await api.actualizarPaciente(this.pacienteActivo.id, {
+        nombre,
+        edad,
+        sexo,
+        estado_civil: civil,
+        medicamentos: meds,
+        observaciones: obs
+      });
+
+      this.pacienteActivo = pacienteActualizado;
+      localStorage.setItem('pacienteActivo', JSON.stringify(pacienteActualizado));
+
+      this.mostrarToast(`✓ Datos de ${nombre} actualizados correctamente`, 'success');
+      this.cerrarModalEdicion();
+
+      // Actualizar la vista
+      await this.mostrarDetallePaciente(pacienteActualizado);
+    } catch (error) {
+      this.mostrarToast(`Error al actualizar: ${error.message}`, 'error');
+    }
+  },
+
+  /**
+   * Generar interpretación basada en el tipo de test y puntuación
+   */
+  generarInterpretacion(tipoTest, total) {
+    try {
+      // Mapeo de tipos de test a métodos de interpretación
+      const mapeoInterpretacion = {
+        'HAMILTON': 'hamD17',
+        'SCL90R': 'scl90R',
+        'MMPI2': 'mmpi2',
+        'ISRA': 'isra',
+        'TDS': 'tds',
+        'PCLR': 'pclR',
+        'EGEP5': 'egep5'
+      };
+
+      const metodo = mapeoInterpretacion[tipoTest];
+      if (!metodo || !interpretacion[metodo]) {
+        return null;
+      }
+
+      return interpretacion[metodo].calcular(total);
+    } catch (error) {
+      console.error('Error al generar interpretación:', error);
+      return null;
+    }
+  },
+
+  /**
+   * Renderizar estudios realizados
+   */
+  renderizarEstudios(pruebas) {
+    const container = document.getElementById('estudios-container');
+    if (!container) return;
+
+    if (!pruebas || pruebas.length === 0) {
+      container.innerHTML = '<div class="empty-estudios">No hay estudios realizados aún</div>';
+      return;
+    }
+
+    const iconos = {
+      'SCL90R': '📊',
+      'HAMILTON': '😔',
+      'MMPI2': '🧠',
+      'ISRA': '😰',
+      'TDS': '😴',
+      'PCLR': '⚠️',
+      'EGEP5': '🚨'
+    };
+
+    const nombres = {
+      'SCL90R': 'SCL-90-R',
+      'HAMILTON': 'Hamilton (HAM-D)',
+      'MMPI2': 'MMPI-2',
+      'ISRA': 'ISRA (Ansiedad)',
+      'TDS': 'TDS (Sueño)',
+      'PCLR': 'PCL-R (Psicopatía)',
+      'EGEP5': 'EGEP-5 (TEPT)'
+    };
+
+    container.innerHTML = pruebas.map(prueba => {
+      // Obtener fecha - el campo es 'fecha' en la base de datos
+      let fecha = 'Fecha pendiente';
+      if (prueba.fecha) {
+        const dateObj = new Date(prueba.fecha);
+        if (!isNaN(dateObj.getTime())) {
+          fecha = dateObj.toLocaleDateString('es-CO', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+        }
+      }
+
+      const icono = iconos[prueba.tipo] || '📋';
+      const nombre = nombres[prueba.tipo] || prueba.tipo;
+
+      // Generar interpretación basada en la puntuación
+      let interpretacionText = 'Revisión pendiente';
+      if (prueba.total !== null && prueba.total !== undefined) {
+        const result = this.generarInterpretacion(prueba.tipo, prueba.total);
+        interpretacionText = result ? result.texto : 'Revisión pendiente';
+      }
+
+      return `
+        <div class="estudio-card">
+          <div class="estudio-header">
+            <div>
+              <h3 class="estudio-title">${nombre}</h3>
+              <p class="estudio-fecha">${fecha}</p>
+            </div>
+            <span class="estudio-icon">${icono}</span>
+          </div>
+
+          <div class="estudio-resultado">
+            <p class="estudio-puntuacion">${prueba.total || '–'}</p>
+            <p class="estudio-label">Puntuación Total</p>
+          </div>
+
+          <div class="estudio-interpretacion">
+            ${interpretacionText}
+          </div>
+
+          <div class="estudio-actions">
+            <button class="btn-ver-reporte" onclick="app.mostrarReporteDetallado(${JSON.stringify(prueba).replace(/"/g, '&quot;')}, ${JSON.stringify(this.pacienteActivo).replace(/"/g, '&quot;')})">
+              📋 Ver Reporte
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  },
+
   async loadExpedientes() {
     try {
       const pacientes = await api.getPacientes();
@@ -553,15 +1302,6 @@ const app = {
   /**
    * Seleccionar paciente
    */
-  selectPaciente(pacienteId) {
-    const paciente = JSON.parse(localStorage.getItem(`paciente_${pacienteId}`));
-    if (paciente) {
-      this.pacienteActivo = paciente;
-      localStorage.setItem('pacienteActivo', JSON.stringify(paciente));
-      this.mostrarToast(`✓ ${paciente.nombre} seleccionado`, 'success');
-      this.showPage('scl90r'); // Ir al primer test
-    }
-  }
 };
 
 // Inicializar cuando el DOM está listo

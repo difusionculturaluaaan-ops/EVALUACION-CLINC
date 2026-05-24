@@ -98,19 +98,26 @@ const expedientes = {
    */
   async verResultadosPrueba(pacienteId, tipoTest) {
     try {
+      console.log('Cargando evaluación:', { pacienteId, tipoTest });
+
       const paciente = await api.getPaciente(pacienteId);
+      console.log('Paciente obtenido:', paciente);
+
       const pruebas = await api.getPruebasPaciente(pacienteId);
+      console.log('Pruebas obtenidas:', pruebas);
+
       const prueba = pruebas.find(p => p.tipo === tipoTest);
+      console.log('Prueba encontrada:', prueba);
 
       if (!prueba) {
-        app.mostrarToast('Evaluación no encontrada', 'error');
+        app.mostrarToast('Evaluación no encontrada para tipo: ' + tipoTest, 'error');
         return;
       }
 
-      // Mostrar reporte con resultados completos y datos del paciente
-      app.mostrarReporteDetallado(prueba, paciente);
+      await app.mostrarReporteDetallado(prueba, paciente);
     } catch (error) {
-      app.mostrarToast(`Error: ${error.message}`, 'error');
+      console.error('Error en verResultadosPrueba:', error);
+      app.mostrarToast(`Error al cargar evaluación: ${error.message}`, 'error');
     }
   },
 
@@ -146,15 +153,14 @@ const expedientes = {
   },
 
   /**
-   * Seleccionar paciente y navegar
+   * Seleccionar paciente y mostrar detalle del expediente
    */
   async seleccionarPaciente(pacienteId) {
     try {
       const paciente = await api.getPaciente(pacienteId);
       app.pacienteActivo = paciente;
       localStorage.setItem('pacienteActivo', JSON.stringify(paciente));
-      app.mostrarToast(`✓ ${paciente.nombre} seleccionado`, 'success');
-      app.showPage('scl90r');
+      await app.mostrarDetallePaciente(paciente);
     } catch (error) {
       app.mostrarToast(`Error: ${error.message}`, 'error');
     }
