@@ -518,15 +518,9 @@
         </div>
       </form>
     </div>
-    <div class="modal-footer" style="gap: 8px; flex-wrap: wrap; justify-content: flex-start;">
-      <div style="flex: 1; display: flex; gap: 8px; flex-wrap: wrap;">
-        <button class="btn btn-primary" onclick="app.descargarConValidacion('png')" title="Descargar gráfica como PNG" style="flex: 1; min-width: 80px;">📥 PNG</button>
-        <button class="btn btn-primary" onclick="app.descargarConValidacion('jpg')" title="Descargar gráfica como JPG" style="flex: 1; min-width: 80px;">📥 JPG</button>
-        <button class="btn btn-primary" onclick="app.descargarConValidacion('excel')" title="Descargar datos como Excel" style="flex: 1; min-width: 80px;">📊 Excel</button>
-        <button class="btn btn-primary" onclick="app.descargarConValidacion('word')" title="Descargar reporte como Word" style="flex: 1; min-width: 80px;">📄 Word</button>
-        <button class="btn btn-primary" onclick="app.descargarPDFConValidacion()" title="Descargar reporte profesional como PDF" style="flex: 1; min-width: 100px;">✓ PDF Validado</button>
-      </div>
-      <button class="btn btn-secondary" onclick="app.cerrarValidacionProfesional()" style="min-width: 100px;">Cancelar</button>
+    <div class="modal-footer" style="gap: 8px;">
+      <button class="btn btn-primary" onclick="app.descargarPDFConValidacion()" title="Descargar reporte profesional como PDF">✓ PDF Validado</button>
+      <button class="btn btn-secondary" onclick="app.cerrarValidacionProfesional()">Cancelar</button>
     </div>
   </div>
 </div>
