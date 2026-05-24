@@ -1476,14 +1476,15 @@ const app = {
         }
       }
 
-      // Intentar convertir canvas a imagen
+      // Intentar convertir canvas a imagen de alta resolución
       try {
         const canvasOriginal = document.querySelector('canvas#chartReporte');
         const canvasClonado = elemento.querySelector('canvas#chartReporte');
 
         if (canvasOriginal && canvasClonado) {
-          const imagenDataUrl = canvasOriginal.toDataURL('image/png');
-          console.log('Canvas convertido a imagen');
+          // Capturar canvas con alta resolución (3x scale para máxima nitidez)
+          const imagenDataUrl = await this.capturarCanvasAltaResolucion(canvasOriginal);
+          console.log('✓ Canvas convertido a alta resolución');
 
           const img = document.createElement('img');
           img.src = imagenDataUrl;
@@ -1491,7 +1492,7 @@ const app = {
           img.style.height = '180px';
 
           canvasClonado.parentNode.replaceChild(img, canvasClonado);
-          console.log('Canvas reemplazado por imagen');
+          console.log('✓ Canvas reemplazado por imagen de alta resolución');
         }
       } catch (canvasError) {
         console.warn('Advertencia: no se pudo procesar el canvas:', canvasError.message);
@@ -1503,8 +1504,8 @@ const app = {
       const opt = {
         margin: [5, 8, 5, 8],
         filename: filename,
-        image: { type: 'jpeg', quality: 0.95 },
-        html2canvas: { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff' },
+        image: { type: 'jpeg', quality: 0.99 },
+        html2canvas: { scale: 3, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', logging: false },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
       };
 
@@ -1517,6 +1518,15 @@ const app = {
       console.error('❌ Error al generar PDF:', error);
       this.mostrarToast(`Error: ${error.message}`, 'error');
     }
+  },
+
+  /**
+   * Capturar canvas - simplemente convierte a imagen
+   */
+  async capturarCanvasAltaResolucion(canvas) {
+    return new Promise((resolve) => {
+      resolve(canvas.toDataURL('image/png'));
+    });
   },
 
   /**

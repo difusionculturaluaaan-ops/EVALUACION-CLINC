@@ -2094,3 +2094,90 @@ textarea {
     width: 100%;
   }
 }
+
+/* ESTILOS DE IMPRESIÓN - FORMATO CARTA */
+@media print {
+  body {
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+
+  .reporte-carta {
+    max-width: 21.59cm;
+    width: 21.59cm;
+    margin: 1cm auto;
+    padding: 1.27cm;
+    page-break-after: always;
+    color: #333;
+    font-family: Arial, sans-serif;
+    border: 1px solid #e5e7eb;
+    background: white;
+  }
+
+  .reporte-carta h1 {
+    font-size: 14px;
+    margin: 0 0 6px 0;
+  }
+
+  .reporte-carta h3 {
+    font-size: 10px;
+    margin: 0 0 4px 0;
+  }
+
+  .reporte-carta h4 {
+    font-size: 9px;
+    margin: 0 0 3px 0;
+  }
+
+  .reporte-carta table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 3px 0;
+  }
+
+  .reporte-carta td,
+  .reporte-carta th {
+    padding: 2px;
+    border: 1px solid #999;
+    font-size: 7px;
+  }
+
+  #modal-reporte {
+    display: block !important;
+    position: static !important;
+    background: white !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  #modal-reporte.active {
+    display: block !important;
+  }
+
+  .modal-overlay {
+    display: none !important;
+  }
+
+  #reporte-contenido {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  canvas {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Ocultar elementos no necesarios en impresión */
+  .modal-header,
+  .modal-footer,
+  .navegacion,
+  .sidebar,
+  button,
+  .btn {
+    display: none !important;
+  }
+}
