@@ -177,6 +177,11 @@ const app = {
 
     // Cargar contenido específico
     if (pageId === 'inicio') {
+      // Reset del sistema - limpiar paciente activo y estado
+      this.pacienteActivo = null;
+      this.testEnEspera = null;
+      this.pruebaActual = null;
+      localStorage.removeItem('pacienteActivo');
       this.loadDashboard();
     } else if (this.pageTestMap[pageId]) {
       this.initTest(pageId);
