@@ -2365,6 +2365,26 @@ textarea {
     padding: 2px;
     border: 1px solid #999;
     font-size: 7px;
+    color: #333;
+  }
+
+  [data-theme="dark"] .reporte-carta td,
+  [data-theme="dark"] .reporte-carta th {
+    color: #ffffff;
+    border-color: #555;
+    background-color: #1e293b;
+  }
+
+  [data-theme="dark"] .reporte-carta {
+    background: #1e293b;
+    color: #ffffff;
+    border-color: #475569;
+  }
+
+  [data-theme="dark"] .reporte-carta h1,
+  [data-theme="dark"] .reporte-carta h3,
+  [data-theme="dark"] .reporte-carta h4 {
+    color: #60a5fa;
   }
 
   #modal-reporte {
@@ -2375,6 +2395,11 @@ textarea {
     height: auto !important;
     max-height: none !important;
     overflow: visible !important;
+  }
+
+  [data-theme="dark"] #modal-reporte {
+    background: #0f172a !important;
+    color: #ffffff;
   }
 
   #modal-reporte.active {
