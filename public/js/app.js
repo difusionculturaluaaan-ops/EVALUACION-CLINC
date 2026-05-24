@@ -428,9 +428,37 @@ const app = {
    * Descargar PDF
    */
   async descargarPDF() {
-    this.mostrarToast('Generando PDF...', 'info');
-    // TODO: Implementar generación de PDF
-    this.mostrarToast('⚠️ Funcionalidad en desarrollo', 'warning');
+    try {
+      if (!this.pacienteActivo) {
+        this.mostrarToast('No hay paciente seleccionado', 'error');
+        return;
+      }
+
+      // Obtener los datos que están en el modal (último reporte mostrado)
+      const contenido = document.getElementById('reporte-contenido');
+      if (!contenido || !contenido.innerHTML) {
+        this.mostrarToast('No hay reporte para descargar', 'error');
+        return;
+      }
+
+      // Usar html2pdf directamente para el contenido del modal
+      const elemento = contenido.cloneNode(true);
+
+      const opciones = {
+        margin: 10,
+        filename: `Reporte_${this.pacienteActivo.nombre}_${new Date().toISOString().split('T')[0]}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      this.mostrarToast('Generando PDF...', 'info');
+      await html2pdf().set(opciones).from(elemento).save();
+      this.mostrarToast('✓ PDF descargado correctamente', 'success');
+    } catch (error) {
+      console.error('Error al generar PDF:', error);
+      this.mostrarToast(`Error: ${error.message}`, 'error');
+    }
   },
 
   /**
