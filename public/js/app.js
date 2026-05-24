@@ -346,72 +346,105 @@ const app = {
   },
 
   /**
-   * Mostrar reporte detallado de una prueba guardada
+   * Mostrar reporte detallado de una prueba guardada (válido legalmente)
    */
-  mostrarReporteDetallado(prueba) {
+  mostrarReporteDetallado(prueba, paciente) {
     const modal = document.getElementById('modal-reporte');
     const contenido = document.getElementById('reporte-contenido');
 
     if (!modal || !contenido) return;
 
     // Parsear datos si están en JSON
-    const datos = typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data;
     const subescalas = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas;
 
     let html = `
-      <div class="reporte">
-        <div class="reporte-header">
-          <h2>${prueba.tipo}</h2>
-          <p class="reporte-fecha">${new Date(prueba.fecha).toLocaleDateString('es-CO')}</p>
+      <div class="reporte" style="font-family: Arial, sans-serif; color: #333;">
+        <!-- ENCABEZADO PROFESIONAL -->
+        <div style="border-bottom: 3px solid #2c5aa0; padding-bottom: 15px; margin-bottom: 20px;">
+          <h1 style="color: #2c5aa0; margin: 0; font-size: 20px;">REPORTE DE EVALUACIÓN CLÍNICA PSICOLÓGICA</h1>
+          <p style="margin: 5px 0; color: #666; font-size: 12px;">Evaluación Clínica - Sistema de Evaluación Psicológica</p>
         </div>
 
-        <div class="reporte-seccion">
+        <!-- DATOS DEL PACIENTE -->
+        <div style="background: #f9f9f9; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+          <h3 style="margin-top: 0; color: #2c5aa0; font-size: 14px;">DATOS DEL PACIENTE</h3>
+          <table style="width: 100%; font-size: 13px;">
+            <tr>
+              <td style="width: 30%; padding: 5px;"><strong>Nombre:</strong></td>
+              <td style="padding: 5px;">${paciente ? paciente.nombre : 'N/A'}</td>
+              <td style="width: 30%; padding: 5px;"><strong>Edad:</strong></td>
+              <td style="padding: 5px;">${paciente && paciente.edad ? paciente.edad + ' años' : 'N/A'}</td>
+            </tr>
+            <tr>
+              <td style="padding: 5px;"><strong>Sexo:</strong></td>
+              <td style="padding: 5px;">${paciente && paciente.sexo ? paciente.sexo : 'N/A'}</td>
+              <td style="padding: 5px;"><strong>Estado Civil:</strong></td>
+              <td style="padding: 5px;">${paciente && paciente.estado_civil ? paciente.estado_civil : 'N/A'}</td>
+            </tr>
+            <tr>
+              <td style="padding: 5px;"><strong>Fecha Evaluación:</strong></td>
+              <td colspan="3" style="padding: 5px;">${new Date(prueba.fecha).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- PRUEBA REALIZADA -->
+        <div style="background: #f0f4f8; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+          <h3 style="margin-top: 0; color: #2c5aa0; font-size: 14px;">PRUEBA APLICADA</h3>
+          <p style="margin: 0; font-size: 13px;"><strong>${prueba.tipo}</strong></p>
+        </div>
+
+        <!-- RESULTADOS -->
+        <div style="margin-bottom: 20px;">
+          <h3 style="color: #2c5aa0; font-size: 14px; margin-top: 0;">RESULTADOS</h3>
+
           <div style="text-align: center; margin: 20px 0;">
-            <div class="reporte-badge" style="border-color: #2c5aa0; color: #2c5aa0; font-size: 24px; padding: 15px 30px;">
-              ${prueba.total || 'Evaluación Completada'}
+            <div style="display: inline-block; border: 3px solid #2c5aa0; border-radius: 8px; padding: 20px 40px;">
+              <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Puntuación Total</div>
+              <div style="font-size: 36px; color: #2c5aa0; font-weight: bold;">${prueba.total || '—'}</div>
             </div>
           </div>
+
+          ${subescalas && typeof subescalas === 'object' && Object.keys(subescalas).length > 0 ? `
+          <div style="margin-top: 20px;">
+            <h4 style="color: #333; font-size: 13px; margin-bottom: 10px;">Detalles por Escala</h4>
+            <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+              <tr style="background: #2c5aa0; color: white;">
+                <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Escala</th>
+                <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Valor</th>
+              </tr>
+              ${Object.entries(subescalas)
+                .filter(([key]) => !['interpretacion', 'label', 'color'].includes(key.toLowerCase()))
+                .map(([key, value]) => `
+                <tr>
+                  <td style="border: 1px solid #ddd; padding: 10px;">${key}</td>
+                  <td style="border: 1px solid #ddd; padding: 10px; text-align: center; font-weight: bold;">
+                    ${typeof value === 'object' ? (value.valor || value.total || '—') : value}
+                  </td>
+                </tr>
+              `).join('')}
+            </table>
+          </div>
+          ` : ''}
         </div>
-    `;
 
-    // Mostrar subescalas si existen
-    if (subescalas && typeof subescalas === 'object' && Object.keys(subescalas).length > 0) {
-      html += `
-        <div class="reporte-seccion">
-          <div class="reporte-titulo">Resultados por Escala</div>
-          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-            <tr style="background: #f5f5f5;">
-              <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Escala</th>
-              <th style="border: 1px solid #ddd; padding: 10px; text-align: right;">Valor</th>
-            </tr>
-      `;
-
-      for (const [key, value] of Object.entries(subescalas)) {
-        html += `
-          <tr>
-            <td style="border: 1px solid #ddd; padding: 10px;">${key}</td>
-            <td style="border: 1px solid #ddd; padding: 10px; text-align: right; font-weight: bold;">${typeof value === 'object' ? value.valor || value.total || '-' : value}</td>
-          </tr>
-        `;
-      }
-      html += `</table></div>`;
-    }
-
-    // Mostrar interpretación si existe
-    if (subescalas && subescalas.interpretacion) {
-      html += `
-        <div class="reporte-seccion" style="margin-top: 20px;">
-          <div class="reporte-titulo">Interpretación</div>
-          <p class="reporte-contenido">${subescalas.interpretacion.label || subescalas.interpretacion}</p>
+        <!-- INTERPRETACIÓN -->
+        ${subescalas && subescalas.interpretacion ? `
+        <div style="background: #f9f9f9; padding: 15px; border-left: 4px solid #2c5aa0; margin-bottom: 20px; border-radius: 4px;">
+          <h3 style="margin-top: 0; color: #2c5aa0; font-size: 14px;">INTERPRETACIÓN CLÍNICA</h3>
+          <p style="margin: 0; font-size: 13px; line-height: 1.6;">
+            ${subescalas.interpretacion.label || subescalas.interpretacion}
+          </p>
         </div>
-      `;
-    }
+        ` : ''}
 
-    html += `
-      <div style="text-align: center; margin-top: 20px; color: #666; font-size: 12px;">
-        <p>📊 Evaluación completada y guardada correctamente</p>
+        <!-- FOOTER -->
+        <div style="border-top: 1px solid #ddd; padding-top: 15px; margin-top: 20px; font-size: 11px; color: #999; text-align: center;">
+          <p style="margin: 0;">Este documento es un reporte de evaluación psicológica generado por el sistema de Evaluación Clínica.</p>
+          <p style="margin: 5px 0 0 0;">Fecha de generación: ${new Date().toLocaleDateString('es-CO')} a las ${new Date().toLocaleTimeString('es-CO')}</p>
+        </div>
       </div>
-    </div>`;
+    `;
 
     contenido.innerHTML = html;
     modal.classList.add('active');

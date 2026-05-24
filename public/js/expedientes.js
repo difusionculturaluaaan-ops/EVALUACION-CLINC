@@ -98,15 +98,17 @@ const expedientes = {
    */
   async verResultadosPrueba(pacienteId, tipoTest) {
     try {
-      const prueba = await api.getPrueba(pacienteId, tipoTest);
+      const paciente = await api.getPaciente(pacienteId);
+      const pruebas = await api.getPruebasPaciente(pacienteId);
+      const prueba = pruebas.find(p => p.tipo === tipoTest);
 
       if (!prueba) {
         app.mostrarToast('Evaluación no encontrada', 'error');
         return;
       }
 
-      // Mostrar reporte con resultados completos
-      app.mostrarReporteDetallado(prueba);
+      // Mostrar reporte con resultados completos y datos del paciente
+      app.mostrarReporteDetallado(prueba, paciente);
     } catch (error) {
       app.mostrarToast(`Error: ${error.message}`, 'error');
     }
