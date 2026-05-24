@@ -76,10 +76,40 @@ const expedientes = {
       });
 
       testContainer.innerHTML = Object.entries(testsByType)
-        .map(([tipo, items]) => `<span class="test-badge">${tipo} (${items.length})</span>`)
+        .map(([tipo, items]) => `<span class="test-badge" data-test-type="${tipo}" data-paciente-id="${pacienteId}" style="cursor: pointer;">${tipo} (${items.length})</span>`)
         .join('');
+
+      // Event listeners para ver resultados
+      testContainer.querySelectorAll('.test-badge').forEach(badge => {
+        badge.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const testType = badge.dataset.testType;
+          const pId = badge.dataset.pacienteId;
+          this.verResultadosPrueba(pId, testType);
+        });
+      });
     } catch (error) {
       console.error(`Error cargando pruebas del paciente ${pacienteId}:`, error);
+    }
+  },
+
+  /**
+   * Ver resultados de una prueba guardada
+   */
+  async verResultadosPrueba(pacienteId, tipoTest) {
+    try {
+      const pruebas = await api.getPruebasPaciente(pacienteId);
+      const prueba = pruebas.find(p => p.tipo === tipoTest);
+
+      if (!prueba) {
+        app.mostrarToast('Evaluación no encontrada', 'error');
+        return;
+      }
+
+      // Mostrar reporte con resultados
+      app.mostrarReporte(prueba, pacienteId);
+    } catch (error) {
+      app.mostrarToast(`Error: ${error.message}`, 'error');
     }
   },
 
