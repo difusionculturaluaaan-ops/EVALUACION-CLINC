@@ -747,7 +747,7 @@ const app = {
         </table>
       </div>
 
-      <div style="margin: 4px 0; padding: 4px; background: #fff; border: 1px solid #ddd; border-radius: 3px;">
+      <div style="margin: 4px 0; padding: 4px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: #333;" class="reporte-analisis">
         <h4 style="color: #333; font-size: 9px; margin: 0 0 3px 0; font-weight: bold;">Puntuaciones comparativas</h4>
         <div style="position: relative; width: 100%; height: 180px;">
           <canvas id="chartReporte" style="width: 100%; height: 100%;"></canvas>
@@ -763,7 +763,7 @@ const app = {
    */
   generarReporteGenerico(prueba, subescalas) {
     return `
-      <div style="margin: 4px 0; padding: 4px; background: #fff; border: 1px solid #ddd; border-radius: 3px;">
+      <div style="margin: 4px 0; padding: 4px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: #333;" class="reporte-analisis">
         <h4 style="color: #333; font-size: 9px; margin: 0 0 3px 0; font-weight: bold;">ANÁLISIS: ${prueba.tipo}</h4>
         <div style="position: relative; width: 100%; height: 180px;">
           <canvas id="chartReporte" style="width: 100%; height: 100%;"></canvas>

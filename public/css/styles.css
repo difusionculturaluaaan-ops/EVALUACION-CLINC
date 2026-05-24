@@ -2412,6 +2412,16 @@ textarea {
     color: #ffffff !important;
   }
 
+  [data-theme="dark"] .reporte-analisis {
+    background: #1e293b !important;
+    color: #ffffff !important;
+    border-color: #475569 !important;
+  }
+
+  [data-theme="dark"] .reporte-analisis h4 {
+    color: #60a5fa !important;
+  }
+
   #modal-reporte.active {
     display: block !important;
   }
