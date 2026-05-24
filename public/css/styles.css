@@ -2402,6 +2402,16 @@ textarea {
     color: #ffffff;
   }
 
+  [data-theme="dark"] .reporte-tabla-resultados td,
+  [data-theme="dark"] .reporte-tabla-resultados tr {
+    color: #ffffff !important;
+    background-color: transparent !important;
+  }
+
+  [data-theme="dark"] .reporte-tabla-resultados {
+    color: #ffffff !important;
+  }
+
   #modal-reporte.active {
     display: block !important;
   }
