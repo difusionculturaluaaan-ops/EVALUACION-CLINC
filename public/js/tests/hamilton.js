@@ -99,7 +99,7 @@ const tests_hamilton = {
   calcular() {
     const data = this.obtenerRespuestas();
     const total = data.reduce((a, b) => a + (b || 0), 0);
-    const interpretacion = interpretacion.hamD17.calcular(total);
-    return { total, ...interpretacion };
+    const calculo = interpretacion.hamD17.calcular(total);
+    return { total, ...calculo };
   }
 };

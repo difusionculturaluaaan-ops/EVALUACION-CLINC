@@ -32,12 +32,12 @@ const tests_isra = {
     const total = data.reduce((a, b) => a + (b || 0), 0);
     const IGA = total / (this.items.length * 4); // Índice General de Ansiedad normalizado
 
-    const interpretacion = interpretacion.isra.interpretarIGA(IGA);
+    const calculo = interpretacion.isra.interpretarIGA(IGA);
 
     return {
       total,
       IGA: IGA.toFixed(2),
-      ...interpretacion
+      ...calculo
     };
   }
 };
