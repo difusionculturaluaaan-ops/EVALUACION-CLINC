@@ -476,27 +476,7 @@ const app = {
 
         <!-- RESULTADOS -->
         <div style="margin-bottom: 10px;">
-          <!-- GRÁFICA -->
-          <div style="margin: 8px 0; padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 4px;">
-            <h4 style="color: #333; font-size: 11px; margin: 0 0 8px 0;">ANÁLISIS: ${prueba.tipo}</h4>
-            <div style="position: relative; width: 100%; height: 320px; overflow-x: auto;">
-              <canvas id="chartReporte" style="width: 100%; height: 100%; min-width: 600px;"></canvas>
-            </div>
-          </div>
-
-          <!-- TABLA DE DATOS -->
-          <div style="margin-top: 8px;">
-            <h4 style="color: #333; font-size: 11px; margin: 0 0 5px 0;">Detalles por Escala</h4>
-            <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
-              <tr style="background: #2c5aa0; color: white;">
-                <th style="border: 1px solid #ddd; padding: 4px; text-align: left;">Escala</th>
-                <th style="border: 1px solid #ddd; padding: 4px; text-align: center;">Valor</th>
-                <th style="border: 1px solid #ddd; padding: 4px; text-align: center;">Media Normal</th>
-                <th style="border: 1px solid #ddd; padding: 4px; text-align: center;">Interpretación</th>
-              </tr>
-              ${this.generarFilasTabla(prueba, subescalas)}
-            </table>
-          </div>
+          ${prueba.tipo === 'SCL90R' ? this.generarReporteSCL(prueba, subescalas) : this.generarReporteGenerico(prueba, subescalas)}
         </div>
 
         <!-- INTERPRETACIÓN -->
@@ -688,6 +668,130 @@ const app = {
     } catch (error) {
       console.error('Error al renderizar gráfica:', error);
     }
+  },
+
+  /**
+   * Generar reporte específico para SCL-90-R (formato PDF)
+   */
+  generarReporteSCL(prueba, subescalas) {
+    const escalasMap = {
+      'SOM': 'Somatización', 'OBS': 'Obsesivo – Compulsivo', 'INT': 'Susceptibilidad Interpersonal',
+      'DEP': 'Depresión', 'ANS': 'Ansiedad', 'HOS': 'Hostilidad', 'FOB': 'Ansiedad Fóbica',
+      'PAR': 'Ideación Paranoide', 'PSI': 'Psicotisismo'
+    };
+
+    let html = `
+      <!-- TABLA 1: Escalas -->
+      <div style="margin: 8px 0;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+          <tr style="background: #00bcd4; color: white;">
+            <th style="border: 1px solid #ddd; padding: 6px; text-align: left;">Escalas</th>
+            <th style="border: 1px solid #ddd; padding: 6px; text-align: center;">Síntomas positivos</th>
+            <th style="border: 1px solid #ddd; padding: 6px; text-align: center;">Suma</th>
+            <th style="border: 1px solid #ddd; padding: 6px; text-align: center;">Media paciente</th>
+            <th style="border: 1px solid #ddd; padding: 6px; text-align: center;">Media Normal</th>
+            <th style="border: 1px solid #ddd; padding: 6px; text-align: center;">Des. Tip Normal</th>
+          </tr>`;
+
+    const escalasOrdenadas = ['SOM', 'OBS', 'INT', 'DEP', 'ANS', 'HOS', 'FOB', 'PAR', 'PSI'];
+    const normas = {
+      'SOM': { media: 0.36, ds: 0.42 }, 'OBS': { media: 0.39, ds: 0.45 },
+      'INT': { media: 0.29, ds: 0.39 }, 'DEP': { media: 0.36, ds: 0.44 },
+      'ANS': { media: 0.30, ds: 0.37 }, 'HOS': { media: 0.30, ds: 0.40 },
+      'FOB': { media: 0.13, ds: 0.31 }, 'PAR': { media: 0.34, ds: 0.44 },
+      'PSI': { media: 0.14, ds: 0.25 }
+    };
+
+    escalasOrdenadas.forEach((escala, idx) => {
+      const valor = Number(subescalas[escala]) || 0;
+      const norma = normas[escala];
+      const bgColor = idx % 2 === 0 ? '#ffeb3b' : 'white';
+      html += `<tr style="background: ${bgColor};">
+        <td style="border: 1px solid #ddd; padding: 4px; font-weight: bold;">${escalasMap[escala]}</td>
+        <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">0</td>
+        <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">0</td>
+        <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">${valor.toFixed(2)}</td>
+        <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">${norma.media.toFixed(2)}</td>
+        <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">${norma.ds.toFixed(2)}</td>
+      </tr>`;
+    });
+
+    html += `</table>
+      </div>
+
+      <!-- TABLA 2: Índices -->
+      <div style="margin: 8px 0;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+          <tr style="background: #666; color: white;">
+            <th style="border: 1px solid #ddd; padding: 6px; text-align: left;"></th>
+            <th style="border: 1px solid #ddd; padding: 6px; text-align: center;">Paciente</th>
+            <th style="border: 1px solid #ddd; padding: 6px; text-align: center;">Media Normal (Ds)</th>
+            <th style="border: 1px solid #ddd; padding: 6px; text-align: center;">Med. P. Internos</th>
+            <th style="border: 1px solid #ddd; padding: 6px; text-align: center;">Med. P. Externos</th>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 4px;"><strong>Índice de Severidad Total</strong></td>
+            <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">${(subescalas.IST || 0).toFixed(2)}</td>
+            <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">0,31 (0,31)</td>
+            <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">1,30 (0,82)</td>
+            <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">1,26 (0,68)</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 4px;"><strong>Total Síntomas Positivos</strong></td>
+            <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">${prueba.total || 0}</td>
+            <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">19.29</td>
+            <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">50,03 (22,40)</td>
+            <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">50,17 (18,98)</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 4px;"><strong>Malestar Referido a Sint. Positivos</strong></td>
+            <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">${(subescalas.MRSP || 0).toFixed(2)}</td>
+            <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">1,32 (0,42)</td>
+            <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">2,15 (0,73)</td>
+            <td style="border: 1px solid #ddd; padding: 4px; text-align: center;">2,14 (0,58)</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- GRÁFICA -->
+      <div style="margin: 12px 0; padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 4px;">
+        <h4 style="color: #333; font-size: 11px; margin: 0 0 8px 0;">Puntuaciones comparativas</h4>
+        <div style="position: relative; width: 100%; height: 300px; overflow-x: auto;">
+          <canvas id="chartReporte" style="width: 100%; height: 100%; min-width: 600px;"></canvas>
+        </div>
+      </div>
+    `;
+
+    return html;
+  },
+
+  /**
+   * Generar reporte genérico para otros tests
+   */
+  generarReporteGenerico(prueba, subescalas) {
+    return `
+      <!-- GRÁFICA -->
+      <div style="margin: 8px 0; padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 4px;">
+        <h4 style="color: #333; font-size: 11px; margin: 0 0 8px 0;">ANÁLISIS: ${prueba.tipo}</h4>
+        <div style="position: relative; width: 100%; height: 320px; overflow-x: auto;">
+          <canvas id="chartReporte" style="width: 100%; height: 100%; min-width: 600px;"></canvas>
+        </div>
+      </div>
+
+      <!-- TABLA DE DATOS -->
+      <div style="margin-top: 8px;">
+        <h4 style="color: #333; font-size: 11px; margin: 0 0 5px 0;">Detalles por Escala</h4>
+        <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+          <tr style="background: #2c5aa0; color: white;">
+            <th style="border: 1px solid #ddd; padding: 4px; text-align: left;">Escala</th>
+            <th style="border: 1px solid #ddd; padding: 4px; text-align: center;">Valor</th>
+            <th style="border: 1px solid #ddd; padding: 4px; text-align: center;">Media Normal</th>
+            <th style="border: 1px solid #ddd; padding: 4px; text-align: center;">Interpretación</th>
+          </tr>
+          ${this.generarFilasTabla(prueba, subescalas)}
+        </table>
+      </div>
+    `;
   },
 
   /**
