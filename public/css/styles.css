@@ -2370,21 +2370,21 @@ textarea {
 
   [data-theme="dark"] .reporte-carta td,
   [data-theme="dark"] .reporte-carta th {
-    color: #ffffff;
-    border-color: #555;
-    background-color: #1e293b;
+    color: #ffffff !important;
+    border-color: #555 !important;
+    background-color: #1e293b !important;
   }
 
   [data-theme="dark"] .reporte-carta {
-    background: #1e293b;
-    color: #ffffff;
-    border-color: #475569;
+    background: #1e293b !important;
+    color: #ffffff !important;
+    border-color: #475569 !important;
   }
 
   [data-theme="dark"] .reporte-carta h1,
   [data-theme="dark"] .reporte-carta h3,
   [data-theme="dark"] .reporte-carta h4 {
-    color: #60a5fa;
+    color: #60a5fa !important;
   }
 
   #modal-reporte {
