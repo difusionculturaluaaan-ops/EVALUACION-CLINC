@@ -578,7 +578,9 @@ const app = {
 
     try {
       const subescalas = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas || {};
+      const data = typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data || [];
       console.log('Subescalas:', subescalas);
+      console.log('Datos prueba:', data);
 
       // Obtener normas de población general
       let normasPoblacion = {};
@@ -619,6 +621,13 @@ const app = {
           labels.push(escalasMap[escala] || escala);
           valoresPaciente.push(Number(subescalas[escala]) || 0);
           valoresPoblacion.push(normasPoblacion[escala] || 0.3);
+        });
+      } else if (Array.isArray(data) && data.length > 0) {
+        // Para tests con datos de ítems (PCL-R, MMPI-2, etc), mostrar ítems individuales
+        data.forEach((valor, indice) => {
+          labels.push(`Ítem ${indice + 1}`);
+          valoresPaciente.push(Number(valor) || 0);
+          valoresPoblacion.push(0.5); // Promedio estimado de población normal
         });
       } else {
         // Para otros tests, usar las claves disponibles en subescalas
