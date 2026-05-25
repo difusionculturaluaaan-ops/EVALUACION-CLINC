@@ -403,6 +403,40 @@ const app = {
       }
     }
 
+    // Mostrar factores si existen (ej: TDS, SCL-90-R)
+    if (resultado.factores) {
+      html += `
+        <div class="reporte-seccion">
+          <div class="reporte-titulo">Análisis por Factores</div>
+          <table class="reporte-tabla-factores">
+            <thead>
+              <tr>
+                <th>Factor</th>
+                <th>Puntaje</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      for (const [key, factor] of Object.entries(resultado.factores)) {
+        const estadoClass = factor.estado === 'Alerta Clínica' ? 'alerta' : 'normal';
+        html += `
+          <tr class="factor-row ${estadoClass}">
+            <td>${factor.nombre}</td>
+            <td>${factor.suma || 0}</td>
+            <td style="color: ${factor.color}; font-weight: 600;">${factor.estado}</td>
+          </tr>
+        `;
+      }
+
+      html += `
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
     html += '</div>';
 
     contenido.innerHTML = html;

@@ -244,33 +244,72 @@ const interpretacion = {
 
   // ===== TDS =====
   tds: {
-    calcular(data) {
-      const total = data.reduce((a, b) => a + b, 0);
-      let nivel, label, color, texto;
+    factoresConfig: {
+      F1: { nombre: 'Somnolencia Excesiva Diurna', items: [0, 1, 2, 3, 4], normal: 4, alerta: 5 },
+      F2: { nombre: 'Insomnio Intermedio / Final', items: [5, 6, 7, 8], normal: 2, alerta: 3 },
+      F3: { nombre: 'Insomnio Inicial', items: [9, 10, 11, 12], normal: 2, alerta: 3 },
+      F4: { nombre: 'Apnea del Sueño', items: [13, 14, 15], normal: 0, alerta: 1 },
+      F5: { nombre: 'Parasomnias Complejas', items: [16, 17, 18], normal: 1, alerta: 2 },
+      F6: { nombre: 'Sonambulismo / Somniloquio', items: [19, 20, 21], normal: 2, alerta: 3 },
+      F7: { nombre: 'Ronquido', items: [22, 23], normal: 1, alerta: 2 },
+      F8: { nombre: 'Piernas Inquietas / Pesadillas', items: [24, 25, 26], normal: 1, alerta: 2 },
+      F9: { nombre: 'Uso de Medicamentos', items: [27, 28], normal: 0, alerta: 1 },
+      F10: { nombre: 'Parálisis al Dormir', items: [29], normal: 0, alerta: 1 }
+    },
 
-      if (total < 15) {
-        nivel = 0;
-        label = 'Sueño Normal';
-        color = '#276749';
-        texto = 'Patrón de sueño dentro de los rangos normales.';
-      } else if (total < 25) {
-        nivel = 1;
-        label = 'Trastorno Leve';
-        color = '#0284c7';
-        texto = 'Presencia de alteraciones del sueño leves.';
-      } else if (total < 35) {
-        nivel = 2;
-        label = 'Trastorno Moderado';
-        color = '#d97706';
-        texto = 'Trastornos del sueño de magnitud clínica moderada.';
-      } else {
-        nivel = 3;
-        label = 'Trastorno Severo';
-        color = '#dc2626';
-        texto = 'Trastornos del sueño severos. Se recomienda evaluación especializada.';
+    calcular(data) {
+      const factores = {};
+      let totalAlertasClinicas = 0;
+
+      for (const [factorKey, config] of Object.entries(this.factoresConfig)) {
+        const suma = config.items.reduce((acc, i) => acc + (data[i] || 0), 0);
+        const tieneAlerta = suma >= config.alerta;
+
+        if (tieneAlerta) totalAlertasClinicas++;
+
+        factores[factorKey] = {
+          nombre: config.nombre,
+          suma: suma,
+          estado: tieneAlerta ? 'Alerta Clínica' : 'Normal',
+          color: tieneAlerta ? '#dc2626' : '#276749'
+        };
       }
 
-      return { nivel, label, color, texto, total };
+      const total = data.reduce((a, b) => a + (b || 0), 0);
+
+      let nivelGlobal, labelGlobal, colorGlobal, textoGlobal;
+
+      if (totalAlertasClinicas === 0) {
+        nivelGlobal = 0;
+        labelGlobal = 'Sueño Normal';
+        colorGlobal = '#276749';
+        textoGlobal = 'Patrón de sueño dentro de los rangos normales. Sin alertas clínicas detectadas.';
+      } else if (totalAlertasClinicas <= 2) {
+        nivelGlobal = 1;
+        labelGlobal = 'Trastorno Leve';
+        colorGlobal = '#0284c7';
+        textoGlobal = 'Presencia de alteraciones del sueño leves. ' + totalAlertasClinicas + ' factor(es) en alerta.';
+      } else if (totalAlertasClinicas <= 4) {
+        nivelGlobal = 2;
+        labelGlobal = 'Trastorno Moderado';
+        colorGlobal = '#d97706';
+        textoGlobal = 'Trastornos del sueño de magnitud clínica moderada. ' + totalAlertasClinicas + ' factor(es) en alerta. Se recomienda intervención.';
+      } else {
+        nivelGlobal = 3;
+        labelGlobal = 'Trastorno Severo';
+        colorGlobal = '#dc2626';
+        textoGlobal = 'Trastornos del sueño severos. ' + totalAlertasClinicas + ' factor(es) en alerta. Se recomienda evaluación especializada.';
+      }
+
+      return {
+        nivel: nivelGlobal,
+        label: labelGlobal,
+        color: colorGlobal,
+        texto: textoGlobal,
+        total: total,
+        factores: factores,
+        totalAlertasClinicas: totalAlertasClinicas
+      };
     }
   },
 

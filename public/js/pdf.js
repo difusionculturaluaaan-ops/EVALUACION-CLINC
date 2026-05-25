@@ -102,6 +102,38 @@ const pdfGenerator = {
           </div>
         </div>
 
+        <!-- Análisis por Factores -->
+        ${resultado.factores ? `
+          <div style="margin-bottom: 30px;">
+            <h2 style="color: #2c5aa0; font-size: 14px; text-transform: uppercase; margin: 0 0 15px 0; border-bottom: 1px solid #ddd; padding-bottom: 5px;">
+              Análisis por Factores
+            </h2>
+            <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+              <thead>
+                <tr style="background: #f5f5f5;">
+                  <th style="padding: 8px; text-align: left; font-weight: bold; border-bottom: 2px solid #2c5aa0;">Factor</th>
+                  <th style="padding: 8px; text-align: center; font-weight: bold; border-bottom: 2px solid #2c5aa0;">Puntaje</th>
+                  <th style="padding: 8px; text-align: center; font-weight: bold; border-bottom: 2px solid #2c5aa0;">Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${Object.entries(resultado.factores).map(([key, factor]) => {
+                  const rowStyle = factor.estado === 'Alerta Clínica'
+                    ? 'background: rgba(220, 38, 38, 0.08);'
+                    : '';
+                  return `
+                    <tr style="${rowStyle}">
+                      <td style="padding: 8px; border-bottom: 1px solid #eee;">${factor.nombre}</td>
+                      <td style="padding: 8px; text-align: center; border-bottom: 1px solid #eee; font-weight: bold;">${factor.suma || 0}</td>
+                      <td style="padding: 8px; text-align: center; border-bottom: 1px solid #eee; color: ${factor.color}; font-weight: bold;">${factor.estado}</td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        ` : ''}
+
         <!-- Observaciones Clínicas -->
         ${paciente.observaciones ? `
           <div style="margin-bottom: 30px;">
