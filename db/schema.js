@@ -94,6 +94,13 @@ async function createTables() {
       )
     `);
 
+    // Agregar columnas de logo a tenants si no existen
+    await pool.query(`
+      ALTER TABLE tenants
+      ADD COLUMN IF NOT EXISTS logo_url TEXT,
+      ADD COLUMN IF NOT EXISTS logo_updated_at TIMESTAMP;
+    `);
+
     // Tabla super admin
     await pool.query(`
       CREATE TABLE IF NOT EXISTS super_admin (
@@ -577,6 +584,19 @@ async function deleteTenant(tenant_id) {
   }
 }
 
+async function actualizarTenantLogo(tenant_id, logo_url) {
+  try {
+    const result = await pool.query(
+      'UPDATE tenants SET logo_url = $1, logo_updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *',
+      [logo_url, tenant_id]
+    );
+    return result.rows[0] || null;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+}
+
 module.exports = {
   initDb,
   pool,
@@ -615,5 +635,6 @@ module.exports = {
   getAuditLog,
   getAllTenants,
   actualizarTenant,
-  deleteTenant
+  deleteTenant,
+  actualizarTenantLogo
 };

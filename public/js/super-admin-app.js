@@ -50,6 +50,10 @@ const superAdminApp = {
           <td>${t.psicologos || 0}</td>
           <td>${t.pacientes || 0}</td>
           <td>
+            ${t.logo_url ? `<img src="${t.logo_url}" style="width: 40px; height: 40px; object-fit: contain;">` : '<em>Sin logo</em>'}
+          </td>
+          <td>
+            <button class="btn-small" onclick="superAdminApp.showUploadLogo('${t.id}')">Subir Logo</button>
             <button class="btn-small" onclick="superAdminApp.deleteTenant('${t.id}', '${t.nombre}')">Eliminar</button>
           </td>
         </tr>
@@ -128,6 +132,56 @@ const superAdminApp = {
     } catch (error) {
       console.error(error);
       alert('Error al cargar auditoría: ' + error.message);
+    }
+  },
+
+  showUploadLogo(tenantId) {
+    document.getElementById('logo-tenant-id').value = tenantId;
+    document.getElementById('logo-file').value = '';
+    document.getElementById('logo-preview').innerHTML = '';
+    document.getElementById('logo-upload-modal').style.display = 'block';
+  },
+
+  async uploadLogo(event) {
+    event.preventDefault();
+
+    const tenantId = document.getElementById('logo-tenant-id').value;
+    const fileInput = document.getElementById('logo-file');
+    const preview = document.getElementById('logo-preview');
+
+    if (!fileInput.files[0]) {
+      alert('Selecciona un archivo');
+      return;
+    }
+
+    const file = fileInput.files[0];
+
+    // Preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      preview.innerHTML = `<img src="${e.target.result}" style="max-width: 150px; max-height: 150px; object-fit: contain;">`;
+    };
+    reader.readAsDataURL(file);
+
+    try {
+      const formData = new FormData();
+      formData.append('logo', file);
+
+      const res = await fetch(`/api/super-admin/tenants/${tenantId}/logo`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${superAdminApi.token}` },
+        body: formData
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || 'Error al subir logo');
+      }
+
+      document.getElementById('logo-upload-modal').style.display = 'none';
+      this.loadTenants();
+    } catch (error) {
+      alert('Error: ' + error.message);
     }
   },
 

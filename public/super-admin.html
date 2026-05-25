@@ -76,6 +76,7 @@
                   <th>Creado</th>
                   <th>Usuarios</th>
                   <th>Pacientes</th>
+                  <th>Logo</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -113,6 +114,23 @@
         <input type="text" id="tenant-slug" placeholder="Slug (ej: clinica-1)" required>
         <input type="email" id="tenant-email" placeholder="Email de contacto (opcional)">
         <button type="submit">Crear</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal para subir logo -->
+  <div id="logo-upload-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span class="close" onclick="document.getElementById('logo-upload-modal').style.display = 'none'">&times;</span>
+      <h2>Cargar Logo del Tenant</h2>
+      <form id="logo-form" onsubmit="superAdminApp.uploadLogo(event)">
+        <input type="hidden" id="logo-tenant-id">
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; margin-bottom: 8px; font-weight: 600;">Seleccionar imagen (2cm x 2cm)</label>
+          <input type="file" id="logo-file" accept="image/*" required>
+        </div>
+        <div id="logo-preview" style="margin-bottom: 15px; text-align: center;"></div>
+        <button type="submit">Cargar Logo</button>
       </form>
     </div>
   </div>

@@ -9,7 +9,8 @@ const pdfGenerator = {
   async generarPDF(paciente, prueba, resultado) {
     try {
       const elemento = document.createElement('div');
-      elemento.innerHTML = this.generarHTML(paciente, prueba, resultado);
+      const logoUrl = localStorage.getItem('tenant_logo_url');
+      elemento.innerHTML = this.generarHTML(paciente, prueba, resultado, logoUrl);
 
       const opciones = {
         margin: 15,
@@ -35,15 +36,18 @@ const pdfGenerator = {
   /**
    * Generar HTML del reporte
    */
-  generarHTML(paciente, prueba, resultado) {
+  generarHTML(paciente, prueba, resultado, logoUrl) {
     const fecha = new Date().toLocaleDateString('es-CO');
     const badge = resultado.label || `${resultado.total} Puntos`;
     const color = resultado.color || '#2c5aa0';
+
+    const logoHTML = logoUrl ? `<img src="${logoUrl}" style="width: 2cm; height: 2cm; object-fit: contain; margin-right: 15px;">` : '';
 
     return `
       <div style="font-family: Arial, sans-serif; color: #333; max-width: 800px; margin: 0 auto; padding: 40px 20px;">
         <!-- Header -->
         <div style="text-align: center; border-bottom: 3px solid #2c5aa0; padding-bottom: 20px; margin-bottom: 30px;">
+          ${logoUrl ? `<div style="text-align: center; margin-bottom: 10px;">${logoHTML}</div>` : ''}
           <h1 style="color: #2c5aa0; margin: 0 0 10px 0; font-size: 24px;">
             REPORTE DE EVALUACIÓN CLÍNICA
           </h1>

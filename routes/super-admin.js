@@ -11,9 +11,11 @@ const {
   crearTenant,
   actualizarTenant,
   deleteTenant,
+  actualizarTenantLogo,
   pool
 } = require('../db/schema');
 const autenticarSuperAdmin = require('../middleware/super-admin-auth');
+const { upload, uploadLogo } = require('../middleware/cloudinary');
 
 const router = express.Router();
 
@@ -192,6 +194,35 @@ router.get('/audit-log', autenticarSuperAdmin, async (req, res) => {
     const logs = await getAuditLog(100);
 
     res.json(logs);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// POST /api/super-admin/tenants/:id/logo
+router.post('/tenants/:id/logo', autenticarSuperAdmin, upload.single('logo'), async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'No se subió archivo' });
+    }
+
+    // Subir a Cloudinary
+    const logoUrl = await uploadLogo(req.file.buffer, id);
+
+    // Guardar en BD
+    const result = await actualizarTenantLogo(parseInt(id), logoUrl);
+
+    if (!result) {
+      return res.status(404).json({ error: 'Tenant no encontrado' });
+    }
+
+    // Auditar
+    registrarAuditLog('actualizar_logo_tenant', parseInt(id), { logo_url: logoUrl });
+
+    res.json({ success: true, logo_url: logoUrl, tenant: result });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error.message });

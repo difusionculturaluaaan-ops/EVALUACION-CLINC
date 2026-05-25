@@ -9,6 +9,7 @@ const authRoutes = require('./routes/auth');
 const pacientesRoutes = require('./routes/pacientes');
 const pruebasRoutes = require('./routes/pruebas');
 const superAdminRoutes = require('./routes/super-admin');
+const tenantsRoutes = require('./routes/tenants');
 const middlewareAutenticacion = require('./middleware/autenticacion');
 
 const app = express();
@@ -36,6 +37,7 @@ app.use('/api/super-admin', superAdminRoutes);
 // Rutas protegidas (requieren autenticación)
 app.use('/api/pacientes', middlewareAutenticacion, pacientesRoutes);
 app.use('/api/pruebas', middlewareAutenticacion, pruebasRoutes);
+app.use('/api/tenants', middlewareAutenticacion, tenantsRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

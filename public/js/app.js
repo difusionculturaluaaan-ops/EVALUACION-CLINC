@@ -80,6 +80,25 @@ const app = {
         userNameEl.textContent = usuarioData.nombre;
       }
 
+      // Cargar logo del tenant
+      const tenantId = usuarioData.tenant_id;
+      if (tenantId) {
+        fetch(`/api/tenants/${tenantId}`)
+          .then(r => r.json())
+          .then(tenant => {
+            if (tenant.logo_url) {
+              const logoEl = document.getElementById('tenant-logo');
+              if (logoEl) {
+                logoEl.src = tenant.logo_url;
+                logoEl.style.display = 'block';
+                // Guardar logo en localStorage para PDF
+                localStorage.setItem('tenant_logo_url', tenant.logo_url);
+              }
+            }
+          })
+          .catch(e => console.log('Logo no disponible'));
+      }
+
       // Agregar evento al botón de logout
       const logoutBtn = document.getElementById('logout-btn');
       if (logoutBtn) {
@@ -973,7 +992,14 @@ const app = {
     let items = [];
     let data = typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data || [];
 
-    if (testObj.items && Array.isArray(testObj.items)) {
+    if (testObj.factores && typeof testObj.factores === 'object') {
+      // Para TDS y otros tests con estructura de factores
+      for (const [factorKey, factor] of Object.entries(testObj.factores)) {
+        if (factor.items && Array.isArray(factor.items)) {
+          items.push(...factor.items);
+        }
+      }
+    } else if (testObj.items && Array.isArray(testObj.items)) {
       items = testObj.items;
     } else if (testObj.escalas && Array.isArray(testObj.escalas)) {
       // Para MMPI2 que usa 'escalas' en lugar de 'items'
