@@ -8,6 +8,7 @@ const { seedNormas } = require('./db/seed-normas');
 const authRoutes = require('./routes/auth');
 const pacientesRoutes = require('./routes/pacientes');
 const pruebasRoutes = require('./routes/pruebas');
+const superAdminRoutes = require('./routes/super-admin');
 const middlewareAutenticacion = require('./middleware/autenticacion');
 
 const app = express();
@@ -30,6 +31,7 @@ app.use('/api', (req, res, next) => {
 // API Routes
 // Rutas públicas (sin autenticación)
 app.use('/api/auth', authRoutes);
+app.use('/api/super-admin', superAdminRoutes);
 
 // Rutas protegidas (requieren autenticación)
 app.use('/api/pacientes', middlewareAutenticacion, pacientesRoutes);

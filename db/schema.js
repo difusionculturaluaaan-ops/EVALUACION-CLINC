@@ -94,12 +94,37 @@ async function createTables() {
       )
     `);
 
+    // Tabla super admin
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS super_admin (
+        id SERIAL PRIMARY KEY,
+        email TEXT NOT NULL UNIQUE,
+        nombre TEXT NOT NULL,
+        password_hash TEXT NOT NULL,
+        creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Tabla auditoría super admin
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS super_admin_audit_log (
+        id SERIAL PRIMARY KEY,
+        accion TEXT NOT NULL,
+        tenant_id INTEGER,
+        detalles TEXT,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     // Crear índices
     await pool.query('CREATE INDEX IF NOT EXISTS idx_pacientes_tenant ON pacientes(tenant_id)');
     await pool.query('CREATE INDEX IF NOT EXISTS idx_pruebas_tenant ON pruebas(tenant_id)');
     await pool.query('CREATE INDEX IF NOT EXISTS idx_usuarios_tenant ON usuarios(tenant_id)');
     await pool.query('CREATE INDEX IF NOT EXISTS idx_usuarios_email ON usuarios(email)');
     await pool.query('CREATE INDEX IF NOT EXISTS idx_normas_test ON normas(test_tipo, escala)');
+    await pool.query('CREATE INDEX IF NOT EXISTS idx_super_admin_email ON super_admin(email)');
+    await pool.query('CREATE INDEX IF NOT EXISTS idx_audit_log_tenant ON super_admin_audit_log(tenant_id)');
   } catch (err) {
     console.error('Error al crear tablas:', err);
     throw err;
@@ -455,6 +480,103 @@ async function insertarNormas(datos) {
   }
 }
 
+// ==================== FUNCIONES SUPER ADMIN ====================
+
+async function getSuperAdminByEmail(email) {
+  try {
+    const result = await pool.query('SELECT * FROM super_admin WHERE email = $1', [email]);
+    return result.rows[0] || null;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+}
+
+async function crearSuperAdmin(email, nombre, password_hash) {
+  try {
+    const result = await pool.query(
+      'INSERT INTO super_admin (email, nombre, password_hash) VALUES ($1, $2, $3) RETURNING *',
+      [email, nombre, password_hash]
+    );
+    return result.rows[0] || null;
+  } catch (err) {
+    console.error('Error al crear super admin:', err);
+    return null;
+  }
+}
+
+async function registrarAuditLog(accion, tenant_id = null, detalles = null) {
+  try {
+    await pool.query(
+      'INSERT INTO super_admin_audit_log (accion, tenant_id, detalles) VALUES ($1, $2, $3)',
+      [accion, tenant_id, detalles ? JSON.stringify(detalles) : null]
+    );
+    return true;
+  } catch (err) {
+    console.error('Error al registrar audit log:', err);
+    return false;
+  }
+}
+
+async function getAuditLog(limit = 100) {
+  try {
+    const result = await pool.query(
+      'SELECT * FROM super_admin_audit_log ORDER BY timestamp DESC LIMIT $1',
+      [limit]
+    );
+    return result.rows || [];
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+}
+
+async function getAllTenants() {
+  try {
+    const result = await pool.query('SELECT * FROM tenants ORDER BY fecha_creacion DESC');
+    return result.rows || [];
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+}
+
+async function actualizarTenant(tenant_id, datos) {
+  try {
+    let query = 'UPDATE tenants SET ';
+    const params = [];
+    let paramCount = 1;
+
+    if (datos.nombre) {
+      query += `nombre = $${paramCount++}, `;
+      params.push(datos.nombre);
+    }
+    if (datos.estado) {
+      query += `estado = $${paramCount++}, `;
+      params.push(datos.estado);
+    }
+
+    query += `actualizado_en = CURRENT_TIMESTAMP WHERE id = $${paramCount} RETURNING *`;
+    params.push(tenant_id);
+
+    const result = await pool.query(query, params);
+    return result.rows[0] || null;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+}
+
+async function deleteTenant(tenant_id) {
+  try {
+    await pool.query('DELETE FROM tenants WHERE id = $1', [tenant_id]);
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+}
+
 module.exports = {
   initDb,
   pool,
@@ -486,5 +608,12 @@ module.exports = {
   obtenerPruebasRango,
   getNormasByTest,
   getNormasPoblacionGeneral,
-  insertarNormas
+  insertarNormas,
+  getSuperAdminByEmail,
+  crearSuperAdmin,
+  registrarAuditLog,
+  getAuditLog,
+  getAllTenants,
+  actualizarTenant,
+  deleteTenant
 };

@@ -1,0 +1,201 @@
+const express = require('express');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const {
+  getSuperAdminByEmail,
+  crearSuperAdmin,
+  registrarAuditLog,
+  getAuditLog,
+  getAllTenants,
+  getTenantById,
+  crearTenant,
+  actualizarTenant,
+  deleteTenant,
+  pool
+} = require('../db/schema');
+const autenticarSuperAdmin = require('../middleware/super-admin-auth');
+
+const router = express.Router();
+
+// POST /api/super-admin/login
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email y password son requeridos' });
+    }
+
+    const superAdmin = await getSuperAdminByEmail(email);
+
+    if (!superAdmin || !await bcrypt.compare(password, superAdmin.password_hash)) {
+      return res.status(401).json({ error: 'Credenciales inválidas' });
+    }
+
+    const token = jwt.sign(
+      { id: superAdmin.id, email: superAdmin.email },
+      process.env.JWT_SECRET_SUPER || process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    registrarAuditLog('login', null, { email });
+
+    res.json({ token, nombre: superAdmin.nombre, email: superAdmin.email });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET /api/super-admin/dashboard
+router.get('/dashboard', autenticarSuperAdmin, async (req, res) => {
+  try {
+    // Contar tenants
+    const tenantsResult = await pool.query(`
+      SELECT
+        COUNT(*) as total_tenants,
+        COUNT(CASE WHEN estado = 'activo' THEN 1 END) as tenants_activos
+      FROM tenants
+    `);
+
+    const { total_tenants, tenants_activos } = tenantsResult.rows[0] || {};
+
+    // Contar usuarios (profesionales)
+    const usuariosResult = await pool.query(`
+      SELECT COUNT(*) as total_usuarios
+      FROM usuarios
+    `);
+
+    const total_usuarios = usuariosResult.rows[0]?.total_usuarios || 0;
+
+    // Contar pacientes
+    const pacientesResult = await pool.query(`
+      SELECT COUNT(*) as total_pacientes
+      FROM pacientes
+    `);
+
+    const total_pacientes = pacientesResult.rows[0]?.total_pacientes || 0;
+
+    registrarAuditLog('ver_dashboard');
+
+    res.json({
+      total_tenants: parseInt(total_tenants) || 0,
+      tenants_activos: parseInt(tenants_activos) || 0,
+      total_psicologos: parseInt(total_usuarios) || 0,
+      total_pacientes: parseInt(total_pacientes) || 0,
+      crecimiento_ultimo_mes: 0
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET /api/super-admin/tenants
+router.get('/tenants', autenticarSuperAdmin, async (req, res) => {
+  try {
+    const tenants = await getAllTenants();
+
+    // Enriquecer con datos de usuarios y pacientes por tenant
+    const tenantsConDatos = await Promise.all(tenants.map(async (tenant) => {
+      const usuariosResult = await pool.query(
+        'SELECT COUNT(*) as count FROM usuarios WHERE tenant_id = $1',
+        [tenant.id]
+      );
+      const pacientesResult = await pool.query(
+        'SELECT COUNT(*) as count FROM pacientes WHERE tenant_id = $1',
+        [tenant.id]
+      );
+
+      return {
+        ...tenant,
+        psicologos: parseInt(usuariosResult.rows[0]?.count || 0),
+        pacientes: parseInt(pacientesResult.rows[0]?.count || 0)
+      };
+    }));
+
+    res.json(tenantsConDatos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// POST /api/super-admin/tenants
+router.post('/tenants', autenticarSuperAdmin, async (req, res) => {
+  try {
+    const { nombre, slug, email_contacto } = req.body;
+
+    if (!nombre || !slug) {
+      return res.status(400).json({ error: 'Nombre y slug son requeridos' });
+    }
+
+    const tenant = await crearTenant(nombre, slug, email_contacto);
+
+    if (!tenant) {
+      return res.status(400).json({ error: 'No se pudo crear el tenant' });
+    }
+
+    registrarAuditLog('crear_tenant', tenant.id, { nombre, slug });
+
+    res.status(201).json(tenant);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// PATCH /api/super-admin/tenants/:id
+router.patch('/tenants/:id', autenticarSuperAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nombre, estado } = req.body;
+
+    const tenant = await actualizarTenant(parseInt(id), { nombre, estado });
+
+    if (!tenant) {
+      return res.status(404).json({ error: 'Tenant no encontrado' });
+    }
+
+    registrarAuditLog('editar_tenant', parseInt(id), { nombre, estado });
+
+    res.json(tenant);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// DELETE /api/super-admin/tenants/:id
+router.delete('/tenants/:id', autenticarSuperAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const success = await deleteTenant(parseInt(id));
+
+    if (!success) {
+      return res.status(400).json({ error: 'No se pudo eliminar el tenant' });
+    }
+
+    registrarAuditLog('eliminar_tenant', parseInt(id));
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET /api/super-admin/audit-log
+router.get('/audit-log', autenticarSuperAdmin, async (req, res) => {
+  try {
+    const logs = await getAuditLog(100);
+
+    res.json(logs);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+module.exports = router;
