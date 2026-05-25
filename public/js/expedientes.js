@@ -42,6 +42,8 @@ const expedientes = {
           this.editarPaciente(pacienteId);
         } else if (accion === 'toggle') {
           this.toggleStatus(pacienteId);
+        } else if (accion === 'eliminar') {
+          this.eliminarPaciente(pacienteId);
         }
       });
     });
@@ -143,6 +145,9 @@ const expedientes = {
             <button class="btn-icon" data-id="${paciente.id}" data-accion="toggle" title="${paciente.status === 'standby' ? 'Reactivar' : 'Pausar'}">
               ${paciente.status === 'standby' ? '▶️' : '⏸️'}
             </button>
+            <button class="btn-icon btn-icon-danger" data-id="${paciente.id}" data-accion="eliminar" title="Eliminar paciente">
+              🗑️
+            </button>
           </div>
         </div>
         <div class="expediente-tests">
@@ -197,6 +202,35 @@ const expedientes = {
       await app.loadExpedientes();
     } catch (error) {
       app.mostrarToast(`Error: ${error.message}`, 'error');
+    }
+  },
+
+  /**
+   * Eliminar paciente con todos sus tests
+   */
+  async eliminarPaciente(pacienteId) {
+    try {
+      const paciente = await api.getPaciente(pacienteId);
+      if (!paciente) {
+        app.mostrarToast('Paciente no encontrado', 'error');
+        return;
+      }
+
+      const confirmacion = confirm(
+        `⚠️ ¿Estás seguro de que deseas eliminar el paciente "${paciente.nombre}" y todos sus evaluaciones?\n\nEsta acción no se puede deshacer.`
+      );
+
+      if (!confirmacion) {
+        return;
+      }
+
+      app.mostrarToast('Eliminando paciente...', 'info');
+      await api.deletePaciente(pacienteId);
+      app.mostrarToast('✓ Paciente eliminado correctamente', 'success');
+      await app.loadExpedientes();
+    } catch (error) {
+      console.error('Error al eliminar paciente:', error);
+      app.mostrarToast(`Error al eliminar: ${error.message}`, 'error');
     }
   },
 

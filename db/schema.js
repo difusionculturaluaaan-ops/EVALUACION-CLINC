@@ -345,6 +345,20 @@ async function toggleStatusPaciente(id) {
   }
 }
 
+async function deletePaciente(id) {
+  try {
+    // Las pruebas se eliminarán automáticamente por ON DELETE CASCADE
+    const result = await pool.query(
+      'DELETE FROM pacientes WHERE id = $1 RETURNING id',
+      [id]
+    );
+    return result.rows.length > 0;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+}
+
 // ==================== FUNCIONES PRUEBAS ====================
 
 async function getPruebas() {
@@ -617,6 +631,7 @@ module.exports = {
   crearPacienteTenant,
   actualizarPaciente,
   toggleStatusPaciente,
+  deletePaciente,
   getPruebas,
   getPruebasByTenant,
   getPruebasByPaciente,

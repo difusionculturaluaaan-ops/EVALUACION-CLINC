@@ -119,6 +119,15 @@ const api = {
   },
 
   /**
+   * Eliminar paciente y todos sus tests
+   */
+  async deletePaciente(id) {
+    return this.request(`/pacientes/${id}`, {
+      method: 'DELETE'
+    });
+  },
+
+  /**
    * Obtener pruebas de un paciente
    */
   async getPruebasPaciente(pacienteId) {

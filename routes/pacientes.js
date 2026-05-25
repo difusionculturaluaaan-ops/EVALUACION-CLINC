@@ -7,6 +7,7 @@ const {
   crearPacienteTenant,
   actualizarPaciente,
   toggleStatusPaciente,
+  deletePaciente,
   obtenerPruebasPaciente
 } = require('../db/schema');
 
@@ -111,6 +112,27 @@ router.patch('/:id/status', async (req, res) => {
     res.json(actualizado);
   } catch (error) {
     console.error('Error al cambiar status:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// DELETE: Eliminar paciente (con todos sus tests) - solo del tenant autenticado
+router.delete('/:id', async (req, res) => {
+  try {
+    const tenant_id = req.tenant_id;
+    const paciente = await getPacienteByIdTenant(req.params.id, tenant_id);
+    if (!paciente) {
+      return res.status(404).json({ error: 'Paciente no encontrado' });
+    }
+
+    const eliminado = await deletePaciente(req.params.id);
+    if (!eliminado) {
+      return res.status(400).json({ error: 'No se pudo eliminar el paciente' });
+    }
+
+    res.json({ success: true, message: 'Paciente y sus tests eliminados correctamente' });
+  } catch (error) {
+    console.error('Error al eliminar paciente:', error);
     res.status(500).json({ error: error.message });
   }
 });
