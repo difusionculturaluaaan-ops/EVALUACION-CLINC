@@ -527,23 +527,35 @@ select:focus {
 .expediente-actions {
   display: flex;
   gap: var(--spacing-sm);
+  flex-shrink: 0;
 }
 
 .btn-icon {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
   padding: 0;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   background: var(--color-surface-alt);
   color: var(--color-text);
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: var(--transition);
+  flex-shrink: 0;
 }
 
 .btn-icon:hover {
   background: var(--color-border);
+}
+
+.btn-icon-danger:hover {
+  background: #fee2e2;
+  color: #dc2626;
 }
 
 .expediente-tests {
