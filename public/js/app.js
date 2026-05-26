@@ -330,8 +330,20 @@ const app = {
    * Mostrar botón del paciente en pantalla del test
    */
   mostrarBotonPaciente() {
-    const testHeader = document.querySelector('.test-header');
-    if (!testHeader || !this.pacienteActivo) return;
+    if (!this.pacienteActivo) return;
+
+    // Buscar el .test-header dentro de la página activa
+    const activePage = document.querySelector('.page.active');
+    if (!activePage) {
+      console.warn('No active page found');
+      return;
+    }
+
+    const testHeader = activePage.querySelector('.test-header');
+    if (!testHeader) {
+      console.warn('No test-header found in active page');
+      return;
+    }
 
     // Remover botón anterior si existe
     const botonAnterior = testHeader.querySelector('.paciente-btn-header');
@@ -340,12 +352,16 @@ const app = {
     // Crear botón del paciente
     const btn = document.createElement('button');
     btn.className = 'paciente-btn-header';
+    btn.type = 'button';
     btn.title = 'Volver al expediente de ' + this.pacienteActivo.nombre;
     btn.innerHTML = `
       <span class="paciente-icon">👤</span>
       <span class="paciente-nombre">${this.pacienteActivo.nombre}</span>
     `;
-    btn.onclick = () => this.volverAlExpediente();
+    btn.onclick = (e) => {
+      e.preventDefault();
+      this.volverAlExpediente();
+    };
 
     // Insertar después del título (h2)
     const titulo = testHeader.querySelector('h2');
@@ -357,9 +373,9 @@ const app = {
   /**
    * Volver al expediente del paciente activo
    */
-  volverAlExpediente() {
+  async volverAlExpediente() {
     if (this.pacienteActivo) {
-      this.mostrarDetalleExpediente(this.pacienteActivo);
+      await this.mostrarDetallePaciente(this.pacienteActivo);
     }
   },
 
@@ -374,7 +390,10 @@ const app = {
         body: JSON.stringify({ estado: nuevoEstado })
       });
 
-      if (!response.ok) throw new Error('Error al cambiar estado');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Error al cambiar estado');
+      }
 
       const mensaje = nuevoEstado === 'oficial' ?
         '✅ Prueba marcada como Oficial' :
@@ -383,11 +402,11 @@ const app = {
 
       // Recargar expediente
       if (this.pacienteActivo) {
-        await this.mostrarDetalleExpediente(this.pacienteActivo);
+        await this.mostrarDetallePaciente(this.pacienteActivo);
       }
     } catch (error) {
       console.error('Error:', error);
-      this.mostrarToast('Error al cambiar estado', 'error');
+      this.mostrarToast(`Error: ${error.message}`, 'error');
     }
   },
 
@@ -402,17 +421,20 @@ const app = {
         method: 'DELETE'
       });
 
-      if (!response.ok) throw new Error('Error al eliminar');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Error al eliminar');
+      }
 
       this.mostrarToast('✓ Prueba eliminada', 'success');
 
       // Recargar expediente
       if (this.pacienteActivo) {
-        await this.mostrarDetalleExpediente(this.pacienteActivo);
+        await this.mostrarDetallePaciente(this.pacienteActivo);
       }
     } catch (error) {
       console.error('Error:', error);
-      this.mostrarToast('Error al eliminar prueba', 'error');
+      this.mostrarToast(`Error: ${error.message}`, 'error');
     }
   },
 
