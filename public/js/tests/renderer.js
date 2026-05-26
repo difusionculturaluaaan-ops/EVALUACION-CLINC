@@ -120,16 +120,16 @@ const testRenderer = {
         </div>
         <div class="opciones">
           <label class="opcion-label">
-            <input type="radio" name="pclr_r${i}" value="0">
-            <span class="opcion-box">No aplica (0)</span>
-          </label>
-          <label class="opcion-label">
             <input type="radio" name="pclr_r${i}" value="1">
-            <span class="opcion-box">Parcial (1)</span>
+            <span class="opcion-box">Nunca (1)</span>
           </label>
           <label class="opcion-label">
             <input type="radio" name="pclr_r${i}" value="2">
-            <span class="opcion-box">Claro (2)</span>
+            <span class="opcion-box">Parcialmente (2)</span>
+          </label>
+          <label class="opcion-label">
+            <input type="radio" name="pclr_r${i}" value="3">
+            <span class="opcion-box">Muchas veces (3)</span>
           </label>
         </div>
       </div>

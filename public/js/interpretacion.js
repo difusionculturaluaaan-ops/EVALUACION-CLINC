@@ -324,11 +324,11 @@ const interpretacion = {
       const total = data.reduce((a, b) => a + b, 0);
       let nivel, label, color;
 
-      if (total < 20) {
+      if (total <= 30) {
         nivel = 0;
         label = 'Sin rasgos psicopáticos significativos';
         color = '#276749';
-      } else if (total < 30) {
+      } else if (total <= 45) {
         nivel = 1;
         label = 'Rasgos moderados (Personalidad antisocial probable)';
         color = '#d97706';
