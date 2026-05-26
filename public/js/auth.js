@@ -17,14 +17,8 @@ class AuthManager {
   // ==================== Setup ====================
 
   setupEventListeners() {
-    // Tab switching
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', e => this.switchTab(e.target.dataset.tab));
-    });
-
     // Forms
     document.getElementById('loginForm')?.addEventListener('submit', e => this.handleLogin(e));
-    document.getElementById('registroForm')?.addEventListener('submit', e => this.handleRegistro(e));
   }
 
   switchTab(tab) {
