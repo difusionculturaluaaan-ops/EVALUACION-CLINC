@@ -351,17 +351,17 @@ const interpretacion = {
 
     obtenerNormasPoblacion() {
       return {
-        totalMedio: 23.6,
+        totalMedio: 20,
         totalMaximo: 60,
         items: {
-          1: 1.18, 2: 1.16, 3: 1.19, 4: 1.15, 5: 1.14,
-          6: 1.125, 7: 1.145, 8: 1.16, 9: 1.14, 10: 1.17,
-          11: 1.18, 12: 1.155, 13: 1.15, 14: 1.165, 15: 1.16,
-          16: 1.145, 17: 1.14, 18: 1.135, 19: 1.13, 20: 1.12
+          1: 1.0, 2: 1.0, 3: 1.0, 4: 1.0, 5: 1.0,
+          6: 1.0, 7: 1.0, 8: 1.0, 9: 1.0, 10: 1.0,
+          11: 1.0, 12: 1.0, 13: 1.0, 14: 1.0, 15: 1.0,
+          16: 1.0, 17: 1.0, 18: 1.0, 19: 1.0, 20: 1.0
         },
         factores: {
-          Factor1: { nombre: 'Interpersonal/Afectivo', media: 5.8 },
-          Factor2: { nombre: 'Estilo de vida/Antisocial', media: 5.77 }
+          Factor1: { nombre: 'Interpersonal/Afectivo', media: 10 },
+          Factor2: { nombre: 'Estilo de vida/Antisocial', media: 10 }
         }
       };
     }
