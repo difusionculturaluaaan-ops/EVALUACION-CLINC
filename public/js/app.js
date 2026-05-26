@@ -534,7 +534,7 @@ const app = {
 
         <!-- RESULTADOS -->
         <div style="margin-bottom: 10px; font-size: 9px;">
-          ${prueba.tipo === 'SCL90R' ? this.generarReporteSCL(prueba, subescalas) : this.generarReporteGenerico(prueba, subescalas)}
+          ${prueba.tipo === 'SCL90R' ? this.generarReporteSCL(prueba, subescalas) : prueba.tipo === 'PCLR' ? this.generarReportePCLR(prueba, subescalas) : this.generarReporteGenerico(prueba, subescalas)}
         </div>
 
         <!-- INTERPRETACIÓN -->
@@ -565,6 +565,9 @@ const app = {
     // Renderizar gráfica después de que el DOM esté actualizado
     setTimeout(() => {
       this.renderChartReporte(prueba);
+      if (prueba.tipo === 'PCLR') {
+        this.renderChartComparativoPCLR(prueba);
+      }
     }, 300);
 
     console.log('✓ Reporte detallado renderizado');
@@ -732,6 +735,83 @@ const app = {
   },
 
   /**
+   * Renderizar gráfica comparativa PCL-R: Paciente vs Población General
+   */
+  async renderChartComparativoPCLR(prueba) {
+    const canvasElement = document.getElementById('chartComparativoPCLR');
+    if (!canvasElement || typeof Chart === 'undefined') return;
+
+    if (canvasElement.chartInstance) {
+      canvasElement.chartInstance.destroy();
+      canvasElement.chartInstance = null;
+    }
+
+    try {
+      const data = typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data || [];
+      const normas = interpretacion.pclr.obtenerNormasPoblacion();
+
+      const labels = Array.from({ length: 20 }, (_, i) => `${i + 1}`);
+      const valoresPaciente = Array.isArray(data) ? data.slice(0, 20) : [];
+      const valoresPoblacion = labels.map((_, i) => normas.items[i + 1] || 0.3);
+
+      const ctx = canvasElement.getContext('2d');
+      canvasElement.chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Paciente',
+              data: valoresPaciente,
+              backgroundColor: 'rgba(220, 38, 38, 0.7)',
+              borderColor: '#dc2626',
+              borderWidth: 1
+            },
+            {
+              label: 'Población General',
+              data: valoresPoblacion,
+              backgroundColor: 'rgba(39, 103, 73, 0.7)',
+              borderColor: '#276749',
+              borderWidth: 1
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'x',
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              labels: { font: { size: 10 }, padding: 10 }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0,0,0,0.8)',
+              padding: 8,
+              titleFont: { size: 10 },
+              bodyFont: { size: 9 }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 3.5,
+              ticks: { font: { size: 8 } },
+              grid: { color: 'rgba(0, 0, 0, 0.1)' }
+            },
+            x: {
+              ticks: { font: { size: 8 } }
+            }
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Error al renderizar gráfica comparativa PCL-R:', error);
+    }
+  },
+
+  /**
    * Generar reporte específico para SCL-90-R (formato PDF)
    */
   generarReporteSCL(prueba, subescalas) {
@@ -835,6 +915,41 @@ const app = {
         </table>
       </div>
     `;
+  },
+
+  /**
+   * Generar reporte PCL-R con gráfica comparativa vs población general
+   */
+  generarReportePCLR(prueba, subescalas) {
+    const data = typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data || [];
+    const normas = interpretacion.pclr.obtenerNormasPoblacion();
+    const totalPaciente = prueba.total || (Array.isArray(data) ? data.reduce((a, b) => a + (b || 0), 0) : 0);
+
+    let html = `
+      <div style="margin: 4px 0; padding: 4px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: #333;" class="reporte-analisis">
+        <h4 style="color: #333; font-size: 9px; margin: 0 0 3px 0; font-weight: bold;">ANÁLISIS COMPARATIVO: PCL-R vs Población General</h4>
+        <div style="position: relative; width: 100%; height: 200px; margin-bottom: 8px;">
+          <canvas id="chartComparativoPCLR" style="width: 100%; height: 100%;"></canvas>
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; font-size: 8px;">
+          <tr style="background: #2c5aa0; color: white;">
+            <th style="border: 1px solid #999; padding: 2px; text-align: left;">Métrica</th>
+            <th style="border: 1px solid #999; padding: 2px; text-align: center;">Paciente</th>
+            <th style="border: 1px solid #999; padding: 2px; text-align: center;">Población</th>
+            <th style="border: 1px solid #999; padding: 2px; text-align: center;">Diferencia</th>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 2px; font-weight: bold;">Puntaje Total</td>
+            <td style="border: 1px solid #ddd; padding: 2px; text-align: center;">${totalPaciente.toFixed(1)}/60</td>
+            <td style="border: 1px solid #ddd; padding: 2px; text-align: center;">${normas.totalMedio.toFixed(1)}/60</td>
+            <td style="border: 1px solid #ddd; padding: 2px; text-align: center; ${totalPaciente > normas.totalMedio ? 'color: #dc2626; font-weight: bold;' : 'color: #276749;'}">${(totalPaciente - normas.totalMedio).toFixed(1)}</td>
+          </tr>
+        </table>
+      </div>
+    `;
+
+    return html;
   },
 
   /**
@@ -1543,13 +1658,13 @@ const app = {
 
       // Intentar convertir canvas a imagen de alta resolución
       try {
+        // Convertir chart principal
         const canvasOriginal = document.querySelector('canvas#chartReporte');
         const canvasClonado = elemento.querySelector('canvas#chartReporte');
 
         if (canvasOriginal && canvasClonado) {
-          // Capturar canvas con alta resolución (3x scale para máxima nitidez)
           const imagenDataUrl = await this.capturarCanvasAltaResolucion(canvasOriginal);
-          console.log('✓ Canvas convertido a alta resolución');
+          console.log('✓ Canvas principal convertido a alta resolución');
 
           const img = document.createElement('img');
           img.src = imagenDataUrl;
@@ -1557,10 +1672,27 @@ const app = {
           img.style.height = '180px';
 
           canvasClonado.parentNode.replaceChild(img, canvasClonado);
-          console.log('✓ Canvas reemplazado por imagen de alta resolución');
+          console.log('✓ Canvas principal reemplazado por imagen');
+        }
+
+        // Convertir chart comparativo (PCL-R)
+        const canvasComparativoOriginal = document.querySelector('canvas#chartComparativoPCLR');
+        const canvasComparativoClonado = elemento.querySelector('canvas#chartComparativoPCLR');
+
+        if (canvasComparativoOriginal && canvasComparativoClonado) {
+          const imagenComparativaUrl = await this.capturarCanvasAltaResolucion(canvasComparativoOriginal);
+          console.log('✓ Canvas comparativo PCL-R convertido a alta resolución');
+
+          const imgComparativa = document.createElement('img');
+          imgComparativa.src = imagenComparativaUrl;
+          imgComparativa.style.width = '100%';
+          imgComparativa.style.height = '200px';
+
+          canvasComparativoClonado.parentNode.replaceChild(imgComparativa, canvasComparativoClonado);
+          console.log('✓ Canvas comparativo reemplazado por imagen');
         }
       } catch (canvasError) {
-        console.warn('Advertencia: no se pudo procesar el canvas:', canvasError.message);
+        console.warn('Advertencia: no se pudo procesar los canvas:', canvasError.message);
       }
 
       const filename = `Reporte_${nombrePaciente.replace(/\s+/g, '_')}_${new Date().getTime()}.pdf`;

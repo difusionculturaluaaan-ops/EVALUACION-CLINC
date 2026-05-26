@@ -324,17 +324,21 @@ const interpretacion = {
       const total = data.reduce((a, b) => a + b, 0);
       let nivel, label, color;
 
-      if (total <= 30) {
+      if (total < 20) {
         nivel = 0;
-        label = 'Sin rasgos psicopáticos significativos';
+        label = 'Sin indicadores significativos de psicopatía';
         color = '#276749';
-      } else if (total <= 45) {
+      } else if (total < 30) {
         nivel = 1;
-        label = 'Rasgos moderados (Personalidad antisocial probable)';
+        label = 'Rasgos psicopáticos subclínicos o moderados';
+        color = '#0284c7';
+      } else if (total < 40) {
+        nivel = 2;
+        label = 'Umbral diagnóstico - Psicopatía probable';
         color = '#d97706';
       } else {
-        nivel = 2;
-        label = 'Psicopatía';
+        nivel = 3;
+        label = 'Psicopatía severa';
         color = '#dc2626';
       }
 
@@ -343,6 +347,23 @@ const interpretacion = {
 
     advertencia() {
       return '⚠️ El PCL-R es de uso restringido. Solo profesionales entrenados deben administrarlo.';
+    },
+
+    obtenerNormasPoblacion() {
+      return {
+        totalMedio: 23.6,
+        totalMaximo: 60,
+        items: {
+          1: 1.18, 2: 1.16, 3: 1.19, 4: 1.15, 5: 1.14,
+          6: 1.125, 7: 1.145, 8: 1.16, 9: 1.14, 10: 1.17,
+          11: 1.18, 12: 1.155, 13: 1.15, 14: 1.165, 15: 1.16,
+          16: 1.145, 17: 1.14, 18: 1.135, 19: 1.13, 20: 1.12
+        },
+        factores: {
+          Factor1: { nombre: 'Interpersonal/Afectivo', media: 5.8 },
+          Factor2: { nombre: 'Estilo de vida/Antisocial', media: 5.77 }
+        }
+      };
     }
   },
 
