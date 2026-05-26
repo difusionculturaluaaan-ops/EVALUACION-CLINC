@@ -297,6 +297,8 @@ const app = {
     if (this.pacienteActivo) {
       // Si hay paciente activo, ir directamente al test
       this.showPage(pageId);
+      // Mostrar botón del paciente en la pantalla del test
+      setTimeout(() => this.mostrarBotonPaciente(), 100);
     } else {
       // Si no hay paciente, guardar el test y abrir formulario de nueva ficha
       this.testEnEspera = pageId;
@@ -321,6 +323,96 @@ const app = {
       setTimeout(() => {
         document.getElementById('f-nombre')?.focus();
       }, 300);
+    }
+  },
+
+  /**
+   * Mostrar botón del paciente en pantalla del test
+   */
+  mostrarBotonPaciente() {
+    const testHeader = document.querySelector('.test-header');
+    if (!testHeader || !this.pacienteActivo) return;
+
+    // Remover botón anterior si existe
+    const botonAnterior = testHeader.querySelector('.paciente-btn-header');
+    if (botonAnterior) botonAnterior.remove();
+
+    // Crear botón del paciente
+    const btn = document.createElement('button');
+    btn.className = 'paciente-btn-header';
+    btn.title = 'Volver al expediente de ' + this.pacienteActivo.nombre;
+    btn.innerHTML = `
+      <span class="paciente-icon">👤</span>
+      <span class="paciente-nombre">${this.pacienteActivo.nombre}</span>
+    `;
+    btn.onclick = () => this.volverAlExpediente();
+
+    // Insertar después del título (h2)
+    const titulo = testHeader.querySelector('h2');
+    if (titulo) {
+      titulo.parentNode.insertBefore(btn, titulo.nextSibling);
+    }
+  },
+
+  /**
+   * Volver al expediente del paciente activo
+   */
+  volverAlExpediente() {
+    if (this.pacienteActivo) {
+      this.mostrarDetalleExpediente(this.pacienteActivo);
+    }
+  },
+
+  /**
+   * Cambiar estado de una prueba (Borrador <-> Oficial)
+   */
+  async cambiarEstadoPrueba(pruebaId, nuevoEstado) {
+    try {
+      const response = await fetch(`/api/pruebas/${pruebaId}/estado`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ estado: nuevoEstado })
+      });
+
+      if (!response.ok) throw new Error('Error al cambiar estado');
+
+      const mensaje = nuevoEstado === 'oficial' ?
+        '✅ Prueba marcada como Oficial' :
+        '📝 Prueba convertida a Borrador';
+      this.mostrarToast(mensaje, 'success');
+
+      // Recargar expediente
+      if (this.pacienteActivo) {
+        await this.mostrarDetalleExpediente(this.pacienteActivo);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      this.mostrarToast('Error al cambiar estado', 'error');
+    }
+  },
+
+  /**
+   * Eliminar una prueba (solo borradores)
+   */
+  async eliminarPrueba(pruebaId) {
+    if (!confirm('¿Deseas eliminar esta prueba? No se puede deshacer.')) return;
+
+    try {
+      const response = await fetch(`/api/pruebas/${pruebaId}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) throw new Error('Error al eliminar');
+
+      this.mostrarToast('✓ Prueba eliminada', 'success');
+
+      // Recargar expediente
+      if (this.pacienteActivo) {
+        await this.mostrarDetalleExpediente(this.pacienteActivo);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      this.mostrarToast('Error al eliminar prueba', 'error');
     }
   },
 
@@ -2178,6 +2270,9 @@ const app = {
 
       const icono = iconos[prueba.tipo] || '📋';
       const nombre = nombres[prueba.tipo] || prueba.tipo;
+      const estado = prueba.estado || 'borrador';
+      const estadoLabel = estado === 'oficial' ? '✅ Oficial' : '📝 Borrador';
+      const estadoColor = estado === 'oficial' ? '#276749' : '#d97706';
 
       // Generar interpretación basada en la puntuación
       let interpretacionText = 'Revisión pendiente';
@@ -2192,6 +2287,7 @@ const app = {
             <div>
               <h3 class="estudio-title">${nombre}</h3>
               <p class="estudio-fecha">${fecha}</p>
+              <span class="estudio-estado" style="color: ${estadoColor}; font-weight: 600; font-size: 12px;">${estadoLabel}</span>
             </div>
             <span class="estudio-icon">${icono}</span>
           </div>
@@ -2209,6 +2305,18 @@ const app = {
             <button class="btn-ver-reporte" onclick="app.mostrarReporteDetallado(${JSON.stringify(prueba).replace(/"/g, '&quot;')}, ${JSON.stringify(this.pacienteActivo).replace(/"/g, '&quot;')})">
               📋 Ver Reporte
             </button>
+            ${estado === 'borrador' ? `
+              <button class="btn-estado btn-oficial" onclick="app.cambiarEstadoPrueba(${prueba.id}, 'oficial')">
+                ✓ Marcar Oficial
+              </button>
+              <button class="btn-eliminar" onclick="app.eliminarPrueba(${prueba.id})">
+                🗑️ Eliminar
+              </button>
+            ` : `
+              <button class="btn-estado btn-borrador" onclick="app.cambiarEstadoPrueba(${prueba.id}, 'borrador')">
+                ↩️ Convertir a Borrador
+              </button>
+            `}
           </div>
         </div>
       `;

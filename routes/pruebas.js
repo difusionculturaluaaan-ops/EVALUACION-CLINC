@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const pool = require('../db/pool');
 const {
   getPacienteByIdTenant,
   guardarPrueba,
@@ -107,6 +108,69 @@ router.get('/normas-poblacion/:tipo_test', async (req, res) => {
     res.json(normas);
   } catch (error) {
     console.error('Error al obtener normas de población:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// PUT: Cambiar estado de una prueba (Borrador <-> Oficial)
+router.put('/:id/estado', async (req, res) => {
+  try {
+    const tenant_id = req.tenant_id;
+    const { id } = req.params;
+    const { estado } = req.body;
+
+    if (!['borrador', 'oficial'].includes(estado)) {
+      return res.status(400).json({ error: 'Estado inválido' });
+    }
+
+    // Validar que la prueba pertenezca al tenant
+    const prueba = await obtenerPruebaById(id);
+    if (!prueba) {
+      return res.status(404).json({ error: 'Prueba no encontrada' });
+    }
+    if (prueba.tenant_id !== tenant_id) {
+      return res.status(403).json({ error: 'Acceso denegado' });
+    }
+
+    // Actualizar estado
+    const result = await pool.query(
+      'UPDATE pruebas SET estado = $1, actualizado_en = NOW() WHERE id = $2 RETURNING *',
+      [estado, id]
+    );
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error al cambiar estado:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// DELETE: Eliminar una prueba (solo borradores)
+router.delete('/:id', async (req, res) => {
+  try {
+    const tenant_id = req.tenant_id;
+    const { id } = req.params;
+
+    // Validar que la prueba pertenezca al tenant
+    const prueba = await obtenerPruebaById(id);
+    if (!prueba) {
+      return res.status(404).json({ error: 'Prueba no encontrada' });
+    }
+    if (prueba.tenant_id !== tenant_id) {
+      return res.status(403).json({ error: 'Acceso denegado' });
+    }
+
+    // Solo permitir eliminar borradores
+    if (prueba.estado === 'oficial') {
+      return res.status(400).json({ error: 'No se pueden eliminar pruebas oficiales' });
+    }
+
+    // Eliminar
+    await pool.query('DELETE FROM pruebas WHERE id = $1', [id]);
+
+    res.json({ success: true, message: 'Prueba eliminada' });
+  } catch (error) {
+    console.error('Error al eliminar:', error);
     res.status(500).json({ error: error.message });
   }
 });

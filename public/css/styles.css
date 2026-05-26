@@ -689,6 +689,38 @@ textarea {
   margin-bottom: var(--spacing-md);
 }
 
+.paciente-btn-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: var(--spacing-md);
+  padding: 8px 12px;
+  background: #e3f2fd;
+  border: 1px solid #2196f3;
+  border-radius: 6px;
+  color: #1976d2;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 13px;
+  transition: all 200ms ease;
+}
+
+.paciente-btn-header:hover {
+  background: #bbdefb;
+  transform: translateX(2px);
+}
+
+.paciente-icon {
+  font-size: 16px;
+}
+
+.paciente-nombre {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
 .help-text {
   font-size: 13px;
   color: var(--color-text-secondary);
@@ -2342,6 +2374,51 @@ textarea {
 
 .btn-descargar:hover {
   background: var(--color-border);
+}
+
+.btn-estado {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffc107;
+}
+
+.btn-estado:hover {
+  background: #ffe69c;
+}
+
+.btn-oficial {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #28a745;
+}
+
+.btn-oficial:hover {
+  background: #c3e6cb;
+}
+
+.btn-borrador {
+  background: #cfe2ff;
+  color: #084298;
+  border: 1px solid #0d6efd;
+}
+
+.btn-borrador:hover {
+  background: #b6d4fe;
+}
+
+.btn-eliminar {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.btn-eliminar:hover {
+  background: #f5c2c7;
+}
+
+.estudio-estado {
+  display: inline-block;
+  margin-top: 4px;
 }
 
 .empty-estudios {

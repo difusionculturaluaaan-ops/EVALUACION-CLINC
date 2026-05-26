@@ -73,9 +73,11 @@ async function createTables() {
         paciente_id INTEGER NOT NULL REFERENCES pacientes(id) ON DELETE CASCADE,
         tipo TEXT NOT NULL,
         fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         data TEXT NOT NULL,
         total REAL,
-        subescalas TEXT
+        subescalas TEXT,
+        estado TEXT DEFAULT 'borrador'
       )
     `);
 
@@ -99,6 +101,13 @@ async function createTables() {
       ALTER TABLE tenants
       ADD COLUMN IF NOT EXISTS logo_url TEXT,
       ADD COLUMN IF NOT EXISTS logo_updated_at TIMESTAMP;
+    `);
+
+    // Agregar columnas de estado y actualizado_en a pruebas si no existen
+    await pool.query(`
+      ALTER TABLE pruebas
+      ADD COLUMN IF NOT EXISTS estado TEXT DEFAULT 'borrador',
+      ADD COLUMN IF NOT EXISTS actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
     `);
 
     // Tabla super admin
@@ -410,9 +419,9 @@ async function getPruebaById(id) {
 async function crearPrueba(datos) {
   try {
     const result = await pool.query(
-      `INSERT INTO pruebas (tenant_id, paciente_id, tipo, data, total, subescalas)
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      [datos.tenant_id, datos.paciente_id, datos.tipo, JSON.stringify(datos.data), datos.total, JSON.stringify(datos.subescalas)]
+      `INSERT INTO pruebas (tenant_id, paciente_id, tipo, data, total, subescalas, estado)
+       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+      [datos.tenant_id, datos.paciente_id, datos.tipo, JSON.stringify(datos.data), datos.total, JSON.stringify(datos.subescalas), 'borrador']
     );
     return result.rows[0] || null;
   } catch (err) {
