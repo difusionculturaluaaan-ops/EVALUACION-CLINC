@@ -201,6 +201,7 @@ const app = {
       this.testEnEspera = null;
       this.pruebaActual = null;
       localStorage.removeItem('pacienteActivo');
+      this.limpiarBotonPaciente();
       this.loadDashboard();
     } else if (this.pageTestMap[pageId]) {
       this.initTest(pageId);
@@ -327,46 +328,47 @@ const app = {
   },
 
   /**
-   * Mostrar botón del paciente en pantalla del test
+   * Mostrar botón del paciente en sidebar
    */
   mostrarBotonPaciente() {
     if (!this.pacienteActivo) return;
 
-    // Buscar el .test-header dentro de la página activa
-    const activePage = document.querySelector('.page.active');
-    if (!activePage) {
-      console.warn('No active page found');
-      return;
-    }
+    const container = document.getElementById('paciente-sidebar-container');
+    if (!container) return;
 
-    const testHeader = activePage.querySelector('.test-header');
-    if (!testHeader) {
-      console.warn('No test-header found in active page');
-      return;
-    }
+    // Limpiar contenedor
+    container.innerHTML = '';
 
-    // Remover botón anterior si existe
-    const botonAnterior = testHeader.querySelector('.paciente-btn-header');
-    if (botonAnterior) botonAnterior.remove();
-
-    // Crear botón del paciente
+    // Crear botón del paciente con estilo nav-item
     const btn = document.createElement('button');
-    btn.className = 'paciente-btn-header';
+    btn.className = 'nav-item paciente-nav-item';
     btn.type = 'button';
-    btn.title = 'Volver al expediente de ' + this.pacienteActivo.nombre;
-    btn.innerHTML = `
-      <span class="paciente-icon">👤</span>
-      <span class="paciente-nombre">${this.pacienteActivo.nombre}</span>
-    `;
+    btn.title = 'Paciente en evaluación: ' + this.pacienteActivo.nombre;
     btn.onclick = (e) => {
       e.preventDefault();
       this.volverAlExpediente();
     };
+    btn.innerHTML = `
+      <span class="icon">👤</span>
+      <span class="label">${this.pacienteActivo.nombre}</span>
+    `;
 
-    // Insertar después del título (h2)
-    const titulo = testHeader.querySelector('h2');
-    if (titulo) {
-      titulo.parentNode.insertBefore(btn, titulo.nextSibling);
+    container.appendChild(btn);
+
+    // Agregar divisor
+    const divider = document.createElement('div');
+    divider.className = 'nav-divider';
+    divider.textContent = 'Tests Disponibles';
+    container.appendChild(divider);
+  },
+
+  /**
+   * Limpiar botón del paciente del sidebar
+   */
+  limpiarBotonPaciente() {
+    const container = document.getElementById('paciente-sidebar-container');
+    if (container) {
+      container.innerHTML = '';
     }
   },
 

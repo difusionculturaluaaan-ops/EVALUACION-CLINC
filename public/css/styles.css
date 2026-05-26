@@ -318,6 +318,35 @@ body {
   letter-spacing: 1px;
 }
 
+.paciente-nav-item {
+  background: var(--gradient-primary) !important;
+  color: #ffffff !important;
+  box-shadow: var(--shadow-lg) !important;
+  margin-bottom: 8px !important;
+  border: 2px solid transparent;
+}
+
+.paciente-nav-item:hover {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%) !important;
+  box-shadow: var(--shadow-lg), 0 4px 12px rgba(25, 118, 210, 0.4) !important;
+  transform: translateY(-3px) !important;
+}
+
+.paciente-nav-item .icon {
+  display: inline-block !important;
+  font-size: 20px;
+}
+
+.paciente-nav-item .label {
+  flex: 1;
+  text-align: left;
+  font-weight: 700;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* ============================================
    MAIN CONTENT
    ============================================ */
@@ -687,38 +716,6 @@ textarea {
   font-weight: 700;
   color: var(--color-text);
   margin-bottom: var(--spacing-md);
-}
-
-.paciente-btn-header {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: var(--spacing-md);
-  padding: 8px 12px;
-  background: #e3f2fd;
-  border: 1px solid #2196f3;
-  border-radius: 6px;
-  color: #1976d2;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 13px;
-  transition: all 200ms ease;
-}
-
-.paciente-btn-header:hover {
-  background: #bbdefb;
-  transform: translateX(2px);
-}
-
-.paciente-icon {
-  font-size: 16px;
-}
-
-.paciente-nombre {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 200px;
 }
 
 .help-text {
