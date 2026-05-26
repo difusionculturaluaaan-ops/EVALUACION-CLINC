@@ -502,27 +502,27 @@ const app = {
 
         <!-- DATOS DEL PACIENTE -->
         <div style="background: #f9f9f9; padding: 8px; margin-bottom: 10px; border-radius: 3px;">
-          <h3 style="margin: 0 0 6px 0; color: #2c5aa0; font-size: 11px; font-weight: bold;">DATOS DEL PACIENTE</h3>
-          <table style="width: 100%; font-size: 10px; border-collapse: collapse; line-height: 1.4;">
+          <h3 style="margin: 0 0 6px 0; color: #2c5aa0; font-size: 12px; font-weight: bold; text-decoration: underline;">DATOS DEL PACIENTE</h3>
+          <table style="width: 100%; font-size: 13px; border-collapse: collapse; line-height: 1.4;">
             <tr>
-              <td style="width: 18%; padding: 3px;"><strong>Nombre:</strong></td>
-              <td style="padding: 3px; width: 32%;">${paciente ? paciente.nombre : 'N/A'}</td>
-              <td style="width: 15%; padding: 3px;"><strong>Edad:</strong></td>
-              <td style="padding: 3px;">${paciente && paciente.edad ? paciente.edad : 'N/A'}</td>
+              <td style="width: 18%; padding: 3px; color: #000; font-weight: bold;"><strong>Nombre:</strong></td>
+              <td style="padding: 3px; width: 32%; color: #000;">${paciente ? paciente.nombre : 'N/A'}</td>
+              <td style="width: 15%; padding: 3px; color: #000; font-weight: bold;"><strong>Edad:</strong></td>
+              <td style="padding: 3px; color: #000;">${paciente && paciente.edad ? paciente.edad : 'N/A'}</td>
             </tr>
             <tr>
-              <td style="padding: 3px;"><strong>Sexo:</strong></td>
-              <td style="padding: 3px;">${paciente && paciente.sexo ? paciente.sexo : 'N/A'}</td>
-              <td style="padding: 3px;"><strong>E. Civil:</strong></td>
-              <td style="padding: 3px;">${paciente && paciente.estado_civil ? paciente.estado_civil : 'N/A'}</td>
+              <td style="padding: 3px; color: #000; font-weight: bold;"><strong>Sexo:</strong></td>
+              <td style="padding: 3px; color: #000;">${paciente && paciente.sexo ? paciente.sexo : 'N/A'}</td>
+              <td style="padding: 3px; color: #000; font-weight: bold;"><strong>E. Civil:</strong></td>
+              <td style="padding: 3px; color: #000;">${paciente && paciente.estado_civil ? paciente.estado_civil : 'N/A'}</td>
             </tr>
             <tr>
-              <td style="padding: 3px;"><strong>Medicamentos:</strong></td>
-              <td colspan="3" style="padding: 3px; font-size: 9px;">${paciente && paciente.medicamentos ? paciente.medicamentos : 'No especificado'}</td>
+              <td style="padding: 3px; color: #000; font-weight: bold;"><strong>Medicamentos:</strong></td>
+              <td colspan="3" style="padding: 3px; font-size: 13px; color: #000;">${paciente && paciente.medicamentos ? paciente.medicamentos : 'No especificado'}</td>
             </tr>
             <tr>
-              <td style="padding: 3px;"><strong>Fecha:</strong></td>
-              <td colspan="3" style="padding: 3px; font-size: 9px;">${new Date(prueba.fecha).toLocaleDateString('es-CO', { year: 'numeric', month: 'short', day: 'numeric' })}</td>
+              <td style="padding: 3px; color: #000; font-weight: bold;"><strong>Fecha:</strong></td>
+              <td colspan="3" style="padding: 3px; font-size: 13px; color: #000;">${new Date(prueba.fecha).toLocaleDateString('es-CO', { year: 'numeric', month: 'short', day: 'numeric' })}</td>
             </tr>
           </table>
         </div>
@@ -763,7 +763,7 @@ const app = {
     escalasOrdenadas.forEach((escala, idx) => {
       const valor = Number(subescalas[escala]) || 0;
       const norma = normas[escala];
-      const bgColor = idx % 2 === 0 ? '#f0f0f0' : 'white';
+      const bgColor = '#ffffff';
       html += `<tr style="background: ${bgColor};">
         <td style="border: 1px solid #ddd; padding: 3px; font-weight: bold; font-size: 8px;">${escalasMap[escala]}</td>
         <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${valor.toFixed(2)}</td>
@@ -915,22 +915,22 @@ const app = {
       return `
         <!-- VALIDACIÓN PROFESIONAL -->
         <div id="validacion-profesional-section" style="background: #f0f4f8; padding: 8px; margin-bottom: 10px; border: 1px solid #2c5aa0; border-radius: 3px;">
-          <h3 style="margin: 0 0 6px 0; color: #2c5aa0; font-size: 11px; font-weight: bold; border-bottom: 1px solid #2c5aa0; padding-bottom: 4px;">VALIDACIÓN PROFESIONAL</h3>
+          <h3 style="margin: 0 0 6px 0; color: #2c5aa0; font-size: 12px; font-weight: bold; border-bottom: 1px solid #2c5aa0; padding-bottom: 4px; text-decoration: underline;">VALIDACIÓN PROFESIONAL</h3>
 
-          <table style="width: 100%; font-size: 10px; border-collapse: collapse; line-height: 1.4;">
+          <table style="width: 100%; font-size: 13px; border-collapse: collapse; line-height: 1.4;">
             <tr>
-              <td style="width: 30%; padding: 3px;"><strong>Profesional:</strong></td>
-              <td style="padding: 3px;">${nombre || '—'}</td>
-              <td style="width: 20%; padding: 3px;"><strong>Cédula:</strong></td>
-              <td style="padding: 3px;">${cedula || '—'}</td>
+              <td style="width: 30%; padding: 3px; color: #000; font-weight: bold;"><strong>Profesional:</strong></td>
+              <td style="padding: 3px; color: #000;">${nombre || '—'}</td>
+              <td style="width: 20%; padding: 3px; color: #000; font-weight: bold;"><strong>Cédula:</strong></td>
+              <td style="padding: 3px; color: #000;">${cedula || '—'}</td>
             </tr>
             <tr>
-              <td style="padding: 3px;"><strong>Especialidad:</strong></td>
-              <td colspan="3" style="padding: 3px;">${especialidad || '—'}</td>
+              <td style="padding: 3px; color: #000; font-weight: bold;"><strong>Especialidad:</strong></td>
+              <td colspan="3" style="padding: 3px; color: #000;">${especialidad || '—'}</td>
             </tr>
             <tr>
-              <td style="padding: 3px; vertical-align: top;"><strong>Diagnóstico:</strong></td>
-              <td colspan="3" style="padding: 3px; font-size: 9px;">${diagnostico || '—'}</td>
+              <td style="padding: 3px; vertical-align: top; color: #000; font-weight: bold;"><strong>Diagnóstico:</strong></td>
+              <td colspan="3" style="padding: 3px; font-size: 13px; color: #000;">${diagnostico || '—'}</td>
             </tr>
           </table>
 
