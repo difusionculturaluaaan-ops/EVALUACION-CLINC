@@ -52,6 +52,26 @@ const interpretacion = {
 
   // ===== SCL-90-R =====
   scl90r: {
+    // Parámetros normativos por subescala (media, DS, corte clínico)
+    normas: {
+      SOM: { media: 0.47, ds: 0.52, corte: 1.0 },
+      OC: { media: 0.59, ds: 0.55, corte: 1.2 },
+      SI: { media: 0.47, ds: 0.52, corte: 1.0 },
+      DEP: { media: 0.59, ds: 0.59, corte: 1.2 },
+      ANX: { media: 0.39, ds: 0.44, corte: 1.0 },
+      HOS: { media: 0.46, ds: 0.55, corte: 1.0 },
+      PHOB: { media: 0.15, ds: 0.31, corte: 0.7 },
+      PAR: { media: 0.47, ds: 0.52, corte: 1.0 },
+      PSY: { media: 0.19, ds: 0.36, corte: 0.7 }
+    },
+
+    // Índices globales: media normal, DS, corte clínico
+    indicesGlobales: {
+      GSI: { media: 0.44, ds: 0.43, corte: 0.70 },
+      PST: { media: 26.9, ds: 18.3, corte: 37 },
+      PSDI: { media: 1.55, ds: 0.46, corte: 1.85 }
+    },
+
     subescalas: {
       SOM: { name: 'Somatización', items: [0, 3, 11, 26, 39, 41, 47, 48, 51, 52, 55, 57] },
       OC: { name: 'Obsesión-Compulsión', items: [2, 8, 9, 27, 37, 44, 45, 50, 54, 64] },
@@ -70,11 +90,15 @@ const interpretacion = {
       for (const [key, sub] of Object.entries(this.subescalas)) {
         const suma = sub.items.reduce((acc, i) => acc + (data[i] || 0), 0);
         const media = suma / sub.items.length;
+        const norma = this.normas[key];
         subescalas[key] = {
           nombre: sub.name,
           suma: suma,
           media: media.toFixed(2),
-          nivel: this.getNivelSubescala(media)
+          mediaNormal: norma.media,
+          ds: norma.ds,
+          corte: norma.corte,
+          nivel: this.getNivelSubescala(media, key)
         };
       }
 
@@ -89,66 +113,122 @@ const interpretacion = {
         GSI: GSI.toFixed(3),
         PST: PST,
         PSDI: PSDI.toFixed(3),
+        indicesGlobales: {
+          GSI: { valor: GSI.toFixed(3), media: this.indicesGlobales.GSI.media, corte: this.indicesGlobales.GSI.corte },
+          PST: { valor: PST, media: this.indicesGlobales.PST.media, corte: this.indicesGlobales.PST.corte },
+          PSDI: { valor: PSDI.toFixed(3), media: this.indicesGlobales.PSDI.media, corte: this.indicesGlobales.PSDI.corte }
+        },
         interpretacion
       };
     },
 
-    getNivelSubescala(media) {
-      if (media < 0.70) return { label: 'Sin significación', color: '#276749' };
-      if (media < 1.30) return { label: 'Leve', color: '#0284c7' };
-      if (media < 2.00) return { label: 'Moderada', color: '#d97706' };
+    getNivelSubescala(media, key) {
+      const corte = this.normas[key]?.corte || 1.0;
+      if (media < corte) return { label: 'Normal', color: '#276749' };
+      if (media < corte * 1.3) return { label: 'Leve', color: '#0284c7' };
+      if (media < corte * 1.7) return { label: 'Moderada', color: '#d97706' };
       return { label: 'Severa', color: '#dc2626' };
     },
 
     interpretarGSI(gsi) {
       let label, color, nivel;
 
-      if (gsi < 0.70) {
+      if (gsi < 0.44) {
         nivel = 0;
-        label = 'Sin Caseness';
+        label = 'Sin malestar significativo';
         color = '#276749';
-      } else if (gsi < 1.30) {
+      } else if (gsi < 0.70) {
         nivel = 1;
-        label = 'Caseness Leve';
+        label = 'Malestar leve';
         color = '#0284c7';
-      } else if (gsi < 2.00) {
+      } else if (gsi < 1.10) {
         nivel = 2;
-        label = 'Caseness Moderado';
+        label = 'Malestar moderado (Umbral clínico)';
         color = '#d97706';
-      } else {
+      } else if (gsi < 1.80) {
         nivel = 3;
-        label = 'Caseness Severo';
+        label = 'Malestar severo';
         color = '#dc2626';
+      } else {
+        nivel = 4;
+        label = 'Malestar muy severo';
+        color = '#991b1b';
       }
 
       return { label, color, nivel };
     }
   },
 
-  // ===== MMPI-2 =====
+  // ===== MMPI-2 (Minnesota Multiphasic Personality Inventory-2) =====
   mmpi2: {
-    escalas: ['L', 'F', 'K', 'Hs', 'D', 'Hy', 'Pd', 'Mf', 'Pa', 'Pt', 'Sc', 'Ma', 'Si'],
-    escalasClinicas: ['Hs', 'D', 'Hy', 'Pd', 'Mf', 'Pa', 'Pt', 'Sc', 'Ma', 'Si'],
+    // Escalas de Validez (T-score: media 50, DS 10)
+    escalasValidez: {
+      L: { nombre: 'Mentira', corteAlerta: 65 },
+      F: { nombre: 'Infrecuencia', corteAlerta: 80 },
+      K: { nombre: 'Corrección', corteAlerta: { bajo: 35, alto: 70 } },
+      VRIN: { nombre: 'Inconsistencia Variable', corteAlerta: 80 },
+      TRIN: { nombre: 'Inconsistencia Verdadero', corteAlerta: 80 }
+    },
+
+    // Escalas Clínicas Básicas (10 escalas primarias)
+    escalasClinicas: {
+      Hs: { numero: 1, nombre: 'Hipocondría', corte: 65 },
+      D: { numero: 2, nombre: 'Depresión', corte: 65 },
+      Hy: { numero: 3, nombre: 'Histeria', corte: 65 },
+      Pd: { numero: 4, nombre: 'Desviación Psicopática', corte: 65 },
+      Mf: { numero: 5, nombre: 'Masculinidad-Feminidad', corte: 65 },
+      Pa: { numero: 6, nombre: 'Paranoia', corte: 65 },
+      Pt: { numero: 7, nombre: 'Psicastenia', corte: 65 },
+      Sc: { numero: 8, nombre: 'Esquizofrenia', corte: 65 },
+      Ma: { numero: 9, nombre: 'Hipomanía', corte: 65 },
+      Si: { numero: 0, nombre: 'Introversión Social', corte: 65 }
+    },
+
+    // Escalas de Contenido (suplementarias)
+    escalasContenido: {
+      ANX: { nombre: 'Ansiedad General', corte: 65 },
+      FRS: { nombre: 'Miedos', corte: 65 },
+      OBS: { nombre: 'Pensamiento Obsesivo', corte: 65 },
+      DEP: { nombre: 'Depresión General', corte: 65 },
+      HEA: { nombre: 'Preocupaciones Saludables', corte: 65 },
+      BIZ: { nombre: 'Pensamiento Bizarro', corte: 65 },
+      ANG: { nombre: 'Ira', corte: 65 },
+      ASP: { nombre: 'Prácticas Antisociales', corte: 65 },
+      TPA: { nombre: 'Conducta Tipo A', corte: 65 },
+      LSE: { nombre: 'Baja Autoestima', corte: 65 },
+      SOD: { nombre: 'Malestar Social', corte: 65 },
+      FAM: { nombre: 'Problemas Familiares', corte: 65 },
+      WRK: { nombre: 'Interferencia Laboral', corte: 65 },
+      TRT: { nombre: 'Indicadores Negativos Tx', corte: 65 }
+    },
 
     interpretarTScore(tScore) {
       let nivel, label, color;
 
-      if (tScore < 50) {
+      if (tScore < 40) {
         nivel = 0;
-        label = 'Bajo';
+        label = 'Bajo / Infravalorado';
         color = '#276749';
-      } else if (tScore < 65) {
+      } else if (tScore < 55) {
         nivel = 1;
-        label = 'Normal';
+        label = 'Normal / Sin significación clínica';
         color = '#0284c7';
-      } else if (tScore < 75) {
+      } else if (tScore < 65) {
         nivel = 2;
-        label = 'Clínicamente elevado';
-        color = '#d97706';
-      } else {
+        label = 'Elevación leve (Monitorear)';
+        color = '#f97316';
+      } else if (tScore < 75) {
         nivel = 3;
-        label = 'Muy elevado';
+        label = 'Clínicamente significativo';
+        color = '#d97706';
+      } else if (tScore < 85) {
+        nivel = 4;
+        label = 'Elevación marcada / Patología probable';
         color = '#dc2626';
+      } else {
+        nivel = 5;
+        label = 'Elevación extrema / Patología severa';
+        color = '#991b1b';
       }
 
       return { nivel, label, color };
@@ -158,20 +238,32 @@ const interpretacion = {
       const L = datos.L || 0;
       const F = datos.F || 0;
       const K = datos.K || 0;
+      const VRIN = datos.VRIN || 0;
+      const TRIN = datos.TRIN || 0;
 
       const advertencias = [];
+      let valido = true;
 
       if (L >= 65) {
         advertencias.push('Elevación en L: Defensividad o imagen excesivamente positiva.');
       }
       if (F >= 80) {
-        advertencias.push('Elevación en F: Posible fingimiento, crisis aguda o protocolo inválido.');
+        advertencias.push('Elevación en F (≥80): Posible fingimiento, crisis aguda o protocolo inválido.');
+        valido = false;
       }
-      if (K < 40) {
-        advertencias.push('K bajo: Franqueza excesiva o autodevaluación.');
+      if (K < 35 || K > 70) {
+        advertencias.push('K fuera de rango: Verificar interpretabilidad del protocolo.');
+      }
+      if (VRIN >= 80) {
+        advertencias.push('VRIN elevado: Respuestas inconsistentes aleatorias.');
+        valido = false;
+      }
+      if (TRIN >= 80) {
+        advertencias.push('TRIN elevado: Sesgo sistemático en respuestas (Sí/No).');
+        valido = false;
       }
 
-      return advertencias;
+      return { advertencias, valido };
     }
   },
 
@@ -198,47 +290,100 @@ const interpretacion = {
     ]
   },
 
-  // ===== ISRA =====
+  // ===== ISRA (Inventario Situaciones y Respuestas de Ansiedad) =====
   isra: {
+    // Parámetros normativos para sistemas de respuesta (Tobal & Cano Vindel)
+    normasSistemas: {
+      C: { media: 55.0, ds: 28.5, rango: '0-272' },     // Cognitivo
+      F: { media: 44.0, ds: 25.0, rango: '0-272' },     // Fisiológico
+      M: { media: 38.0, ds: 22.0, rango: '0-272' }      // Motor-Conductual
+    },
+
+    normasTotal: {
+      total: { media: 137.0, ds: 68.0, rango: '0-816', corte: 185, corteP75: 185 }
+    },
+
+    // Percentiles para clasificación
+    percentiles: {
+      P25: 90,      // < 25 percentil
+      P50: 137,     // 25-50 percentil
+      P75: 185,     // 51-75 percentil
+      P90: 240      // 76-90 percentil
+    },
+
     sistemas: {
-      C: { nombre: 'Cognitivo', items: [] },
-      F: { nombre: 'Fisiológico', items: [] },
-      M: { nombre: 'Motor-Conductual', items: [] }
+      C: { nombre: 'Cognitivo', rango: '0-272' },
+      F: { nombre: 'Fisiológico', rango: '0-272' },
+      M: { nombre: 'Motor-Conductual', rango: '0-272' }
     },
 
-    situaciones: {
-      E: { nombre: 'Evaluación', items: [] },
-      I: { nombre: 'Interpersonal', items: [] },
-      F: { nombre: 'Fóbicas', items: [] },
-      V: { nombre: 'Vida Cotidiana', items: [] }
+    areas: {
+      FE: { nombre: 'Evaluación y vida cotidiana' },
+      IS: { nombre: 'Situaciones interpersonales/sexuales' },
+      FC: { nombre: 'Situaciones fóbicas' },
+      RH: { nombre: 'Rutinas y hábitos' }
     },
 
-    interpretarIGA(iga) {
-      let nivel, label, color;
+    calcular(datos) {
+      const sistemas = {};
 
-      if (iga < 0.15) {
-        nivel = 0;
-        label = 'Muy Bajo';
-        color = '#276749';
-      } else if (iga < 0.30) {
-        nivel = 1;
-        label = 'Bajo';
-        color = '#0284c7';
-      } else if (iga < 0.70) {
-        nivel = 2;
-        label = 'Medio';
-        color = '#f97316';
-      } else if (iga < 0.85) {
-        nivel = 3;
-        label = 'Alto';
-        color = '#d97706';
-      } else {
-        nivel = 4;
-        label = 'Muy Alto';
-        color = '#dc2626';
+      // Calcular sistemas de respuesta
+      for (const [key, sys] of Object.entries(this.sistemas)) {
+        const puntuacion = datos[key] || 0;
+        const norma = this.normasSistemas[key];
+        const z = ((puntuacion - norma.media) / norma.ds).toFixed(2);
+
+        sistemas[key] = {
+          nombre: sys.nombre,
+          suma: puntuacion,
+          media: norma.media,
+          ds: norma.ds,
+          zScore: z,
+          elevado: puntuacion > (norma.media + norma.ds)
+        };
       }
 
-      return { nivel, label, color };
+      const totalR = (datos.C || 0) + (datos.F || 0) + (datos.M || 0);
+      const interpretacion = this.interpretarTotal(totalR);
+
+      return {
+        sistemas,
+        totalR: totalR,
+        interpretacion
+      };
+    },
+
+    interpretarTotal(totalR) {
+      let nivel, label, color, percentil;
+
+      if (totalR < this.percentiles.P25) {
+        nivel = 0;
+        label = 'Ansiedad baja';
+        color = '#276749';
+        percentil = '< P25';
+      } else if (totalR <= this.percentiles.P50) {
+        nivel = 1;
+        label = 'Ansiedad normal/media';
+        color = '#0284c7';
+        percentil = 'P25–P50';
+      } else if (totalR <= this.percentiles.P75) {
+        nivel = 2;
+        label = 'Ansiedad moderada';
+        color = '#f97316';
+        percentil = 'P51–P75';
+      } else if (totalR <= this.percentiles.P90) {
+        nivel = 3;
+        label = 'Ansiedad alta';
+        color = '#d97706';
+        percentil = 'P76–P90';
+      } else {
+        nivel = 4;
+        label = 'Ansiedad muy alta / Clínica';
+        color = '#dc2626';
+        percentil = '> P90';
+      }
+
+      return { nivel, label, color, percentil, corteClinico: totalR > this.percentiles.P75 };
     }
   },
 
@@ -367,43 +512,73 @@ const interpretacion = {
     }
   },
 
-  // ===== EGEP-5 =====
+  // ===== EGEP-5 (TEPT) =====
   egep5: {
+    // Parámetros normativos (media, DS) por clúster DSM-5
+    normas: {
+      B: { media: 2.1, ds: 2.8, rango: '0-20' },
+      C: { media: 0.8, ds: 1.4, rango: '0-8' },
+      D: { media: 3.2, ds: 4.1, rango: '0-28' },
+      E: { media: 3.5, ds: 3.9, rango: '0-24' }
+    },
+
+    indicesGlobales: {
+      total: { media: 9.6, ds: 11.2, corte: 20, corteMaximo: 80 }
+    },
+
     criterios: {
-      B: { nombre: 'Re-experimentación', items: [1, 2, 3, 4, 5] },
-      C: { nombre: 'Evitación', items: [6, 7] },
-      D: { nombre: 'Alteraciones cognitivas/afectivas', items: [8, 9, 10, 11, 12, 13, 14] },
-      E: { nombre: 'Activación/Reactividad', items: [15, 16, 17, 18, 19, 20] },
-      F: { nombre: 'Deterioro funcional', items: [21, 22] }
+      B: { nombre: 'Clúster B — Re-experimentación', items: [1, 2, 3, 4, 5], rango: 20 },
+      C: { nombre: 'Clúster C — Evitación', items: [6, 7], rango: 8 },
+      D: { nombre: 'Clúster D — Alteraciones cognitivas/ánimo', items: [8, 9, 10, 11, 12, 13, 14], rango: 28 },
+      E: { nombre: 'Clúster E — Hiperactivación', items: [15, 16, 17, 18, 19, 20], rango: 24 }
     },
 
     calcular(data) {
+      const clusters = {};
+
+      for (const [key, crit] of Object.entries(this.criterios)) {
+        const suma = crit.items.reduce((acc, i) => acc + (data[i - 1] || 0), 0);
+        const norma = this.normas[key];
+        clusters[key] = {
+          nombre: crit.nombre,
+          suma: suma,
+          rango: crit.rango,
+          media: norma.media,
+          ds: norma.ds
+        };
+      }
+
       const total = data.reduce((a, b) => a + b, 0);
       let nivel, label, color, texto;
 
-      if (total < 21) {
+      if (total <= 10) {
         nivel = 0;
-        label = 'Subcrínico';
+        label = 'Sin TEPT / Subcínico';
         color = '#276749';
-        texto = 'Síntomas por debajo del nivel de diagnóstico clínico.';
-      } else if (total < 41) {
+        texto = 'Síntomas por debajo del umbral diagnóstico.';
+      } else if (total <= 20) {
         nivel = 1;
-        label = 'TEPT Leve';
+        label = 'Leve (Punto de corte diagnóstico)';
         color = '#0284c7';
-        texto = 'Síntomas de TEPT presentes con interferencia leve en funcionamiento.';
-      } else if (total < 61) {
+        texto = 'Cumple criterios básicos de TEPT. Requiere verificación de: Criterio A (exposición), duración >1 mes y deterioro funcional.';
+      } else if (total <= 35) {
         nivel = 2;
-        label = 'TEPT Moderado';
+        label = 'Moderado';
         color = '#d97706';
         texto = 'TEPT de severidad moderada. Se recomienda tratamiento especializado.';
-      } else {
+      } else if (total <= 50) {
         nivel = 3;
-        label = 'TEPT Severo';
+        label = 'Severo';
         color = '#dc2626';
         texto = 'Síntomas severos de TEPT con deterioro importante. Evaluación urgente recomendada.';
+      } else {
+        nivel = 4;
+        label = 'Muy severo';
+        color = '#991b1b';
+        texto = 'TEPT extremadamente severo. Intervención inmediata necesaria.';
       }
 
-      return { nivel, label, color, texto, total };
+      return { nivel, label, color, texto, total, clusters };
     },
 
     obtenerDiagnosticoDSM5(data) {
@@ -412,14 +587,15 @@ const interpretacion = {
       const criterioC = data.slice(5, 7).some(v => v >= 1) ? 1 : 0;
       const criterioD = data.slice(7, 14).filter(v => v >= 1).length >= 2 ? 1 : 0;
       const criterioE = data.slice(14, 20).filter(v => v >= 1).length >= 2 ? 1 : 0;
-      const criterioF = data.slice(20, 22).some(v => v >= 1) ? 1 : 0;
 
-      const cumplidos = [criterioB, criterioC, criterioD, criterioE, criterioF].filter(c => c).length;
+      const cumplidos = [criterioB, criterioC, criterioD, criterioE].filter(c => c).length;
+      const total = data.reduce((a, b) => a + b, 0);
+      const cumplePuntoCOrte = total >= 20;
 
-      if (cumplidos === 5) {
-        return { probable: true, texto: 'TEPT probable según criterios DSM-5' };
+      if (cumplidos === 4 && cumplePuntoCOrte) {
+        return { probable: true, texto: 'TEPT probable según criterios DSM-5 (Bados et al., 2015)' };
       } else {
-        return { probable: false, texto: `Criterios incompletos: ${cumplidos}/5 presentes` };
+        return { probable: false, texto: `Criterios incompletos: ${cumplidos}/4 presentes. Total: ${total}/80 (corte: ≥20)` };
       }
     }
   },
