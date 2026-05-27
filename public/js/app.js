@@ -10,7 +10,9 @@ const app = {
     'HAMILTON': tests_hamilton,
     'MMPI2': tests_mmpi2,
     'TDS': tests_tds,
-    'ISRA': tests_isra,
+    'ISRA_C': tests_isra,
+    'ISRA_F': tests_isra_f,
+    'ISRA_M': tests_isra_m,
     'PCLR': tests_pclr,
     'EGEP5': tests_egep5
   },
@@ -21,7 +23,9 @@ const app = {
     'hamilton': 'HAMILTON',
     'mmpi2': 'MMPI2',
     'tds': 'TDS',
-    'isra': 'ISRA',
+    'isra-c': 'ISRA_C',
+    'isra-f': 'ISRA_F',
+    'isra-m': 'ISRA_M',
     'pclr': 'PCLR',
     'egep5': 'EGEP5'
   },

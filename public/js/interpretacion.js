@@ -300,7 +300,7 @@ const interpretacion = {
     },
 
     normasTotal: {
-      total: { media: 137.0, ds: 68.0, rango: '0-816', corte: 185, corteP75: 185 }
+      total: { media: 137.0, ds: 68.0, rango: '0-896', corte: 185, corteP75: 185 }
     },
 
     // Percentiles para clasificación
