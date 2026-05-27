@@ -47,6 +47,15 @@ const interpretacion = {
         { min: 19, max: 22, label: 'Severa' },
         { min: 23, max: 52, label: 'Muy severa' }
       ];
+    },
+
+    // Normas poblacionales para gráfico de perfil
+    normasPopulacion: {
+      labels: ['Humor deprimido', 'Sentimientos culpa', 'Suicidio', 'Insomnio inicial', 'Insomnio medio',
+               'Insomnio terminal', 'Trabajo/Actividades', 'Retardo', 'Agitación', 'Ansiedad psíquica',
+               'Ansiedad somática', 'Síntomas GI', 'Síntomas gen.', 'Síntomas genitales',
+               'Hipocondría', 'Pérdida de peso', 'Insight'],
+      medias: [1, 0.5, 0.2, 0.8, 0.7, 0.6, 1, 0.9, 0.5, 0.7, 0.6, 0.4, 0.5, 0.3, 0.4, 0.3, 0.2]
     }
   },
 
@@ -82,6 +91,13 @@ const interpretacion = {
       PHOB: { name: 'Ansiedad Fóbica', items: [12, 24, 46, 49, 69, 74, 81] },
       PAR: { name: 'Ideación Paranoide', items: [7, 17, 42, 67, 75, 82] },
       PSY: { name: 'Psicoticismo', items: [6, 15, 34, 61, 76, 83, 84, 86, 87, 89] }
+    },
+
+    // Normas poblacionales para gráfico de perfil
+    normasPopulacion: {
+      labels: ['Somatización', 'Obsesión-Compulsión', 'Sensibilidad Interp.', 'Depresión', 'Ansiedad',
+               'Hostilidad', 'Ansiedad Fóbica', 'Ideación Paranoide', 'Psicoticismo'],
+      medias: [0.47, 0.59, 0.47, 0.59, 0.39, 0.46, 0.15, 0.47, 0.19]
     },
 
     calcular(data) {
@@ -200,6 +216,12 @@ const interpretacion = {
       FAM: { nombre: 'Problemas Familiares', corte: 65 },
       WRK: { nombre: 'Interferencia Laboral', corte: 65 },
       TRT: { nombre: 'Indicadores Negativos Tx', corte: 65 }
+    },
+
+    // Normas poblacionales para gráfico de perfil (T-scores, media=50)
+    normasPopulacion: {
+      labels: ['Hs', 'D', 'Hy', 'Pd', 'Mf', 'Pa', 'Pt', 'Sc', 'Ma', 'Si'],
+      medias: [50, 50, 50, 50, 50, 50, 50, 50, 50, 50]
     },
 
     interpretarTScore(tScore) {
@@ -322,6 +344,12 @@ const interpretacion = {
       IS: { nombre: 'Situaciones interpersonales/sexuales' },
       FC: { nombre: 'Situaciones fóbicas' },
       RH: { nombre: 'Rutinas y hábitos' }
+    },
+
+    // Normas poblacionales para gráfico de perfil
+    normasPopulacion: {
+      labels: ['Cognitivo', 'Fisiológico', 'Motor-Conductual'],
+      medias: [55, 44, 38]
     },
 
     calcular(datos) {

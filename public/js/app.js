@@ -702,6 +702,7 @@ const app = {
     // Renderizar gráfica después de que el DOM esté actualizado
     setTimeout(() => {
       this.renderChartReporte(prueba);
+      this.renderGraficoPerfil(prueba, subescalas);
       if (prueba.tipo === 'PCLR') {
         this.renderChartComparativoPCLR(prueba);
       }
@@ -872,6 +873,62 @@ const app = {
   },
 
   /**
+   * Renderizar gráfico de perfil: Paciente vs Población Normal
+   */
+  renderGraficoPerfil(prueba, subescalas) {
+    try {
+      // Encontrar canvas de gráfico de perfil
+      const canvas = document.querySelector('[id^="chartPerfil"]');
+      if (!canvas || typeof Chart === 'undefined') return;
+
+      const testType = {
+        'SCL90R': 'SCL90R',
+        'MMPI2': 'MMPI2',
+        'HAMILTON': 'HAMILTON',
+        'ISRA_C': 'ISRA',
+        'ISRA_F': 'ISRA',
+        'ISRA_M': 'ISRA'
+      }[prueba.tipo];
+
+      if (!testType || !profileCharts || !profileCharts.configs[testType]) {
+        console.log(`Gráfico de perfil no configurado para: ${prueba.tipo}`);
+        return;
+      }
+
+      // Preparar datos según tipo de test
+      let datos = {};
+      if (testType === 'SCL90R') {
+        // SCL-90-R: usar subescalas
+        const escalas = ['SOM', 'OC', 'SI', 'DEP', 'ANX', 'HOS', 'PHOB', 'PAR', 'PSY'];
+        escalas.forEach(escala => {
+          datos[escala] = subescalas[escala] || { media: 0 };
+        });
+      } else if (testType === 'MMPI2') {
+        // MMPI-2: usar escalas clínicas T-scores
+        datos.escalasClinicas = subescalas.escalasClinicas || [];
+      } else if (testType === 'HAMILTON') {
+        // Hamilton: usar items
+        datos = typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data || [];
+      } else if (testType === 'ISRA') {
+        // ISRA: usar sistemas C, F, M
+        datos = {
+          C: subescalas.totalC || 0,
+          F: subescalas.totalF || 0,
+          M: subescalas.totalM || 0
+        };
+      }
+
+      // Renderizar gráfico de perfil
+      if (profileCharts && canvas) {
+        profileCharts.crearGraficoPerfil(canvas.id, testType, datos);
+      }
+
+    } catch (error) {
+      console.error('Error al renderizar gráfico de perfil:', error);
+    }
+  },
+
+  /**
    * Renderizar gráfica comparativa PCL-R: Paciente vs Población General
    */
   async renderChartComparativoPCLR(prueba) {
@@ -1017,10 +1074,10 @@ const app = {
         </table>
       </div>
 
-      <div style="margin: 4px 0; padding: 4px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: #333;" class="reporte-analisis">
-        <h4 style="color: #333; font-size: 9px; margin: 0 0 3px 0; font-weight: bold;">Puntuaciones comparativas</h4>
-        <div style="position: relative; width: 100%; height: 180px;">
-          <canvas id="chartReporte" style="width: 100%; height: 100%;"></canvas>
+      <div style="margin: 4px 0; padding: 4px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 3px; color: #333;" class="reporte-analisis">
+        <h4 style="color: #333; font-size: 9px; margin: 0 0 3px 0; font-weight: bold;">Perfil de Subescalas (Paciente vs Población Normal)</h4>
+        <div style="position: relative; width: 100%; height: 250px;">
+          <canvas id="chartPerfil-${Date.now()}" style="width: 100%; height: 100%;"></canvas>
         </div>
       </div>
     `;
@@ -1037,6 +1094,13 @@ const app = {
         <h4 style="color: #333; font-size: 9px; margin: 0 0 3px 0; font-weight: bold;">ANÁLISIS: ${prueba.tipo}</h4>
         <div style="position: relative; width: 100%; height: 180px;">
           <canvas id="chartReporte" style="width: 100%; height: 100%;"></canvas>
+        </div>
+      </div>
+
+      <div style="margin: 4px 0; padding: 4px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 3px; color: #333;" class="reporte-analisis">
+        <h4 style="color: #333; font-size: 9px; margin: 0 0 3px 0; font-weight: bold;">Perfil (Paciente vs Población Normal)</h4>
+        <div style="position: relative; width: 100%; height: 250px;">
+          <canvas id="chartPerfil-${Date.now()}" style="width: 100%; height: 100%;"></canvas>
         </div>
       </div>
 
@@ -1827,6 +1891,23 @@ const app = {
 
           canvasComparativoClonado.parentNode.replaceChild(imgComparativa, canvasComparativoClonado);
           console.log('✓ Canvas comparativo reemplazado por imagen');
+        }
+
+        // Convertir gráfico de perfil (Paciente vs Población Normal)
+        const canvasPerfilOriginal = document.querySelector('canvas[id^="chartPerfil"]');
+        const canvasPerfilClonado = elemento.querySelector('canvas[id^="chartPerfil"]');
+
+        if (canvasPerfilOriginal && canvasPerfilClonado) {
+          const imagenPerfilUrl = await this.capturarCanvasAltaResolucion(canvasPerfilOriginal);
+          console.log('✓ Canvas de perfil convertido a alta resolución');
+
+          const imgPerfil = document.createElement('img');
+          imgPerfil.src = imagenPerfilUrl;
+          imgPerfil.style.width = '100%';
+          imgPerfil.style.height = '250px';
+
+          canvasPerfilClonado.parentNode.replaceChild(imgPerfil, canvasPerfilClonado);
+          console.log('✓ Canvas de perfil reemplazado por imagen');
         }
       } catch (canvasError) {
         console.warn('Advertencia: no se pudo procesar los canvas:', canvasError.message);
