@@ -14,7 +14,8 @@ const app = {
     'ISRA_F': tests_isra_f,
     'ISRA_M': tests_isra_m,
     'PCLR': tests_pclr,
-    'EGEP5': tests_egep5
+    'EGEP5': tests_egep5,
+    'SCID2': tests_scid2
   },
 
   // Mapeo de página a test
@@ -27,7 +28,8 @@ const app = {
     'isra-f': 'ISRA_F',
     'isra-m': 'ISRA_M',
     'pclr': 'PCLR',
-    'egep5': 'EGEP5'
+    'egep5': 'EGEP5',
+    'scid2': 'SCID2'
   },
 
   /**

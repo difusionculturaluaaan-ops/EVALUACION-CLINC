@@ -204,6 +204,37 @@ const testRenderer = {
   },
 
   /**
+   * Renderizar items Sí/No (SCID-II y similares)
+   */
+  renderYesNo(containerId, items, prefix) {
+    const container = document.getElementById(containerId);
+    if (!container) {
+      console.error(`Contenedor ${containerId} no encontrado`);
+      return;
+    }
+
+    container.innerHTML = items.map((texto, i) => `
+      <div class="test-item" data-item="${i}">
+        <div class="test-item-text">
+          <span class="test-item-number">${i + 1}.</span> ${texto}
+        </div>
+        <div class="opciones-binarias">
+          <label class="opcion-label">
+            <input type="radio" name="${prefix}_r${i}" value="1">
+            <span class="opcion-box">Sí</span>
+          </label>
+          <label class="opcion-label">
+            <input type="radio" name="${prefix}_r${i}" value="0">
+            <span class="opcion-box">No</span>
+          </label>
+        </div>
+      </div>
+    `).join('');
+
+    this.agregarListenersProgreso(prefix, items.length);
+  },
+
+  /**
    * Mapeo de prefijo a container ID
    */
   getContainerId(prefix) {
@@ -212,8 +243,11 @@ const testRenderer = {
       'ham': 'ham-container',
       'tds': 'tds-container',
       'isra': 'isra-container',
+      'isra-f': 'isra-f-container',
+      'isra-m': 'isra-m-container',
       'pclr': 'pclr-container',
-      'egep5': 'egep5-container'
+      'egep5': 'egep5-container',
+      'scid2': 'scid2-container'
     };
     return mapa[prefix] || '';
   }

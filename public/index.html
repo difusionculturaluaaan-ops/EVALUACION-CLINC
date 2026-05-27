@@ -89,6 +89,10 @@
       <span class="icon">🚨</span>
       <span class="label">EGEP-5 (TEPT)</span>
     </button>
+    <button class="nav-item" data-page="scid2" onclick="app.iniciarTestConPaciente('scid2')">
+      <span class="icon">🧬</span>
+      <span class="label">SCID-II (Personalidad)</span>
+    </button>
   </nav>
 </aside>
 
@@ -455,6 +459,24 @@
     </div>
   </section>
 
+  <!-- Página: SCID-II -->
+  <section id="page-scid2" class="page">
+    <div class="test-page">
+      <div class="test-header">
+        <h2>SCID-II (Trastornos de Personalidad - DSM-IV)</h2>
+        <p style="font-size: 12px; color: #666; margin: 8px 0;">Entrevista Clínica Estructurada para los Trastornos del Eje II</p>
+        <div class="progress-bar">
+          <div id="scid2-progress" class="progress-fill"></div>
+          <span id="scid2-counter" class="progress-text">0 / 119</span>
+        </div>
+      </div>
+      <div id="scid2-container" class="test-items"></div>
+      <button type="button" class="btn btn-primary btn-lg" onclick="app.guardarPrueba('SCID2')">
+        Finalizar SCID-II
+      </button>
+    </div>
+  </section>
+
 </main>
 
 <!-- Modal de Editar Paciente -->
@@ -613,6 +635,7 @@
 <script src="/js/tests/tds.js"></script>
 <script src="/js/tests/pclr.js"></script>
 <script src="/js/tests/egep5.js"></script>
+<script src="/js/tests/scid2.js"></script>
 <script src="/js/expedientes.js"></script>
 <script src="/js/pdf.js"></script>
 <script src="/js/app.js"></script>
