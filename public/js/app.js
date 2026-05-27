@@ -386,9 +386,17 @@ const app = {
    */
   async cambiarEstadoPrueba(pruebaId, nuevoEstado) {
     try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        throw new Error('Sesión expirada. Por favor, inicia sesión de nuevo.');
+      }
+
       const response = await fetch(`/api/pruebas/${pruebaId}/estado`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ estado: nuevoEstado })
       });
 
@@ -419,8 +427,16 @@ const app = {
     if (!confirm('¿Deseas eliminar esta prueba? No se puede deshacer.')) return;
 
     try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        throw new Error('Sesión expirada. Por favor, inicia sesión de nuevo.');
+      }
+
       const response = await fetch(`/api/pruebas/${pruebaId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
 
       if (!response.ok) {
