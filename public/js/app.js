@@ -386,17 +386,18 @@ const app = {
    */
   async cambiarEstadoPrueba(pruebaId, nuevoEstado) {
     try {
-      const token = localStorage.getItem('auth_token');
-      if (!token) {
-        throw new Error('Sesión expirada. Por favor, inicia sesión de nuevo.');
+      const token = api.getToken();
+      const headers = {
+        'Content-Type': 'application/json'
+      };
+
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
       }
 
       const response = await fetch(`/api/pruebas/${pruebaId}/estado`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        headers,
         body: JSON.stringify({ estado: nuevoEstado })
       });
 
@@ -427,16 +428,16 @@ const app = {
     if (!confirm('¿Deseas eliminar esta prueba? No se puede deshacer.')) return;
 
     try {
-      const token = localStorage.getItem('auth_token');
-      if (!token) {
-        throw new Error('Sesión expirada. Por favor, inicia sesión de nuevo.');
+      const token = api.getToken();
+      const headers = {};
+
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
       }
 
       const response = await fetch(`/api/pruebas/${pruebaId}`, {
         method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        headers
       });
 
       if (!response.ok) {
