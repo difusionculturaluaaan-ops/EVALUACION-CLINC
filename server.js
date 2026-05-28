@@ -22,8 +22,14 @@ app.use(cors());
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
-// Servir archivos estáticos desde public
-app.use(express.static(path.join(__dirname, 'public')));
+// Servir archivos estáticos desde public con MIME types correctos
+app.use(express.static(path.join(__dirname, 'public'), {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+    }
+  }
+}));
 
 // Headers para UTF-8 (solo para rutas API, no para archivos estáticos)
 app.use('/api', (req, res, next) => {
