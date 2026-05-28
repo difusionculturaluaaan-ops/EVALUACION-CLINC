@@ -1884,6 +1884,14 @@ const app = {
         return;
       }
 
+      // Verificar si hay datos de validación profesional
+      const datosGuardados = localStorage.getItem('datos_profesional');
+      if (!datosGuardados && !this.datosValidacionProfesional) {
+        // Abrir modal para que llene los datos del profesional
+        this.abrirValidacionProfesional();
+        return;
+      }
+
       // Obtener nombre del paciente del reporte
       let nombrePaciente = 'Reporte';
       const tablaTexto = contenido.innerText;
