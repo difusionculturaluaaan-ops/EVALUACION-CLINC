@@ -188,7 +188,7 @@ async function crearTenant(nombre, slug, email_contacto = null) {
     return result.rows[0] || null;
   } catch (err) {
     console.error('Error al crear tenant:', err);
-    return null;
+    throw err;
   }
 }
 

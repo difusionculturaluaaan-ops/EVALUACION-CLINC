@@ -12,6 +12,7 @@ const {
   actualizarTenant,
   deleteTenant,
   actualizarTenantLogo,
+  inicializarMapeoSCID2,
   pool
 } = require('../db/schema');
 const autenticarSuperAdmin = require('../middleware/super-admin-auth');
@@ -123,6 +124,36 @@ router.get('/tenants', autenticarSuperAdmin, async (req, res) => {
   }
 });
 
+// GET /api/super-admin/tenants/:id
+router.get('/tenants/:id', autenticarSuperAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const tenant = await getTenantById(parseInt(id));
+
+    if (!tenant) {
+      return res.status(404).json({ error: 'Tenant no encontrado' });
+    }
+
+    const usuariosResult = await pool.query(
+      'SELECT COUNT(*) as count FROM usuarios WHERE tenant_id = $1',
+      [tenant.id]
+    );
+    const pacientesResult = await pool.query(
+      'SELECT COUNT(*) as count FROM pacientes WHERE tenant_id = $1',
+      [tenant.id]
+    );
+
+    res.json({
+      ...tenant,
+      psicologos: parseInt(usuariosResult.rows[0]?.count || 0),
+      pacientes: parseInt(pacientesResult.rows[0]?.count || 0)
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // POST /api/super-admin/tenants
 router.post('/tenants', autenticarSuperAdmin, async (req, res) => {
   try {
@@ -134,15 +165,18 @@ router.post('/tenants', autenticarSuperAdmin, async (req, res) => {
 
     const tenant = await crearTenant(nombre, slug, email_contacto);
 
-    if (!tenant) {
-      return res.status(400).json({ error: 'No se pudo crear el tenant' });
+    if (tenant) {
+      // Inicializar estructura SCID-II automáticamente para el nuevo tenant
+      await inicializarMapeoSCID2(tenant.id, null);
+
+      registrarAuditLog('crear_tenant', tenant.id, { nombre, slug });
+      res.status(201).json(tenant);
     }
-
-    registrarAuditLog('crear_tenant', tenant.id, { nombre, slug });
-
-    res.status(201).json(tenant);
   } catch (error) {
-    console.error(error);
+    console.error('Error en POST /tenants:', error);
+    if (error.code === '23505') {
+      return res.status(400).json({ error: 'El nombre o slug ya existe' });
+    }
     res.status(500).json({ error: error.message });
   }
 });
