@@ -9,10 +9,12 @@ const {
   getAllTenants,
   getTenantById,
   crearTenant,
+  crearUsuario,
   actualizarTenant,
   deleteTenant,
   actualizarTenantLogo,
   inicializarMapeoSCID2,
+  inicializarTestsParaUsuario,
   pool
 } = require('../db/schema');
 const autenticarSuperAdmin = require('../middleware/super-admin-auth');
@@ -157,25 +159,71 @@ router.get('/tenants/:id', autenticarSuperAdmin, async (req, res) => {
 // POST /api/super-admin/tenants
 router.post('/tenants', autenticarSuperAdmin, async (req, res) => {
   try {
-    const { nombre, slug, email_contacto } = req.body;
+    const { nombre, slug, email_contacto, admin_nombre, admin_email, admin_password } = req.body;
 
     if (!nombre || !slug) {
       return res.status(400).json({ error: 'Nombre y slug son requeridos' });
     }
 
+    if (!admin_nombre || !admin_email || !admin_password) {
+      return res.status(400).json({ error: 'Datos del admin requeridos' });
+    }
+
+    if (admin_password.length < 6) {
+      return res.status(400).json({ error: 'Contraseña debe tener mínimo 6 caracteres' });
+    }
+
+    // Crear tenant
     const tenant = await crearTenant(nombre, slug, email_contacto);
 
-    if (tenant) {
-      // Inicializar estructura SCID-II automáticamente para el nuevo tenant
-      await inicializarMapeoSCID2(tenant.id, null);
-
-      registrarAuditLog('crear_tenant', tenant.id, { nombre, slug });
-      res.status(201).json(tenant);
+    if (!tenant) {
+      return res.status(400).json({ error: 'No se pudo crear el tenant' });
     }
+
+    // Hash de contraseña
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(admin_password, salt);
+
+    // Crear usuario admin para el nuevo tenant
+    const admin = await crearUsuario(
+      tenant.id,
+      admin_email,
+      admin_nombre,
+      passwordHash,
+      'admin'
+    );
+
+    if (!admin) {
+      // Rollback: eliminar tenant si no se pudo crear el usuario
+      await deleteTenant(tenant.id);
+      return res.status(500).json({ error: 'Error al crear usuario admin' });
+    }
+
+    // Inicializar tests para el nuevo admin
+    await inicializarTestsParaUsuario(admin.id);
+
+    // Inicializar estructura SCID-II automáticamente para el nuevo tenant
+    await inicializarMapeoSCID2(tenant.id, null);
+
+    registrarAuditLog('crear_tenant', tenant.id, {
+      nombre,
+      slug,
+      admin_email,
+      admin_id: admin.id
+    });
+
+    res.status(201).json({
+      tenant,
+      admin: {
+        id: admin.id,
+        email: admin.email,
+        nombre: admin.nombre
+      }
+    });
   } catch (error) {
     console.error('Error en POST /tenants:', error);
     if (error.code === '23505') {
-      return res.status(400).json({ error: 'El nombre o slug ya existe' });
+      return res.status(400).json({ error: 'El nombre, slug o email del admin ya existe' });
     }
     res.status(500).json({ error: error.message });
   }
