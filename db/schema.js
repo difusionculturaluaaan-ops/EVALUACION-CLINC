@@ -160,6 +160,17 @@ async function createTables() {
       )
     `);
 
+    // Tabla de tests habilitados por usuario
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS usuario_tests (
+        id SERIAL PRIMARY KEY,
+        usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+        test_tipo TEXT NOT NULL,
+        habilitado BOOLEAN DEFAULT true,
+        creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(usuario_id, test_tipo)
+      )
+    `);
 
     // Crear índices
     await pool.query('CREATE INDEX IF NOT EXISTS idx_pacientes_tenant ON pacientes(tenant_id)');
@@ -171,6 +182,7 @@ async function createTables() {
     await pool.query('CREATE INDEX IF NOT EXISTS idx_audit_log_tenant ON super_admin_audit_log(tenant_id)');
     await pool.query('CREATE INDEX IF NOT EXISTS idx_scid2_escala_tenant ON scid2_escala(tenant_id)');
     await pool.query('CREATE INDEX IF NOT EXISTS idx_scid2_mapeo_tenant ON scid2_pregunta_mapeo(tenant_id)');
+    await pool.query('CREATE INDEX IF NOT EXISTS idx_usuario_tests_usuario ON usuario_tests(usuario_id)');
   } catch (err) {
     console.error('Error al crear tablas:', err);
     throw err;
@@ -865,6 +877,72 @@ async function inicializarMapeoSCID2(tenant_id, usuario_id) {
   }
 }
 
+// ==================== FUNCIONES USUARIO_TESTS ====================
+
+async function obtenerTestsHabilitados(usuario_id) {
+  try {
+    const result = await pool.query(
+      'SELECT test_tipo, habilitado FROM usuario_tests WHERE usuario_id = $1 ORDER BY test_tipo',
+      [usuario_id]
+    );
+    return result.rows || [];
+  } catch (err) {
+    console.error('Error al obtener tests habilitados:', err);
+    return [];
+  }
+}
+
+async function habilitarTest(usuario_id, test_tipo) {
+  try {
+    const result = await pool.query(
+      `INSERT INTO usuario_tests (usuario_id, test_tipo, habilitado)
+       VALUES ($1, $2, true)
+       ON CONFLICT (usuario_id, test_tipo)
+       DO UPDATE SET habilitado = true
+       RETURNING *`,
+      [usuario_id, test_tipo]
+    );
+    return result.rows[0] || null;
+  } catch (err) {
+    console.error('Error al habilitar test:', err);
+    throw err;
+  }
+}
+
+async function deshabilitarTest(usuario_id, test_tipo) {
+  try {
+    const result = await pool.query(
+      `UPDATE usuario_tests SET habilitado = false
+       WHERE usuario_id = $1 AND test_tipo = $2
+       RETURNING *`,
+      [usuario_id, test_tipo]
+    );
+    return result.rows[0] || null;
+  } catch (err) {
+    console.error('Error al deshabilitar test:', err);
+    throw err;
+  }
+}
+
+async function inicializarTestsParaUsuario(usuario_id) {
+  try {
+    const tests = ['scl90r', 'hamilton', 'mmpi2', 'isra-c', 'isra-f', 'isra-m', 'tds', 'pclr', 'egep5', 'scid2'];
+
+    for (const test of tests) {
+      await pool.query(
+        `INSERT INTO usuario_tests (usuario_id, test_tipo, habilitado)
+         VALUES ($1, $2, true)
+         ON CONFLICT (usuario_id, test_tipo) DO NOTHING`,
+        [usuario_id, test]
+      );
+    }
+    return true;
+  } catch (err) {
+    console.error('Error al inicializar tests:', err);
+    throw err;
+  }
+}
+
 
 module.exports = {
   initDb,
@@ -909,5 +987,9 @@ module.exports = {
   actualizarTenantLogo,
   obtenerEscalasSCID2,
   obtenerMapeoSCID2,
-  inicializarMapeoSCID2
+  inicializarMapeoSCID2,
+  obtenerTestsHabilitados,
+  habilitarTest,
+  deshabilitarTest,
+  inicializarTestsParaUsuario
 };

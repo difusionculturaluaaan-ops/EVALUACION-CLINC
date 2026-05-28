@@ -7,7 +7,8 @@ const {
   crearUsuario,
   getUsuarioPorEmail,
   actualizarUltimoAcceso,
-  getTenantBySlug
+  getTenantBySlug,
+  inicializarTestsParaUsuario
 } = require('../db/schema');
 
 // Generar slug a partir del nombre
@@ -86,6 +87,9 @@ router.post('/register', async (req, res) => {
     if (!usuario) {
       return res.status(500).json({ error: 'Error al crear el usuario' });
     }
+
+    // Inicializar todos los tests como habilitados para el nuevo usuario
+    await inicializarTestsParaUsuario(usuario.id);
 
     // Actualizar último acceso
     await actualizarUltimoAcceso(usuario.id);

@@ -11,6 +11,7 @@ const pruebasRoutes = require('./routes/pruebas');
 const superAdminRoutes = require('./routes/super-admin');
 const adminRoutes = require('./routes/admin');
 const tenantsRoutes = require('./routes/tenants');
+const usuarioTestsRoutes = require('./routes/usuario-tests');
 const middlewareAutenticacion = require('./middleware/autenticacion');
 
 const app = express();
@@ -40,6 +41,7 @@ app.use('/api/pacientes', middlewareAutenticacion, pacientesRoutes);
 app.use('/api/pruebas', middlewareAutenticacion, pruebasRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/tenants', middlewareAutenticacion, tenantsRoutes);
+app.use('/api/usuario-tests', middlewareAutenticacion, usuarioTestsRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
