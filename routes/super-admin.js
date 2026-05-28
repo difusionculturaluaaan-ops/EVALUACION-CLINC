@@ -250,6 +250,49 @@ router.patch('/tenants/:id', autenticarSuperAdmin, async (req, res) => {
   }
 });
 
+// POST /api/super-admin/tenants/:id/logo - Subir logo
+router.post('/tenants/:id/logo', autenticarSuperAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { logo_base64 } = req.body;
+
+    if (!logo_base64) {
+      return res.status(400).json({ error: 'Logo requerido' });
+    }
+
+    // Validar que sea base64 válido y una imagen
+    if (!logo_base64.startsWith('data:image/')) {
+      return res.status(400).json({ error: 'Solo se aceptan imágenes (PNG, JPG, etc.)' });
+    }
+
+    // Limitar tamaño: máximo 2MB
+    if (logo_base64.length > 2 * 1024 * 1024) {
+      return res.status(400).json({ error: 'Imagen demasiado grande (máximo 2MB)' });
+    }
+
+    // Actualizar logo en BD
+    const result = await pool.query(
+      `UPDATE tenants SET logo_url = $1, logo_updated_at = NOW()
+       WHERE id = $2 RETURNING *`,
+      [logo_base64, parseInt(id)]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Tenant no encontrado' });
+    }
+
+    registrarAuditLog('actualizar_logo_tenant', parseInt(id));
+
+    res.json({
+      success: true,
+      tenant: result.rows[0]
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // DELETE /api/super-admin/tenants/:id
 router.delete('/tenants/:id', autenticarSuperAdmin, async (req, res) => {
   try {
