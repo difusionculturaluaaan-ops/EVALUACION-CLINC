@@ -1149,7 +1149,7 @@ const app = {
         </div>
       </div>
 
-      <div style="margin-top: 4px;">
+      <div style="margin-top: 4px; margin-bottom: 12px;">
         <table style="width: 100%; border-collapse: collapse;" class="reporte-tabla-resultados">
           <tr style="background: #2c5aa0; color: white;">
             <th style="border: 1px solid #999; padding: 3px; text-align: left; font-size: 8px; font-weight: bold;">Métrica</th>
