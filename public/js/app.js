@@ -1177,13 +1177,6 @@ const app = {
         </div>
       </div>
 
-      <div style="margin: 4px 0; padding: 3px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 3px; color: #333;" class="reporte-analisis">
-        <h4 style="color: #333; font-size: 11px; margin: 0 0 3px 0; font-weight: bold;">Perfil (Paciente vs Población Normal)</h4>
-        <div style="position: relative; width: 100%; height: 380px; margin-bottom: 0;">
-          <canvas id="chartPerfilComparativo" style="width: 100%; height: 100%; display: block;"></canvas>
-        </div>
-      </div>
-
       <div style="margin-top: 4px; margin-bottom: 30px; page-break-inside: avoid;">
         <table style="width: 100%; border-collapse: collapse;" class="reporte-tabla-resultados">
           <tr style="background: #2c5aa0; color: white;">
