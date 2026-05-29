@@ -1303,23 +1303,23 @@ const app = {
 
       return `
         <!-- VALIDACIÓN PROFESIONAL -->
-        <div id="validacion-profesional-section" style="background: #f0f4f8; padding: 8px; margin-bottom: 10px; border: 1px solid #2c5aa0; border-radius: 3px;">
+        <div id="validacion-profesional-section" style="background: #f0f4f8; padding: 8px; margin-bottom: 10px; border: 1px solid #2c5aa0; border-radius: 3px; page-break-inside: avoid;">
           <h3 style="margin: 0 0 6px 0; color: #2c5aa0; font-size: 12px; font-weight: bold; border-bottom: 1px solid #2c5aa0; padding-bottom: 4px; text-decoration: underline;">VALIDACIÓN PROFESIONAL</h3>
 
-          <table style="width: 100%; font-size: 13px; border-collapse: collapse; line-height: 1.4;">
+          <table style="width: 100%; font-size: 13px; border-collapse: collapse; line-height: 1.4; table-layout: fixed;">
             <tr>
-              <td style="width: 30%; padding: 3px; color: #000; font-weight: bold;"><strong>Profesional:</strong></td>
-              <td style="padding: 3px; color: #000;">${nombre || '—'}</td>
-              <td style="width: 20%; padding: 3px; color: #000; font-weight: bold;"><strong>Cédula:</strong></td>
-              <td style="padding: 3px; color: #000;">${cedula || '—'}</td>
+              <td style="width: 30%; padding: 3px; color: #000; font-weight: bold; word-wrap: break-word;"><strong>Profesional:</strong></td>
+              <td style="padding: 3px; color: #000; word-wrap: break-word;">${nombre || '—'}</td>
+              <td style="width: 20%; padding: 3px; color: #000; font-weight: bold; word-wrap: break-word;"><strong>Cédula:</strong></td>
+              <td style="padding: 3px; color: #000; word-wrap: break-word;">${cedula || '—'}</td>
             </tr>
             <tr>
-              <td style="padding: 3px; color: #000; font-weight: bold;"><strong>Especialidad:</strong></td>
-              <td colspan="3" style="padding: 3px; color: #000;">${especialidad || '—'}</td>
+              <td style="padding: 3px; color: #000; font-weight: bold; word-wrap: break-word;"><strong>Especialidad:</strong></td>
+              <td colspan="3" style="padding: 3px; color: #000; word-wrap: break-word;">${especialidad || '—'}</td>
             </tr>
             <tr>
-              <td style="padding: 3px; vertical-align: top; color: #000; font-weight: bold;"><strong>Diagnóstico:</strong></td>
-              <td colspan="3" style="padding: 3px; font-size: 13px; color: #000;">${diagnostico || '—'}</td>
+              <td style="padding: 3px; vertical-align: top; color: #000; font-weight: bold; word-wrap: break-word;"><strong>Diagnóstico:</strong></td>
+              <td colspan="3" style="padding: 3px; font-size: 13px; color: #000; word-wrap: break-word; white-space: normal; max-height: none;">${diagnostico || '—'}</td>
             </tr>
           </table>
 
