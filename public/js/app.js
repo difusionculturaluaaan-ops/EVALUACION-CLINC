@@ -886,6 +886,9 @@ const app = {
           maintainAspectRatio: false,
           interaction: { mode: false },
           onHover: false,
+          animation: {
+            duration: 0
+          },
           plugins: {
             legend: {
               display: true,
@@ -910,6 +913,22 @@ const app = {
           }
         }
       });
+
+      // Convertir a imagen estática después de renderizar
+      setTimeout(() => {
+        if (canvasElement.chartInstance) {
+          const imagenDataUrl = canvasElement.toDataURL('image/png');
+          const img = document.createElement('img');
+          img.src = imagenDataUrl;
+          img.style.width = '100%';
+          img.style.height = '400px';
+          img.style.display = 'block';
+
+          canvasElement.parentNode.replaceChild(img, canvasElement);
+          canvasElement.chartInstance.destroy();
+          console.log('✓ Gráfico convertido a imagen estática');
+        }
+      }, 100);
 
       console.log('✓ Gráfica comparativa renderizada para', prueba.tipo);
     } catch (error) {
@@ -1045,6 +1064,22 @@ const app = {
           }
         }
       });
+
+      // Convertir a imagen estática después de renderizar
+      setTimeout(() => {
+        if (canvasElement.chartInstance) {
+          const imagenDataUrl = canvasElement.toDataURL('image/png');
+          const img = document.createElement('img');
+          img.src = imagenDataUrl;
+          img.style.width = '100%';
+          img.style.height = '320px';
+          img.style.display = 'block';
+
+          canvasElement.parentNode.replaceChild(img, canvasElement);
+          canvasElement.chartInstance.destroy();
+          console.log('✓ Gráfico PCL-R convertido a imagen estática');
+        }
+      }, 100);
     } catch (error) {
       console.error('Error al renderizar gráfica comparativa PCL-R:', error);
     }
