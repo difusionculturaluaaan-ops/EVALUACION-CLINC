@@ -868,14 +868,16 @@ const app = {
               data: valoresPaciente,
               backgroundColor: '#e74c3c',
               borderColor: '#c0392b',
-              borderWidth: 1
+              borderWidth: 2,
+              barPercentage: 0.8
             },
             {
               label: 'Población Normal',
               data: valoresPoblacion,
               backgroundColor: '#27ae60',
               borderColor: '#229954',
-              borderWidth: 1
+              borderWidth: 2,
+              barPercentage: 0.8
             }
           ]
         },
@@ -1921,7 +1923,7 @@ const app = {
           const img = document.createElement('img');
           img.src = imagenDataUrl;
           img.style.width = '100%';
-          img.style.height = '180px';
+          img.style.height = '300px';
 
           canvasClonado.parentNode.replaceChild(img, canvasClonado);
           console.log('✓ Canvas principal reemplazado por imagen');
@@ -1938,7 +1940,7 @@ const app = {
           const imgComparativa = document.createElement('img');
           imgComparativa.src = imagenComparativaUrl;
           imgComparativa.style.width = '100%';
-          imgComparativa.style.height = '200px';
+          imgComparativa.style.height = '320px';
 
           canvasComparativoClonado.parentNode.replaceChild(imgComparativa, canvasComparativoClonado);
           console.log('✓ Canvas comparativo reemplazado por imagen');
@@ -1955,7 +1957,7 @@ const app = {
           const imgPerfil = document.createElement('img');
           imgPerfil.src = imagenPerfilUrl;
           imgPerfil.style.width = '100%';
-          imgPerfil.style.height = '250px';
+          imgPerfil.style.height = '300px';
 
           canvasPerfilClonado.parentNode.replaceChild(imgPerfil, canvasPerfilClonado);
           console.log('✓ Canvas de perfil reemplazado por imagen');
