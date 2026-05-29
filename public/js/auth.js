@@ -18,7 +18,8 @@ class AuthManager {
 
   setupEventListeners() {
     // Forms
-    document.getElementById('loginForm')?.addEventListener('submit', e => this.handleLogin(e));
+    document.getElementById('clinicaForm')?.addEventListener('submit', e => this.handleClinicaLogin(e));
+    document.getElementById('adminForm')?.addEventListener('submit', e => this.handleAdminLogin(e));
   }
 
   switchTab(tab) {
@@ -39,15 +40,15 @@ class AuthManager {
 
   // ==================== Autenticación ====================
 
-  async handleLogin(e) {
+  async handleClinicaLogin(e) {
     e.preventDefault();
     const btn = e.target.querySelector('.submit-btn');
     const btnText = btn.querySelector('span');
     const originalText = btnText.textContent;
 
     try {
-      const email = document.getElementById('loginEmail').value.trim();
-      const password = document.getElementById('loginPassword').value;
+      const email = document.getElementById('clinicaEmail').value.trim();
+      const password = document.getElementById('clinicaPassword').value;
 
       if (!email || !password) {
         throw new Error('Email y contraseña requeridos');
@@ -82,6 +83,59 @@ class AuthManager {
 
     } catch (error) {
       notifications.error(error.message);
+      document.getElementById('clinicaError').textContent = error.message;
+      document.getElementById('clinicaError').classList.add('show');
+      btn.disabled = false;
+      btnText.textContent = originalText;
+    }
+  }
+
+  async handleAdminLogin(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('.submit-btn');
+    const btnText = btn.querySelector('span');
+    const originalText = btnText.textContent;
+
+    try {
+      const email = document.getElementById('adminEmail').value.trim();
+      const password = document.getElementById('adminPassword').value;
+
+      if (!email || !password) {
+        throw new Error('Email y contraseña requeridos');
+      }
+
+      // Mostrar cargando
+      btn.disabled = true;
+      btnText.innerHTML = '<span class="loading"></span>Autenticando...';
+
+      // Hacer request a endpoint de super admin
+      const response = await fetch(`${this.baseURL}/super-admin/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Credenciales inválidas');
+      }
+
+      // Guardar datos de super admin
+      localStorage.setItem('super-admin-token', data.token);
+      localStorage.setItem('super-admin-usuario', data.usuario?.nombre || email);
+
+      // Notificar y redirigir
+      notifications.success(`¡Bienvenido Admin!`);
+      console.log('✓ Login super admin exitoso');
+      setTimeout(() => {
+        window.location.href = '/admin-simple.html';
+      }, 500);
+
+    } catch (error) {
+      notifications.error(error.message);
+      document.getElementById('adminError').textContent = error.message;
+      document.getElementById('adminError').classList.add('show');
       btn.disabled = false;
       btnText.textContent = originalText;
     }
@@ -227,6 +281,13 @@ class AuthManager {
       el.classList.remove('show');
       el.textContent = '';
     });
+  }
+}
+
+// Función global para cambiar pestañas
+function switchTab(tab) {
+  if (window.authManager) {
+    window.authManager.switchTab(tab);
   }
 }
 
