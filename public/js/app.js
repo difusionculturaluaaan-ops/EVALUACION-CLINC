@@ -1145,7 +1145,7 @@ const app = {
         <div style="position: relative; width: 100%; height: 380px; margin-bottom: 0;">
           <canvas id="chartPerfil-${Date.now()}" style="width: 100%; height: 100%; display: block;"></canvas>
         </div>
-      </div>`
+      </div>
 
       <div style="margin-top: 4px;">
         <table style="width: 100%; border-collapse: collapse;" class="reporte-tabla-resultados">
