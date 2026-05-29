@@ -93,36 +93,23 @@ const profileCharts = {
 
     // Configurar gráfico Chart.js
     this.currentChart = new Chart(ctx, {
-      type: 'line',
+      type: 'bar',
       data: {
         labels: config.labels,
         datasets: [
           {
             label: 'Paciente',
             data: dataPaciente,
-            borderColor: config.colorPaciente,
-            backgroundColor: config.colorPaciente + '10',
-            borderWidth: 3,
-            pointRadius: 5,
-            pointBackgroundColor: config.colorPaciente,
-            pointBorderColor: '#fff',
-            pointBorderWidth: 2,
-            fill: true,
-            tension: 0.4
+            backgroundColor: config.colorPaciente,
+            borderColor: config.colorPaciente + '80',
+            borderWidth: 1
           },
           {
             label: 'Población Normal',
             data: dataNormal,
-            borderColor: config.colorNormal,
-            backgroundColor: config.colorNormal + '10',
-            borderWidth: 2,
-            borderDash: [5, 5],
-            pointRadius: 4,
-            pointBackgroundColor: config.colorNormal,
-            pointBorderColor: '#fff',
-            pointBorderWidth: 2,
-            fill: false,
-            tension: 0.4
+            backgroundColor: config.colorNormal,
+            borderColor: config.colorNormal + '80',
+            borderWidth: 1
           }
         ]
       },

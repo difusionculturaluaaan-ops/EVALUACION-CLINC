@@ -859,36 +859,23 @@ const app = {
       const ctx = canvasElement.getContext('2d');
 
       canvasElement.chartInstance = new Chart(ctx, {
-        type: 'line',
+        type: 'bar',
         data: {
           labels: labels,
           datasets: [
             {
               label: 'Paciente',
               data: valoresPaciente,
-              borderColor: '#e74c3c',
-              backgroundColor: 'rgba(231, 76, 60, 0.1)',
-              borderWidth: 3,
-              pointRadius: 5,
-              pointBackgroundColor: '#e74c3c',
-              pointBorderColor: '#fff',
-              pointBorderWidth: 2,
-              tension: 0.4,
-              fill: true
+              backgroundColor: '#e74c3c',
+              borderColor: '#c0392b',
+              borderWidth: 1
             },
             {
               label: 'Población Normal',
               data: valoresPoblacion,
-              borderColor: '#3b82f6',
-              backgroundColor: 'rgba(59, 130, 246, 0.1)',
-              borderWidth: 2,
-              pointRadius: 4,
-              pointBackgroundColor: '#3b82f6',
-              pointBorderColor: '#fff',
-              pointBorderWidth: 1.5,
-              tension: 0.4,
-              fill: true,
-              borderDash: [5, 5]
+              backgroundColor: '#27ae60',
+              borderColor: '#229954',
+              borderWidth: 1
             }
           ]
         },

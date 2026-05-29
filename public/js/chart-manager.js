@@ -53,22 +53,15 @@ const chartManager = {
    */
   crearGraficaPerfil(canvasId, labels, data, titulo = 'Perfil de Evaluación', tipoTest = 'HAM') {
     return this.create(canvasId, {
-      type: 'line',
+      type: 'bar',
       data: {
         labels: labels,
         datasets: [{
           label: titulo,
           data: data,
-          borderColor: '#2c5aa0',
-          backgroundColor: 'rgba(44, 90, 160, 0.05)',
-          borderWidth: 2.5,
-          pointRadius: 5,
-          pointHoverRadius: 7,
-          pointBackgroundColor: '#2c5aa0',
-          pointBorderColor: '#fff',
-          pointBorderWidth: 2,
-          tension: 0.4,
-          fill: true
+          backgroundColor: '#2c5aa0',
+          borderColor: '#1a3a5c',
+          borderWidth: 1
         }]
       },
       options: {
