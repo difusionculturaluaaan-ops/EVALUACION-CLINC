@@ -924,6 +924,37 @@ const app = {
   },
 
   /**
+   * Calcular respuestas afirmativas por escala SCID-II
+   */
+  calcularRespuestasPorEscalaSCID2(respuestas) {
+    if (!Array.isArray(respuestas)) return {};
+
+    const escalas = [
+      { letra: 'A', inicio: 0, fin: 7 },      // 1-7 → índices 0-6
+      { letra: 'B', inicio: 7, fin: 15 },     // 8-15 → índices 7-14
+      { letra: 'C', inicio: 15, fin: 26 },    // 16-26 → índices 15-25
+      { letra: 'D', inicio: 26, fin: 35 },    // 27-35 → índices 26-34
+      { letra: 'E', inicio: 35, fin: 48 },    // 36-48 → índices 35-47
+      { letra: 'F', inicio: 48, fin: 56 },    // 49-56 → índices 48-55
+      { letra: 'G', inicio: 56, fin: 64 },    // 57-64 → índices 56-63
+      { letra: 'H', inicio: 64, fin: 69 },    // 65-69 → índices 64-68
+      { letra: 'I', inicio: 69, fin: 79 },    // 70-79 → índices 69-78
+      { letra: 'J', inicio: 79, fin: 90 },    // 80-90 → índices 79-89
+      { letra: 'K', inicio: 90, fin: 108 },   // 91-108 → índices 90-107
+      { letra: 'L', inicio: 108, fin: 120 }   // 109-120 → índices 108-119
+    ];
+
+    const resultado = {};
+    escalas.forEach(escala => {
+      const rango = respuestas.slice(escala.inicio, escala.fin);
+      const count = rango.filter(r => r === 1).length;
+      resultado[escala.letra] = count;
+    });
+
+    return resultado;
+  },
+
+  /**
    * Renderizar gráfica comparativa: Paciente vs Población Normal
    */
   async renderChartReporte(prueba) {
@@ -980,9 +1011,97 @@ const app = {
           promedioReferencia = mediaRef;
         }
       } else if (prueba.tipo === 'SCID2') {
-        // SCID-II: total de respuestas sí
-        promedioPaciente = prueba.total || 0;
-        promedioReferencia = (119 * 0.3).toFixed(1);
+        // SCID-II: gráfico por escala (A-L)
+        const respuestasPorEscala = this.calcularRespuestasPorEscalaSCID2(data);
+        const escalasConfig = [
+          { letra: 'A', abrev: 'TPE', minimo: 4 },
+          { letra: 'B', abrev: 'TPD', minimo: 5 },
+          { letra: 'C', abrev: 'TOC', minimo: 5 },
+          { letra: 'D', abrev: 'PA', minimo: 5 },
+          { letra: 'E', abrev: 'AUT', minimo: 5 },
+          { letra: 'F', abrev: 'TPP', minimo: 4 },
+          { letra: 'G', abrev: 'TEZ', minimo: 5 },
+          { letra: 'H', abrev: 'TES', minimo: 4 },
+          { letra: 'I', abrev: 'TH', minimo: 4 },
+          { letra: 'J', abrev: 'TN', minimo: 6 },
+          { letra: 'K', abrev: 'TL', minimo: 5 },
+          { letra: 'L', abrev: 'TA', minimo: 3 }
+        ];
+
+        const labels = escalasConfig.map(e => e.abrev);
+        const valoresPaciente = escalasConfig.map(e => respuestasPorEscala[e.letra] || 0);
+        const valoresReferencia = escalasConfig.map(e => e.minimo);
+
+        const maxValor = Math.max(...valoresPaciente, ...valoresReferencia) + 2;
+        const ctx = canvasElement.getContext('2d');
+
+        canvasElement.chartInstance = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Paciente',
+                data: valoresPaciente,
+                backgroundColor: '#e74c3c',
+                borderColor: '#c0392b',
+                borderWidth: 2,
+                barPercentage: 0.7
+              },
+              {
+                label: 'Referencia (Mínimo)',
+                data: valoresReferencia,
+                backgroundColor: '#27ae60',
+                borderColor: '#229954',
+                borderWidth: 2,
+                barPercentage: 0.7
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: false },
+            onHover: false,
+            animation: { duration: 0 },
+            plugins: {
+              legend: {
+                display: true,
+                position: 'top',
+                labels: { font: { size: 12 }, padding: 15, usePointStyle: true }
+              },
+              tooltip: { enabled: false }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: maxValor,
+                ticks: { stepSize: 1, font: { size: 10 } },
+                grid: { color: 'rgba(0, 0, 0, 0.08)' }
+              },
+              x: {
+                grid: { display: false },
+                ticks: { font: { size: 11 }, maxRotation: 0 }
+              }
+            }
+          }
+        });
+
+        setTimeout(() => {
+          if (canvasElement.chartInstance) {
+            const imagenDataUrl = canvasElement.toDataURL('image/png');
+            const img = document.createElement('img');
+            img.src = imagenDataUrl;
+            img.style.width = '100%';
+            img.style.height = '400px';
+            img.style.display = 'block';
+            canvasElement.parentNode.replaceChild(img, canvasElement);
+            canvasElement.chartInstance.destroy();
+            console.log('✓ Gráfico SCID-II por escala convertido a imagen estática');
+          }
+        }, 100);
+
+        return; // Salir sin procesar el gráfico genérico
       } else {
         // Fallback: promedio simple
         if (Array.isArray(data) && data.length > 0) {
@@ -1340,18 +1459,18 @@ const app = {
    */
   generarTablaTrastornosSCIDII() {
     const trastornos = [
-      { escala: 'A', preguntas: '1 - 7', minimo: 4, nombre: 'Trastorno de la personalidad por evitación' },
-      { escala: 'B', preguntas: '8 - 15', minimo: 5, nombre: 'Trastorno de la personalidad por dependencia' },
-      { escala: 'C', preguntas: '16 - 26', minimo: 5, nombre: 'Trastorno obsesivo – compulsivo' },
-      { escala: 'D', preguntas: '27 - 35', minimo: 5, nombre: 'Pasivo – agresivo' },
-      { escala: 'E', preguntas: '36 - 48', minimo: 5, nombre: 'Autodestructivo' },
-      { escala: 'F', preguntas: '49 - 56', minimo: 4, nombre: 'Trastorno paranoide de la personalidad' },
-      { escala: 'G', preguntas: '57 - 64', minimo: 5, nombre: 'Trastorno esquizotípico de la personalidad' },
-      { escala: 'H', preguntas: '65 - 69', minimo: 4, nombre: 'Trastorno esquizoide de la personalidad' },
-      { escala: 'I', preguntas: '70 - 79', minimo: 4, nombre: 'Trastorno histríónico de la personalidad' },
-      { escala: 'J', preguntas: '80 - 90', minimo: 6, nombre: 'Trastorno narcisista de la personalidad' },
-      { escala: 'K', preguntas: '91 - 108', minimo: 5, nombre: 'Trastorno límite de la personalidad' },
-      { escala: 'L', preguntas: '109 - 120', minimo: 3, nombre: 'Trastorno antisocial de la personalidad' }
+      { escala: 'A', preguntas: '1 - 7', minimo: 4, abrev: 'TPE', nombre: 'Trastorno de la personalidad por evitación' },
+      { escala: 'B', preguntas: '8 - 15', minimo: 5, abrev: 'TPD', nombre: 'Trastorno de la personalidad por dependencia' },
+      { escala: 'C', preguntas: '16 - 26', minimo: 5, abrev: 'TOC', nombre: 'Trastorno obsesivo – compulsivo' },
+      { escala: 'D', preguntas: '27 - 35', minimo: 5, abrev: 'PA', nombre: 'Pasivo – agresivo' },
+      { escala: 'E', preguntas: '36 - 48', minimo: 5, abrev: 'AUT', nombre: 'Autodestructivo' },
+      { escala: 'F', preguntas: '49 - 56', minimo: 4, abrev: 'TPP', nombre: 'Trastorno paranoide de la personalidad' },
+      { escala: 'G', preguntas: '57 - 64', minimo: 5, abrev: 'TEZ', nombre: 'Trastorno esquizotípico de la personalidad' },
+      { escala: 'H', preguntas: '65 - 69', minimo: 4, abrev: 'TES', nombre: 'Trastorno esquizoide de la personalidad' },
+      { escala: 'I', preguntas: '70 - 79', minimo: 4, abrev: 'TH', nombre: 'Trastorno histríónico de la personalidad' },
+      { escala: 'J', preguntas: '80 - 90', minimo: 6, abrev: 'TN', nombre: 'Trastorno narcisista de la personalidad' },
+      { escala: 'K', preguntas: '91 - 108', minimo: 5, abrev: 'TL', nombre: 'Trastorno límite de la personalidad' },
+      { escala: 'L', preguntas: '109 - 120', minimo: 3, abrev: 'TA', nombre: 'Trastorno antisocial de la personalidad' }
     ];
 
     let html = `
@@ -1373,7 +1492,7 @@ const app = {
             <td style="border: 1px solid #ddd; padding: 5px; text-align: center; font-weight: bold;">${t.escala}</td>
             <td style="border: 1px solid #ddd; padding: 5px; text-align: center;">${t.preguntas}</td>
             <td style="border: 1px solid #ddd; padding: 5px; text-align: center;">${t.minimo}</td>
-            <td style="border: 1px solid #ddd; padding: 5px; text-align: left;">${t.nombre}</td>
+            <td style="border: 1px solid #ddd; padding: 5px; text-align: left;"><strong>${t.abrev}</strong> - ${t.nombre}</td>
           </tr>
       `;
     });
