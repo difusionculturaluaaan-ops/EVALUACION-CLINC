@@ -25,13 +25,14 @@ const app = {
     'scl90r': 'SCL90R',
     'hamilton': 'HAMILTON',
     'mmpi2': 'MMPI2',
-    'mmpi2rf': 'MMPI2RF',
     'tds': 'TDS',
     'isra': 'ISRA',
     'pclr': 'PCLR',
     'egep5': 'EGEP5',
     'scid2': 'SCID2'
   },
+
+  mmpi2Method: 'manual',
 
   /**
    * Inicializar la aplicación
@@ -272,6 +273,23 @@ const app = {
   },
 
   /**
+   * Cambiar método de MMPI-2: Manual o Cuestionario
+   */
+  cambiarMetodoMMPI2(metodo) {
+    this.mmpi2Method = metodo;
+    const manualDiv = document.getElementById('mmpi2-manual');
+    const cuestionarioDiv = document.getElementById('mmpi2-cuestionario');
+
+    if (metodo === 'manual') {
+      manualDiv.style.display = 'block';
+      cuestionarioDiv.style.display = 'none';
+    } else {
+      manualDiv.style.display = 'none';
+      cuestionarioDiv.style.display = 'block';
+    }
+  },
+
+  /**
    * Cambiar de subtab en ISRA
    */
   cambiarSubTab(subtab) {
@@ -328,6 +346,13 @@ const app = {
       tests_isra_m.init();
       // Mostrar solo la primera pestaña (C)
       this.cambiarSubTab('isra-c');
+    } else if (pageId === 'mmpi2') {
+      // MMPI-2: inicializar ambos métodos
+      const mmpiTest = this.testsDisponibles['MMPI2'];
+      if (mmpiTest && mmpiTest.init) mmpiTest.init();
+      tests_mmpi2rf.init();
+      // Mostrar método manual por defecto
+      this.cambiarMetodoMMPI2('manual');
     } else {
       test.init();
     }
@@ -623,6 +648,35 @@ const app = {
         );
 
         this.mostrarToast('✓ ISRA (C, F, M) guardado correctamente', 'success');
+      } else if (testType === 'MMPI2' && this.mmpi2Method === 'cuestionario') {
+        // MMPI-2 vía cuestionario MMPI-2-RF
+        const sinResponder = tests_mmpi2rf.validar();
+        if (sinResponder.length > 0) {
+          this.mostrarToast(`⚠️ Complete los ítems: ${sinResponder.join(', ')}`, 'warning');
+          return;
+        }
+
+        // Obtener respuestas y calcular
+        const respuestasRF = tests_mmpi2rf.obtenerRespuestas();
+        const resultadoRF = tests_mmpi2rf.calcular();
+
+        // Convertir a formato MMPI-2 (T-scores)
+        data = respuestasRF;
+        resultado = {
+          ...resultadoRF,
+          metodo: 'cuestionario',
+          label: 'MMPI-2-RF: 338 ítems'
+        };
+
+        pruebaGuardada = await api.guardarPrueba(
+          this.pacienteActivo.id,
+          'MMPI2',
+          data,
+          resultadoRF.total,
+          resultado
+        );
+
+        this.mostrarToast('✓ MMPI-2 (Cuestionario) guardado correctamente', 'success');
       } else {
         const test = this.testsDisponibles[testType];
         if (!test) {
@@ -1277,6 +1331,7 @@ const app = {
       </div>
 
       ${prueba.tipo === 'SCID2' ? this.generarTablaTrastornosSCIDII() : ''}
+      ${prueba.tipo === 'MMPI2' ? this.generarTablaResultadosMMPI2(subescalas) : ''}
     `;
   },
 
@@ -1327,6 +1382,68 @@ const app = {
         </table>
         <p style="margin: 6px 0 0 0; font-size: 10px; color: #666; font-style: italic;">
           Nota: Se consideran presentes cuando se alcanza o supera el número mínimo de respuestas afirmativas para cada escala.
+        </p>
+      </div>
+    `;
+
+    return html;
+  },
+
+  /**
+   * Generar tabla de resultados MMPI-2
+   */
+  generarTablaResultadosMMPI2(subescalas) {
+    const escalas = [
+      { nombre: 'L (Mentira)', abrev: 'L' },
+      { nombre: 'F (Infrecuencia)', abrev: 'F' },
+      { nombre: 'K (Corrección)', abrev: 'K' },
+      { nombre: 'Hs (Hipocondría)', abrev: 'Hs' },
+      { nombre: 'D (Depresión)', abrev: 'D' },
+      { nombre: 'Hy (Histeria)', abrev: 'Hy' },
+      { nombre: 'Pd (Desviación Psicopática)', abrev: 'Pd' },
+      { nombre: 'Mf (Masculinidad/Feminidad)', abrev: 'Mf' },
+      { nombre: 'Pa (Paranoia)', abrev: 'Pa' },
+      { nombre: 'Pt (Psicastenia)', abrev: 'Pt' },
+      { nombre: 'Sc (Esquizofrenia)', abrev: 'Sc' },
+      { nombre: 'Ma (Hipomanía)', abrev: 'Ma' },
+      { nombre: 'Si (Introversión Social)', abrev: 'Si' }
+    ];
+
+    let html = `
+      <div style="margin-top: 10px; margin-bottom: 20px; page-break-inside: avoid;">
+        <h4 style="color: #2c5aa0; font-size: 11px; margin: 0 0 6px 0; font-weight: bold; border-bottom: 2px solid #2c5aa0; padding-bottom: 3px;">ESCALAS MMPI-2</h4>
+        <table style="width: 100%; border-collapse: collapse; font-size: 8px;">
+          <tr style="background: #e8f0f7;">
+            <th style="border: 1px solid #999; padding: 3px; text-align: left; font-weight: bold;">Escala</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">T-Score</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">Rango</th>
+          </tr>
+    `;
+
+    escalas.forEach((e, idx) => {
+      const bgColor = idx % 2 === 0 ? '#ffffff' : '#f9f9f9';
+      const tScore = subescalas?.[e.abrev] || '—';
+      let rango = '—';
+      if (typeof tScore === 'number') {
+        if (tScore < 40) rango = 'Bajo';
+        else if (tScore < 60) rango = 'Normal';
+        else if (tScore < 70) rango = 'Elevado';
+        else rango = 'Muy Elevado';
+      }
+
+      html += `
+          <tr style="background: ${bgColor};">
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: left;">${e.nombre}</td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-weight: bold;">${tScore}</td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center;">${rango}</td>
+          </tr>
+      `;
+    });
+
+    html += `
+        </table>
+        <p style="margin: 4px 0 0 0; font-size: 7px; color: #666; font-style: italic;">
+          Nota: T-Score normalizado con media=50 y desviación estándar=10
         </p>
       </div>
     `;
