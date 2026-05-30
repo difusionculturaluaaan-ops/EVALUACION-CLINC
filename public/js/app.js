@@ -1179,7 +1179,63 @@ const app = {
           ${this.generarFilasTabla(prueba, subescalas)}
         </table>
       </div>
+
+      ${prueba.tipo === 'SCID2' ? this.generarTablaTrastornosSCIDII() : ''}
     `;
+  },
+
+  /**
+   * Generar tabla de trastornos de personalidad SCID-II
+   */
+  generarTablaTrastornosSCIDII() {
+    const trastornos = [
+      { escala: 'A', preguntas: '1 - 7', minimo: 4, nombre: 'Trastorno de la personalidad por evitación' },
+      { escala: 'B', preguntas: '8 - 15', minimo: 5, nombre: 'Trastorno de la personalidad por dependencia' },
+      { escala: 'C', preguntas: '16 - 26', minimo: 5, nombre: 'Trastorno obsesivo – compulsivo' },
+      { escala: 'D', preguntas: '27 - 35', minimo: 5, nombre: 'Pasivo – agresivo' },
+      { escala: 'E', preguntas: '36 - 48', minimo: 5, nombre: 'Autodestructivo' },
+      { escala: 'F', preguntas: '49 - 56', minimo: 4, nombre: 'Trastorno paranoide de la personalidad' },
+      { escala: 'G', preguntas: '57 - 64', minimo: 5, nombre: 'Trastorno esquizotípico de la personalidad' },
+      { escala: 'H', preguntas: '65 - 69', minimo: 4, nombre: 'Trastorno esquizoide de la personalidad' },
+      { escala: 'I', preguntas: '70 - 79', minimo: 4, nombre: 'Trastorno histríónico de la personalidad' },
+      { escala: 'J', preguntas: '80 - 90', minimo: 6, nombre: 'Trastorno narcisista de la personalidad' },
+      { escala: 'K', preguntas: '91 - 108', minimo: 5, nombre: 'Trastorno límite de la personalidad' },
+      { escala: 'L', preguntas: '109 - 120', minimo: 3, nombre: 'Trastorno antisocial de la personalidad' }
+    ];
+
+    let html = `
+      <div style="margin-top: 10px; margin-bottom: 20px; page-break-inside: avoid;">
+        <h4 style="color: #2c5aa0; font-size: 9px; margin: 0 0 6px 0; font-weight: bold; border-bottom: 1px solid #2c5aa0; padding-bottom: 3px;">ESCALA DE TRASTORNOS DE LA PERSONALIDAD</h4>
+        <table style="width: 100%; border-collapse: collapse; font-size: 7px;">
+          <tr style="background: #e8f0f7;">
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">Escala</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">Preguntas</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">Mínimo</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: left; font-weight: bold;">Trastorno de la Personalidad</th>
+          </tr>
+    `;
+
+    trastornos.forEach((t, idx) => {
+      const bgColor = idx % 2 === 0 ? '#ffffff' : '#f9f9f9';
+      html += `
+          <tr style="background: ${bgColor};">
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-weight: bold;">${t.escala}</td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center;">${t.preguntas}</td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center;">${t.minimo}</td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: left;">${t.nombre}</td>
+          </tr>
+      `;
+    });
+
+    html += `
+        </table>
+        <p style="margin: 4px 0 0 0; font-size: 7px; color: #666; font-style: italic;">
+          Nota: Se consideran presentes cuando se alcanza o supera el número mínimo de respuestas afirmativas para cada escala.
+        </p>
+      </div>
+    `;
+
+    return html;
   },
 
   /**
