@@ -65,17 +65,9 @@
       <span class="icon">🧠</span>
       <span class="label">MMPI-2</span>
     </button>
-    <button class="nav-item" data-page="isra-c" onclick="app.iniciarTestConPaciente('isra-c')">
-      <span class="icon">🧠</span>
-      <span class="label">ISRA-C (Cognitivo)</span>
-    </button>
-    <button class="nav-item" data-page="isra-f" onclick="app.iniciarTestConPaciente('isra-f')">
-      <span class="icon">❤️</span>
-      <span class="label">ISRA-F (Fisiológico)</span>
-    </button>
-    <button class="nav-item" data-page="isra-m" onclick="app.iniciarTestConPaciente('isra-m')">
-      <span class="icon">🚶</span>
-      <span class="label">ISRA-M (Motor)</span>
+    <button class="nav-item" data-page="isra" onclick="app.iniciarTestConPaciente('isra')">
+      <span class="icon">😰</span>
+      <span class="label">ISRA (Ansiedad)</span>
     </button>
     <button class="nav-item" data-page="tds" onclick="app.iniciarTestConPaciente('tds')">
       <span class="icon">😴</span>
@@ -351,56 +343,32 @@
     </div>
   </section>
 
-  <!-- Página: ISRA-C (Cognitiva) -->
-  <section id="page-isra-c" class="page">
+  <!-- Página: ISRA (Ansiedad - Completo) -->
+  <section id="page-isra" class="page">
     <div class="test-page">
       <div class="test-header">
-        <h2>ISRA - Sección C (Cognitiva)</h2>
-        <p style="font-size: 12px; color: #666; margin: 8px 0;">Sistema de respuesta cognitivo - Preocupación y pensamientos</p>
+        <h2>ISRA - Inventario de Situaciones y Respuestas de Ansiedad</h2>
+        <p style="font-size: 12px; color: #666; margin: 8px 0;">Evalúa ansiedad en tres sistemas: Cognitivo, Fisiológico y Motor-Conductual</p>
         <div class="progress-bar">
-          <div id="isra-c-progress" class="progress-fill"></div>
-          <span id="isra-c-counter" class="progress-text">0 / 64</span>
+          <div id="isra-progress" class="progress-fill"></div>
+          <span id="isra-counter" class="progress-text">0 / 245</span>
         </div>
       </div>
-      <div id="isra-container" class="test-items"></div>
-      <button type="button" class="btn btn-primary btn-lg" onclick="app.guardarPrueba('ISRA_C')">
-        Finalizar Sección C
-      </button>
-    </div>
-  </section>
 
-  <!-- Página: ISRA-F (Fisiológica) -->
-  <section id="page-isra-f" class="page">
-    <div class="test-page">
-      <div class="test-header">
-        <h2>ISRA - Sección F (Fisiológica)</h2>
-        <p style="font-size: 12px; color: #666; margin: 8px 0;">Sistema de respuesta fisiológica - Síntomas físicos</p>
-        <div class="progress-bar">
-          <div id="isra-f-progress" class="progress-fill"></div>
-          <span id="isra-f-counter" class="progress-text">0 / 122</span>
-        </div>
+      <!-- Sub-tabs para ISRA -->
+      <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 2px solid #e0e0e0; padding: 0 0 8px 0;">
+        <button class="isra-tab-btn active" onclick="app.cambiarSubTab('isra-c')" style="padding: 8px 16px; border: none; background: #e8f0f7; color: #2c5aa0; font-weight: bold; cursor: pointer; border-radius: 4px 4px 0 0;">🧠 Cognitivo (C)</button>
+        <button class="isra-tab-btn" onclick="app.cambiarSubTab('isra-f')" style="padding: 8px 16px; border: none; background: #f0f0f0; color: #666; font-weight: bold; cursor: pointer; border-radius: 4px 4px 0 0;">❤️ Fisiológico (F)</button>
+        <button class="isra-tab-btn" onclick="app.cambiarSubTab('isra-m')" style="padding: 8px 16px; border: none; background: #f0f0f0; color: #666; font-weight: bold; cursor: pointer; border-radius: 4px 4px 0 0;">🚶 Motor (M)</button>
       </div>
-      <div id="isra-f-container" class="test-items"></div>
-      <button type="button" class="btn btn-primary btn-lg" onclick="app.guardarPrueba('ISRA_F')">
-        Finalizar Sección F
-      </button>
-    </div>
-  </section>
 
-  <!-- Página: ISRA-M (Motor-Conductual) -->
-  <section id="page-isra-m" class="page">
-    <div class="test-page">
-      <div class="test-header">
-        <h2>ISRA - Sección M (Motor-Conductual)</h2>
-        <p style="font-size: 12px; color: #666; margin: 8px 0;">Sistema de respuesta motor-conductual - Conductas y comportamientos</p>
-        <div class="progress-bar">
-          <div id="isra-m-progress" class="progress-fill"></div>
-          <span id="isra-m-counter" class="progress-text">0 / 63</span>
-        </div>
-      </div>
-      <div id="isra-m-container" class="test-items"></div>
-      <button type="button" class="btn btn-primary btn-lg" onclick="app.guardarPrueba('ISRA_M')">
-        Finalizar Sección M
+      <!-- Contenedor de items -->
+      <div id="isra-container" class="test-items" style="display: block;"></div>
+      <div id="isra-f-container" class="test-items" style="display: none;"></div>
+      <div id="isra-m-container" class="test-items" style="display: none;"></div>
+
+      <button type="button" class="btn btn-primary btn-lg" onclick="app.guardarPrueba('ISRA')" style="margin-top: 16px;">
+        ✓ Finalizar ISRA (todos los sistemas)
       </button>
     </div>
   </section>

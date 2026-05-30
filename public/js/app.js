@@ -10,6 +10,7 @@ const app = {
     'HAMILTON': tests_hamilton,
     'MMPI2': tests_mmpi2,
     'TDS': tests_tds,
+    'ISRA': { nombre: 'ISRA' },
     'ISRA_C': tests_isra,
     'ISRA_F': tests_isra_f,
     'ISRA_M': tests_isra_m,
@@ -24,9 +25,7 @@ const app = {
     'hamilton': 'HAMILTON',
     'mmpi2': 'MMPI2',
     'tds': 'TDS',
-    'isra-c': 'ISRA_C',
-    'isra-f': 'ISRA_F',
-    'isra-m': 'ISRA_M',
+    'isra': 'ISRA',
     'pclr': 'PCLR',
     'egep5': 'EGEP5',
     'scid2': 'SCID2'
@@ -271,6 +270,37 @@ const app = {
   },
 
   /**
+   * Cambiar de subtab en ISRA
+   */
+  cambiarSubTab(subtab) {
+    // Ocultar todos los contenedores
+    document.getElementById('isra-container').style.display = 'none';
+    document.getElementById('isra-f-container').style.display = 'none';
+    document.getElementById('isra-m-container').style.display = 'none';
+
+    // Desactivar todos los botones
+    document.querySelectorAll('.isra-tab-btn').forEach(btn => {
+      btn.style.background = '#f0f0f0';
+      btn.style.color = '#666';
+    });
+
+    // Mostrar el contenedor seleccionado
+    if (subtab === 'isra-c') {
+      document.getElementById('isra-container').style.display = 'block';
+      document.querySelectorAll('.isra-tab-btn')[0].style.background = '#e8f0f7';
+      document.querySelectorAll('.isra-tab-btn')[0].style.color = '#2c5aa0';
+    } else if (subtab === 'isra-f') {
+      document.getElementById('isra-f-container').style.display = 'block';
+      document.querySelectorAll('.isra-tab-btn')[1].style.background = '#e8f0f7';
+      document.querySelectorAll('.isra-tab-btn')[1].style.color = '#2c5aa0';
+    } else if (subtab === 'isra-m') {
+      document.getElementById('isra-m-container').style.display = 'block';
+      document.querySelectorAll('.isra-tab-btn')[2].style.background = '#e8f0f7';
+      document.querySelectorAll('.isra-tab-btn')[2].style.color = '#2c5aa0';
+    }
+  },
+
+  /**
    * Inicializar un test cuando se abre su página
    */
   initTest(pageId) {
@@ -289,7 +319,16 @@ const app = {
     }
 
     // Renderizar el test
-    test.init();
+    if (pageId === 'isra') {
+      // ISRA especial: inicializar las tres secciones
+      tests_isra.init();
+      tests_isra_f.init();
+      tests_isra_m.init();
+      // Mostrar solo la primera pestaña (C)
+      this.cambiarSubTab('isra-c');
+    } else {
+      test.init();
+    }
   },
 
   /**
@@ -528,32 +567,87 @@ const app = {
       return;
     }
 
-    const test = this.testsDisponibles[testType];
-    if (!test) {
-      this.mostrarToast('Error: Test no encontrado', 'error');
-      return;
-    }
-
-    // Validar que todos los ítems tengan respuesta
-    const sinResponder = test.validar();
-    if (sinResponder.length > 0) {
-      this.mostrarToast(`⚠️ Complete los ítems: ${sinResponder.join(', ')}`, 'warning');
-      return;
-    }
-
     try {
-      const data = test.obtenerRespuestas();
-      const resultado = test.calcular();
+      let data, resultado, pruebaGuardada;
 
-      const pruebaGuardada = await api.guardarPrueba(
-        this.pacienteActivo.id,
-        testType,
-        data,
-        resultado.total,
-        resultado
-      );
+      if (testType === 'ISRA') {
+        // Validar las tres secciones
+        const sinResponderC = tests_isra.validar();
+        const sinResponderF = tests_isra_f.validar();
+        const sinResponderM = tests_isra_m.validar();
 
-      this.mostrarToast(`✓ ${test.nombre} guardado correctamente`, 'success');
+        if (sinResponderC.length > 0 || sinResponderF.length > 0 || sinResponderM.length > 0) {
+          const faltantes = [];
+          if (sinResponderC.length > 0) faltantes.push(`Cognitivo: ${sinResponderC.join(', ')}`);
+          if (sinResponderF.length > 0) faltantes.push(`Fisiológico: ${sinResponderF.join(', ')}`);
+          if (sinResponderM.length > 0) faltantes.push(`Motor: ${sinResponderM.join(', ')}`);
+          this.mostrarToast(`⚠️ Complete los ítems: ${faltantes.join(' | ')}`, 'warning');
+          return;
+        }
+
+        // Obtener respuestas de las tres secciones
+        const dataC = tests_isra.obtenerRespuestas();
+        const dataF = tests_isra_f.obtenerRespuestas();
+        const dataM = tests_isra_m.obtenerRespuestas();
+
+        // Calcular resultados de las tres secciones
+        const resultC = tests_isra.calcular();
+        const resultF = tests_isra_f.calcular();
+        const resultM = tests_isra_m.calcular();
+
+        // Combinar en un único objeto
+        const totalISRA = resultC.total + resultF.total + resultM.total;
+        resultado = {
+          total: totalISRA,
+          sistemas: {
+            C: resultC,
+            F: resultF,
+            M: resultM
+          },
+          label: `ISRA Completo: ${totalISRA} puntos`,
+          color: '#2c5aa0',
+          texto: `Ansiedad Cognitiva: ${resultC.label} (${resultC.total}) | Ansiedad Fisiológica: ${resultF.label} (${resultF.total}) | Ansiedad Motora: ${resultM.label} (${resultM.total})`
+        };
+
+        // Guardar con combinación de datos
+        data = { C: dataC, F: dataF, M: dataM };
+
+        pruebaGuardada = await api.guardarPrueba(
+          this.pacienteActivo.id,
+          'ISRA',
+          data,
+          totalISRA,
+          resultado
+        );
+
+        this.mostrarToast('✓ ISRA (C, F, M) guardado correctamente', 'success');
+      } else {
+        const test = this.testsDisponibles[testType];
+        if (!test) {
+          this.mostrarToast('Error: Test no encontrado', 'error');
+          return;
+        }
+
+        // Validar que todos los ítems tengan respuesta
+        const sinResponder = test.validar();
+        if (sinResponder.length > 0) {
+          this.mostrarToast(`⚠️ Complete los ítems: ${sinResponder.join(', ')}`, 'warning');
+          return;
+        }
+
+        data = test.obtenerRespuestas();
+        resultado = test.calcular();
+
+        pruebaGuardada = await api.guardarPrueba(
+          this.pacienteActivo.id,
+          testType,
+          data,
+          resultado.total,
+          resultado
+        );
+
+        this.mostrarToast(`✓ ${test.nombre} guardado correctamente`, 'success');
+      }
 
       // Mostrar reporte detallado con datos del paciente
       this.pruebaActual = pruebaGuardada;
