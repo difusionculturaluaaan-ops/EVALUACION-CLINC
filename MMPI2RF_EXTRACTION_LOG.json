@@ -1,0 +1,107 @@
+{
+  "totalFormulas": 49,
+  "ejemploFormulas": [
+    {
+      "celda": "AV7",
+      "formula": "+K23+O14+S22+AA37+AM12",
+      "items": [
+        "K23",
+        "O14",
+        "S22",
+        "AA37",
+        "AM12"
+      ]
+    },
+    {
+      "celda": "AV8",
+      "formula": "+O29+S27+W36+AM14+AF32",
+      "items": [
+        "O29",
+        "S27",
+        "W36",
+        "AM14",
+        "AF32"
+      ]
+    },
+    {
+      "celda": "AR9",
+      "formula": "+C16+C32+G12+G22+G33+K4+K36+O11+O14+O33+S4+S22+W25+AA4+AA17+AA26+AE3+AE14+AE25+AE27+AE31+AI8+AI15+AI",
+      "items": [
+        "C16",
+        "C32",
+        "G12",
+        "G22",
+        "G33",
+        "K4",
+        "K36",
+        "O11",
+        "O14",
+        "O33",
+        "S4",
+        "S22",
+        "W25",
+        "AA4",
+        "AA17",
+        "AA26",
+        "AE3",
+        "AE14",
+        "AE25",
+        "AE27",
+        "AE31",
+        "AI8",
+        "AI15",
+        "AI24",
+        "AI26",
+        "AM10",
+        "H25",
+        "L13",
+        "L32",
+        "T32",
+        "AB13"
+      ]
+    },
+    {
+      "celda": "AV9",
+      "formula": "+G14+K19+AA18+AE38",
+      "items": [
+        "G14",
+        "K19",
+        "AA18",
+        "AE38"
+      ]
+    },
+    {
+      "celda": "AR10",
+      "formula": "+G6+G7+K9+K16+O18+O23+S8+S26+S36+W13+W30+AA38+AE5+AE20+AI28+AI31+D9+L28+T15+AB7+AF33",
+      "items": [
+        "G6",
+        "G7",
+        "K9",
+        "K16",
+        "O18",
+        "O23",
+        "S8",
+        "S26",
+        "S36",
+        "W13",
+        "W30",
+        "AA38",
+        "AE5",
+        "AE20",
+        "AI28",
+        "AI31",
+        "D9",
+        "L28",
+        "T15",
+        "AB7",
+        "AF33"
+      ]
+    }
+  ],
+  "estructura": {
+    "items_total": 338,
+    "filas_datos_ingreso": 102,
+    "columnas": 43
+  },
+  "timestamp": "2026-05-30T02:43:09.729Z"
+}

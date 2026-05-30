@@ -1,0 +1,33 @@
+{
+  "items_total": 338,
+  "escalas_validez": [
+    "CNS",
+    "VRIN-r",
+    "TRIN-r",
+    "F-r",
+    "Fp-r"
+  ],
+  "escalas_clinicas": [
+    "RCd",
+    "RC1",
+    "RC2",
+    "RC3",
+    "RC4",
+    "RC6",
+    "RC7",
+    "RC8",
+    "RC9"
+  ],
+  "estructura_ingreso": {
+    "repeticion": "Cada 4 columnas: ITEM# | R | V | F",
+    "items_por_fila": 9,
+    "columnas_totales": 43
+  },
+  "formulas_encontradas": 1775,
+  "paciete_datos": [
+    "NOMBRE",
+    "CARGO",
+    "FECHA",
+    "INSTITUCI?N"
+  ]
+}
