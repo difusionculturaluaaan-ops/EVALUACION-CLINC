@@ -1205,13 +1205,13 @@ const app = {
 
     let html = `
       <div style="margin-top: 10px; margin-bottom: 20px; page-break-inside: avoid;">
-        <h4 style="color: #2c5aa0; font-size: 9px; margin: 0 0 6px 0; font-weight: bold; border-bottom: 1px solid #2c5aa0; padding-bottom: 3px;">ESCALA DE TRASTORNOS DE LA PERSONALIDAD</h4>
-        <table style="width: 100%; border-collapse: collapse; font-size: 7px;">
+        <h4 style="color: #2c5aa0; font-size: 12px; margin: 0 0 8px 0; font-weight: bold; border-bottom: 2px solid #2c5aa0; padding-bottom: 4px;">ESCALA DE TRASTORNOS DE LA PERSONALIDAD</h4>
+        <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
           <tr style="background: #e8f0f7;">
-            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">Escala</th>
-            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">Preguntas</th>
-            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">Mínimo</th>
-            <th style="border: 1px solid #999; padding: 3px; text-align: left; font-weight: bold;">Trastorno de la Personalidad</th>
+            <th style="border: 1px solid #999; padding: 5px; text-align: center; font-weight: bold;">Escala</th>
+            <th style="border: 1px solid #999; padding: 5px; text-align: center; font-weight: bold;">Preguntas</th>
+            <th style="border: 1px solid #999; padding: 5px; text-align: center; font-weight: bold;">Mínimo</th>
+            <th style="border: 1px solid #999; padding: 5px; text-align: left; font-weight: bold;">Trastorno de la Personalidad</th>
           </tr>
     `;
 
@@ -1219,17 +1219,17 @@ const app = {
       const bgColor = idx % 2 === 0 ? '#ffffff' : '#f9f9f9';
       html += `
           <tr style="background: ${bgColor};">
-            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-weight: bold;">${t.escala}</td>
-            <td style="border: 1px solid #ddd; padding: 3px; text-align: center;">${t.preguntas}</td>
-            <td style="border: 1px solid #ddd; padding: 3px; text-align: center;">${t.minimo}</td>
-            <td style="border: 1px solid #ddd; padding: 3px; text-align: left;">${t.nombre}</td>
+            <td style="border: 1px solid #ddd; padding: 5px; text-align: center; font-weight: bold;">${t.escala}</td>
+            <td style="border: 1px solid #ddd; padding: 5px; text-align: center;">${t.preguntas}</td>
+            <td style="border: 1px solid #ddd; padding: 5px; text-align: center;">${t.minimo}</td>
+            <td style="border: 1px solid #ddd; padding: 5px; text-align: left;">${t.nombre}</td>
           </tr>
       `;
     });
 
     html += `
         </table>
-        <p style="margin: 4px 0 0 0; font-size: 7px; color: #666; font-style: italic;">
+        <p style="margin: 6px 0 0 0; font-size: 10px; color: #666; font-style: italic;">
           Nota: Se consideran presentes cuando se alcanza o supera el número mínimo de respuestas afirmativas para cada escala.
         </p>
       </div>
