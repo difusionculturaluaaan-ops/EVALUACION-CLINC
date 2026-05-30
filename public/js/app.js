@@ -1234,7 +1234,17 @@ const app = {
     const normasLocales = this.getNormasLocales(prueba.tipo);
     let filas = '';
 
-    if (prueba.tipo === 'SCL90R') {
+    if (prueba.tipo === 'SCID2') {
+      const total = prueba.total || 0;
+      const porcentajeSi = ((total / 119) * 100).toFixed(1);
+      const estado = this.compararConReferencia(porcentajeSi, 30);
+      filas += `<tr>
+        <td style="border: 1px solid #ddd; padding: 3px; font-size: 8px;">Respuestas Afirmativas</td>
+        <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-weight: bold; font-size: 8px;">${total}/119</td>
+        <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">30%</td>
+        <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 7px; ${estado.color}">${porcentajeSi}%</td>
+      </tr>`;
+    } else if (prueba.tipo === 'SCL90R') {
       const indices = [
         { label: 'IST', valor: subescalas.IST || subescalas.total || 0, ref: 0.31 },
         { label: 'TSP', valor: subescalas.TSP || 0, ref: 19.29 },
