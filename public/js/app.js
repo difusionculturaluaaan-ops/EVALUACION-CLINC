@@ -789,73 +789,64 @@ const app = {
       const subescalas = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas || {};
       const data = typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data || [];
 
-      let labels = [];
-      let valoresPaciente = [];
-      let valoresPoblacion = [];
-
       // Obtener normas del archivo local basadas en tipo de test
       const normasLocales = this.getNormasLocales(prueba.tipo);
 
-      // Procesar según tipo de test
+      let promedioPaciente = 0;
+      let promedioReferencia = 0;
+
+      // Procesar según tipo de test - calcular promedios
       if (prueba.tipo === 'SCL90R') {
-        // SCL-90-R: mostrar 9 escalas con nombres
-        const escalasOrdenadas = ['SOM', 'OBS', 'INT', 'DEP', 'ANS', 'HOS', 'FOB', 'PAR', 'PSI'];
-        const escalasMap = {
-          'SOM': 'Somatización', 'OBS': 'Obsesivo-Compulsivo', 'INT': 'Susceptibilidad',
-          'DEP': 'Depresión', 'ANS': 'Ansiedad', 'HOS': 'Hostilidad', 'FOB': 'Ansiedad Fóbica',
-          'PAR': 'Ideación Paranoide', 'PSI': 'Psicotisismo'
-        };
-        escalasOrdenadas.forEach((escala, idx) => {
-          labels.push(escalasMap[escala]);
-          valoresPaciente.push(Number(subescalas[escala]) || 0);
-          const norma = normasLocales?.escalas?.find(e => e.id === escala);
-          valoresPoblacion.push(norma?.media || 0.3);
+        // SCL-90-R: promedio de subescalas
+        const escalas = ['SOM', 'OBS', 'INT', 'DEP', 'ANS', 'HOS', 'FOB', 'PAR', 'PSI'];
+        const valores = escalas.map(e => Number(subescalas[e]) || 0);
+        const referencias = escalas.map(e => {
+          const norma = normasLocales?.escalas?.find(esc => esc.id === e);
+          return norma?.media || 0.3;
         });
+        promedioPaciente = (valores.reduce((a, b) => a + b, 0) / valores.length).toFixed(2);
+        promedioReferencia = (referencias.reduce((a, b) => a + b, 0) / referencias.length).toFixed(2);
       } else if (prueba.tipo === 'MMPI2') {
-        // MMPI-2: mostrar solo números (13 escalas)
+        // MMPI-2: promedio de escalas
         if (Array.isArray(data) && data.length > 0) {
-          data.forEach((valor, idx) => {
-            labels.push(`${idx + 1}`);
-            valoresPaciente.push(Number(valor) || 0);
-            const norma = normasLocales?.escalas?.[idx];
-            valoresPoblacion.push(norma?.media || 50);
-          });
+          promedioPaciente = (data.reduce((a, b) => a + (Number(b) || 0), 0) / data.length).toFixed(1);
+          const referencias = data.map((_, idx) => normasLocales?.escalas?.[idx]?.media || 50);
+          promedioReferencia = (referencias.reduce((a, b) => a + b, 0) / referencias.length).toFixed(1);
         }
       } else if (['PCLR', 'EGEP5'].includes(prueba.tipo)) {
-        // PCL-R y EGEP-5: mostrar solo números
+        // PCL-R y EGEP-5: total o promedio
         if (Array.isArray(data) && data.length > 0) {
-          data.forEach((valor, idx) => {
-            labels.push(`${idx + 1}`);
-            valoresPaciente.push(Number(valor) || 0);
-            valoresPoblacion.push(normasLocales?.escalas?.[idx]?.media || (prueba.tipo === 'PCLR' ? 0.2 : 0.2));
-          });
+          const total = data.reduce((a, b) => a + (Number(b) || 0), 0);
+          promedioPaciente = total.toFixed(1);
+          const mediaRef = (data.length * (prueba.tipo === 'PCLR' ? 0.2 : 0.2)).toFixed(1);
+          promedioReferencia = mediaRef;
         }
       } else if (['HAMILTON', 'ISRA', 'TDS'].includes(prueba.tipo)) {
-        // Hamilton, ISRA, TDS: mostrar solo números
+        // Hamilton, ISRA, TDS: total
         if (Array.isArray(data) && data.length > 0) {
-          data.forEach((valor, idx) => {
-            labels.push(`${idx + 1}`);
-            valoresPaciente.push(Number(valor) || 0);
-            valoresPoblacion.push(normasLocales?.media_por_item || 0.5);
-          });
+          const total = data.reduce((a, b) => a + (Number(b) || 0), 0);
+          promedioPaciente = total.toFixed(1);
+          const mediaRef = (data.length * (normasLocales?.media_por_item || 0.5)).toFixed(1);
+          promedioReferencia = mediaRef;
         }
+      } else if (prueba.tipo === 'SCID2') {
+        // SCID-II: total de respuestas sí
+        promedioPaciente = prueba.total || 0;
+        promedioReferencia = (119 * 0.3).toFixed(1);
       } else {
-        // Fallback: mostrar números
+        // Fallback: promedio simple
         if (Array.isArray(data) && data.length > 0) {
-          data.forEach((valor, idx) => {
-            labels.push(`${idx + 1}`);
-            valoresPaciente.push(Number(valor) || 0);
-            valoresPoblacion.push(0.5);
-          });
+          promedioPaciente = (data.reduce((a, b) => a + (Number(b) || 0), 0) / data.length).toFixed(1);
+          promedioReferencia = 0.5;
         }
       }
 
-      if (labels.length === 0) {
-        console.warn('No hay datos para graficar');
-        return;
-      }
+      // Labels simplificados: solo Paciente y Referencia
+      const labels = ['Paciente', 'Referencia'];
+      const valoresPaciente = [Number(promedioPaciente)];
+      const valoresReferencia = [Number(promedioReferencia)];
 
-      const maxValor = Math.max(...valoresPaciente, ...valoresPoblacion, 2) + 0.5;
+      const maxValor = Math.max(Number(promedioPaciente), Number(promedioReferencia), 2) + 1;
       const ctx = canvasElement.getContext('2d');
 
       canvasElement.chartInstance = new Chart(ctx, {
@@ -869,15 +860,15 @@ const app = {
               backgroundColor: '#e74c3c',
               borderColor: '#c0392b',
               borderWidth: 2,
-              barPercentage: 0.8
+              barPercentage: 0.6
             },
             {
               label: 'Población Normal',
-              data: valoresPoblacion,
+              data: valoresReferencia,
               backgroundColor: '#27ae60',
               borderColor: '#229954',
               borderWidth: 2,
-              barPercentage: 0.8
+              barPercentage: 0.6
             }
           ]
         },
