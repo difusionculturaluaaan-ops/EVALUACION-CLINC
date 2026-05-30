@@ -65,6 +65,10 @@
       <span class="icon">🧠</span>
       <span class="label">MMPI-2</span>
     </button>
+    <button class="nav-item" data-page="mmpi2rf" onclick="app.iniciarTestConPaciente('mmpi2rf')">
+      <span class="icon">📋</span>
+      <span class="label">MMPI-2-RF (338 ítems)</span>
+    </button>
     <button class="nav-item" data-page="isra" onclick="app.iniciarTestConPaciente('isra')">
       <span class="icon">😰</span>
       <span class="label">ISRA (Ansiedad)</span>
@@ -339,6 +343,24 @@
       <div id="mmpi-container" class="mmpi-grid"></div>
       <button type="button" class="btn btn-primary btn-lg" onclick="app.guardarPrueba('MMPI2')">
         Guardar Perfil MMPI-2
+      </button>
+    </div>
+  </section>
+
+  <!-- Página: MMPI-2-RF (338 ítems) -->
+  <section id="page-mmpi2rf" class="page">
+    <div class="test-page">
+      <div class="test-header">
+        <h2>MMPI-2-RF (Forma Reestructurada - 338 ítems)</h2>
+        <p style="font-size: 12px; color: #666; margin: 8px 0;">Inventario de personalidad con respuestas Verdadero/Falso. Evalúa validez y escalas clínicas reestructuradas.</p>
+        <div class="progress-bar">
+          <div id="mmpi2rf-progress" class="progress-fill"></div>
+          <span id="mmpi2rf-counter" class="progress-text">0 / 338</span>
+        </div>
+      </div>
+      <div id="mmpi2rf-container" class="test-items"></div>
+      <button type="button" class="btn btn-primary btn-lg" onclick="app.guardarPrueba('MMPI2RF')">
+        ✓ Finalizar MMPI-2-RF
       </button>
     </div>
   </section>
