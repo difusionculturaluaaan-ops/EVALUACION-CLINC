@@ -727,22 +727,24 @@ const app = {
           <h3 style="margin: 0; color: #2c5aa0; font-size: 10px; font-weight: bold;">PRUEBA: ${prueba.tipo}</h3>
         </div>
 
-        <!-- RESULTADOS -->
-        <div style="margin-bottom: 10px; font-size: 9px;">
-          ${prueba.tipo === 'SCL90R' ? this.generarReporteSCL(prueba, subescalas) : prueba.tipo === 'PCLR' ? this.generarReportePCLR(prueba, subescalas) : this.generarReporteGenerico(prueba, subescalas)}
+        <!-- RESULTADOS + INTERPRETACIÓN (AGRUPADOS) -->
+        <div style="page-break-inside: avoid; margin-bottom: 10px;">
+          <!-- Gráfico PCL-R -->
+          <div style="margin-bottom: 10px; font-size: 9px;">
+            ${prueba.tipo === 'SCL90R' ? this.generarReporteSCL(prueba, subescalas) : prueba.tipo === 'PCLR' ? this.generarReportePCLR(prueba, subescalas) : this.generarReporteGenerico(prueba, subescalas)}
+          </div>
+
+          <!-- INTERPRETACIÓN (dentro del contenedor principal) -->
+          ${subescalas && subescalas.interpretacion ? `
+          <div style="background: #f9f9f9; padding: 8px; border-left: 3px solid #2c5aa0; margin-bottom: 10px; border-radius: 3px;">
+            <h3 style="margin: 0 0 4px 0; color: #2c5aa0; font-size: 9px; font-weight: bold;">INTERPRETACIÓN</h3>
+            <p style="margin: 0; font-size: 8px; line-height: 1.4;">
+              ${typeof subescalas.interpretacion === 'object' ? (subescalas.interpretacion.label || subescalas.interpretacion.texto || '') : subescalas.interpretacion}
+            </p>
+          </div>
+          ` : ''}
         </div>
 
-        <!-- INTERPRETACIÓN -->
-        ${subescalas && subescalas.interpretacion ? `
-        <div style="background: #f9f9f9; padding: 8px; border-left: 3px solid #2c5aa0; margin-bottom: 10px; border-radius: 3px;">
-          <h3 style="margin: 0 0 4px 0; color: #2c5aa0; font-size: 9px; font-weight: bold;">INTERPRETACIÓN</h3>
-          <p style="margin: 0; font-size: 8px; line-height: 1.4;">
-            ${typeof subescalas.interpretacion === 'object' ? (subescalas.interpretacion.label || subescalas.interpretacion.texto || '') : subescalas.interpretacion}
-          </p>
-        </div>
-        ` : ''}
-
-        <div style="page-break-before: always;"></div>
         ${this.generarValidacionProfesional()}
 
         <!-- FOOTER -->
@@ -1289,7 +1291,7 @@ const app = {
 
       return `
         <!-- VALIDACIÓN PROFESIONAL -->
-        <div id="validacion-profesional-section" style="background: #f0f4f8; padding: 8px; margin-bottom: 10px; border: 1px solid #2c5aa0; border-radius: 3px; page-break-inside: avoid;">
+        <div id="validacion-profesional-section" style="background: #f0f4f8; padding: 8px; margin-top: 15px; margin-bottom: 10px; border: 1px solid #2c5aa0; border-radius: 3px;">
           <h3 style="margin: 0 0 6px 0; color: #2c5aa0; font-size: 12px; font-weight: bold; border-bottom: 1px solid #2c5aa0; padding-bottom: 4px; text-decoration: underline;">VALIDACIÓN PROFESIONAL</h3>
 
           <table style="width: 100%; font-size: 13px; border-collapse: collapse; line-height: 1.4; table-layout: fixed;">
