@@ -1200,19 +1200,19 @@ const app = {
           <canvas id="chartComparativoPCLR" style="width: 100%; height: 100%;"></canvas>
         </div>
 
-        <!-- TABLA DE MÉTRICAS -->
-        <table style="width: 100%; border-collapse: collapse; font-size: 8px; margin-top: 8px;">
+        <!-- TABLA DE MÉTRICAS (PCL-R específico) -->
+        <table style="width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 8px;">
           <tr style="background: #2c5aa0; color: white;">
-            <th style="border: 1px solid #999; padding: 2px; text-align: left;">Métrica</th>
-            <th style="border: 1px solid #999; padding: 2px; text-align: center;">Paciente</th>
-            <th style="border: 1px solid #999; padding: 2px; text-align: center;">Población</th>
-            <th style="border: 1px solid #999; padding: 2px; text-align: center;">Diferencia</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: left; font-size: 10px;">Métrica</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-size: 10px;">Paciente</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-size: 10px;">Población</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-size: 10px;">Diferencia</th>
           </tr>
           <tr>
-            <td style="border: 1px solid #ddd; padding: 2px; font-weight: bold;">Puntaje Total</td>
-            <td style="border: 1px solid #ddd; padding: 2px; text-align: center;">${totalPaciente.toFixed(1)}/60</td>
-            <td style="border: 1px solid #ddd; padding: 2px; text-align: center;">${normas.totalMedio.toFixed(1)}/60</td>
-            <td style="border: 1px solid #ddd; padding: 2px; text-align: center; ${totalPaciente > normas.totalMedio ? 'color: #dc2626; font-weight: bold;' : 'color: #276749;'}">${(totalPaciente - normas.totalMedio).toFixed(1)}</td>
+            <td style="border: 1px solid #ddd; padding: 3px; font-weight: bold; font-size: 10px;">Puntaje Total</td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 10px;">${totalPaciente.toFixed(1)}/60</td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 10px;">${normas.totalMedio.toFixed(1)}/60</td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 10px; ${totalPaciente > normas.totalMedio ? 'color: #dc2626; font-weight: bold;' : 'color: #276749;'}">${(totalPaciente - normas.totalMedio).toFixed(1)}</td>
           </tr>
         </table>
       </div>
