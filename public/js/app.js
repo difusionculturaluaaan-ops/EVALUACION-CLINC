@@ -1304,7 +1304,7 @@ const app = {
 
       return `
         <!-- VALIDACIÓN PROFESIONAL -->
-        <div id="validacion-profesional-section" style="background: #f0f4f8; padding: 8px; margin-bottom: 10px; border: 1px solid #2c5aa0; border-radius: 3px; page-break-inside: avoid;">
+        <div id="validacion-profesional-section" style="background: #f0f4f8; padding: 8px; margin-top: 50px; margin-bottom: 10px; border: 1px solid #2c5aa0; border-radius: 3px; page-break-inside: avoid;">
           <h3 style="margin: 0 0 6px 0; color: #2c5aa0; font-size: 12px; font-weight: bold; border-bottom: 1px solid #2c5aa0; padding-bottom: 4px; text-decoration: underline;">VALIDACIÓN PROFESIONAL</h3>
 
           <table style="width: 100%; font-size: 13px; border-collapse: collapse; line-height: 1.4; table-layout: fixed;">
