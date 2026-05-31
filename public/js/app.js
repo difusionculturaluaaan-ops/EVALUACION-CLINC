@@ -1192,25 +1192,9 @@ const app = {
 
     let html = `
       <div style="margin: 4px 0; padding: 4px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: #333;" class="reporte-analisis">
-        <h4 style="color: #333; font-size: 9px; margin: 0 0 3px 0; font-weight: bold;">ANÁLISIS COMPARATIVO: PCL-R vs Población General</h4>
-        <div style="position: relative; width: 100%; height: 200px; margin-bottom: 8px;">
+        <div style="position: relative; width: 100%; height: 200px;">
           <canvas id="chartComparativoPCLR" style="width: 100%; height: 100%;"></canvas>
         </div>
-
-        <table style="width: 100%; border-collapse: collapse; font-size: 8px;">
-          <tr style="background: #2c5aa0; color: white;">
-            <th style="border: 1px solid #999; padding: 2px; text-align: left;">Métrica</th>
-            <th style="border: 1px solid #999; padding: 2px; text-align: center;">Paciente</th>
-            <th style="border: 1px solid #999; padding: 2px; text-align: center;">Población</th>
-            <th style="border: 1px solid #999; padding: 2px; text-align: center;">Diferencia</th>
-          </tr>
-          <tr>
-            <td style="border: 1px solid #ddd; padding: 2px; font-weight: bold;">Puntaje Total</td>
-            <td style="border: 1px solid #ddd; padding: 2px; text-align: center;">${totalPaciente.toFixed(1)}/60</td>
-            <td style="border: 1px solid #ddd; padding: 2px; text-align: center;">${normas.totalMedio.toFixed(1)}/60</td>
-            <td style="border: 1px solid #ddd; padding: 2px; text-align: center; ${totalPaciente > normas.totalMedio ? 'color: #dc2626; font-weight: bold;' : 'color: #276749;'}">${(totalPaciente - normas.totalMedio).toFixed(1)}</td>
-          </tr>
-        </table>
       </div>
     `;
 
