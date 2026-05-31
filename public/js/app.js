@@ -742,6 +742,7 @@ const app = {
         </div>
         ` : ''}
 
+        <div style="page-break-before: always;"></div>
         ${this.generarValidacionProfesional()}
 
         <!-- FOOTER -->
@@ -1191,7 +1192,7 @@ const app = {
     const totalPaciente = prueba.total || (Array.isArray(data) ? data.reduce((a, b) => a + (b || 0), 0) : 0);
 
     let html = `
-      <div style="margin: 4px 0; padding: 4px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: #333;" class="reporte-analisis">
+      <div style="margin: 4px 0 25px 0; padding: 4px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: #333; page-break-after: avoid; page-break-inside: avoid;" class="reporte-analisis">
         <div style="position: relative; width: 100%; height: 200px;">
           <canvas id="chartComparativoPCLR" style="width: 100%; height: 100%;"></canvas>
         </div>
