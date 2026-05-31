@@ -722,6 +722,9 @@ const app = {
           </table>
         </div>
 
+        <!-- VALIDACIÓN PROFESIONAL (después de datos del paciente) -->
+        ${this.generarValidacionProfesional()}
+
         <!-- PRUEBA REALIZADA -->
         <div style="background: #f0f4f8; padding: 6px; margin-bottom: 10px; border-radius: 3px;">
           <h3 style="margin: 0; color: #2c5aa0; font-size: 10px; font-weight: bold;">PRUEBA: ${prueba.tipo}</h3>
@@ -744,8 +747,6 @@ const app = {
           </div>
           ` : ''}
         </div>
-
-        ${this.generarValidacionProfesional()}
 
         <!-- FOOTER -->
         <div style="border-top: 1px solid #ddd; padding-top: 6px; margin-top: 10px; font-size: 7px; color: #999; text-align: center;">
