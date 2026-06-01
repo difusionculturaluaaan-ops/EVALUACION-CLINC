@@ -1562,8 +1562,9 @@ const app = {
       return '';
     }
 
+    const pageBreak = prueba.tipo === 'SCID2' ? '' : 'page-break-before: always;';
     let html = `
-      <div style="page-break-before: always; font-family: Arial, sans-serif; color: #333; line-height: 1.2; max-width: 21.59cm; margin: 0 auto; padding: 1.27cm;">
+      <div style="${pageBreak} font-family: Arial, sans-serif; color: #333; line-height: 1.2; max-width: 21.59cm; margin: 0 auto; padding: 1.27cm;">
         <!-- ENCABEZADO SEGUNDA PÁGINA -->
         <div style="border-bottom: 2px solid #2c5aa0; padding-bottom: 6px; margin-bottom: 8px;">
           <h2 style="color: #2c5aa0; margin: 0; font-size: 12px; font-weight: bold;">DETALLE DE ÍTEMS - ${prueba.tipo}</h2>
