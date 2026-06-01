@@ -530,12 +530,32 @@ const app = {
   },
 
   /**
+   * Verificar si una sección de ISRA está completa
+   */
+  validarSeccionISRA(seccion) {
+    const itemsTotal = seccion === 'C' ? tests_isra.items.length : (seccion === 'F' ? tests_isra_f.items.length : tests_isra_m.items.length);
+    const respuestas = app.obtenerRespuestasISRA(
+      seccion === 'C' ? tests_isra.items : (seccion === 'F' ? tests_isra_f.items : tests_isra_m.items),
+      `isra-${seccion.toLowerCase()}`
+    );
+    const respondidos = respuestas.filter(r => r !== null && r !== undefined).length;
+    return respondidos === itemsTotal;
+  },
+
+  /**
    * Cambiar a una sección de ISRA desde las tabs
    */
   cambiarSeccionISRA(seccion) {
-    // Guardar la sección actual antes de cambiar
+    // Verificar si la sección actual está completa antes de cambiar
     const actual = this.israState.seccionActual;
     if (actual && actual !== seccion) {
+      if (!this.validarSeccionISRA(actual)) {
+        const itemsTotal = actual === 'C' ? tests_isra.items.length : (actual === 'F' ? tests_isra_f.items.length : tests_isra_m.items.length);
+        this.mostrarToast(`⚠️ Completa todos los items de la Sección ${actual} (${itemsTotal} items)`, 'warning');
+        return;
+      }
+
+      // Guardar la sección actual después de validar
       const respuestasActual = app.obtenerRespuestasISRA(
         actual === 'C' ? tests_isra.items : (actual === 'F' ? tests_isra_f.items : tests_isra_m.items),
         `isra-${actual.toLowerCase()}`
@@ -551,7 +571,19 @@ const app = {
    */
   irSeccionISRASiguiente() {
     const actual = this.israState.seccionActual;
-    // Guardar respuestas de la sección actual antes de cambiar
+
+    // Validar que la sección actual esté completa
+    if (!this.validarSeccionISRA(actual)) {
+      const itemsTotal = actual === 'C' ? tests_isra.items.length : (actual === 'F' ? tests_isra_f.items.length : tests_isra_m.items.length);
+      const respondidos = app.obtenerRespuestasISRA(
+        actual === 'C' ? tests_isra.items : (actual === 'F' ? tests_isra_f.items : tests_isra_m.items),
+        `isra-${actual.toLowerCase()}`
+      ).filter(r => r !== null && r !== undefined).length;
+      this.mostrarToast(`⚠️ Faltan ${itemsTotal - respondidos} items por responder en Sección ${actual}`, 'warning');
+      return;
+    }
+
+    // Guardar respuestas de la sección actual
     const respuestasActual = app.obtenerRespuestasISRA(
       actual === 'C' ? tests_isra.items : (actual === 'F' ? tests_isra_f.items : tests_isra_m.items),
       `isra-${actual.toLowerCase()}`
@@ -570,7 +602,8 @@ const app = {
    */
   irSeccionISRAAnterior() {
     const actual = this.israState.seccionActual;
-    // Guardar respuestas de la sección actual antes de cambiar
+
+    // Guardar respuestas de la sección actual (no validar al retroceder)
     const respuestasActual = app.obtenerRespuestasISRA(
       actual === 'C' ? tests_isra.items : (actual === 'F' ? tests_isra_f.items : tests_isra_m.items),
       `isra-${actual.toLowerCase()}`
