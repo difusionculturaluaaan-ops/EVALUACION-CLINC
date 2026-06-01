@@ -1171,20 +1171,39 @@ const app = {
               // Líneas de percentiles
               [25, 50, 75, 99].forEach(pc => {
                 const y = yAxis.getPixelForValue(pc);
-                ctx.strokeStyle = pc === 50 ? '#666' : '#ccc';
-                ctx.lineWidth = pc === 50 ? 2 : 1;
-                ctx.setLineDash(pc === 50 ? [5, 5] : []);
-                ctx.beginPath();
-                ctx.moveTo(chartArea.left, y);
-                ctx.lineTo(chartArea.right, y);
-                ctx.stroke();
-                ctx.setLineDash([]);
 
-                // Etiqueta
-                ctx.fillStyle = '#666';
-                ctx.font = 'bold 9px Arial';
-                ctx.textAlign = 'right';
-                ctx.fillText(`Pc ${pc}`, chartArea.left - 5, y + 3);
+                // Línea de Población Normal (Pc 50)
+                if (pc === 50) {
+                  ctx.strokeStyle = '#228B22'; // Verde - Población Normal
+                  ctx.lineWidth = 3;
+                  ctx.setLineDash([8, 4]); // Punteada más visible
+                  ctx.beginPath();
+                  ctx.moveTo(chartArea.left, y);
+                  ctx.lineTo(chartArea.right, y);
+                  ctx.stroke();
+                  ctx.setLineDash([]);
+
+                  // Etiqueta para Población Normal
+                  ctx.fillStyle = '#228B22';
+                  ctx.font = 'bold 10px Arial';
+                  ctx.textAlign = 'right';
+                  ctx.fillText('Población Normal', chartArea.left - 5, y - 5);
+                } else {
+                  // Otras líneas de percentiles (25, 75, 99)
+                  ctx.strokeStyle = '#e0e0e0';
+                  ctx.lineWidth = 1;
+                  ctx.setLineDash([]);
+                  ctx.beginPath();
+                  ctx.moveTo(chartArea.left, y);
+                  ctx.lineTo(chartArea.right, y);
+                  ctx.stroke();
+
+                  // Etiqueta
+                  ctx.fillStyle = '#999';
+                  ctx.font = '8px Arial';
+                  ctx.textAlign = 'right';
+                  ctx.fillText(`Pc ${pc}`, chartArea.left - 5, y + 3);
+                }
               });
             }
           }]
