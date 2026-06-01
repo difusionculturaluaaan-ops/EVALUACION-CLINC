@@ -28,10 +28,31 @@ const app = {
         const C = app.israState.datosC || app.obtenerRespuestasISRA(tests_isra.items, 'isra-c');
         const F = app.israState.datosF || app.obtenerRespuestasISRA(tests_isra_f.items, 'isra-f');
         const M = app.israState.datosM || app.obtenerRespuestasISRA(tests_isra_m.items, 'isra-m');
-        return { C, F, M };
+
+        // Guardar las secciones en memoria para acceso posterior
+        app.israState._respuestas = { C, F, M };
+
+        // Retornar array combinado: C + F + M (lo que el servidor espera)
+        return [...(C || []), ...(F || []), ...(M || [])];
       },
       validar() {
-        const respuestas = this.obtenerRespuestas();
+        // Validar usando las respuestas separadas guardadas
+        const respuestas = app.israState._respuestas;
+        if (!respuestas) {
+          // Si no están guardadas, obtenerlas ahora
+          const actual = app.israState.seccionActual;
+          const respuestasActual = app.obtenerRespuestasISRA(
+            actual === 'C' ? tests_isra.items : (actual === 'F' ? tests_isra_f.items : tests_isra_m.items),
+            `isra-${actual.toLowerCase()}`
+          );
+          app.israState[`datos${actual}`] = respuestasActual;
+
+          const C = app.israState.datosC || app.obtenerRespuestasISRA(tests_isra.items, 'isra-c');
+          const F = app.israState.datosF || app.obtenerRespuestasISRA(tests_isra_f.items, 'isra-f');
+          const M = app.israState.datosM || app.obtenerRespuestasISRA(tests_isra_m.items, 'isra-m');
+          app.israState._respuestas = { C, F, M };
+        }
+
         const errores = [];
         const C_respondidos = respuestas.C ? respuestas.C.filter(r => r !== null && r !== undefined).length : 0;
         const F_respondidos = respuestas.F ? respuestas.F.filter(r => r !== null && r !== undefined).length : 0;
@@ -43,7 +64,11 @@ const app = {
         return errores;
       },
       calcular() {
-        const respuestas = this.obtenerRespuestas();
+        // Primero obtener respuestas para guardar las secciones
+        this.obtenerRespuestas();
+
+        // Usar las respuestas separadas guardadas
+        const respuestas = app.israState._respuestas;
         const totalC = respuestas.C ? respuestas.C.reduce((a, b) => a + (Number(b) || 0), 0) : 0;
         const totalF = respuestas.F ? respuestas.F.reduce((a, b) => a + (Number(b) || 0), 0) : 0;
         const totalM = respuestas.M ? respuestas.M.reduce((a, b) => a + (Number(b) || 0), 0) : 0;
@@ -51,9 +76,11 @@ const app = {
         return {
           total,
           datos: [totalC, totalF, totalM],
-          C: { total: totalC, items: respuestas.C },
-          F: { total: totalF, items: respuestas.F },
-          M: { total: totalM, items: respuestas.M }
+          subescalas: {
+            C: { total: totalC, items: respuestas.C },
+            F: { total: totalF, items: respuestas.F },
+            M: { total: totalM, items: respuestas.M }
+          }
         };
       }
     },
