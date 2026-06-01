@@ -38,6 +38,7 @@ body {
   overflow-x: hidden;
 }
 
+/* NOISE OVERLAY */
 body::before {
   content: '';
   position: fixed; inset: 0;
@@ -45,6 +46,7 @@ body::before {
   pointer-events: none; z-index: 9999;
 }
 
+/* HEADER */
 header {
   display: flex; align-items: center; gap: 18px;
   padding: 20px 32px;
@@ -74,6 +76,7 @@ header {
   padding: 4px 10px; border-radius: 20px;
 }
 
+/* TABS */
 .tabs-bar {
   display: flex; gap: 2px;
   padding: 12px 32px 0;
@@ -110,11 +113,13 @@ header {
   background: rgba(88,166,255,.2); color: var(--accent);
 }
 
+/* MAIN */
 main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; animation: fadeIn .25s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
+/* CARDS */
 .card {
   background: var(--bg2);
   border: 1px solid var(--border);
@@ -134,9 +139,11 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
 .card-header .icon { font-size: 16px; }
 .card-body { padding: 20px; }
 
+/* GRID */
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
 
+/* FORM ELEMENTS */
 .form-group { margin-bottom: 14px; }
 .form-label {
   display: block; font-size: 11px; font-weight: 600;
@@ -159,6 +166,7 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
   box-shadow: 0 0 0 3px rgba(88,166,255,.12);
 }
 
+/* ITEMS GRID */
 .items-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
@@ -209,6 +217,7 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
   color: var(--red);
 }
 
+/* PROGRESS BAR */
 .progress-wrap { margin-bottom: 20px; }
 .progress-info {
   display: flex; justify-content: space-between; align-items: center;
@@ -227,6 +236,7 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
   transition: width .4s ease;
 }
 
+/* BUTTONS */
 .btn {
   display: inline-flex; align-items: center; gap: 7px;
   padding: 9px 18px;
@@ -250,6 +260,7 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
 .btn-danger:hover { background: rgba(248,81,73,.2); }
 .btn-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
 
+/* SCALE TABLE */
 .scale-table { width: 100%; border-collapse: collapse; }
 .scale-table th {
   background: var(--bg3);
@@ -267,6 +278,118 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
 .scale-table tr:last-child td { border-bottom: none; }
 .scale-table tr:hover td { background: rgba(88,166,255,.03); }
 
+.cat-label {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .4px;
+  padding: 2px 8px; border-radius: 20px;
+}
+.t-score {
+  font-family: var(--font-mono); font-weight: 600; font-size: 14px;
+}
+.pd-score { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+
+/* NIVEL BADGES */
+.nivel-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 600;
+  padding: 3px 9px; border-radius: 20px;
+}
+.nivel-bajo    { background: rgba(63,185,80,.12);  color: var(--green);  border: 1px solid rgba(63,185,80,.25); }
+.nivel-medio   { background: rgba(210,153,34,.12); color: var(--gold);   border: 1px solid rgba(210,153,34,.25); }
+.nivel-alto    { background: rgba(227,179,65,.15);  color: var(--orange); border: 1px solid rgba(227,179,65,.3); }
+.nivel-muyalto { background: rgba(248,81,73,.12);  color: var(--red);    border: 1px solid rgba(248,81,73,.25); }
+
+/* BAR CHART (profile) */
+.profile-wrap {
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+.profile-chart {
+  min-width: 900px;
+  height: 340px;
+  position: relative;
+  padding: 10px 10px 40px 60px;
+}
+.profile-grid-line {
+  position: absolute; left: 60px; right: 10px;
+  height: 1px; background: rgba(48,54,61,.6);
+}
+.profile-grid-label {
+  position: absolute; left: 10px;
+  font-family: var(--font-mono); font-size: 9px; color: var(--muted);
+  transform: translateY(-50%);
+}
+.profile-bars {
+  display: flex; align-items: flex-end;
+  height: 280px; gap: 3px;
+  position: relative; z-index: 2;
+}
+.profile-bar-wrap {
+  flex: 1; min-width: 16px;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 3px; height: 280px; justify-content: flex-end;
+}
+.profile-bar {
+  width: 100%; border-radius: 3px 3px 0 0;
+  transition: height .6s cubic-bezier(.34,1.56,.64,1);
+  position: relative; min-height: 2px;
+}
+.profile-bar:hover::after {
+  content: attr(data-tip);
+  position: absolute; bottom: 105%; left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text); font-size: 10px; font-family: var(--font-mono);
+  padding: 4px 8px; border-radius: 4px; white-space: nowrap;
+  z-index: 10; pointer-events: none;
+}
+.profile-abbr {
+  font-family: var(--font-mono); font-size: 8px;
+  color: var(--muted); writing-mode: vertical-rl;
+  text-orientation: mixed; transform: rotate(180deg);
+  max-height: 50px; overflow: hidden;
+  margin-top: 4px;
+}
+.threshold-line {
+  position: absolute; left: 60px; right: 10px;
+  height: 2px; z-index: 3; pointer-events: none;
+}
+
+/* INTERPRETATION */
+.interp-section { margin-bottom: 24px; }
+.interp-section-title {
+  font-family: var(--font-disp); font-size: 15px;
+  color: var(--accent); margin-bottom: 10px;
+  padding-bottom: 6px; border-bottom: 1px solid var(--border);
+}
+.interp-row {
+  display: grid; grid-template-columns: 160px 60px 1fr;
+  gap: 0; border-bottom: 1px solid rgba(48,54,61,.5);
+  align-items: start;
+}
+.interp-row:last-child { border-bottom: none; }
+.interp-scale { padding: 9px 12px; font-weight: 600; font-size: 12px; }
+.interp-t { padding: 9px 4px; font-family: var(--font-mono); font-size: 13px; font-weight: 600; text-align: center; }
+.interp-text { padding: 9px 12px; font-size: 12px; color: var(--muted); line-height: 1.6; }
+.interp-alert { color: var(--red) !important; font-weight: 600; }
+.interp-warn  { color: var(--orange) !important; }
+
+/* VALIDITY DASHBOARD */
+.validity-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  margin-bottom: 20px;
+}
+.validity-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px;
+}
+.validity-name { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
+.validity-t    { font-family: var(--font-mono); font-size: 28px; font-weight: 600; margin: 6px 0; }
+.validity-status { font-size: 11px; font-weight: 600; }
+
+/* NOTICE BOX */
 .notice {
   display: flex; gap: 12px; align-items: flex-start;
   background: rgba(88,166,255,.06);
@@ -282,8 +405,10 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
 .notice-text { font-size: 12px; color: var(--muted); line-height: 1.7; }
 .notice-text strong { color: var(--text); }
 
+/* TABLE SCROLL */
 .table-scroll { overflow-x: auto; border-radius: 10px; }
 
+/* SECTION HEADER */
 .section-divider {
   background: var(--bg3);
   font-size: 10px; font-weight: 700; text-transform: uppercase;
@@ -291,6 +416,7 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
   padding: 6px 12px; border-bottom: 1px solid var(--border);
 }
 
+/* TEST PANEL STYLES */
 .test-page { display:none; animation: fadeIn .2s ease; }
 .test-page.tactive { display:block; }
 
@@ -330,9 +456,19 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
   box-shadow:0 0 10px rgba(248,81,73,.15);
 }
 
+/* PRINT */
+@media print {
+  header, .tabs-bar, .btn-group, .btn { display: none !important; }
+  .tab-panel { display: block !important; }
+  body { background: white; color: #111; }
+  .card { border: 1px solid #ccc; }
+}
+
+/* RESPONSIVE */
 @media (max-width: 768px) {
   main { padding: 16px; }
   .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .validity-grid { grid-template-columns: repeat(2,1fr); }
   .items-grid { grid-template-columns: repeat(auto-fill, minmax(75px,1fr)); }
 }
 </style>
@@ -368,17 +504,70 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
 
 <main>
 
+<!-- TAB 0: APLICAR TEST -->
+<div id="tab-test" class="tab-panel">
+
+  <div class="notice">
+    <span class="notice-icon">📋</span>
+    <div class="notice-text">
+      <strong>Instrucciones:</strong> A continuación encontrará una serie de enunciados.
+      Lea cada uno y decida si es <strong style="color:var(--green)">Verdadero (V)</strong> o
+      <strong style="color:var(--red)">Falso (F)</strong> en referencia a usted.
+      Trate de dar una respuesta a cada enunciado. No hay respuestas correctas ni incorrectas.
+      Sea lo más sincero(a) posible.
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-body" style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
+      <div style="flex:1;min-width:220px">
+        <div class="progress-info">
+          <span class="progress-label">Progreso del cuestionario</span>
+          <span class="progress-count" id="test-prog-count">0 / 338 respondidos</span>
+        </div>
+        <div class="progress-bar-bg" style="margin-top:8px">
+          <div class="progress-bar-fill" id="test-prog-bar" style="width:0%"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <div style="text-align:center;background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.2);border-radius:8px;padding:8px 16px">
+          <div style="font-family:var(--font-mono);font-size:20px;font-weight:600;color:var(--green)" id="test-count-v">0</div>
+          <div style="font-size:10px;color:var(--muted)">Verdaderos</div>
+        </div>
+        <div style="text-align:center;background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.2);border-radius:8px;padding:8px 16px">
+          <div style="font-family:var(--font-mono);font-size:20px;font-weight:600;color:var(--red)" id="test-count-f">0</div>
+          <div style="font-size:10px;color:var(--muted)">Falsos</div>
+        </div>
+        <button class="btn btn-primary" id="btn-finish-test" onclick="finishTest()"
+          style="opacity:.35;pointer-events:none">
+          ⚡ Calcular Resultados
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="test-pages"></div>
+
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;flex-wrap:wrap;gap:12px">
+    <button class="btn btn-secondary" id="btn-prev-page" onclick="changePage(-1)" style="opacity:.35;pointer-events:none">← Anterior</button>
+    <span style="font-size:12px;color:var(--muted)" id="page-indicator">Página 1 de 15</span>
+    <button class="btn btn-primary" id="btn-next-page" onclick="changePage(1)">Siguiente →</button>
+  </div>
+</div>
+
 <!-- TAB 1: DATOS -->
 <div id="tab-datos" class="tab-panel active">
+
   <div class="notice">
     <span class="notice-icon">ℹ️</span>
     <div class="notice-text">
       <strong>Instrucciones:</strong> Complete los datos del evaluado y luego ingrese las respuestas
       haciendo clic en <strong>V</strong> (Verdadero) o <strong>F</strong> (Falso) para cada uno de los 338 ítems.
+      Los datos se guardan automáticamente en el navegador.
     </div>
   </div>
 
-  <div class="grid-2">
+  <div class="grid-2" style="margin-bottom:20px">
     <div class="card">
       <div class="card-header"><span class="icon">👤</span><h2>Datos del Evaluado</h2></div>
       <div class="card-body">
@@ -433,16 +622,18 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
             <div style="font-size:11px;color:var(--muted);margin-top:3px">Falso (F)</div>
           </div>
         </div>
-        <div class="btn-group">
+        <div class="btn-group" style="margin-top:20px">
           <button class="btn btn-primary" onclick="calcAll();showTab('resultados')">⚡ Calcular Resultados</button>
-          <button class="btn btn-secondary" onclick="clearAll()">🗑 Limpiar</button>
+          <button class="btn btn-secondary" onclick="exportJSON()">💾 Exportar JSON</button>
+          <button class="btn btn-secondary" onclick="importJSON()">📥 Importar</button>
+          <button class="btn btn-danger" onclick="clearAll()">🗑️ Limpiar</button>
         </div>
       </div>
     </div>
   </div>
 
   <div class="card">
-    <div class="card-header"><span class="icon">📝</span><h2>Respuestas · 338 Ítems</h2>
+    <div class="card-header"><span class="icon">📝</span><h2>Respuestas • 338 Ítems</h2>
       <span style="margin-left:auto;font-size:11px;color:var(--muted)">Clic en V o F para cada ítem</span>
     </div>
     <div class="card-body">
@@ -451,67 +642,21 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
   </div>
 </div>
 
-<!-- TAB 2: APLICAR TEST -->
-<div id="tab-test" class="tab-panel">
-  <div class="notice">
-    <span class="notice-icon">📋</span>
-    <div class="notice-text">
-      <strong>Instrucciones:</strong> A continuación encontrará una serie de enunciados.
-      Lea cada uno y decida si es <strong style="color:var(--green)">Verdadero (V)</strong> o
-      <strong style="color:var(--red)">Falso (F)</strong> en referencia a usted.
-    </div>
-  </div>
-
-  <div class="card" style="margin-bottom:20px">
-    <div class="card-body" style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
-      <div style="flex:1;min-width:220px">
-        <div class="progress-info">
-          <span class="progress-label">Progreso del cuestionario</span>
-          <span class="progress-count" id="test-prog-count">0 / 338 respondidos</span>
-        </div>
-        <div class="progress-bar-bg" style="margin-top:8px">
-          <div class="progress-bar-fill" id="test-prog-bar" style="width:0%"></div>
-        </div>
-      </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <div style="text-align:center;background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.2);border-radius:8px;padding:8px 16px">
-          <div style="font-family:var(--font-mono);font-size:20px;font-weight:600;color:var(--green)" id="test-count-v">0</div>
-          <div style="font-size:10px;color:var(--muted)">Verdaderos</div>
-        </div>
-        <div style="text-align:center;background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.2);border-radius:8px;padding:8px 16px">
-          <div style="font-family:var(--font-mono);font-size:20px;font-weight:600;color:var(--red)" id="test-count-f">0</div>
-          <div style="font-size:10px;color:var(--muted)">Falsos</div>
-        </div>
-        <button class="btn btn-primary" id="btn-finish-test" onclick="finishTest()" style="opacity:.35;pointer-events:none">
-          ⚡ Calcular Resultados
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <div id="test-pages"></div>
-
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;flex-wrap:wrap;gap:12px">
-    <button class="btn btn-secondary" id="btn-prev-page" onclick="changePage(-1)" style="opacity:.35;pointer-events:none">← Anterior</button>
-    <span style="font-size:12px;color:var(--muted)" id="page-indicator">Página 1 de 15</span>
-    <button class="btn btn-primary" id="btn-next-page" onclick="changePage(1)">Siguiente →</button>
-  </div>
-</div>
-
-<!-- TAB 3: RESULTADOS -->
+<!-- TAB 2: RESULTADOS -->
 <div id="tab-resultados" class="tab-panel">
+
+  <div class="notice warn" id="validity-notice" style="display:none">
+    <span class="notice-icon">⚠️</span>
+    <div class="notice-text" id="validity-notice-text"></div>
+  </div>
+
+  <div class="notice" id="calc-notice">
+    <span class="notice-icon">💡</span>
+    <div class="notice-text">Complete el ingreso de datos y presione <strong>Calcular Resultados</strong> para ver los puntajes.</div>
+  </div>
+
   <div id="results-content" style="display:none">
-    <div class="card" style="margin-bottom: 20px;">
-      <div class="card-header"><span class="icon">💾</span><h2>Acciones</h2></div>
-      <div class="card-body">
-        <button class="btn btn-primary" onclick="generarPDF()" style="background: #27ae60;">
-          📥 Descargar PDF
-        </button>
-        <button class="btn btn-secondary" onclick="imprimirResultados()" style="margin-left: 10px;">
-          🖨️ Imprimir
-        </button>
-      </div>
-    </div>
+    <div class="validity-grid" id="validity-grid"></div>
 
     <div class="card">
       <div class="card-header"><span class="icon">📊</span><h2>Puntajes por Escala</h2></div>
@@ -519,6 +664,7 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
         <table class="scale-table" id="scale-table">
           <thead>
             <tr>
+              <th>Categoría</th>
               <th>Escala</th>
               <th>Abrev.</th>
               <th>PD</th>
@@ -533,34 +679,47 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
   </div>
 </div>
 
-<!-- TAB 4: PERFIL -->
+<!-- TAB 3: PERFIL -->
 <div id="tab-perfil" class="tab-panel">
   <div class="card">
     <div class="card-header"><span class="icon">📈</span><h2>Perfil Gráfico MMPI-2 RF</h2>
       <span style="margin-left:auto;font-size:11px;color:var(--muted)">Línea roja = T 65 · Línea naranja = T 70</span>
     </div>
     <div class="card-body">
-      <div style="color:var(--muted);font-size:12px;text-align:center;padding-top:80px">
-        Calcule los resultados para ver el perfil gráfico.
+      <div class="profile-wrap">
+        <div class="profile-chart" id="profile-chart">
+          <div style="color:var(--muted);font-size:12px;text-align:center;padding-top:80px">
+            Calcule los resultados para ver el perfil gráfico.
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- TAB 5: INTERPRETACION -->
+<!-- TAB 4: INTERPRETACIÓN -->
 <div id="tab-interpretacion" class="tab-panel">
   <div class="card" style="margin-bottom:20px">
     <div class="card-header"><span class="icon">📋</span><h2>Informe de Resultados</h2></div>
     <div class="card-body">
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;font-size:12px">
-        <div><span style="color:var(--muted)">Nombre: </span><strong id="inf-nombre">–</strong></div>
-        <div><span style="color:var(--muted)">Fecha: </span><strong id="inf-fecha">–</strong></div>
-        <div><span style="color:var(--muted)">Cargo: </span><strong id="inf-cargo">–</strong></div>
+        <div><span style="color:var(--muted)">Nombre: </span><strong id="inf-nombre">—</strong></div>
+        <div><span style="color:var(--muted)">Fecha: </span><strong id="inf-fecha">—</strong></div>
+        <div><span style="color:var(--muted)">Cargo: </span><strong id="inf-cargo">—</strong></div>
+        <div><span style="color:var(--muted)">Institución: </span><strong id="inf-inst">—</strong></div>
+        <div><span style="color:var(--muted)">Evaluador: </span><strong id="inf-eval">—</strong></div>
+        <div><span style="color:var(--muted)">Edad/Sexo: </span><strong id="inf-edad">—</strong></div>
       </div>
       <div class="notice" style="margin-bottom:0">
         <span class="notice-icon">⚠️</span>
-        <div class="notice-text"><strong>Aviso clínico:</strong> Este informe es una guía automática. La interpretación final <strong>siempre debe ser realizada por un psicólogo</strong> con formación en evaluación psicológica.</div>
+        <div class="notice-text"><strong>Aviso clínico:</strong> Este informe es una guía automática. La interpretación final <strong>siempre debe ser realizada por un psicólogo</strong> con formación en evaluación psicológica. El software no reemplaza el juicio clínico profesional.</div>
       </div>
+    </div>
+  </div>
+
+  <div id="interp-content">
+    <div class="notice"><span class="notice-icon">💡</span>
+      <div class="notice-text">Calcule los resultados para generar el informe interpretativo.</div>
     </div>
   </div>
 </div>
@@ -572,356 +731,408 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
 <script>
 const ITEMS = [
   "",
-    '1. Me gustan las revistas de mecánica.',
-    '2. Tengo buen apetito.',
-    '3. Creo que me gustaría el trabajo de bibliotecario.',
-    '4. Mi vida diaria está llena de cosas que mantienen mi interés.',
-    '5. A veces he sentido un intenso deseo de abandonar mi hogar.',
-    '6. Tengo dificultades para concentrarme en una tarea o trabajo.',
-    '7. Mi madre es una buena mujer. (O si su madre ha fallecido) Mi madre era una buena mujer.',
-    '8. Encuentro alivio cuando comparto mis problemas con alguien.',
-    '9. A menudo me he sentido culpable porque he fingido mayor peso del que realmente sentía.',
-    '10. Cuesta mucho trabajo convencer a la mayoría de la gente de la verdad.',
-    '11. Me gusta muchísimo ir a bailes.',
-    '12. Frecuentemente siento que puedo leer la mente de otras personas.',
-    '13. Algunas veces me empeño tanto en algo que las personas pierden la paciencia conmigo.',
-    '14. En ocasiones los espíritus malignos se posesionan de mí.',
-    '15. Siento un nudo en la garganta casi todo el tiempo.',
-    '16. En ocasiones siento deseos de maldecir.',
-    '17. Soy una persona muy sociable.',
-    '18. Siento debilidad general la mayor parte del tiempo.',
-    '19. Los miembros de mi familia y mis parientes más cercanos se llevan bastante bien.',
-    '20. Me siento incómodo(a) cuando estoy en lugares cerrados.',
-    '21. Cuando era más joven, a veces robé algunas cosas.',
-    '22. Quisiera poder ser tan feliz como parece serlo otras personas.',
-    '23. A veces siento ganas de destrozar las cosas.',
-    '24. Pierdo fácilmente las discusiones.',
-    '25. Actualmente estoy tan capacitado(a) para trabajar como siempre lo he estado.',
-    '26. Por principio, cuando alguien me hace algún mal siento que, de ser posible, debería pagarle con la misma moneda.',
-    '27. Muchas veces he perdido oportunidades por no haberme decidido a tiempo.',
-    '28. Por lo general tengo las manos y los pies lo suficientemente calientes.',
-    '29. Siendo a tomar los desengaños tan a pecho que no puedo dejar de pensar en ellos.',
-    '30. La mayor parte del tiempo me siento triste.',
-    '31. No entiendo lo que leo tan bien como antes.',
-    '32. He tenido experiencias muy peculiares y extrañas.',
-    '33. Casi siempre tengo tos.',
-    '34. Los fantasmas o los espíritus pueden influir en las personas para bien o para mal.',
-    '35. Frecuentemente tengo que esforzarme para no demostrar que soy tímido(a).',
-    '36. Creo que mucha gente exagera sus desgracias para que los demás se compadezcan de ellos y les ayuden.',
-    '37. Las personas no lastiman mis sentimientos fácilmente.',
-    '38. Nunca he tenido dificultades a causa de mi conducta sexual.',
-    '39. Con frecuencia he tenido que recibir órdenes de personas que sabían menos que yo.',
-    '40. Casi siempre preferiría soñar despierto en lugar de hacer otra cosa.',
-    '41. Algunas veces me gusta herir a las personas que quiero.',
-    '42. Me gustaría ser soldado.',
-    '43. Sufro ataques de náusea y de vómito.',
-    '44. Me cuesta trabajo entablar una conversación con alguien que acabo de conocer.',
-    '45. No siempre digo la verdad.',
-    '46. Cuando estoy con gente me molesta oír cosas muy extrañas.',
-    '47. Me gusta ir a fiestas y reuniones alegres y bulliciosas.',
-    '48. Definitivamente no tengo confianza en mi mismo.',
-    '49. He disfrutado fumando marihuana.',
-    '50. Me gustaría ser cantante.',
-    '51. He tenido miedo de cosas o personas que sabía que no podían hacerme daño.',
-    '52. Muy raras veces padezco estreñimiento.',
-    '53. A veces me siento lleno(a) de energía.',
-    '54. Temo a los relámpagos.',
-    '55. Creo que la mayoría de la gente mentiría para salir adelante.',
-    '56. Me pongo nervioso(a) y preocupado(a) cuando tengo que salir de casa para hacer un viaje corto.',
-    '57. Me gustan las reuniones sociales sólo por estar con la gente.',
-    '58. Algunos de mis familiares tienen hábitos que me molestan o irritan mucho.',
-    '59. Mi memoria parece estar en buenas condiciones.',
-    '60. Con frecuencia siento la necesidad de luchar por lo que creo justo.',
-    '61. Nunca he hecho algo peligroso sólo por el gusto de hacerlo.',
-    '62. Hago muchas cosas de las que luego me arrepiento. (Me arrepiento más o más frecuentemente que otras personas de las cosas que hago).',
-    '63. Con frecuencia me ha parecido que algún extraño me miraba críticamente.',
-    '64. Soy una persona importante.',
-    '65. Casi nunca me ha dolido el corazón o el pecho.',
-    '66. En la escuela algunas veces me llevaron ante el director por mala conducta.',
-    '67. No me gusta tener gente a mi alrededor.',
-    '68. Generalmente tengo que detenerme a pensar antes de hacer algo, aunque sea un asunto sin importancia.',
-    '69. Mis manos no se han entorpecido ni perdido habilidad.',
-    '70. No leo diariamente todos los artículos editoriales del periódico.',
-    '71. Creo que están conspirando contra mí.',
-    '72. A veces mis pensamientos han pasado por mi mente con tanta rapidez que no he podido expresarlos en palabras.',
-    '73. No creo ser más nervioso(a) que la mayoría de las personas.',
-    '74. Muchas veces tengo la sensación de haber hecho algo malo o diabólico.',
-    '75. Creo que me gustaría trabajar como guardabosques.',
-    '76. Padezco problemas estomacales varias veces a la semana.',
-    '77. Soy tan susceptible respecto a algunos temas que ni siquiera puedo hablar de ellos.',
-    '78. Aparentemente oigo tan bien como la mayoría de las personas.',
-    '79. Tengo pesadillas varias veces a la semana.',
-    '80. Tengo pocos disgustos con miembros de mi familia.',
-    '81. A veces me dan ataques de risa o de llanto que no puedo controlar.',
-    '82. No le tengo mucho miedo a las serpientes.',
-    '83. Generalmente siento que la vida vale la pena.',
-    '84. A veces siento deseos de empezar peleas a golpes.',
-    '85. Nunca he tenido una visión.',
-    '86. Solamente puedo expresar lo que en verdad siento, cuando tomo.',
-    '87. La mayoría de la gente es honrada principalmente por temor a ser descubierta.',
-    '88. Muy raras veces siento dolor en la nuca.',
-    '89. Definitivamente, a veces me siento un inútil.',
-    '90. Temo encontrarme encerrado(a) en un ropero o en un lugar pequeño y cerrado.',
-    '91. Me avergüenzo muy fácilmente.',
-    '92. Creo que me están siguiendo.',
-    '93. Recientemente he pensado en matarme.',
-    '94. No me molesta conocer a personas extrañas.',
-    '95. De vez en cuando dejo para mañana lo que debería hacer hoy.',
-    '96. A menudo mis padres se oponían a la clase de gente que frecuentaba.',
-    '97. Me gusta conocer a gente importante porque eso me hace sentir importante.',
-    '98. Quiero a mi padre. (O si su padre ha fallecido) Quise a mi padre.',
-    '99. La mayoría de la gente usaría medios injustos con tal de obtener lo que quiere.',
-    '100. Me gusta la poesía.',
-    '101. Muchas veces siento que me duele toda la cabeza.',
-    '102. Me parece que soy tan listo(a) y capaz como la mayoría de los que me rodean.',
-    '103. De vez en cuando siento odio hacia los miembros de mi familia a los que usualmente quiero.',
-    '104. Generalmente defendiendo con tenacidad mis propias opiniones.',
-    '105. Casi siempre estoy feliz.',
-    '106. He tenido épocas durante las cuales he hecho cosas que luego no recuerdo haber hecho.',
-    '107. Me gusta hablar sobre temas sexuales.',
-    '108. En varias ocasiones he dejado de hacer algo porque he dudado de mi habilidad.',
-    '109. Disfruto con el alboroto de una multitud.',
-    '110. Siento que frecuentemente he sido castigado(a) sin motivo.',
-    '111. Creo que me gustaría el trabajo de contratista de obras.',
-    '112. Tiend a dejar de hacer algo que deseo cuando los demás piensan que esa no es la manera correcta de hacerlo.',
-    '113. Casi nunca tengo calambres o dolores musculares.',
-    '114. Desearía no ser tan tímido(a).',
-    '115. No le temo al fuego.',
-    '116. Tengo la tendencia a tomar las cosas muy en serio.',
-    '117. Algo anda mal en mi mente.',
-    '118. Me gusta coquetear.',
-    '119. Pierdo fácilmente la paciencia con la gente.',
-    '120. La mayor parte del tiempo desearía estar muerto(a).',
-    '121. Es más seguro no confiar en nadie.',
-    '122. He tenido ataques durante los cuales no podía controlar el habla o los movimientos, pero me daba cuenta de lo que ocurría a mi alrededor.',
-    '123. Me preocupo mucho por posibles desgracias.',
-    '124. Nunca he estado enamorado(a) de alguien.',
-    '125. Mi manera de hablar es la misma de siempre (ni más rápida, ni más lenta, ni balbuceante, ni ronca).',
-    '126. Me gustaba la escuela.',
-    '127. Algunas veces me enojo.',
-    '128. No tengo miedo de manejar dinero.',
-    '129. Alguien ha intentado envenenarme.',
-    '130. Me preocupo mucho.',
-    '131. Cuando me aburro me gusta provocar algo emocionante o divertido.',
-    '132. Con frecuencia cruzo la calle para evitar encontrarme con alguien que veo venir.',
-    '133. Todo me sabe igual.',
-    '134. No me enojo fácilmente.',
-    '135. Me molesta mucho pensar en hacer cambios en mi vida.',
-    '136. No me puedo concentrar en una sola cosa.',
-    '137. Me parece tener la cabeza o la nariz congestionada la mayor parte del tiempo.',
-    '138. Mis padres y familiares me encuentran más fallas de las que deberían.',
-    '139. Frecuentemente oigo voces sin saber de dónde vienen.',
-    '140. Disfruto de distintas clases de juegos y diversiones.',
-    '141. He bebido alcohol con exceso.',
-    '142. La mayoría de las personas hace amistades porque los amigos les pueden resultar útiles en algún momento.',
-    '143. Algunas veces he sido un obstáculo para personas que querían hacer algo, no porque eso fuera importante, sino por cuestión de principios.',
-    '144. Se me dificulta comenzar a hacer las cosas.',
-    '145. Me gustaría ser florista.',
-    '146. Casi todos los días sucede algo que me asusta.',
-    '147. Me gusta hacerle saber a la gente mi punto de vista sobre las cosas.',
-    '148. Me gusta mucho cazar.',
-    '149. Algunas veces me vienen a la mente pensamientos sin importancia que me molestan por días.',
-    '150. Alguien ha estado intentando robarme.',
-    '151. Le tengo terror a los huracanes.',
-    '152. Me río fácilmente cuando las cosas van mal.',
-    '153. Mis preocupaciones parecen desaparecer cuando estoy con un grupo de amigos(as) animados(as).',
-    '154. Mis modales en la mesa no son tan buenos en casa como cuando salgo a comer con otras personas.',
-    '155. Me enojo con facilidad, pero se me pasa pronto.',
-    '156. Recuerdo haberme fingido enfermo(a) para evitar algo.',
-    '157. Cualquier persona que sea capaz y esté dispuesta a trabajar duro tiene buenas posibilidades de éxito.',
-    '158. A menudo la vida me resulta difícil.',
-    '159. He tenido momentos en los que mi mente se ha quedado en blanco y no me daba cuenta de lo que ocurría a mi alrededor.',
-    '160. A veces creo que puedo tomar decisiones con extraordinaria facilidad.',
-    '161. A menudo me vienen a la mente malas palabras, palabras horribles y me es imposible quitármelas de la cabeza.',
-    '162. Nunca o casi nunca tengo mareos.',
-    '163. Despierto descansado(a) y fresco(a) casi todas las mañanas.',
-    '164. Últimamente he pensado mucho en matarme.',
-    '165. Con frecuencia le tengo miedo a la obscuridad.',
-    '166. Algunas veces sin razón, aun cuando me vaya mal, me siento muy alegre, como si estuviera en "la cima del mundo".',
-    '167. Me pone nervioso(a) tener que esperar.',
-    '168. Hay personas que quieren apoderarse de mis pensamientos e ideas.',
-    '169. El futuro me parece sin esperanzas.',
-    '170. Puedo dormir durante el día pero no durante la noche.',
-    '171. Creo que casi todo el mundo mentiría para evasarse de problemas.',
-    '172. Con frecuencia, aun cuando todo vaya bien, siento que nada me importa.',
-    '173. Cuando era niño(a) me golpearon muchas veces.',
-    '174. Durante los últimos años he gozado de buena salud la mayor parte del tiempo.',
-    '175. Nunca me siento más contento(a) que cuando estoy solo(a).',
-    '176. A menudo siento como si tuviera una cinta que me apretara la cabeza.',
-    '177. Por lo general no le hablo a la gente, hasta que ellos me hablan.',
-    '178. Sería mejor que se desecharan casi todas las leyes.',
-    '179. Algunas veces pierdo o me cambia la voz, aunque no esté resfriado(a).',
-    '180. Algunos de mis familiares han hecho ciertas cosas que me han asustado.',
-    '181. Una vez a la semana o más frecuentemente me pongo muy agitado(a).',
-    '182. Tengo entera confianza en mi mismo.',
-    '183. Prefiero ganar que perder en un juego.',
-    '184. No le temo al agua.',
-    '185. A la mayoría de la gente le disgustaría ayudar a los demás, aunque no lo diga.',
-    '186. Nunca he tenido un ataque ni convulsiones.',
-    '187. Algunas veces he sentido que las dificultades se acumulan de tal modo que no puedo vencerlas.',
-    '188. Si fuera reportero(a) me gustaría mucho escribir notas deportivas.',
-    '189. Muy pocas veces me duele la cabeza.',
-    '190. Nunca he tenido problemas con la ley.',
-    '191. Cuando camino tengo mucho cuidado de no pisar las rayas en las banquetas.',
-    '192. Después de un mal día, generalmente necesito algunos tragos para relajarme.',
-    '193. A veces me divierte tanto la astucia de algún criminal, que he deseado que se salga con la suya.',
-    '194. Estoy seguro(a) de que la gente habla de mí.',
-    '195. Cuando me siento triste, casi siempre algo emocionante me saca de ese estado.',
-    '196. Me gusta el arte dramático.',
-    '197. Generalmente le hablo claro a la gente a quien estoy tratando de mejorar o corregir.',
-    '198. Me atemorizo ante las crisis o dificultades.',
-    '199. A veces percibo olores raros.',
-    '200. Es más difícil para mi concentrarme de lo que parece ser para otras personas.',
-    '201. Me gustan las fiestas y las reuniones sociales.',
-    '202. Nunca en mi vida me he sentido mejor que ahora.',
-    '203. A veces mi alma abandona mi cuerpo.',
-    '204. Aun cuando estoy acompañado(a) me siento solo(a) la mayor parte del tiempo.',
-    '205. Cuando era chico(a) frecuentemente no iba a la escuela aunque debería haberlo hecho.',
-    '206. Quisiera dejar de preocuparme por las cosas que he dicho y que quizás hayan herido los sentimientos de otras personas.',
-    '207. Tengo períodos en que me siento muy alegre sin que exista una razón especial.',
-    '208. Tengo miedo de usar cuchillos o cualquier otra cosa filosa o puntiaguda.',
-    '209. Sin duda he tenido más cosas de qué preocuparme de las que me corresponderían.',
-    '210. Sufro de malestares en la boca del estómago, varias días a la semana o más frecuentemente.',
-    '211. No me agradan todas las personas que conozco.',
-    '212. No tengo enemigos que realmente quieran hacerme daño.',
-    '213. Las personas generalmente exigen más respeto para sus propios derechos, que el que están dispuestos a conceder a los demás.',
-    '214. Aunque no estoy satisfecho(a) con mi vida, nada puedo hacer ahora para cambiarla.',
-    '215. Con frecuencia tengo serios desacuerdos con personas importantes para mí.',
-    '216. A veces me molesta oír tan bien.',
-    '217. Muy rara vez me siento deprimido(a).',
-    '218. A veces me ha sido imposible evitar robar o llevarme algo de una tienda.',
-    '219. Algunas veces me siento tan inquieto(a) que me es difícil quedarme dormido(a).',
-    '220. No le temo a las arañas.',
-    '221. Creo en el cumplimiento de la ley.',
-    '222. Creo que hago amistades tan fácilmente como cualquiera.',
-    '223. Cuando joven me suspendieron de la escuela una o más veces por mala conducta.',
-    '224. Siempre tengo muy poco tiempo para terminar lo que hago.',
-    '225. Me han dicho que camino cuando estoy dormido(a).',
-    '226. Me gustaría ser corredor(a) de autos.',
-    '227. No he tenido dificultad en mantener el equilibrio cuando camino.',
-    '228. Casi todo el tiempo me siento preocupado(a) por algo o por alguien.',
-    '229. Siendo a dejar de hacer algo que quiero, si otros creen que eso no vale la pena.',
-    '230. Tengo muchos problemas estomacales.',
-    '231. Puedo atemorizar fácilmente a la gente y a veces lo hago para divertirme.',
-    '232. A veces pienso que no sirvo para nada.',
-    '233. La gente dice cosas ofensivas y vulgares acerca de mí.',
-    '234. Actualmente no me siento estresado(a).',
-    '235. Me molesta que la gente me mire en la calle, en las tiendas, etc.',
-    '236. No me gusta escuchar a otras personas dar sus opiniones sobre la vida.',
-    '237. Excepto por orden del médico, nunca he tomado drogas o pastillas para dormir.',
-    '238. Cuando un hombre está con una mujer, casi siempre está pensando en cosas relacionadas con el sexo.',
-    '239. Si me dieran la oportunidad sería un buen líder.',
-    '240. Muchas veces siento como si las cosas no fueran reales.',
-    '241. En ocasiones me gusta el chisme.',
-    '242. A veces la parte superior de mi cabeza está muy sensible.',
-    '243. La sociedad me molesta o me horroriza.',
-    '244. Si me dieran la oportunidad, podría hacer algunas cosas que serían de gran beneficio para la humanidad.',
-    '245. Si fuera periodista me gustaría mucho escribir sobre teatro.',
-    '246. Por lo general espero tener éxito en lo que hago.',
-    '247. Gran parte del tiempo me siento cansado(a).',
-    '248. Me han dicho con frecuencia que tengo mal genio.',
-    '249. En la escuela me era muy difícil hablar frente a la clase.',
-    '250. Frecuentemente me siento apenado(a) por ser tan irritable y gruñón(a).',
-    '251. Nadie lo sabe, pero he tratado de matarme.',
-    '252. Alguien controla mi mente.',
-    '253. En la escuela mis calificaciones en conducta generalmente eran malas.',
-    '254. Raras veces noto los latidos de mi corazón, y muy pocas veces me falta la respiración.',
-    '255. No me molesta mucho ver sufrir a los animales.',
-    '256. Con frecuencia he conocido a personas supuestamente expertas y que no resultaron mejores que yo.',
-    '257. Tengo pensamientos extraños y poco comunes.',
-    '258. Me produce terror la idea de un terremoto.',
-    '259. Me gusta reparar las cerraduras de las puertas.',
-    '260. Frecuentemente he trabajado para personas que atribuyen el reconocimiento por culpan a los subalternos de los errores.',
-    '261. Algunas veces me siento al borde de una crisis nerviosa.',
-    '262. Estoy tan sano como la mayoría de mis amigos.',
-    '263. Tengo que admitir que a veces me he preocupado más de la cuenta por cosas que no valían la pena.',
-    '264. Alguien me tiene mala voluntad.',
-    '265. Padezco poca o ninguna clase de dolores.',
-    '266. Tengo problemas con el alcohol o las drogas.',
-    '267. He tenido épocas en las que me sentía tan lleno de energía que en ocasiones, hasta por varios días, no necesitaba dormir.',
-    '268. Nunca me preocupa mi apariencia física.',
-    '269. Cuando las cosas van muy mal, sé que puedo contar con la ayuda de mi familia.',
-    '270. Una o más veces en mi vida he sentido que alguien me obligaba a hacer cosas hipnotizándome.',
-    '271. Me molesta que la gente me apresure.',
-    '272. No tengo dificultades al tragar.',
-    '273. Oigo cosas extrañas cuando estoy solo(a).',
-    '274. En general tengo problemas para decidir qué debo hacer.',
-    '275. Varias veces por semana siento como si algo terrible fuera a suceder.',
-    '276. Cuando alguien hace algo que me enoja, le digo a la persona cómo me siento.',
-    '277. Con frecuencia noto que mis manos tiemblan cuando trato de hacer algo.',
-    '278. Siempre que me es posible evito estar entre mucha gente.',
-    '279. La mayoría de los hombres son infieles a sus esposas de vez en cuando.',
-    '280. Con frecuencia me confundo y se me olvida lo que quiero decir.',
-    '281. Mi familia me trata más como un niño(a) que como un adulto.',
-    '282. Los objetivos más importantes de mi vida están a mi alcance.',
-    '283. Hablar con alguien sobre los problemas y preocupaciones es mucho mejor que tomar drogas o medicinas.',
-    '284. Tengo miedo de estar solo(a) en un sitio al descubierto.',
-    '285. A veces me parece que no puedo dejar de hablar.',
-    '286. No le tengo miedo a los ratones.',
-    '287. Alguien ha tratado de influir en mi mente.',
-    '288. Con frecuencia siento que no soy tan bueno(a) como otras personas.',
-    '289. Con frecuencia he tenido miedo durante la noche.',
-    '290. Casi nunca noto que me zumben o silben los oídos.',
-    '291. Nunca me siento más feliz que cuando estoy solo(a).',
-    '292. Me gusta tener a los demás intrigados con respecto a lo que haré.',
-    '293. Por lo general soy tranquilo(a) y no me altero fácilmente.',
-    '294. A mi alrededor veo cosas, animales o personas que otros no ven.',
-    '295. No temo entrar solo(a) a un salón donde hay gente reunida platicando.',
-    '296. Me gustaría ser periodista.',
-    '297. Me drogo o me emborracho por lo menos una vez a la semana.',
-    '298. En las elecciones, algunas veces voto por candidatos que casi no conozco.',
-    '299. Me siento incapaz cuando tengo que tomar una decisión importante.',
-    '300. Me gusta mucho jugar deportes rudo (como fútbol americano o fútbol soccer).',
-    '301. Se me adormecen una o varias partes de la piel.',
-    '302. Me gusta tomar decisiones y asignar trabajo a otros.',
-    '303. Con frecuencia me irrita mucho que me interrumpan cuando estoy trabajando.',
-    '304. En la mayoría de los matrimonios uno o los dos miembros de la pareja son infelices.',
-    '305. Me gustaría mucho ganarles a los criminales en sus fechorías.',
-    '306. Olvido dónde dejo las cosas.',
-    '307. Algunas veces he tenido pensamientos terribles acerca de mi familia.',
-    '308. Con frecuencia me salen manchas rojas en el cuello.',
-    '309. Me preocupa bastante el dinero.',
-    '310. La gente no es muy amable conmigo.',
-    '311. Algunas veces estoy seguro(a) que los demás pueden saber lo que estoy pensando.',
-    '312. Cuando he estado tomado(a) me he enojado y he roto muebles y platos.',
-    '313. Nunca he sufrido parálisis o alguna debilidad fuera de lo común en alguno de mis músculos.',
-    '314. Odio a toda mi familia.',
-    '315. Estoy tan harto(a) de lo que hago diariamente, que lo único que deseo es deshacer de todo.',
-    '316. A veces he tenido que ser rudo(a) con personas groseras o inoportunas.',
-    '317. No puedo entrar solo(a) en un cuarto oscuro, aun en mi propia casa.',
-    '318. En ocasiones me molesto y enojo tanto, que no sé qué me pasa.',
-    '319. A veces me es difícil defender mis derechos porque soy muy reservado(a).',
-    '320. Ciertos animales me ponen nervioso(a).',
-    '321. Me gusta negociar en situaciones difíciles.',
-    '322. La crítica o el regaño me hieren profundamente.',
-    '323. Cuando estoy triste, me ayuda a sentirme mejor visitar a los amigos.',
-    '324. Me pongo nervioso(a) cuando tengo que tomar decisiones importantes.',
-    '325. A veces me río de los chistes obscenos.',
-    '326. La mayoría de las parejas casadas no se demuestran mucho afecto.',
-    '327. Con frecuencia me esfuerzo para superar a alguien que me ha llevado la contraria.',
-    '328. Si me enojo, sé con seguridad que me dará dolor de cabeza.',
-    '329. Me he llegado a sentir tan enojado(a) que he lastimado a otra persona en un pleito a puñetazos.',
-    '330. En ocasiones me parece escuchar lo que pienso en voz alta.',
-    '331. Cuando la vida se pone difícil, quisiera tan sólo rendirme.',
-    '332. Si la gente no hubiera querido perjudicarme, hubiera tenido más éxito en la vida.',
-    '333. No me censo con facilidad.',
-    '334. Últimamente, mis pensamientos están más y más relacionados con la muerte y con la vida después de la muerte.',
-    '335. Me enojo conmigo mismo(a) cuando accedo demasiado a los deseos de los demás.',
-    '336. Reconozco que tengo varios defectos que no seré capaz de cambiar.',
-    '337. Me he enojado tanto con alguien, que he sentido como si fuera a explotar.',
-    '338. Frecuentemente me encuentro preocupado(a) por algo.'
+  "Me gustan las revistas de mecánica.",
+  "Tengo buen apetito.",
+  "Creo que me gustaría el trabajo de bibliotecario.",
+  "Mi vida diaria está llena de cosas que mantienen mi interés.",
+  "A veces he sentido un intenso deseo de abandonar mi hogar.",
+  "Tengo dificultades para concentrarme en una tarea o trabajo.",
+  "Mi madre es una buena mujer. (O si su madre ha fallecido) Mi madre era una buena mujer.",
+  "Encuentro alivio cuando comparto mis problemas con alguien.",
+  "A menudo me he sentido culpable porque he fingido mayor pesar del que realmente sentía.",
+  "Cuesta mucho trabajo convencer a la mayoría de la gente de la verdad.",
+  "Me gusta muchísimo ir a bailes.",
+  "Frecuentemente siento que puedo leer la mente de otras personas.",
+  "Algunas veces me empeño tanto en algo que las personas pierden la paciencia conmigo.",
+  "En ocasiones los espíritus malignos se posesionan de mí.",
+  "Siento un nudo en la garganta casi todo el tiempo.",
+  "En ocasiones siento deseos de maldecir.",
+  "Soy una persona muy sociable.",
+  "Siento debilidad general la mayor parte del tiempo.",
+  "Los miembros de mi familia y mis parientes más cercanos se llevan bastante bien.",
+  "Me siento incómodo(a) cuando estoy en lugares cerrados.",
+  "Cuando era más joven, a veces robé algunas cosas.",
+  "Quisiera poder ser tan feliz como parecen serlo otras personas.",
+  "A veces siento ganas de destrozar las cosas.",
+  "Pierdo fácilmente las discusiones.",
+  "Actualmente estoy tan capacitado(a) para trabajar como siempre lo he estado.",
+  "Por principio, cuando alguien me hace algún mal siento que, de ser posible, debería pagarle con la misma moneda.",
+  "Muchas veces he perdido oportunidades por no haberme decidido a tiempo.",
+  "Por lo general tengo las manos y los pies lo suficientemente calientes.",
+  "Tiendo a tomar los desengaños tan a pecho que no puedo dejar de pensar en ellos.",
+  "La mayor parte del tiempo me siento triste.",
+  "No entiendo lo que leo tan bien como antes.",
+  "He tenido experiencias muy peculiares y extrañas.",
+  "Casi siempre tengo tos.",
+  "Los fantasmas o los espíritus pueden influir en las personas para bien o para mal.",
+  "Frecuentemente tengo que esforzarme para no demostrar que soy tímido(a).",
+  "Creo que mucha gente exagera sus desgracias para que los demás se compadezcan de ellos y les ayuden.",
+  "Las personas no lastiman mis sentimientos fácilmente.",
+  "Nunca he tenido dificultades a causa de mi conducta sexual.",
+  "Con frecuencia he tenido que recibir órdenes de personas que sabían menos que yo.",
+  "Casi siempre preferiría soñar despierto en lugar de hacer otra cosa.",
+  "Algunas veces me gusta herir a las personas que quiero.",
+  "Me gustaría ser soldado.",
+  "Sufro ataques de náusea y de vómito.",
+  "Me cuesta trabajo entablar una conversación con alguien que acabo de conocer.",
+  "No siempre digo la verdad.",
+  "Cuando estoy con gente me molesta oír cosas muy extrañas.",
+  "Me gusta ir a fiestas y reuniones alegres y bulliciosas.",
+  "Definitivamente no tengo confianza en mí mismo.",
+  "He disfrutado fumando marihuana.",
+  "Me gustaría ser cantante.",
+  "He tenido miedo de cosas o personas que sabía que no podían hacerme daño.",
+  "Muy raras veces padezco estreñimiento.",
+  "A veces me siento lleno(a) de energía.",
+  "Temo a los relámpagos.",
+  "Creo que la mayoría de la gente mentiría para salir adelante.",
+  "Me pongo nervioso(a) y preocupado(a) cuando tengo que salir de casa para hacer un viaje corto.",
+  "Me gustan las reuniones sociales sólo por estar con la gente.",
+  "Algunos de mis familiares tienen hábitos que me molestan o irritan mucho.",
+  "Mi memoria parece estar en buenas condiciones.",
+  "Con frecuencia siento la necesidad de luchar por lo que creo justo.",
+  "Nunca he hecho algo peligroso sólo por el gusto de hacerlo.",
+  "Hago muchas cosas de las que luego me arrepiento. (Me arrepiento más o más frecuentemente que otras personas de las cosas que hago).",
+  "Con frecuencia me ha parecido que algún extraño me miraba críticamente.",
+  "Soy una persona importante.",
+  "Casi nunca me ha dolido el corazón o el pecho.",
+  "En la escuela algunas veces me llevaron ante el director por mala conducta.",
+  "No me gusta tener gente a mi alrededor.",
+  "Generalmente tengo que detenerme a pensar antes de hacer algo, aunque sea un asunto sin importancia.",
+  "Mis manos no se han entorpecido ni perdido habilidad.",
+  "No leo diariamente todos los artículos editoriales del periódico.",
+  "Creo que están conspirando contra mí.",
+  "A veces mis pensamientos han pasado por mi mente con tanta rapidez que no he podido expresarlos en palabras.",
+  "No creo ser más nervioso(a) que la mayoría de las personas.",
+  "Muchas veces tengo la sensación de haber hecho algo malo o diabólico.",
+  "Creo que me gustaría trabajar como guardabosques.",
+  "Padezco problemas estomacales varias veces a la semana.",
+  "Soy tan susceptible respecto a algunos temas que ni siquiera puedo hablar de ellos.",
+  "Aparentemente oigo tan bien como la mayoría de las personas.",
+  "Tengo pesadillas varias veces a la semana.",
+  "Tengo pocos disgustos con miembros de mi familia.",
+  "A veces me dan ataques de risa o de llanto que no puedo controlar.",
+  "No le tengo mucho miedo a las serpientes.",
+  "Generalmente siento que la vida vale la pena.",
+  "A veces siento deseos de empezar peleas a golpes.",
+  "Nunca he tenido una visión.",
+  "Solamente puedo expresar lo que en verdad siento, cuando tomo.",
+  "La mayor parte de la gente es honrada principalmente por temor a ser descubierta.",
+  "Muy raras veces siento dolor en la nuca.",
+  "Definitivamente, a veces me siento un inútil.",
+  "Temo encontrarme encerrado(a) en un ropero o en un lugar pequeño y cerrado.",
+  "Me avergüenzo muy fácilmente.",
+  "Creo que me están siguiendo.",
+  "Recientemente he pensado en matarme.",
+  "No me molesta conocer a personas extrañas.",
+  "De vez en cuando dejo para mañana lo que debiera hacer hoy.",
+  "A menudo mis padres se oponían a la clase de gente que frecuentaba.",
+  "Me gusta conocer a gente importante porque eso me hace sentir importante.",
+  "Quiero a mi padre. (O si su padre ha fallecido) Quise a mi padre.",
+  "La mayor parte de la gente usaría medios injustos con tal de obtener lo que quiere.",
+  "Me gusta la poesía.",
+  "Muchas veces siento que me duele toda la cabeza.",
+  "Me parece que soy tan listo(a) y capaz como la mayoría de los que me rodean.",
+  "De vez en cuando siento odio hacia los miembros de mi familia a los que usualmente quiero.",
+  "Generalmente defiendo con tenacidad mis propias opiniones.",
+  "Casi siempre estoy feliz.",
+  "He tenido épocas durante las cuales he hecho cosas que luego no recuerdo haber hecho.",
+  "Me gusta hablar sobre temas sexuales.",
+  "En varias ocasiones he dejado de hacer algo porque he dudado de mi habilidad.",
+  "Disfruto con el alboroto de una multitud.",
+  "Siento que frecuentemente he sido castigado(a) sin motivo.",
+  "Creo que me gustaría el trabajo de contratista de obras.",
+  "Tiendo a dejar de hacer algo que deseo cuando los demás piensan que esa no es la manera correcta de hacerlo.",
+  "Casi nunca tengo calambres o dolores musculares.",
+  "Desearía no ser tan tímido(a).",
+  "No le temo al fuego.",
+  "Tengo la tendencia a tomar las cosas muy en serio.",
+  "Algo anda mal en mi mente.",
+  "Me gusta coquetear.",
+  "Pierdo fácilmente la paciencia con la gente.",
+  "La mayor parte del tiempo desearía estar muerto(a).",
+  "Es más seguro no confiar en nadie.",
+  "He tenido ataques durante los cuales no podía controlar el habla o los movimientos, pero me daba cuenta de lo que ocurría a mi alrededor.",
+  "Me preocupo mucho por posibles desgracias.",
+  "Nunca he estado enamorado(a) de alguien.",
+  "Mi manera de hablar es la misma de siempre (ni más rápida, ni más lenta, ni balbuceante, ni ronca).",
+  "Me gustaba la escuela.",
+  "Algunas veces me enojo.",
+  "No tengo miedo de manejar dinero.",
+  "Alguien ha intentado envenenarme.",
+  "Me preocupo mucho.",
+  "Cuando me aburro me gusta provocar algo emocionante o divertido.",
+  "Con frecuencia cruzo la calle para evitar encontrarme con alguien que veo venir.",
+  "Todo me sabe igual.",
+  "No me enojo fácilmente.",
+  "Me molesta mucho pensar en hacer cambios en mi vida.",
+  "No me puedo concentrar en una sola cosa.",
+  "Me parece tener la cabeza o la nariz congestionada la mayor parte del tiempo.",
+  "Mis padres y familiares me encuentran más fallas de las que debieran.",
+  "Frecuentemente oigo voces sin saber de dónde vienen.",
+  "Disfruto de distintas clases de juegos y diversiones.",
+  "He bebido alcohol con exceso.",
+  "La mayoría de las personas hace amistades porque los amigos les pueden resultar útiles en algún momento.",
+  "Algunas veces he sido un obstáculo para personas que querían hacer algo, no porque eso fuera importante, sino por cuestión de principios.",
+  "Se me dificulta comenzar a hacer las cosas.",
+  "Me gustaría ser florista.",
+  "Casi todos los días sucede algo que me asusta.",
+  "Me gusta hacerle saber a la gente mi punto de vista sobre las cosas.",
+  "Me gusta mucho cazar.",
+  "Algunas veces me vienen a la mente pensamientos sin importancia que me molestan por días.",
+  "Alguien ha estado intentando robarme.",
+  "Le tengo terror a los huracanes.",
+  "Me rindo fácilmente cuando las cosas van mal.",
+  "Mis preocupaciones parecen desaparecer cuando estoy con un grupo de amigos(as) animados(as).",
+  "Mis modales en la mesa no son tan buenos en casa como cuando salgo a comer con otras personas.",
+  "Me enojo con facilidad, pero se me pasa pronto.",
+  "Recuerdo haberme fingido enfermo(a) para evitar algo.",
+  "Cualquier persona que sea capaz y esté dispuesta a trabajar duro tiene buenas posibilidades de éxito.",
+  "A menudo la vida me resulta difícil.",
+  "He tenido momentos en los que mi mente se ha quedado en blanco y no me daba cuenta de lo que ocurría a mi alrededor.",
+  "A veces creo que puedo tomar decisiones con extraordinaria facilidad.",
+  "A menudo me vienen a la mente malas palabras, palabras horribles y me es imposible quitármelas de la cabeza.",
+  "Nunca o casi nunca tengo mareos.",
+  "Despierto descansado(a) y fresco(a) casi todas las mañanas.",
+  "Últimamente he pensado mucho en matarme.",
+  "Con frecuencia le tengo miedo a la obscuridad.",
+  "Algunas veces sin razón, aun cuando me vaya mal, me siento muy alegre, como si estuviera en \"la cima del mundo\".",
+  "Me pone nervioso(a) tener que esperar.",
+  "Hay personas que quieren apoderarse de mis pensamientos e ideas.",
+  "El futuro me parece sin esperanzas.",
+  "Puedo dormir durante el día pero no durante la noche.",
+  "Creo que casi todo el mundo mentiría para evitarse problemas.",
+  "Con frecuencia, aun cuando todo vaya bien, siento que nada me importa.",
+  "Cuando era niño(a) me golpearon muchas veces.",
+  "Durante los últimos años he gozado de buena salud la mayor parte del tiempo.",
+  "Nunca me siento más contento(a) que cuando estoy solo(a).",
+  "A menudo siento como si tuviera una cinta que me apretara la cabeza.",
+  "Por lo general no le hablo a la gente, hasta que ellos me hablan.",
+  "Sería mejor que se desecharan casi todas las leyes.",
+  "Algunas veces pierdo o me cambia la voz, aunque no esté resfriado(a).",
+  "Algunos de mis familiares han hecho ciertas cosas que me han asustado.",
+  "Una vez a la semana o más frecuentemente me pongo muy agitado(a).",
+  "Tengo entera confianza en mí mismo.",
+  "Prefiero ganar que perder en un juego.",
+  "No le temo al agua.",
+  "A la mayor parte de la gente le disgusta ayudar a los demás, aunque no lo diga.",
+  "Nunca he tenido un ataque ni convulsiones.",
+  "Algunas veces he sentido que las dificultades se acumulan de tal modo que no puedo vencerlas.",
+  "Si fuera reportero(a) me gustaría mucho escribir notas deportivas.",
+  "Muy pocas veces me duele la cabeza.",
+  "Nunca he tenido problemas con la ley.",
+  "Cuando camino tengo mucho cuidado de no pisar las rayas en las banquetas.",
+  "Después de un mal día, generalmente necesito algunos tragos para relajarme.",
+  "A veces me divierte tanto la astucia de algún criminal, que he deseado que se salga con la suya.",
+  "Estoy seguro(a) de que la gente habla de mí.",
+  "Cuando me siento triste, casi siempre algo emocionante me saca de ese estado.",
+  "Me gusta el arte dramático.",
+  "Generalmente le hablo claro a la gente a quien estoy tratando de mejorar o corregir.",
+  "Me atemorizo ante las crisis o dificultades.",
+  "A veces percibo olores raros.",
+  "Es más difícil para mí concentrarme de lo que parece ser para otras personas.",
+  "Me gustan las fiestas y las reuniones sociales.",
+  "Nunca en mi vida me he sentido mejor que ahora.",
+  "A veces mi alma abandona mi cuerpo.",
+  "Aun cuando estoy acompañado(a) me siento solo(a) la mayor parte del tiempo.",
+  "Cuando era chico(a) frecuentemente no iba a la escuela aunque debía haberlo hecho.",
+  "Quisiera dejar de preocuparme por las cosas que he dicho y que quizás han herido los sentimientos de otras personas.",
+  "Tengo periodos en que me siento muy alegre sin que exista una razón especial.",
+  "Tengo miedo de usar cuchillos o cualquier otra cosa filosa o puntiaguda.",
+  "Sin duda he tenido más cosas de qué preocuparme de las que me corresponderían.",
+  "Sufro de malestares en la boca del estómago, varios días a la semana o más frecuentemente.",
+  "No me agradan todas las personas que conozco.",
+  "No tengo enemigos que realmente quieran hacerme daño.",
+  "Las personas generalmente exigen más respeto para sus propios derechos, que el que están dispuestas a conceder a los demás.",
+  "Aunque no estoy satisfecho(a) con mi vida, nada puedo hacer ahora para cambiarla.",
+  "Con frecuencia tengo serios desacuerdos con personas importantes para mí.",
+  "A veces me molesta oír tan bien.",
+  "Muy rara vez me siento deprimido(a).",
+  "A veces me ha sido imposible evitar robar o llevarme algo de una tienda.",
+  "Algunas veces me siento tan inquieto(a) que me es difícil quedarme dormido(a).",
+  "No le temo a las arañas.",
+  "Creo en el cumplimiento de la ley.",
+  "Creo que hago amistades tan fácilmente como cualquiera.",
+  "Cuando joven me suspendieron de la escuela una o más veces por mala conducta.",
+  "Siempre tengo muy poco tiempo para terminar lo que hago.",
+  "Me han dicho que camino cuando estoy dormido(a).",
+  "Me gustaría ser corredor(a) de autos.",
+  "No he tenido dificultad en mantener el equilibrio cuando camino.",
+  "Casi todo el tiempo me siento preocupado(a) por algo o por alguien.",
+  "Tiendo a dejar de hacer algo que quiero, si otros creen que ese no vale la pena.",
+  "Tengo muchos problemas estomacales.",
+  "Puedo atemorizar fácilmente a la gente y a veces lo hago para divertirme.",
+  "A veces pienso que no sirvo para nada.",
+  "La gente dice cosas ofensivas y vulgares acerca de mí.",
+  "Actualmente no me siento estresado(a).",
+  "Me molesta que la gente me mire en la calle, en las tiendas, etc.",
+  "No me gusta escuchar a otras personas dar sus opiniones sobre la vida.",
+  "Excepto por orden del médico, nunca he tomado drogas o pastillas para dormir.",
+  "Cuando un hombre está con una mujer, casi siempre está pensando en cosas relacionadas con el sexo.",
+  "Si me dieran la oportunidad sería un buen líder.",
+  "Muchas veces siento como si las cosas no fueran reales.",
+  "En ocasiones me gusta el chisme.",
+  "A veces la parte superior de mi cabeza está muy sensible.",
+  "La suciedad me molesta o me horroriza.",
+  "Si me dieran la oportunidad, podría hacer algunas cosas que serían de gran beneficio para la humanidad.",
+  "Si fuera periodista me gustaría mucho escribir sobre teatro.",
+  "Por lo general espero tener éxito en lo que hago.",
+  "Gran parte del tiempo me siento cansado(a).",
+  "Me han dicho con frecuencia que tengo mal genio.",
+  "En la escuela me era muy difícil hablar frente a la clase.",
+  "Frecuentemente me siento apenado(a) por ser tan irritable y gruñón(a).",
+  "Nadie lo sabe, pero he tratado de matarme.",
+  "Alguien controla mi mente.",
+  "En la escuela mis calificaciones en conducta generalmente eran malas.",
+  "Raras veces noto los latidos de mi corazón, y muy pocas veces me falta la respiración.",
+  "No me molesta mucho ver sufrir a los animales.",
+  "Con frecuencia he conocido a personas supuestamente expertas y que no resultaron mejores que yo.",
+  "Tengo pensamientos extraños y poco comunes.",
+  "Me produce terror la idea de un terremoto.",
+  "Me gusta reparar las cerraduras de las puertas.",
+  "Frecuentemente he trabajado para personas que se atribuyen el reconocimiento por un buen trabajo pero culpan a los subalternos de los errores.",
+  "Algunas veces me siento al borde de una crisis nerviosa.",
+  "Estoy tan sano como la mayoría de mis amigos.",
+  "Tengo que admitir que a veces me he preocupado más de la cuenta por cosas que no valían la pena.",
+  "Alguien me tiene mala voluntad.",
+  "Padezco poca o ninguna clase de dolores.",
+  "Tengo problemas con el alcohol o las drogas.",
+  "He tenido épocas en las que me sentía tan lleno de energía que en ocasiones, hasta por varios días, no necesitaba dormir.",
+  "Nunca me preocupa mi apariencia física.",
+  "Cuando las cosas van muy mal, sé que puedo contar con la ayuda de mi familia.",
+  "Una o más veces en mi vida he sentido que alguien me obligaba a hacer cosas hipnotizándome.",
+  "Me molesta que la gente me apresure.",
+  "No tengo dificultades al tragar.",
+  "Oigo cosas extrañas cuando estoy solo(a).",
+  "En general tengo problemas para decidir qué debo hacer.",
+  "Varias veces por semana siento como si algo terrible fuera a suceder.",
+  "Cuando alguien hace algo que me enoja, le digo a la persona cómo me siento.",
+  "Con frecuencia noto que mis manos tiemblan cuando trato de hacer algo.",
+  "Siempre que me es posible evito estar entre mucha gente.",
+  "La mayoría de los hombres son infieles a sus esposas de vez en cuando.",
+  "Con frecuencia me confundo y se me olvida lo que quiero decir.",
+  "Mi familia me trata más como un niño(a) que como un adulto.",
+  "Los objetivos más importantes de mi vida están a mi alcance.",
+  "Hablar con alguien sobre los problemas y preocupaciones es mucho mejor que tomar drogas o medicinas.",
+  "Tengo miedo de estar solo(a) en un sitio al descubierto.",
+  "A veces me parece que no puedo dejar de hablar.",
+  "No le tengo miedo a los ratones.",
+  "Alguien ha tratado de influir en mi mente.",
+  "Con frecuencia siento que no soy tan bueno(a) como otras personas.",
+  "Con frecuencia he tenido miedo durante la noche.",
+  "Casi nunca noto que me zumben o silben los oídos.",
+  "Nunca me siento más feliz que cuando estoy solo(a).",
+  "Me gusta tener a los demás intrigados con respecto a lo que haré.",
+  "Por lo general soy tranquilo(a) y no me altero fácilmente.",
+  "A mi alrededor veo cosas, animales o personas que otros no ven.",
+  "No temo entrar solo(a) a un salón donde hay gente reunida platicando.",
+  "Me gustaría ser periodista.",
+  "Me drogo o me emborracho por lo menos una vez a la semana.",
+  "En las elecciones, algunas veces voto por candidatos que casi no conozco.",
+  "Me siento incapaz cuando tengo que tomar una decisión importante.",
+  "Me gusta mucho jugar deportes rudos (como fútbol americano o fútbol soccer).",
+  "Se me adormecen una o varias partes de la piel.",
+  "Me gusta tomar decisiones y asignar trabajo a otros.",
+  "Con frecuencia me irrita mucho que me interrumpan cuando estoy trabajando.",
+  "En la mayoría de los matrimonios uno o los dos miembros de la pareja son infelices.",
+  "Me gustaría mucho ganarles a los criminales en sus fechorías.",
+  "Olvido dónde dejo las cosas.",
+  "Algunas veces he tenido pensamientos terribles acerca de mi familia.",
+  "Con frecuencia me salen manchas rojas en el cuello.",
+  "Me preocupa bastante el dinero.",
+  "La gente no es muy amable conmigo.",
+  "Algunas veces estoy seguro(a) que los demás pueden saber lo que estoy pensando.",
+  "Cuando he estado tomado(a) me he enojado y he roto muebles y platos.",
+  "Nunca he sufrido parálisis o alguna debilidad fuera de lo común en alguno de mis músculos.",
+  "Odio a toda mi familia.",
+  "Estoy tan harto(a) de lo que hago diariamente, que lo único que deseo es deshacerme de todo.",
+  "A veces he tenido que ser rudo(a) con personas groseras o inoportunas.",
+  "No puedo entrar solo(a) en un cuarto oscuro, aun en mi propia casa.",
+  "En ocasiones me molesto y enojo tanto, que no sé qué me pasa.",
+  "A veces me es difícil defender mis derechos porque soy muy reservado(a).",
+  "Ciertos animales me ponen nervioso(a).",
+  "Me gusta negociar en situaciones difíciles.",
+  "La crítica o el regaño me hieren profundamente.",
+  "Cuando estoy triste, me ayuda a sentirme mejor visitar a los amigos.",
+  "Me pongo nervioso(a) cuando tengo que tomar decisiones importantes.",
+  "A veces me río de los chistes obscenos.",
+  "La mayoría de las parejas casadas no se demuestran mucho afecto.",
+  "Con frecuencia me esfuerzo para superar a alguien que me ha llevado la contraria.",
+  "Si me enojo, sé con seguridad que me dará dolor de cabeza.",
+  "Me he llegado a sentir tan enojado(a) que he lastimado a otra persona en un pleito a puñetazos.",
+  "En ocasiones me parece escuchar lo que pienso en voz alta.",
+  "Cuando la vida se pone difícil, quisiera tan sólo rendirme.",
+  "Si la gente no hubiera querido perjudicarme, hubiera tenido más éxito en la vida.",
+  "No me canso con facilidad.",
+  "Últimamente, mis pensamientos están más y más relacionados con la muerte y con la vida después de la muerte.",
+  "Me enojo conmigo mismo(a) cuando accedo demasiado a los deseos de los demás.",
+  "Reconozco que tengo varios defectos que no seré capaz de cambiar.",
+  "Me he enojado tanto con alguien, que he sentido como si fuera a explotar.",
+  "Frecuentemente me encuentro preocupado(a) por algo."
 ];
 
 const responses = new Array(339).fill(null);
-let currentTestPage = 0;
-const ITEMS_PER_PAGE = 24;
-const totalTestPages = Math.ceil(338 / ITEMS_PER_PAGE);
 
-function showTab(name) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(`tab-${name}`).classList.add('active');
-  event.currentTarget.classList.add('active');
+// Scoring SCALE_DEFS
+const SCALE_DEFS = [
+  {name:"INVAR-r",abbr:"INVAR-r",cat:"Validez",itemsV:[55,99,246,323],itemsF:[6,32,67,93,123,158,187,136,257,278,282,331,338,228,164]},
+  {name:"INVER-r",abbr:"INVER-r",cat:"Validez",itemsV:[17,40,58,95,141,165,196,299],itemsF:[79,144,180,94,289]},
+  {name:"F-r",abbr:"F-r",cat:"Validez",itemsV:[37,73,109,145,181,217,253,289,325,19,55,91,127,163,199,235,271,307,44,80,116,152,188,224,260,296],itemsF:[14,32,52,78,114,150,186,222,258,294,9,45,81,117,153,189,225,261,297,24,60,96,132,168,204,240,276,312,4,40,76,112,148,184,220,256,292,328]},
+  {name:"Fpsi-r",abbr:"Fpsi-r",cat:"Validez",itemsV:[42,43,75,76,111,147,183,219,255,291,327],itemsF:[9,72,108,144,110,74]},
+  {name:"Fs",abbr:"Fs",cat:"Validez",itemsV:[14,48,84,120,156,192,228,264,300,336],itemsF:[17,35,73,116,127,138,153,192,226,264,75]},
+  {name:"FVS-r",abbr:"FVS-r",cat:"Validez",itemsV:[8,17,73,42,43,45,47,53,91,127,150,188,224,282,297,37,47,69,78],itemsF:[214,245,53,69,106,114,155,193,231,84,105,120,156,264,192,311,264]},
+  {name:"SI",abbr:"SI",cat:"Validez",itemsV:[8,26,28,33,70,9,22,31,36,46,14,26,30,31,17,272,282,290,258],itemsF:[13,23,19,25,14,10,1,8,15,21,29,285,293,315,252]},
+  {name:"L-r",abbr:"L-r",cat:"Validez",itemsV:[63,163,218,256],itemsF:[18,47,71,111,137,161,200,226,261,297,333,11,83,167]},
+  {name:"K-r",abbr:"K-r",cat:"Validez",itemsV:[46,156],itemsF:[12,25,38,36,38,46,74,111,129,149,168,187,208,336]},
+  {name:"CRd",abbr:"CRd",cat:"Reestructuradas",itemsV:[11,25,37,47,63,99,131,155,173,196,208,255,271,298],itemsF:[8,24,32,51,9,28,11,38,24,33]},
+  {name:"CR1",abbr:"CR1",cat:"Reestructuradas",itemsV:[17,47,71,111,137,161,200,226,261,297,333],itemsF:[6,30,46,72,116,128,150,186,222,258,294,336,46]},
+  {name:"CR2",abbr:"CR2",cat:"Reestructuradas",itemsV:[],itemsF:[6,19,27,47,30,13,32,35,18,4,17,24,8,32,32,16,37]},
+  {name:"CR3",abbr:"CR3",cat:"Reestructuradas",itemsV:[12,38,57,93,117,129,151,165,186,207,228,258,285,310,338],itemsF:[]},
+  {name:"CR4",abbr:"CR4",cat:"Reestructuradas",itemsV:[7,23,51,56,62,68,86,94,99,113,127,145,149,161,173,191,201,213,221,227,239,247],itemsF:[21,10,34]},
+  {name:"CR6",abbr:"CR6",cat:"Reestructuradas",itemsV:[16,36,73,114,152,168,182,216,220,254,258,274,282,286,302,309,320],itemsF:[]},
+  {name:"CR7",abbr:"CR7",cat:"Reestructuradas",itemsV:[11,25,37,49,63,71,91,107,113,121,127,155,179,196,221,235,261,275,287,295,309,317,323,329],itemsF:[]},
+  {name:"CR8",abbr:"CR8",cat:"Reestructuradas",itemsV:[14,34,52,72,92,114,132,150,168,186,204,222,238,254,270,286,302,318],itemsF:[]},
+  {name:"CR9",abbr:"CR9",cat:"Reestructuradas",itemsV:[15,28,41,55,69,80,91,99,109,117,127,133,143,151,163,173,195,201,217,233,241,249,261,285,293,305,317,329],itemsF:[]},
+];
+
+const T_TABLES = {
+  "INVAR-r": [32,37,42,46,51,56,61,65,70,75,79,84,89,94,98,103,108,112,117,120],
+  "INVER-r": [118,111,105,99,92,86,80,73,67,61,55,52,58,64,71,77,83,90,96,102,109,120],
+  "F-r":     [40,43,47,50,53,57,60,63,67,70,73,77,80,83,87,90,94,97,100,104,107,110,114,117,120],
+  "Fpsi-r":  [33,39,46,52,59,65,72,78,85,91,98,104,111,118,120],
+  "Fs":      [40,47,55,62,69,76,83,91,98,105,112,119,120],
+  "FVS-r":   [23,27,30,33,37,40,43,47,50,54,57,60,64,70,74,77,81,84,87,91,94,97,101,104,107,111,114,118,120],
+  "SI":      [21,25,29,33,37,41,45,49,53,57,61,65,69,73,77,81,85,89,93,97,101,105,109,113,118,120],
+  "L-r":     [22,27,31,35,39,44,48,52,56,61,65,69,73,78,82],
+  "K-r":     [22,26,29,33,36,39,43,46,50,53,57,60,63,67,70],
+  "CRd":     [37,43,47,50,53,54,55,57,58,61,63,65,67,70,72,74,76,79,81,83,86,88,90,92,95],
+  "CR1":     [35,40,44,47,50,52,54,57,59,62,64,67,70,73,75,78,81,83,86,89,92,94,97,100],
+  "CR2":     [35,40,44,48,52,56,60,64,68,72,76,80,84,88,92,96,100],
+  "CR3":     [31,36,39,41,42,44,45,47,48,51,55,59,65,71,77,83],
+  "CR4":     [18,28,37,43,47,51,54,57,61,65,69,74,78,82,86,90,94,98,100],
+  "CR6":     [40,50,55,59,63,68,73,77,82,87,91,96,100],
+  "CR7":     [34,39,42,45,47,49,51,53,54,56,59,62,65,67,70,73,76,79,82,85,88,91,94,97,100],
+  "CR8":     [37,44,49,53,56,59,63,67,71,75,79,83,87,91,95,99,100],
+  "CR9":     [25,28,30,33,35,37,38,40,42,43,45,47,48,50,52,54,57,60,63,66,69,71,74,77,80,83,86,89,92],
+};
+
+function lookupT(abbr, pd) {
+  const tbl = T_TABLES[abbr];
+  if (!tbl) return 50;
+  if (pd <= 0) return tbl[0];
+  if (pd >= tbl.length) return tbl[tbl.length - 1];
+  return tbl[pd];
+}
+
+function calcPD(scale) {
+  let pd = 0;
+  for (const item of scale.itemsV) {
+    if (responses[item] === 'V') pd++;
+  }
+  for (const item of scale.itemsF) {
+    if (responses[item] === 'F') pd++;
+  }
+  return pd;
 }
 
 function buildItemsGrid() {
@@ -961,374 +1172,410 @@ function updateProgress() {
   for (let i = 1; i <= 338; i++) {
     if (responses[i]) { filled++; if (responses[i]==='V') v++; else f++; }
   }
+  document.getElementById('prog-count').textContent = `${filled} / 338`;
+  document.getElementById('prog-bar').style.width = `${(filled/338)*100}%`;
+  document.getElementById('count-v').textContent = v;
+  document.getElementById('count-f').textContent = f;
+}
 
-  // Actualizar Tab 1 (Ingreso de Datos)
-  const progCount = document.getElementById('prog-count');
-  if (progCount) progCount.textContent = `${filled} / 338`;
+let calcResults = [];
 
-  const progBar = document.getElementById('prog-bar');
-  if (progBar) progBar.style.width = `${(filled/338)*100}%`;
+function calcAll() {
+  calcResults = SCALE_DEFS.map(s => {
+    const pd = calcPD(s);
+    const t  = lookupT(s.abbr, pd);
+    return { ...s, pd, t };
+  });
 
-  const countV = document.getElementById('count-v');
-  if (countV) countV.textContent = v;
+  renderResults();
+  renderProfile();
+  renderInterpretation();
 
-  const countF = document.getElementById('count-f');
-  if (countF) countF.textContent = f;
+  document.getElementById('calc-notice').style.display = 'none';
+  document.getElementById('results-content').style.display = 'block';
+  updateInfoPanel();
+}
 
-  // Actualizar Tab 2 (Aplicar Test)
-  const testProgCount = document.getElementById('test-prog-count');
-  if (testProgCount) testProgCount.textContent = `${filled} / 338 respondidos`;
+function getNivel(t) {
+  if (t >= 70) return { label: 'MUY ALTO', cls: 'nivel-muyalto' };
+  if (t >= 60) return { label: 'ALTO',     cls: 'nivel-alto'    };
+  if (t >= 45) return { label: 'MEDIO',    cls: 'nivel-medio'   };
+  return           { label: 'BAJO',        cls: 'nivel-bajo'    };
+}
 
-  const testProgBar = document.getElementById('test-prog-bar');
-  if (testProgBar) testProgBar.style.width = `${(filled/338)*100}%`;
+function renderResults() {
+  const tbody = document.getElementById('scale-tbody');
+  tbody.innerHTML = '';
+  let lastCat = '';
 
-  const testCountV = document.getElementById('test-count-v');
-  if (testCountV) testCountV.textContent = v;
-
-  const testCountF = document.getElementById('test-count-f');
-  if (testCountF) testCountF.textContent = f;
-
-  // Activar botón Calcular cuando esté completo
-  const btnFinish = document.getElementById('btn-finish-test');
-  if (btnFinish) {
-    if (filled === 338) {
-      btnFinish.style.opacity = '1';
-      btnFinish.style.pointerEvents = 'auto';
-    } else {
-      btnFinish.style.opacity = '0.35';
-      btnFinish.style.pointerEvents = 'none';
+  const validityWarnings = [];
+  const validScales = ["INVAR-r","INVER-r","F-r","Fpsi-r","Fs","FVS-r","SI","L-r","K-r"];
+  calcResults.forEach(r => {
+    if (validScales.includes(r.abbr)) {
+      if (r.t >= 80) validityWarnings.push(`${r.abbr} (T=${r.t})`);
     }
+  });
+  const vNotice = document.getElementById('validity-notice');
+  if (validityWarnings.length) {
+    vNotice.style.display = 'flex';
+    document.getElementById('validity-notice-text').innerHTML =
+      `<strong>⚠️ Alerta de Validez:</strong> Las siguientes escalas muestran puntuaciones elevadas que pueden comprometer la interpretabilidad del protocolo: <strong>${validityWarnings.join(', ')}</strong>. Revise las escalas de validez antes de interpretar las escalas clínicas.`;
+  } else {
+    vNotice.style.display = 'none';
   }
+
+  const vGrid = document.getElementById('validity-grid');
+  vGrid.innerHTML = '';
+  calcResults.filter(r => r.cat === 'Validez').forEach(r => {
+    const nivel = getNivel(r.t);
+    const tColor = r.t >= 80 ? 'var(--red)' : r.t >= 65 ? 'var(--orange)' : r.t >= 45 ? 'var(--gold)' : 'var(--green)';
+    vGrid.innerHTML += `
+      <div class="validity-card">
+        <div class="validity-name">${r.abbr}</div>
+        <div class="validity-t" style="color:${tColor}">${r.t}</div>
+        <span class="nivel-badge ${nivel.cls}">${nivel.label}</span>
+      </div>`;
+  });
+
+  calcResults.forEach(r => {
+    if (r.cat !== lastCat) {
+      const divRow = document.createElement('tr');
+      divRow.innerHTML = `<td colspan="6" class="section-divider">${r.cat}</td>`;
+      tbody.appendChild(divRow);
+      lastCat = r.cat;
+    }
+    const nivel = getNivel(r.t);
+    const tColor = r.t >= 70 ? '#f85149' : r.t >= 60 ? '#e3b341' : r.t >= 45 ? '#d29922' : '#3fb950';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${tColor};margin-right:6px"></span></td>
+      <td style="font-size:12px">${r.name}</td>
+      <td><code style="font-size:11px;color:var(--muted)">${r.abbr}</code></td>
+      <td class="pd-score">${r.pd}</td>
+      <td class="t-score" style="color:${tColor}">${r.t}</td>
+      <td><span class="nivel-badge ${nivel.cls}">${nivel.label}</span></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function renderProfile() {
+  const chart = document.getElementById('profile-chart');
+  const MAX_T = 120, MIN_T = 20, RANGE = MAX_T - MIN_T;
+  const H = 280;
+
+  const px = t => ((t - MIN_T) / RANGE) * H;
+
+  let html = '';
+
+  [20,30,40,50,60,70,80,90,100,110,120].forEach(t => {
+    const bot = px(t);
+    html += `<div class="profile-grid-line" style="bottom:${bot}px"></div>
+             <div class="profile-grid-label" style="bottom:${bot}px">${t}</div>`;
+  });
+
+  html += `<div class="threshold-line" style="bottom:${px(65)}px;background:rgba(248,81,73,.5)"></div>`;
+  html += `<div class="threshold-line" style="bottom:${px(70)}px;background:rgba(248,81,73,.85)"></div>`;
+  html += `<div class="threshold-line" style="bottom:${px(50)}px;background:rgba(88,166,255,.3)"></div>`;
+
+  html += '<div class="profile-bars">';
+  calcResults.forEach(r => {
+    const barH = Math.max(2, px(r.t) - px(MIN_T));
+    const t = r.t;
+    const clr = t >= 70 ? '#f85149' : t >= 60 ? '#e3b341' : t >= 45 ? '#3fb950' : '#58a6ff';
+    html += `
+      <div class="profile-bar-wrap">
+        <div class="profile-bar"
+          style="height:${barH}px;background:${clr};opacity:0.85"
+          data-tip="${r.abbr}: T=${r.t} PD=${r.pd}"></div>
+        <div class="profile-abbr">${r.abbr}</div>
+      </div>`;
+  });
+  html += '</div>';
+
+  chart.innerHTML = html;
+}
+
+const INTERPRETATIONS = {
+  "INVAR-r": t => t<=38 ? "El protocolo es interpretable. El evaluado comprendió y respondió adecuadamente los reactivos." : t<70 ? "El protocolo es interpretable. El evaluado comprendió y respondió adecuadamente los reactivos." : t<80 ? "⚠️ Hay evidencia de inconsistencias en las respuestas variables. Interpretar con precaución." : "🚫 El protocolo NO ES INTERPRETABLE por exceso de inconsistencias en las respuestas variables.",
+  "INVER-r": t => t<58 ? "Protocolo interpretable." : t<80 ? "⚠️ Interpretar con cautela. El sujeto muestra poca cooperación en la prueba." : "🚫 El protocolo NO ES INTERPRETABLE.",
+  "F-r":     t => t<=79 ? "No hay evidencia de sobrerreporte." : t<90 ? "⚠️ Posible sobrerreporte de disfunción psicológica. Revisar INVAR e INVER." : t<100 ? "⚠️ Número considerablemente mayor que el promedio. Revisar INVAR e INVER." : "🚫 El protocolo puede ser NO VÁLIDO. Exceso de respuestas infrecuentes.",
+  "CRd":     t => t<39 ? "Reporta estado de ánimo y satisfacción con su vida superior al promedio." : t<65 ? "Estado de ánimo y satisfacción con la vida dentro del promedio." : t<80 ? "Reporta sentimientos de tristeza e insatisfacción con su vida." : "Confusión emocional significativa. Sentirse agobiada, muy infeliz e insatisfecha.",
+  "CR1":     t => t<39 ? "Indica un sentido de bienestar físico." : t<65 ? "Indica bienestar con escasas quejas somáticas." : t<80 ? "Indica múltiples quejas somáticas." : "Patrón difuso de quejas somáticas en múltiples sistemas corporales.",
+  "CR3":     t => t<39 ? "Describe a los otros como bien intencionados. Posible exceso de confianza." : t<65 ? "Actitud confiada y bienintencionada." : "Creencias cínicas. Desconfianza en otros. Cree que los demás velan solo por sus propios intereses.",
+  "CR4":     t => t<39 ? "Nivel por debajo del promedio de conductas antisociales." : t<65 ? "Nivel promedio de conductas antisociales en el pasado." : "Historia significativa de conductas antisociales.",
+  "CR6":     t => t<41 ? "Baja tendencia de ideas de persecución." : t<63 ? "Poca tendencia de ideas de persecución." : t<80 ? "Alta probabilidad de ideas de persecución." : "Ideas de persecución significativas. Posibles niveles de delirios paranoides.",
+  "CR7":     t => t<=39 ? "Nivel de experiencias emocionales negativas por debajo del promedio." : t<65 ? "Experiencias emocionales negativas conformes a la norma." : "Refiere diversas experiencias emocionales negativas: ansiedad, enojo y miedo.",
+  "CR9":     t => t<39 ? "Nivel de activación y compromiso con el ambiente por debajo del promedio." : t<65 ? "Nivel de activación y compromiso con su ambiente dentro del promedio." : "Nivel de activación y compromiso considerablemente por arriba del promedio.",
+};
+
+function renderInterpretation() {
+  const cats = [...new Set(calcResults.map(r => r.cat))];
+  let html = '';
+  cats.forEach(cat => {
+    const scales = calcResults.filter(r => r.cat === cat);
+    html += `<div class="card interp-section" style="margin-bottom:16px">
+      <div class="card-header"><span class="icon">📖</span><h2>${cat}</h2></div>
+      <div class="card-body" style="padding:0">`;
+    scales.forEach(r => {
+      const fn = INTERPRETATIONS[r.abbr];
+      const text = fn ? fn(r.t) : 'Sin interpretación disponible.';
+      const isAlert = text.includes('🚫') || text.includes('ATENCIÓN');
+      const isWarn  = text.includes('⚠️');
+      const tColor = r.t >= 70 ? '#f85149' : r.t >= 60 ? '#e3b341' : r.t >= 45 ? '#d29922' : '#3fb950';
+      html += `<div class="interp-row">
+        <div class="interp-scale">${r.abbr}</div>
+        <div class="interp-t" style="color:${tColor}">${r.t}</div>
+        <div class="interp-text ${isAlert?'interp-alert':isWarn?'interp-warn':''}">${text}</div>
+      </div>`;
+    });
+    html += '</div></div>';
+  });
+  document.getElementById('interp-content').innerHTML = html;
+}
+
+function updateInfoPanel() {
+  document.getElementById('inf-nombre').textContent = document.getElementById('inp-nombre').value || '—';
+  document.getElementById('inf-fecha').textContent  = document.getElementById('inp-fecha').value  || '—';
+  document.getElementById('inf-cargo').textContent  = document.getElementById('inp-cargo').value  || '—';
+  document.getElementById('inf-inst').textContent   = document.getElementById('inp-inst').value   || '—';
+  document.getElementById('inf-eval').textContent   = document.getElementById('inp-eval').value   || '—';
+  document.getElementById('inf-edad').textContent   = document.getElementById('inp-edad').value   || '—';
+}
+
+function showTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const panel = document.getElementById(`tab-${name}`);
+  if (panel) panel.classList.add('active');
+  const tabOrder = ['datos','test','resultados','perfil','interpretacion'];
+  const idx = tabOrder.indexOf(name);
+  const allBtns = document.querySelectorAll('.tab-btn');
+  if (idx >= 0 && allBtns[idx]) allBtns[idx].classList.add('active');
+}
+
+function saveInfo() {
+  const info = {
+    nombre: document.getElementById('inp-nombre').value,
+    fecha:  document.getElementById('inp-fecha').value,
+    cargo:  document.getElementById('inp-cargo').value,
+    inst:   document.getElementById('inp-inst').value,
+    eval:   document.getElementById('inp-eval').value,
+    edad:   document.getElementById('inp-edad').value,
+  };
+  localStorage.setItem('mmpi_info', JSON.stringify(info));
+}
+
+function loadData() {
+  try {
+    const info = JSON.parse(localStorage.getItem('mmpi_info') || '{}');
+    if (info.nombre) document.getElementById('inp-nombre').value = info.nombre;
+    if (info.fecha)  document.getElementById('inp-fecha').value  = info.fecha;
+    if (info.cargo)  document.getElementById('inp-cargo').value  = info.cargo;
+    if (info.inst)   document.getElementById('inp-inst').value   = info.inst;
+    if (info.eval)   document.getElementById('inp-eval').value   = info.eval;
+    if (info.edad)   document.getElementById('inp-edad').value   = info.edad;
+
+    const saved = JSON.parse(localStorage.getItem('mmpi_responses') || 'null');
+    if (saved) saved.forEach((v, i) => { if (v) responses[i] = v; });
+  } catch(e) {}
 }
 
 function clearAll() {
-  if (!confirm('¿Desea borrar todos los datos?')) return;
+  if (!confirm('¿Desea borrar todos los datos? Esta acción no se puede deshacer.')) return;
   for (let i = 0; i <= 338; i++) responses[i] = null;
   localStorage.removeItem('mmpi_responses');
+  localStorage.removeItem('mmpi_info');
+  ['inp-nombre','inp-fecha','inp-cargo','inp-inst','inp-eval','inp-edad'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
   buildItemsGrid();
 }
 
-function calcAll() {
-  console.log('⚙️ Calculando MMPI-2-RF...');
-
-  // Validar que todos estén respondidos
-  let filled = 0;
-  for (let i = 1; i <= 338; i++) {
-    if (responses[i]) filled++;
-  }
-
-  if (filled < 338) {
-    alert(`❌ Faltan ${338 - filled} ítems por responder`);
-    return;
-  }
-
-  // Calcular escalas
-  const escalas = [
-    { nombre: 'Depresión', abrev: 'RCd', items: [30, 37, 47, 63, 99, 113, 155, 173, 196, 208, 255, 271, 298] },
-    { nombre: 'Ansiedad', abrev: 'RC7', items: [11, 25, 37, 49, 63, 71, 91, 107, 113, 121, 127, 155, 179, 196, 221, 235, 261, 275, 287, 295, 309, 317, 323, 329] },
-    { nombre: 'Quejas Somáticas', abrev: 'RC1', items: [17, 47, 71, 111, 137, 161, 200, 226, 261, 297, 333] },
-    { nombre: 'Baja Energía', abrev: 'RC2', items: [6, 30, 32, 33, 37, 47, 49, 52, 53, 61, 74, 99, 149, 174, 190, 194, 196, 204] },
-    { nombre: 'Disfunción Cognitiva', abrev: 'RC3', items: [31, 78, 114, 150, 186, 255, 282, 293, 309] },
-    { nombre: 'Conducta Deshinibida', abrev: 'RC4', items: [23, 51, 56, 62, 68, 86, 94, 99, 113, 145, 149, 161, 173, 191, 201, 213, 221, 227, 239, 247] },
-    { nombre: 'Ideas Persecutorias', abrev: 'RC6', items: [16, 36, 73, 114, 152, 168, 182, 216, 220, 254, 258, 274, 282, 286, 302, 309, 320] },
-    { nombre: 'Experiencias Aberrantes', abrev: 'RC8', items: [14, 34, 52, 72, 92, 114, 132, 150, 168, 186, 204, 222, 238, 254, 270, 286, 302, 318] },
-    { nombre: 'Hipomanía', abrev: 'RC9', items: [15, 28, 41, 55, 69, 80, 91, 99, 109, 117, 127, 133, 143, 151, 163, 173, 195, 201, 217, 233, 241, 249, 261, 285, 293, 305, 317, 329] }
-  ];
-
-  const resultados = {};
-
-  escalas.forEach(escala => {
-    let rawScore = 0;
-    escala.items.forEach(itemNum => {
-      if (responses[itemNum] === 'V') rawScore++;
-    });
-
-    // Calcular T-Score (50 + (rawScore - media) * 10 / ds)
-    const media = escala.items.length / 2;
-    const ds = escala.items.length / 3;
-    const tScore = Math.round(50 + (rawScore - media) * 10 / ds);
-
-    resultados[escala.abrev] = {
-      nombre: escala.nombre,
-      abrev: escala.abrev,
-      pd: rawScore,
-      t: tScore,
-      nivel: tScore >= 70 ? 'MUY ALTO' : tScore >= 60 ? 'ALTO' : tScore >= 45 ? 'PROMEDIO' : 'BAJO'
-    };
-  });
-
-  // Mostrar tabla de resultados
-  let html = `
-    <table class="scale-table">
-      <thead>
-        <tr>
-          <th>Escala</th>
-          <th>Abrev.</th>
-          <th>PD</th>
-          <th>T</th>
-          <th>Nivel</th>
-        </tr>
-      </thead>
-      <tbody>
-  `;
-
-  Object.entries(resultados).forEach(([key, data]) => {
-    const colorT = data.t >= 70 ? '#f85149' : data.t >= 60 ? '#e3b341' : data.t >= 45 ? '#3fb950' : '#58a6ff';
-    html += `
-      <tr>
-        <td>${data.nombre}</td>
-        <td><code>${data.abrev}</code></td>
-        <td>${data.pd}</td>
-        <td style="color: ${colorT}; font-weight: 600;">${data.t}</td>
-        <td><span style="background: ${colorT}; color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600;">${data.nivel}</span></td>
-      </tr>
-    `;
-  });
-
-  html += `</tbody></table>`;
-
-  document.getElementById('scale-tbody').innerHTML = html.split('<tbody>')[1].split('</table>')[0];
-  document.getElementById('results-content').style.display = 'block';
-
-  // Guardar resultados en sessionStorage
-  sessionStorage.setItem('mmpi-resultados', JSON.stringify(resultados));
-
-  console.log('✅ Cálculo completado:', resultados);
+function exportJSON() {
+  const data = {
+    info: {
+      nombre: document.getElementById('inp-nombre').value,
+      fecha:  document.getElementById('inp-fecha').value,
+      cargo:  document.getElementById('inp-cargo').value,
+      inst:   document.getElementById('inp-inst').value,
+      eval:   document.getElementById('inp-eval').value,
+      edad:   document.getElementById('inp-edad').value,
+    },
+    responses: responses.slice(1),
+    exportDate: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `MMPI2RF_${data.info.nombre||'evaluado'}_${data.info.fecha||Date.now()}.json`;
+  a.click();
 }
 
-function saveInfo() {}
-function loadData() {
-  const saved = JSON.parse(localStorage.getItem('mmpi_responses') || 'null');
-  if (saved) saved.forEach((v, i) => { if (v) responses[i] = v; });
-  buildItemsGrid();
+function importJSON() { document.getElementById('file-import').click(); }
+function handleImport(evt) {
+  const file = evt.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (data.info) {
+        if (data.info.nombre) document.getElementById('inp-nombre').value = data.info.nombre;
+        if (data.info.fecha)  document.getElementById('inp-fecha').value  = data.info.fecha;
+        if (data.info.cargo)  document.getElementById('inp-cargo').value  = data.info.cargo;
+        if (data.info.inst)   document.getElementById('inp-inst').value   = data.info.inst;
+        if (data.info.eval)   document.getElementById('inp-eval').value   = data.info.eval;
+        if (data.info.edad)   document.getElementById('inp-edad').value   = data.info.edad;
+      }
+      if (data.responses) {
+        data.responses.forEach((v, i) => { responses[i + 1] = v || null; });
+      }
+      buildItemsGrid();
+      saveInfo();
+      localStorage.setItem('mmpi_responses', JSON.stringify(responses));
+      alert('Datos importados correctamente.');
+    } catch(err) { alert('Error al importar el archivo JSON.'); }
+  };
+  reader.readAsText(file);
 }
+
+const ITEMS_PER_PAGE = 24;
+let currentTestPage = 0;
+const totalTestPages = Math.ceil(338 / ITEMS_PER_PAGE);
 
 function buildTestPages() {
   const container = document.getElementById('test-pages');
+  if (!container) return;
   container.innerHTML = '';
+
   for (let p = 0; p < totalTestPages; p++) {
     const pageDiv = document.createElement('div');
     pageDiv.className = 'test-page' + (p === 0 ? ' tactive' : '');
+    pageDiv.id = `tpage-${p}`;
+
     const start = p * ITEMS_PER_PAGE + 1;
-    const end = Math.min(start + ITEMS_PER_PAGE - 1, 338);
+    const end   = Math.min(start + ITEMS_PER_PAGE - 1, 338);
 
     const card = document.createElement('div');
     card.className = 'card';
 
-    // Header
-    const header = document.createElement('div');
-    header.className = 'card-header';
-    header.innerHTML = `<span class="icon">📋</span><h2>Ítems ${start} – ${end}</h2>`;
-    card.appendChild(header);
+    const hdr = document.createElement('div');
+    hdr.className = 'card-header';
+    hdr.innerHTML = `<span class="icon">📋</span>
+      <h2>Ítems ${start} – ${end}</h2>
+      <span style="margin-left:auto;font-size:11px;color:var(--muted)">Página ${p+1} de ${totalTestPages}</span>`;
+    card.appendChild(hdr);
 
-    // Body con items
     const body = document.createElement('div');
     body.style.padding = '0';
+
     for (let i = start; i <= end; i++) {
-      const itemDiv = document.createElement('div');
-      itemDiv.className = 'test-item' + (responses[i] ? ' answered' : '');
-      itemDiv.innerHTML = `
+      const row = document.createElement('div');
+      row.className = 'test-item' + (responses[i] ? ' answered' : '');
+      row.id = `trow-${i}`;
+      row.innerHTML = `
         <span class="test-num">${i}</span>
-        <span class="test-text">${ITEMS[i] || ''}</span>
+        <span class="test-text">${ITEMS[i]}</span>
         <div class="test-btns">
           <button class="vf-btn ${responses[i]==='V'?'sel-v':''}" onclick="testSetResp(${i},'V')">V</button>
           <button class="vf-btn ${responses[i]==='F'?'sel-f':''}" onclick="testSetResp(${i},'F')">F</button>
-        </div>
-      `;
-      body.appendChild(itemDiv);
+        </div>`;
+      body.appendChild(row);
     }
+
     card.appendChild(body);
     pageDiv.appendChild(card);
     container.appendChild(pageDiv);
   }
+
+  updatePageNav();
+  syncTestProgress();
 }
 
 function testSetResp(item, val) {
   responses[item] = val;
-  const items = document.querySelectorAll('.test-item');
-  for (let i = 0; i < items.length; i++) {
-    const btn = items[i];
-    const num = parseInt(btn.querySelector('.test-num').textContent);
-    if (num === item) {
-      if (val) {
-        btn.classList.add('answered');
-      } else {
-        btn.classList.remove('answered');
-      }
-      const btns = btn.querySelectorAll('.vf-btn');
-      btns[0].className = 'vf-btn' + (val==='V' ? ' sel-v' : '');
-      btns[1].className = 'vf-btn' + (val==='F' ? ' sel-f' : '');
-    }
+
+  const row = document.getElementById(`trow-${item}`);
+  if (row) {
+    row.classList.add('answered');
+    const btns = row.querySelectorAll('.vf-btn');
+    btns[0].className = 'vf-btn' + (val==='V' ? ' sel-v' : '');
+    btns[1].className = 'vf-btn' + (val==='F' ? ' sel-f' : '');
+  }
+
+  const cells = document.querySelectorAll('.item-cell');
+  const cell = cells[item - 1];
+  if (cell) {
+    const dataBtns = cell.querySelectorAll('.resp-btn');
+    dataBtns[0].className = 'resp-btn' + (val==='V'?' selected-v':'');
+    dataBtns[1].className = 'resp-btn' + (val==='F'?' selected-f':'');
+  }
+
+  syncTestProgress();
+  localStorage.setItem('mmpi_responses', JSON.stringify(responses));
+}
+
+function syncTestProgress() {
+  let filled = 0, v = 0, f = 0;
+  for (let i = 1; i <= 338; i++) {
+    if (responses[i]) { filled++; if (responses[i]==='V') v++; else f++; }
+  }
+  const pct = (filled / 338) * 100;
+  document.getElementById('test-prog-count').textContent = `${filled} / 338 respondidos`;
+  document.getElementById('test-prog-bar').style.width = `${pct}%`;
+  document.getElementById('test-count-v').textContent = v;
+  document.getElementById('test-count-f').textContent = f;
+
+  const btn = document.getElementById('btn-finish-test');
+  if (filled >= 280) {
+    btn.style.opacity = '1';
+    btn.style.pointerEvents = 'auto';
+    btn.textContent = `⚡ Calcular Resultados (${filled}/338)`;
   }
   updateProgress();
 }
 
 function changePage(dir) {
+  document.querySelectorAll('.test-page')[currentTestPage].classList.remove('tactive');
   currentTestPage = Math.max(0, Math.min(totalTestPages - 1, currentTestPage + dir));
+  document.querySelectorAll('.test-page')[currentTestPage].classList.add('tactive');
+  updatePageNav();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
-  // Ocultar todas las páginas
-  const pages = document.querySelectorAll('.test-page');
-  pages.forEach((page, idx) => {
-    page.classList.remove('tactive');
-    if (idx === currentTestPage) {
-      page.classList.add('tactive');
-    }
-  });
+function updatePageNav() {
+  document.getElementById('page-indicator').textContent =
+    `Página ${currentTestPage + 1} de ${totalTestPages}`;
 
-  document.getElementById('page-indicator').textContent = `Página ${currentTestPage + 1} de ${totalTestPages}`;
+  const prev = document.getElementById('btn-prev-page');
+  const next = document.getElementById('btn-next-page');
 
-  // Actualizar botones de navegación
-  const btnPrev = document.getElementById('btn-prev-page');
-  const btnNext = document.getElementById('btn-next-page');
+  prev.style.opacity = currentTestPage === 0 ? '.35' : '1';
+  prev.style.pointerEvents = currentTestPage === 0 ? 'none' : 'auto';
 
-  if (btnPrev) {
-    if (currentTestPage === 0) {
-      btnPrev.style.opacity = '0.35';
-      btnPrev.style.pointerEvents = 'none';
-    } else {
-      btnPrev.style.opacity = '1';
-      btnPrev.style.pointerEvents = 'auto';
-    }
-  }
-
-  if (btnNext) {
-    if (currentTestPage === totalTestPages - 1) {
-      btnNext.textContent = 'Finalizar ✓';
-      btnNext.style.opacity = '0.35';
-      btnNext.style.pointerEvents = 'none';
-    } else {
-      btnNext.textContent = 'Siguiente →';
-      btnNext.style.opacity = '1';
-      btnNext.style.pointerEvents = 'auto';
-    }
+  if (currentTestPage === totalTestPages - 1) {
+    next.textContent = '⚡ Ver Resultados';
+    next.onclick = finishTest;
+  } else {
+    next.textContent = 'Siguiente →';
+    next.onclick = () => changePage(1);
   }
 }
 
 function finishTest() {
   calcAll();
-  showTab('resultados');
-}
-
-function generarPDF() {
-  const nombre = document.getElementById('inp-nombre').value || 'Evaluado';
-  const fecha = document.getElementById('inp-fecha').value || new Date().toISOString().split('T')[0];
-  const resultados = JSON.parse(sessionStorage.getItem('mmpi-resultados') || '{}');
-
-  let contenidoHTML = `
-    <div style="font-family: Arial, sans-serif; padding: 20px;">
-      <h1 style="text-align: center; color: #1f3a70;">MMPI-2 Forma Reestructurada</h1>
-      <p style="text-align: center; color: #666;">Informe de Evaluación Psicológica</p>
-
-      <hr style="border: 1px solid #ddd; margin: 20px 0;">
-
-      <h3 style="color: #1f3a70;">Datos del Evaluado</h3>
-      <table style="width: 100%; border-collapse: collapse;">
-        <tr>
-          <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Nombre:</strong></td>
-          <td style="padding: 8px; border-bottom: 1px solid #ddd;">${nombre}</td>
-        </tr>
-        <tr>
-          <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Fecha de Evaluación:</strong></td>
-          <td style="padding: 8px; border-bottom: 1px solid #ddd;">${fecha}</td>
-        </tr>
-      </table>
-
-      <h3 style="color: #1f3a70; margin-top: 20px;">Puntajes por Escala</h3>
-      <table style="width: 100%; border-collapse: collapse;">
-        <thead>
-          <tr style="background: #f0f0f0;">
-            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Escala</th>
-            <th style="padding: 10px; border: 1px solid #ddd; text-align: center;">PD</th>
-            <th style="padding: 10px; border: 1px solid #ddd; text-align: center;">T</th>
-            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Nivel</th>
-          </tr>
-        </thead>
-        <tbody>
-  `;
-
-  Object.entries(resultados).forEach(([key, data]) => {
-    contenidoHTML += `
-      <tr>
-        <td style="padding: 8px; border: 1px solid #ddd;">${data.nombre}</td>
-        <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${data.pd}</td>
-        <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: 600;">${data.t}</td>
-        <td style="padding: 8px; border: 1px solid #ddd;">${data.nivel}</td>
-      </tr>
-    `;
-  });
-
-  contenidoHTML += `
-        </tbody>
-      </table>
-
-      <p style="margin-top: 30px; font-size: 10px; color: #999;">
-        <strong>Nota:</strong> Este informe es una guía automática. La interpretación final siempre debe ser realizada por un psicólogo con formación en evaluación psicológica.
-      </p>
-    </div>
-  `;
-
-  const element = document.createElement('div');
-  element.innerHTML = contenidoHTML;
-
-  const opt = {
-    margin: 10,
-    filename: `MMPI-2RF_${nombre.replace(/\\s+/g, '_')}_${fecha}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2 },
-    jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
-  };
-
-  html2pdf().set(opt).from(element).save();
-  console.log('📥 PDF descargado');
-}
-
-function imprimirResultados() {
-  const nombre = document.getElementById('inp-nombre').value || 'Evaluado';
-  const fecha = document.getElementById('inp-fecha').value || new Date().toISOString().split('T')[0];
-  const resultados = JSON.parse(sessionStorage.getItem('mmpi-resultados') || '{}');
-
-  let contenidoHTML = `
-    <h1>MMPI-2 Forma Reestructurada</h1>
-    <h3>Datos del Evaluado</h3>
-    <p><strong>Nombre:</strong> ${nombre}</p>
-    <p><strong>Fecha:</strong> ${fecha}</p>
-
-    <h3>Puntajes por Escala</h3>
-    <table style="width: 100%; border-collapse: collapse;">
-      <thead>
-        <tr style="background: #f0f0f0;">
-          <th style="padding: 10px; border: 1px solid #ddd;">Escala</th>
-          <th style="padding: 10px; border: 1px solid #ddd;">PD</th>
-          <th style="padding: 10px; border: 1px solid #ddd;">T</th>
-          <th style="padding: 10px; border: 1px solid #ddd;">Nivel</th>
-        </tr>
-      </thead>
-      <tbody>
-  `;
-
-  Object.entries(resultados).forEach(([key, data]) => {
-    contenidoHTML += `
-      <tr>
-        <td style="padding: 8px; border: 1px solid #ddd;">${data.nombre}</td>
-        <td style="padding: 8px; border: 1px solid #ddd;">${data.pd}</td>
-        <td style="padding: 8px; border: 1px solid #ddd;">${data.t}</td>
-        <td style="padding: 8px; border: 1px solid #ddd;">${data.nivel}</td>
-      </tr>
-    `;
-  });
-
-  contenidoHTML += `</tbody></table>`;
-
-  const ventana = window.open('', '', 'width=900,height=600');
-  ventana.document.write('<html><head><title>MMPI-2RF</title></head><body style="font-family: Arial;">');
-  ventana.document.write(contenidoHTML);
-  ventana.document.write('</body></html>');
-  ventana.print();
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-resultados').classList.add('active');
+  const tabs = document.querySelectorAll('.tab-btn');
+  if (tabs[2]) tabs[2].classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 loadData();
 buildItemsGrid();
 buildTestPages();
+syncTestProgress();
+
 </script>
 </body>
 </html>
