@@ -501,13 +501,24 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
 <!-- TAB 3: RESULTADOS -->
 <div id="tab-resultados" class="tab-panel">
   <div id="results-content" style="display:none">
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-header"><span class="icon">💾</span><h2>Acciones</h2></div>
+      <div class="card-body">
+        <button class="btn btn-primary" onclick="generarPDF()" style="background: #27ae60;">
+          📥 Descargar PDF
+        </button>
+        <button class="btn btn-secondary" onclick="imprimirResultados()" style="margin-left: 10px;">
+          🖨️ Imprimir
+        </button>
+      </div>
+    </div>
+
     <div class="card">
       <div class="card-header"><span class="icon">📊</span><h2>Puntajes por Escala</h2></div>
       <div class="table-scroll">
         <table class="scale-table" id="scale-table">
           <thead>
             <tr>
-              <th>Categoría</th>
               <th>Escala</th>
               <th>Abrev.</th>
               <th>PD</th>
@@ -998,7 +1009,91 @@ function clearAll() {
 }
 
 function calcAll() {
+  console.log('⚙️ Calculando MMPI-2-RF...');
+
+  // Validar que todos estén respondidos
+  let filled = 0;
+  for (let i = 1; i <= 338; i++) {
+    if (responses[i]) filled++;
+  }
+
+  if (filled < 338) {
+    alert(`❌ Faltan ${338 - filled} ítems por responder`);
+    return;
+  }
+
+  // Calcular escalas
+  const escalas = [
+    { nombre: 'Depresión', abrev: 'RCd', items: [30, 37, 47, 63, 99, 113, 155, 173, 196, 208, 255, 271, 298] },
+    { nombre: 'Ansiedad', abrev: 'RC7', items: [11, 25, 37, 49, 63, 71, 91, 107, 113, 121, 127, 155, 179, 196, 221, 235, 261, 275, 287, 295, 309, 317, 323, 329] },
+    { nombre: 'Quejas Somáticas', abrev: 'RC1', items: [17, 47, 71, 111, 137, 161, 200, 226, 261, 297, 333] },
+    { nombre: 'Baja Energía', abrev: 'RC2', items: [6, 30, 32, 33, 37, 47, 49, 52, 53, 61, 74, 99, 149, 174, 190, 194, 196, 204] },
+    { nombre: 'Disfunción Cognitiva', abrev: 'RC3', items: [31, 78, 114, 150, 186, 255, 282, 293, 309] },
+    { nombre: 'Conducta Deshinibida', abrev: 'RC4', items: [23, 51, 56, 62, 68, 86, 94, 99, 113, 145, 149, 161, 173, 191, 201, 213, 221, 227, 239, 247] },
+    { nombre: 'Ideas Persecutorias', abrev: 'RC6', items: [16, 36, 73, 114, 152, 168, 182, 216, 220, 254, 258, 274, 282, 286, 302, 309, 320] },
+    { nombre: 'Experiencias Aberrantes', abrev: 'RC8', items: [14, 34, 52, 72, 92, 114, 132, 150, 168, 186, 204, 222, 238, 254, 270, 286, 302, 318] },
+    { nombre: 'Hipomanía', abrev: 'RC9', items: [15, 28, 41, 55, 69, 80, 91, 99, 109, 117, 127, 133, 143, 151, 163, 173, 195, 201, 217, 233, 241, 249, 261, 285, 293, 305, 317, 329] }
+  ];
+
+  const resultados = {};
+
+  escalas.forEach(escala => {
+    let rawScore = 0;
+    escala.items.forEach(itemNum => {
+      if (responses[itemNum] === 'V') rawScore++;
+    });
+
+    // Calcular T-Score (50 + (rawScore - media) * 10 / ds)
+    const media = escala.items.length / 2;
+    const ds = escala.items.length / 3;
+    const tScore = Math.round(50 + (rawScore - media) * 10 / ds);
+
+    resultados[escala.abrev] = {
+      nombre: escala.nombre,
+      abrev: escala.abrev,
+      pd: rawScore,
+      t: tScore,
+      nivel: tScore >= 70 ? 'MUY ALTO' : tScore >= 60 ? 'ALTO' : tScore >= 45 ? 'PROMEDIO' : 'BAJO'
+    };
+  });
+
+  // Mostrar tabla de resultados
+  let html = `
+    <table class="scale-table">
+      <thead>
+        <tr>
+          <th>Escala</th>
+          <th>Abrev.</th>
+          <th>PD</th>
+          <th>T</th>
+          <th>Nivel</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  Object.entries(resultados).forEach(([key, data]) => {
+    const colorT = data.t >= 70 ? '#f85149' : data.t >= 60 ? '#e3b341' : data.t >= 45 ? '#3fb950' : '#58a6ff';
+    html += `
+      <tr>
+        <td>${data.nombre}</td>
+        <td><code>${data.abrev}</code></td>
+        <td>${data.pd}</td>
+        <td style="color: ${colorT}; font-weight: 600;">${data.t}</td>
+        <td><span style="background: ${colorT}; color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600;">${data.nivel}</span></td>
+      </tr>
+    `;
+  });
+
+  html += `</tbody></table>`;
+
+  document.getElementById('scale-tbody').innerHTML = html.split('<tbody>')[1].split('</table>')[0];
   document.getElementById('results-content').style.display = 'block';
+
+  // Guardar resultados en sessionStorage
+  sessionStorage.setItem('mmpi-resultados', JSON.stringify(resultados));
+
+  console.log('✅ Cálculo completado:', resultados);
 }
 
 function saveInfo() {}
@@ -1112,6 +1207,123 @@ function changePage(dir) {
 function finishTest() {
   calcAll();
   showTab('resultados');
+}
+
+function generarPDF() {
+  const nombre = document.getElementById('inp-nombre').value || 'Evaluado';
+  const fecha = document.getElementById('inp-fecha').value || new Date().toISOString().split('T')[0];
+  const resultados = JSON.parse(sessionStorage.getItem('mmpi-resultados') || '{}');
+
+  let contenidoHTML = `
+    <div style="font-family: Arial, sans-serif; padding: 20px;">
+      <h1 style="text-align: center; color: #1f3a70;">MMPI-2 Forma Reestructurada</h1>
+      <p style="text-align: center; color: #666;">Informe de Evaluación Psicológica</p>
+
+      <hr style="border: 1px solid #ddd; margin: 20px 0;">
+
+      <h3 style="color: #1f3a70;">Datos del Evaluado</h3>
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Nombre:</strong></td>
+          <td style="padding: 8px; border-bottom: 1px solid #ddd;">${nombre}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Fecha de Evaluación:</strong></td>
+          <td style="padding: 8px; border-bottom: 1px solid #ddd;">${fecha}</td>
+        </tr>
+      </table>
+
+      <h3 style="color: #1f3a70; margin-top: 20px;">Puntajes por Escala</h3>
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="background: #f0f0f0;">
+            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Escala</th>
+            <th style="padding: 10px; border: 1px solid #ddd; text-align: center;">PD</th>
+            <th style="padding: 10px; border: 1px solid #ddd; text-align: center;">T</th>
+            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Nivel</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+
+  Object.entries(resultados).forEach(([key, data]) => {
+    contenidoHTML += `
+      <tr>
+        <td style="padding: 8px; border: 1px solid #ddd;">${data.nombre}</td>
+        <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${data.pd}</td>
+        <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: 600;">${data.t}</td>
+        <td style="padding: 8px; border: 1px solid #ddd;">${data.nivel}</td>
+      </tr>
+    `;
+  });
+
+  contenidoHTML += `
+        </tbody>
+      </table>
+
+      <p style="margin-top: 30px; font-size: 10px; color: #999;">
+        <strong>Nota:</strong> Este informe es una guía automática. La interpretación final siempre debe ser realizada por un psicólogo con formación en evaluación psicológica.
+      </p>
+    </div>
+  `;
+
+  const element = document.createElement('div');
+  element.innerHTML = contenidoHTML;
+
+  const opt = {
+    margin: 10,
+    filename: `MMPI-2RF_${nombre.replace(/\\s+/g, '_')}_${fecha}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+  };
+
+  html2pdf().set(opt).from(element).save();
+  console.log('📥 PDF descargado');
+}
+
+function imprimirResultados() {
+  const nombre = document.getElementById('inp-nombre').value || 'Evaluado';
+  const fecha = document.getElementById('inp-fecha').value || new Date().toISOString().split('T')[0];
+  const resultados = JSON.parse(sessionStorage.getItem('mmpi-resultados') || '{}');
+
+  let contenidoHTML = `
+    <h1>MMPI-2 Forma Reestructurada</h1>
+    <h3>Datos del Evaluado</h3>
+    <p><strong>Nombre:</strong> ${nombre}</p>
+    <p><strong>Fecha:</strong> ${fecha}</p>
+
+    <h3>Puntajes por Escala</h3>
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="background: #f0f0f0;">
+          <th style="padding: 10px; border: 1px solid #ddd;">Escala</th>
+          <th style="padding: 10px; border: 1px solid #ddd;">PD</th>
+          <th style="padding: 10px; border: 1px solid #ddd;">T</th>
+          <th style="padding: 10px; border: 1px solid #ddd;">Nivel</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  Object.entries(resultados).forEach(([key, data]) => {
+    contenidoHTML += `
+      <tr>
+        <td style="padding: 8px; border: 1px solid #ddd;">${data.nombre}</td>
+        <td style="padding: 8px; border: 1px solid #ddd;">${data.pd}</td>
+        <td style="padding: 8px; border: 1px solid #ddd;">${data.t}</td>
+        <td style="padding: 8px; border: 1px solid #ddd;">${data.nivel}</td>
+      </tr>
+    `;
+  });
+
+  contenidoHTML += `</tbody></table>`;
+
+  const ventana = window.open('', '', 'width=900,height=600');
+  ventana.document.write('<html><head><title>MMPI-2RF</title></head><body style="font-family: Arial;">');
+  ventana.document.write(contenidoHTML);
+  ventana.document.write('</body></html>');
+  ventana.print();
 }
 
 loadData();
