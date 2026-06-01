@@ -454,7 +454,7 @@ const app = {
    * Mostrar una sección de ISRA
    */
   mostrarSeccionISRA(seccion) {
-    // GUARDAR respuestas de la sección anterior antes de cambiar
+    // GUARDAR respuestas de la sección anterior ANTES de cambiar
     const seccionAnterior = this.israState.seccionActual;
     if (seccionAnterior && seccionAnterior !== seccion) {
       const respuestasAnterior = app.obtenerRespuestasISRA(
@@ -462,6 +462,8 @@ const app = {
         `isra-${seccionAnterior.toLowerCase()}`
       );
       this.israState[`datos${seccionAnterior}`] = respuestasAnterior;
+      const respondidos = respuestasAnterior.filter(r => r !== null).length;
+      console.log(`💾 Guardadas respuestas ${seccionAnterior}: ${respondidos} items`);
     }
 
     // Actualizar sección actual
@@ -526,6 +528,22 @@ const app = {
 
     if (testObj && testObj.items) {
       testRenderer.renderLikert04(`isra-container`, testObj.items, prefix);
+
+      // RESTAURAR respuestas guardadas de esta sección
+      setTimeout(() => {
+        const respuestasGuardadas = this.israState[`datos${seccion}`];
+        if (respuestasGuardadas && Array.isArray(respuestasGuardadas)) {
+          respuestasGuardadas.forEach((valor, idx) => {
+            if (valor !== null && valor !== undefined) {
+              const input = document.querySelector(`input[name="${prefix}_r${idx}"][value="${valor}"]`);
+              if (input) {
+                input.checked = true;
+              }
+            }
+          });
+          console.log(`✓ Restauradas ${respuestasGuardadas.filter(r => r !== null).length} respuestas de Sección ${seccion}`);
+        }
+      }, 100);
     }
   },
 
