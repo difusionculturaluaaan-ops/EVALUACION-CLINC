@@ -533,7 +533,17 @@ const app = {
    * Cambiar a una sección de ISRA desde las tabs
    */
   cambiarSeccionISRA(seccion) {
-    this.iniciarISRA(seccion);
+    // Guardar la sección actual antes de cambiar
+    const actual = this.israState.seccionActual;
+    if (actual && actual !== seccion) {
+      const respuestasActual = app.obtenerRespuestasISRA(
+        actual === 'C' ? tests_isra.items : (actual === 'F' ? tests_isra_f.items : tests_isra_m.items),
+        `isra-${actual.toLowerCase()}`
+      );
+      this.israState[`datos${actual}`] = respuestasActual;
+      console.log(`✓ Guardadas respuestas ${actual}:`, respuestasActual.filter(r => r !== null).length, 'items');
+    }
+    this.mostrarSeccionISRA(seccion);
   },
 
   /**
