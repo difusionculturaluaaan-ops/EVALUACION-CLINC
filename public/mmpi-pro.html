@@ -1592,10 +1592,6 @@ function generarPDF() {
   const nombre = document.getElementById('inp-nombre').value || 'Evaluado';
   const fecha = document.getElementById('inp-fecha').value || new Date().toISOString().split('T')[0];
 
-  // Capturar el gráfico del perfil visual
-  let graficoImageBase64 = '';
-  const chartElement = document.getElementById('profile-chart');
-
   // Crear contenedor para el PDF
   const pdfContent = document.createElement('div');
   pdfContent.style.backgroundColor = 'white';
@@ -1689,7 +1685,7 @@ function generarPDF() {
           Gráfico de barras con T-scores por escala clínica<br>
           Línea roja (T=70) = punto de corte clínico
         </p>
-        <div id="pdf-profile-chart" style="text-align:center;min-height:300px;background:white;border-radius:5px"></div>
+        ${generarSVGGraficoParaPDF()}
       </div>
       <p style="margin-top:15px;font-size:10px;color:#666;background:#f5f5f5;padding:10px;border-radius:3px">
         <strong>Interpretación del gráfico:</strong> Las barras azules indican T-scores dentro del rango promedio.
@@ -1764,46 +1760,18 @@ function generarPDF() {
 
   pdfContent.innerHTML = html;
 
-  // Usar html2canvas para capturar el gráfico del perfil visual
-  if (chartElement) {
-    html2canvas(chartElement, {
-      scale: 2,
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: '#ffffff'
-    }).then(canvas => {
-      const imgData = canvas.toDataURL('image/png');
-      const graficoImg = pdfContent.querySelector('#pdf-profile-chart');
-      if (graficoImg) {
-        graficoImg.innerHTML = `<img src="${imgData}" style="width:100%;height:auto;border:1px solid #ddd;border-radius:4px;background:white;padding:10px"/>`;
-      }
+  // Configurar opciones de html2pdf
+  const opt = {
+    margin: [12, 12, 15, 12],
+    filename: `MMPI-2RF_${nombre}_${fecha}.pdf`,
+    image: { type: 'jpeg', quality: 0.95 },
+    html2canvas: { scale: 2, useCORS: true, allowTaint: true },
+    jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4', compress: true },
+    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+  };
 
-      // Configurar opciones de html2pdf
-      const opt = {
-        margin: [12, 12, 15, 12],
-        filename: `MMPI-2RF_${nombre}_${fecha}.pdf`,
-        image: { type: 'jpeg', quality: 0.95 },
-        html2canvas: { scale: 2, useCORS: true, allowTaint: true },
-        jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4', compress: true },
-        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-      };
-
-      // Generar PDF
-      html2pdf().set(opt).from(pdfContent).save();
-    });
-  } else {
-    // Fallback si no hay gráfico
-    const opt = {
-      margin: [12, 12, 15, 12],
-      filename: `MMPI-2RF_${nombre}_${fecha}.pdf`,
-      image: { type: 'jpeg', quality: 0.95 },
-      html2canvas: { scale: 2, useCORS: true, allowTaint: true },
-      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4', compress: true },
-      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-    };
-
-    html2pdf().set(opt).from(pdfContent).save();
-  }
+  // Generar PDF
+  html2pdf().set(opt).from(pdfContent).save();
 }
 
 function generarSVGGraficoParaPDF() {
