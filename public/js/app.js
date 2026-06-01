@@ -161,7 +161,10 @@ const app = {
   mmpiState: {
     seccionActual: 'RF', // RF, SCORES
     datosRF: null,
-    datosScores: null
+    datosScores: null,
+    paginaActual: 0, // Página actual en RF (0-14)
+    itemsPorPagina: 24, // Items por página
+    totalItems: 338 // Total de items RF
   },
 
   /**
@@ -733,6 +736,9 @@ const app = {
   iniciarMMPI(seccion) {
     this.mmpiState.seccionActual = seccion;
     if (seccion === 'RF') {
+      // Construir paginación
+      this.construirPaginasMMPI();
+      this.mmpiActualizarProgreso();
       tests_mmpi2rf.init();
     } else {
       tests_mmpi2.init();
@@ -801,6 +807,238 @@ const app = {
     if (tabScores) {
       tabScores.style.color = seccion === 'SCORES' ? '#2c5aa0' : '#999';
       tabScores.style.borderBottomColor = seccion === 'SCORES' ? '#2c5aa0' : 'transparent';
+    }
+  },
+
+  /**
+   * Construir páginas del MMPI-2-RF (paginación)
+   */
+  construirPaginasMMPI() {
+    const container = document.getElementById('mmpi-pages-container');
+    if (!container) return;
+
+    container.innerHTML = '';
+    const totalPaginas = Math.ceil(this.mmpiState.totalItems / this.mmpiState.itemsPorPagina);
+
+    for (let pag = 0; pag < totalPaginas; pag++) {
+      const inicio = pag * this.mmpiState.itemsPorPagina + 1;
+      const fin = Math.min(inicio + this.mmpiState.itemsPorPagina - 1, this.mmpiState.totalItems);
+
+      const pagDiv = document.createElement('div');
+      pagDiv.id = `mmpi-page-${pag}`;
+      pagDiv.style.display = pag === 0 ? 'block' : 'none';
+
+      // Card para la página
+      const card = document.createElement('div');
+      card.style.cssText = 'background: #fff; border: 1px solid #ddd; border-radius: 6px; overflow: hidden; margin-bottom: 16px;';
+
+      // Header de la página
+      const header = document.createElement('div');
+      header.style.cssText = 'background: #f9f9f9; padding: 12px 16px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center;';
+      header.innerHTML = `
+        <h3 style="margin: 0; font-size: 14px; color: #2c5aa0; font-weight: bold;">Ítems ${inicio} - ${fin}</h3>
+        <span style="font-size: 11px; color: #999;">Página ${pag + 1} de ${totalPaginas}</span>
+      `;
+      card.appendChild(header);
+
+      // Items
+      const itemsDiv = document.createElement('div');
+      itemsDiv.style.padding = '0';
+      for (let i = inicio; i <= fin; i++) {
+        const itemEl = this.crearElementoItemMMPI(i);
+        itemsDiv.appendChild(itemEl);
+      }
+      card.appendChild(itemsDiv);
+      pagDiv.appendChild(card);
+      container.appendChild(pagDiv);
+    }
+
+    this.mmpiActualizarPagina();
+  },
+
+  /**
+   * Crear elemento para un item del MMPI-2-RF
+   */
+  crearElementoItemMMPI(itemNum) {
+    const itemEl = document.createElement('div');
+    itemEl.className = 'test-item';
+    itemEl.id = `mmpi-item-${itemNum}`;
+    itemEl.style.cssText = 'display: grid; grid-template-columns: 40px 1fr 90px; align-items: center; gap: 14px; padding: 12px 16px; border-bottom: 1px solid #e0e0e0; transition: background 0.15s;';
+
+    // Obtener texto del item (si está disponible)
+    const textoItem = tests_mmpi2rf?.items?.[itemNum - 1] || `Ítem ${itemNum}`;
+
+    const respuestaActual = localStorage.getItem(`mmpi_r${itemNum}`) || '';
+
+    itemEl.innerHTML = `
+      <div style="font-family: monospace; font-size: 10px; color: #999; text-align: right; line-height: 1;">${itemNum}.</div>
+      <div style="font-size: 13px; line-height: 1.5; color: #333;">${textoItem}</div>
+      <div style="display: flex; gap: 6px; justify-content: flex-end;">
+        <button type="button" class="vf-btn ${respuestaActual === 'V' ? 'sel-v' : ''}"
+          onclick="app.marcarRespuestaMMPI(${itemNum}, 'V')"
+          style="width: 38px; height: 34px; border-radius: 4px; border: 1px solid #ddd; background: #fff; color: #666; font-family: monospace; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.12s;">V</button>
+        <button type="button" class="vf-btn ${respuestaActual === 'F' ? 'sel-f' : ''}"
+          onclick="app.marcarRespuestaMMPI(${itemNum}, 'F')"
+          style="width: 38px; height: 34px; border-radius: 4px; border: 1px solid #ddd; background: #fff; color: #666; font-family: monospace; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.12s;">F</button>
+      </div>
+    `;
+
+    return itemEl;
+  },
+
+  /**
+   * Marcar respuesta MMPI y actualizar UI
+   */
+  marcarRespuestaMMPI(itemNum, valor) {
+    // Guardar en localStorage
+    localStorage.setItem(`mmpi_r${itemNum}`, valor);
+
+    // Actualizar botones del item actual
+    const item = document.getElementById(`mmpi-item-${itemNum}`);
+    if (item) {
+      const btns = item.querySelectorAll('.vf-btn');
+      if (btns[0]) {
+        btns[0].className = valor === 'V' ? 'vf-btn sel-v' : 'vf-btn';
+        btns[0].style.background = valor === 'V' ? 'rgba(39, 174, 96, 0.2)' : '#fff';
+        btns[0].style.borderColor = valor === 'V' ? '#27ae60' : '#ddd';
+        btns[0].style.color = valor === 'V' ? '#27ae60' : '#666';
+      }
+      if (btns[1]) {
+        btns[1].className = valor === 'F' ? 'vf-btn sel-f' : 'vf-btn';
+        btns[1].style.background = valor === 'F' ? 'rgba(231, 76, 60, 0.15)' : '#fff';
+        btns[1].style.borderColor = valor === 'F' ? '#e74c3c' : '#ddd';
+        btns[1].style.color = valor === 'F' ? '#e74c3c' : '#666';
+      }
+      item.style.background = valor ? '#f0f7ff' : '#fff';
+      item.style.borderLeft = valor ? '3px solid #2c5aa0' : '0';
+    }
+
+    this.mmpiActualizarProgreso();
+  },
+
+  /**
+   * Actualizar progreso del MMPI-2-RF
+   */
+  mmpiActualizarProgreso() {
+    let respondidos = 0;
+    let verdaderos = 0;
+    let falsos = 0;
+
+    for (let i = 1; i <= this.mmpiState.totalItems; i++) {
+      const resp = localStorage.getItem(`mmpi_r${i}`);
+      if (resp) {
+        respondidos++;
+        if (resp === 'V') verdaderos++;
+        else if (resp === 'F') falsos++;
+      }
+    }
+
+    const porcentaje = (respondidos / this.mmpiState.totalItems) * 100;
+
+    // Actualizar contadores
+    const counter = document.getElementById('mmpi-resp-counter');
+    if (counter) counter.textContent = `${respondidos}/${this.mmpiState.totalItems}`;
+
+    const countV = document.getElementById('mmpi-count-v');
+    if (countV) countV.textContent = verdaderos;
+
+    const countF = document.getElementById('mmpi-count-f');
+    if (countF) countF.textContent = falsos;
+
+    const progBar = document.getElementById('mmpi2rf-progress');
+    if (progBar) progBar.style.width = `${porcentaje}%`;
+
+    const progPct = document.getElementById('mmpi-progress-pct');
+    if (progPct) progPct.textContent = `${Math.round(porcentaje)}%`;
+
+    // Activar botón de finalizar si está completo
+    const btnFinish = document.getElementById('mmpi-btn-finish');
+    if (btnFinish) {
+      if (respondidos === this.mmpiState.totalItems) {
+        btnFinish.style.opacity = '1';
+        btnFinish.style.pointerEvents = 'auto';
+        btnFinish.textContent = '✓ Todas respondidas - Validar T-scores →';
+      } else {
+        btnFinish.style.opacity = '0.35';
+        btnFinish.style.pointerEvents = 'none';
+        btnFinish.textContent = `✓ Completa los ${this.mmpiState.totalItems - respondidos} restantes`;
+      }
+    }
+  },
+
+  /**
+   * Ir a página anterior del MMPI-2-RF
+   */
+  mmpiPaginaAnterior() {
+    if (this.mmpiState.paginaActual > 0) {
+      this.mmpiState.paginaActual--;
+      this.mmpiActualizarPagina();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  },
+
+  /**
+   * Ir a página siguiente del MMPI-2-RF
+   */
+  mmpiPaginaSiguiente() {
+    const totalPaginas = Math.ceil(this.mmpiState.totalItems / this.mmpiState.itemsPorPagina);
+    if (this.mmpiState.paginaActual < totalPaginas - 1) {
+      this.mmpiState.paginaActual++;
+      this.mmpiActualizarPagina();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  },
+
+  /**
+   * Actualizar visualización de página
+   */
+  mmpiActualizarPagina() {
+    const totalPaginas = Math.ceil(this.mmpiState.totalItems / this.mmpiState.itemsPorPagina);
+    const pag = this.mmpiState.paginaActual;
+
+    // Ocultar todas las páginas
+    for (let i = 0; i < totalPaginas; i++) {
+      const pageEl = document.getElementById(`mmpi-page-${i}`);
+      if (pageEl) pageEl.style.display = 'none';
+    }
+
+    // Mostrar página actual
+    const pageActual = document.getElementById(`mmpi-page-${pag}`);
+    if (pageActual) pageActual.style.display = 'block';
+
+    // Actualizar indicador
+    const inicio = pag * this.mmpiState.itemsPorPagina + 1;
+    const fin = Math.min(inicio + this.mmpiState.itemsPorPagina - 1, this.mmpiState.totalItems);
+    const pageInd = document.getElementById('mmpi-page-indicator');
+    if (pageInd) pageInd.textContent = `Página ${pag + 1} de ${totalPaginas}`;
+
+    const pageInfo = document.getElementById('mmpi-page-info');
+    if (pageInfo) pageInfo.textContent = `Página ${pag + 1} de ${totalPaginas} (ítems ${inicio}-${fin})`;
+
+    // Actualizar botones de navegación
+    const btnPrev = document.getElementById('mmpi-btn-prev');
+    const btnNext = document.getElementById('mmpi-btn-next');
+
+    if (btnPrev) {
+      if (pag === 0) {
+        btnPrev.style.opacity = '0.35';
+        btnPrev.style.pointerEvents = 'none';
+      } else {
+        btnPrev.style.opacity = '1';
+        btnPrev.style.pointerEvents = 'auto';
+      }
+    }
+
+    if (btnNext) {
+      if (pag === totalPaginas - 1) {
+        btnNext.textContent = 'Finalizar ✓';
+        btnNext.style.opacity = '0.35';
+        btnNext.style.pointerEvents = 'none';
+      } else {
+        btnNext.textContent = 'Siguiente →';
+        btnNext.style.opacity = '1';
+        btnNext.style.pointerEvents = 'auto';
+      }
     }
   },
 
