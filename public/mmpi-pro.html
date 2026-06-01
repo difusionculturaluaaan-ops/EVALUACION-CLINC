@@ -1831,9 +1831,7 @@ function generarSVGGraficoParaPDF() {
 
     svg += `<rect x="${x}" y="${y}" width="${barActualWidth}" height="${barHeight}" fill="${color}" opacity="0.8" stroke="none"/>`;
     svg += `<text x="${x + barActualWidth / 2}" y="${padding.top + chartHeight + 15}" class="bar-label">${r.abbr}</text>`;
-    if (barActualWidth > 25) {
-      svg += `<text x="${x + barActualWidth / 2}" y="${y - 3}" class="bar-label" font-weight="bold" font-size="9">${r.t}</text>`;
-    }
+    svg += `<text x="${x + barActualWidth / 2}" y="${y - 3}" class="bar-label" style="font-weight:bold;font-size:9px">${r.t}</text>`;
   });
 
   svg += `</svg>`;
