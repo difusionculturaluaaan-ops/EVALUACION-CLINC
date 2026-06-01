@@ -1785,21 +1785,21 @@ function generarSVGGraficoParaPDF() {
   if (!calcResults || calcResults.length === 0) return '<p>No hay datos para mostrar</p>';
 
   const numBars = calcResults.length;
-  const barMinWidth = 60;
-  const width = numBars * barMinWidth + 200;
-  const height = 450;
-  const padding = { top: 30, right: 30, bottom: 60, left: 70 };
+  const barMinWidth = 50;
+  const width = Math.max(800, numBars * barMinWidth + 200);
+  const height = 400;
+  const padding = { top: 30, right: 20, bottom: 50, left: 60 };
   const chartWidth = width - padding.left - padding.right;
   const chartHeight = height - padding.top - padding.bottom;
 
   const MAX_T = 120, MIN_T = 20, RANGE = MAX_T - MIN_T;
   const px = t => ((t - MIN_T) / RANGE) * chartHeight;
 
-  let svg = `<svg width="100%" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" style="background:white;margin:10px 0;overflow:visible">
+  let svg = `<svg width="100%" height="350" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" style="background:white;margin:10px 0">
     <style>
       .grid-line { stroke: #e0e0e0; stroke-width: 0.8; }
-      .axis-label { font-family: Arial, sans-serif; font-size: 12px; fill: #333; }
-      .bar-label { font-family: Arial, sans-serif; font-size: 11px; fill: #333; text-anchor: middle; }
+      .axis-label { font-family: Arial, sans-serif; font-size: 11px; fill: #333; }
+      .bar-label { font-family: Arial, sans-serif; font-size: 10px; fill: #333; text-anchor: middle; }
     </style>`;
 
   // Ejes
