@@ -765,11 +765,20 @@ const app = {
 
     // Validar que la sección actual esté completa (solo para avanzar)
     if (this.mmpiState.seccionActual === 'RF' && seccion === 'SCORES') {
-      const invalid = tests_mmpi2rf.validar();
-      if (invalid.length > 0) {
-        this.mostrarToast('⚠️ Completa todos los 338 ítems antes de continuar', 'warning');
+      // Validar desde localStorage (más confiable)
+      let respondidos = 0;
+      for (let i = 1; i <= this.mmpiState.totalItems; i++) {
+        const resp = localStorage.getItem(`mmpi_r${i}`);
+        if (resp && (resp === 'V' || resp === 'F')) {
+          respondidos++;
+        }
+      }
+
+      if (respondidos < this.mmpiState.totalItems) {
+        this.mostrarToast(`⚠️ Faltan ${this.mmpiState.totalItems - respondidos} ítems por responder`, 'warning');
         return;
       }
+
       // Calcular T-scores automáticamente desde las respuestas del RF
       const resultRF = tests_mmpi2rf.calcular();
       this.mmpiState.datosRF = resultRF.datos;
