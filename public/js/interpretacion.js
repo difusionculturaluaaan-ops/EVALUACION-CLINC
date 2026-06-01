@@ -314,23 +314,40 @@ const interpretacion = {
 
   // ===== ISRA (Inventario Situaciones y Respuestas de Ansiedad) =====
   isra: {
+    // Baremos de población normal (Tabla 8 - separado por sexo)
+    // Conversión: Puntuación directa → Percentil
+    baremos: {
+      mujeres: {
+        // Formato: [puntuación_directa]: percentil
+        C: { 147: 99, 132: 95, 125: 90, 116: 85, 107: 80, 101: 75, 95: 70, 88: 65, 85: 60, 81: 55, 80: 50, 77: 45, 75: 40, 69: 35, 65: 30, 57: 25, 52: 20, 47: 15, 42: 10, 33: 5 },
+        F: { 112: 99, 98: 95, 79: 90, 71: 85, 65: 80, 59: 75, 53: 70, 50: 65, 48: 60, 45: 55, 41: 50, 37: 45, 34: 40, 33: 35, 29: 30, 26: 25, 21: 20, 17: 15, 13: 10, 7: 5 },
+        M: { 124: 99, 105: 95, 94: 90, 87: 85, 81: 80, 76: 75, 69: 70, 64: 65, 62: 60, 60: 55, 55: 50, 49: 45, 47: 40, 45: 35, 41: 30, 36: 25, 32: 20, 28: 15, 21: 10, 16: 5 },
+        T: { 351: 99, 302: 95, 280: 90, 248: 85, 230: 80, 225: 75, 212: 70, 203: 65, 196: 60, 186: 55, 182: 50, 172: 45, 169: 40, 152: 35, 148: 30, 137: 25, 126: 20, 103: 15, 83: 10, 63: 5 }
+      },
+      varones: {
+        C: { 122: 99, 102: 95, 95: 90, 90: 85, 84: 80, 79: 75, 74: 70, 71: 65, 70: 60, 68: 55, 67: 50, 62: 45, 58: 40, 51: 35, 47: 30, 44: 25, 38: 20, 34: 15, 29: 10, 22: 5 },
+        F: { 84: 99, 61: 95, 53: 90, 48: 85, 45: 80, 40: 75, 38: 70, 33: 65, 30: 60, 29: 55, 27: 50, 25: 45, 21: 40, 19: 35, 17: 30, 14: 25, 11: 20, 9: 15, 6: 10, 6: 5 },
+        M: { 108: 99, 91: 95, 82: 90, 72: 85, 66: 80, 63: 75, 58: 70, 49: 65, 44: 60, 41: 55, 39: 50, 36: 45, 34: 40, 30: 35, 29: 30, 26: 25, 22: 20, 18: 15, 17: 10, 12: 5 },
+        T: { 291: 99, 248: 95, 210: 90, 197: 85, 192: 80, 183: 75, 169: 70, 160: 65, 150: 60, 136: 55, 130: 50, 125: 45, 113: 40, 107: 35, 106: 30, 87: 25, 77: 20, 67: 15, 64: 10, 56: 5 }
+      }
+    },
+
     // Parámetros normativos para sistemas de respuesta (Tobal & Cano Vindel)
     normasSistemas: {
-      C: { media: 55.0, ds: 28.5, rango: '0-272' },     // Cognitivo
-      F: { media: 44.0, ds: 25.0, rango: '0-272' },     // Fisiológico
-      M: { media: 38.0, ds: 22.0, rango: '0-272' }      // Motor-Conductual
+      C: { media: 71.78, ds: 31.73, rango: '0-272' },     // Cognitivo
+      F: { media: 33.36, ds: 21.92, rango: '0-272' },     // Fisiológico
+      M: { media: 49.84, ds: 27.64, rango: '0-272' }      // Motor-Conductual
     },
 
     normasTotal: {
-      total: { media: 137.0, ds: 68.0, rango: '0-896', corte: 185, corteP75: 185 }
+      total: { media: 154.98, ds: 68.24, rango: '0-896' }
     },
 
     // Percentiles para clasificación
     percentiles: {
-      P25: 90,      // < 25 percentil
-      P50: 137,     // 25-50 percentil
-      P75: 185,     // 51-75 percentil
-      P90: 240      // 76-90 percentil
+      P25: 25,      // Límite inferior normal
+      P75: 75,      // Límite superior normal
+      P99: 99       // Límite ansiedad extrema
     },
 
     sistemas: {
@@ -350,6 +367,44 @@ const interpretacion = {
     normasPopulacion: {
       labels: ['Cognitivo', 'Fisiológico', 'Motor-Conductual'],
       medias: [55, 44, 38]
+    },
+
+    /**
+     * Convertir puntuación directa a centil usando tabla de baremos
+     * @param {number} puntuacion - Puntuación directa
+     * @param {string} escala - 'C', 'F', 'M' o 'T'
+     * @param {string} sexo - 'mujeres' o 'varones'
+     * @returns {number} Percentil (0-99)
+     */
+    obtenerCentil(puntuacion, escala, sexo = 'mujeres') {
+      const baremoSexo = this.baremos[sexo];
+      if (!baremoSexo || !baremoSexo[escala]) return 50; // Centil por defecto
+
+      const tabla = baremoSexo[escala];
+      const puntuaciones = Object.keys(tabla).map(Number).sort((a, b) => b - a);
+
+      // Si es mayor o igual al máximo
+      if (puntuacion >= puntuaciones[0]) return tabla[puntuaciones[0]];
+
+      // Si es menor o igual al mínimo
+      if (puntuacion <= puntuaciones[puntuaciones.length - 1]) {
+        return tabla[puntuaciones[puntuaciones.length - 1]];
+      }
+
+      // Interpolación lineal entre dos valores
+      for (let i = 0; i < puntuaciones.length - 1; i++) {
+        const p1 = puntuaciones[i];
+        const p2 = puntuaciones[i + 1];
+
+        if (puntuacion >= p2 && puntuacion <= p1) {
+          const c1 = tabla[p1];
+          const c2 = tabla[p2];
+          const centil = c2 + ((puntuacion - p2) / (p1 - p2)) * (c1 - c2);
+          return Math.round(centil);
+        }
+      }
+
+      return 50; // Fallback
     },
 
     calcular(datos) {
