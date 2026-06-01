@@ -16,17 +16,30 @@ const app = {
       items: [], // Placeholder
       init() { app.iniciarISRA('C'); },
       obtenerRespuestas() {
-        const C = app.obtenerRespuestasISRA(tests_isra.items, 'isra-c');
-        const F = app.obtenerRespuestasISRA(tests_isra_f.items, 'isra-f');
-        const M = app.obtenerRespuestasISRA(tests_isra_m.items, 'isra-m');
+        // PRIMERO: guardar la sección actual antes de retornar
+        const actual = app.israState.seccionActual;
+        const respuestasActual = app.obtenerRespuestasISRA(
+          actual === 'C' ? tests_isra.items : (actual === 'F' ? tests_isra_f.items : tests_isra_m.items),
+          `isra-${actual.toLowerCase()}`
+        );
+        app.israState[`datos${actual}`] = respuestasActual;
+
+        // Retornar todas las secciones (desde memoria + DOM actual)
+        const C = app.israState.datosC || app.obtenerRespuestasISRA(tests_isra.items, 'isra-c');
+        const F = app.israState.datosF || app.obtenerRespuestasISRA(tests_isra_f.items, 'isra-f');
+        const M = app.israState.datosM || app.obtenerRespuestasISRA(tests_isra_m.items, 'isra-m');
         return { C, F, M };
       },
       validar() {
         const respuestas = this.obtenerRespuestas();
         const errores = [];
-        if (!respuestas.C || respuestas.C.filter(r => r !== null).length < tests_isra.items.length) errores.push('Sección C incompleta');
-        if (!respuestas.F || respuestas.F.filter(r => r !== null).length < tests_isra_f.items.length) errores.push('Sección F incompleta');
-        if (!respuestas.M || respuestas.M.filter(r => r !== null).length < tests_isra_m.items.length) errores.push('Sección M incompleta');
+        const C_respondidos = respuestas.C ? respuestas.C.filter(r => r !== null && r !== undefined).length : 0;
+        const F_respondidos = respuestas.F ? respuestas.F.filter(r => r !== null && r !== undefined).length : 0;
+        const M_respondidos = respuestas.M ? respuestas.M.filter(r => r !== null && r !== undefined).length : 0;
+
+        if (C_respondidos < tests_isra.items.length) errores.push('Sección C incompleta');
+        if (F_respondidos < tests_isra_f.items.length) errores.push('Sección F incompleta');
+        if (M_respondidos < tests_isra_m.items.length) errores.push('Sección M incompleta');
         return errores;
       },
       calcular() {
@@ -441,6 +454,19 @@ const app = {
    * Mostrar una sección de ISRA
    */
   mostrarSeccionISRA(seccion) {
+    // GUARDAR respuestas de la sección anterior antes de cambiar
+    const seccionAnterior = this.israState.seccionActual;
+    if (seccionAnterior && seccionAnterior !== seccion) {
+      const respuestasAnterior = app.obtenerRespuestasISRA(
+        seccionAnterior === 'C' ? tests_isra.items : (seccionAnterior === 'F' ? tests_isra_f.items : tests_isra_m.items),
+        `isra-${seccionAnterior.toLowerCase()}`
+      );
+      this.israState[`datos${seccionAnterior}`] = respuestasAnterior;
+    }
+
+    // Actualizar sección actual
+    this.israState.seccionActual = seccion;
+
     // Ocultar todas las secciones
     const sC = document.getElementById('isra-section-c');
     const sF = document.getElementById('isra-section-f');
@@ -515,10 +541,17 @@ const app = {
    */
   irSeccionISRASiguiente() {
     const actual = this.israState.seccionActual;
+    // Guardar respuestas de la sección actual antes de cambiar
+    const respuestasActual = app.obtenerRespuestasISRA(
+      actual === 'C' ? tests_isra.items : (actual === 'F' ? tests_isra_f.items : tests_isra_m.items),
+      `isra-${actual.toLowerCase()}`
+    );
+    this.israState[`datos${actual}`] = respuestasActual;
+
     if (actual === 'C') {
-      this.iniciarISRA('F');
+      this.mostrarSeccionISRA('F');
     } else if (actual === 'F') {
-      this.iniciarISRA('M');
+      this.mostrarSeccionISRA('M');
     }
   },
 
@@ -527,10 +560,17 @@ const app = {
    */
   irSeccionISRAAnterior() {
     const actual = this.israState.seccionActual;
+    // Guardar respuestas de la sección actual antes de cambiar
+    const respuestasActual = app.obtenerRespuestasISRA(
+      actual === 'C' ? tests_isra.items : (actual === 'F' ? tests_isra_f.items : tests_isra_m.items),
+      `isra-${actual.toLowerCase()}`
+    );
+    this.israState[`datos${actual}`] = respuestasActual;
+
     if (actual === 'M') {
-      this.iniciarISRA('F');
+      this.mostrarSeccionISRA('F');
     } else if (actual === 'F') {
-      this.iniciarISRA('C');
+      this.mostrarSeccionISRA('C');
     }
   },
 
