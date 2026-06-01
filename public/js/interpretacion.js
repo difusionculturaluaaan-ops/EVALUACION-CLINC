@@ -314,22 +314,53 @@ const interpretacion = {
 
   // ===== ISRA (Inventario Situaciones y Respuestas de Ansiedad) =====
   isra: {
-    // Baremos de población normal (Tabla 8 - separado por sexo)
-    // Conversión: Puntuación directa → Percentil
+    // Baremos de población normal (Tabla completa - separado por sexo)
+    // Formato: percentil: { C, F, M, T }
     baremos: {
-      mujeres: {
-        // Formato: [puntuación_directa]: percentil
-        C: { 147: 99, 132: 95, 125: 90, 116: 85, 107: 80, 101: 75, 95: 70, 88: 65, 85: 60, 81: 55, 80: 50, 77: 45, 75: 40, 69: 35, 65: 30, 57: 25, 52: 20, 47: 15, 42: 10, 33: 5 },
-        F: { 112: 99, 98: 95, 79: 90, 71: 85, 65: 80, 59: 75, 53: 70, 50: 65, 48: 60, 45: 55, 41: 50, 37: 45, 34: 40, 33: 35, 29: 30, 26: 25, 21: 20, 17: 15, 13: 10, 7: 5 },
-        M: { 124: 99, 105: 95, 94: 90, 87: 85, 81: 80, 76: 75, 69: 70, 64: 65, 62: 60, 60: 55, 55: 50, 49: 45, 47: 40, 45: 35, 41: 30, 36: 25, 32: 20, 28: 15, 21: 10, 16: 5 },
-        T: { 351: 99, 302: 95, 280: 90, 248: 85, 230: 80, 225: 75, 212: 70, 203: 65, 196: 60, 186: 55, 182: 50, 172: 45, 169: 40, 152: 35, 148: 30, 137: 25, 126: 20, 103: 15, 83: 10, 63: 5 }
-      },
-      varones: {
-        C: { 122: 99, 102: 95, 95: 90, 90: 85, 84: 80, 79: 75, 74: 70, 71: 65, 70: 60, 68: 55, 67: 50, 62: 45, 58: 40, 51: 35, 47: 30, 44: 25, 38: 20, 34: 15, 29: 10, 22: 5 },
-        F: { 84: 99, 61: 95, 53: 90, 48: 85, 45: 80, 40: 75, 38: 70, 33: 65, 30: 60, 29: 55, 27: 50, 25: 45, 21: 40, 19: 35, 17: 30, 14: 25, 11: 20, 9: 15, 6: 10, 6: 5 },
-        M: { 108: 99, 91: 95, 82: 90, 72: 85, 66: 80, 63: 75, 58: 70, 49: 65, 44: 60, 41: 55, 39: 50, 36: 45, 34: 40, 30: 35, 29: 30, 26: 25, 22: 20, 18: 15, 17: 10, 12: 5 },
-        T: { 291: 99, 248: 95, 210: 90, 197: 85, 192: 80, 183: 75, 169: 70, 160: 65, 150: 60, 136: 55, 130: 50, 125: 45, 113: 40, 107: 35, 106: 30, 87: 25, 77: 20, 67: 15, 64: 10, 56: 5 }
-      }
+      mujeres: [
+        { pc: 99, C: 186, F: 168, M: 161, T: 499 },
+        { pc: 95, C: 158, F: 135, M: 141, T: 422 },
+        { pc: 90, C: 153, F: 124, M: 118, T: 393 },
+        { pc: 85, C: 148, F: 111, M: 112, T: 344 },
+        { pc: 80, C: 142, F: 101, M: 103, T: 318 },
+        { pc: 75, C: 138, F: 95, M: 99, T: 310 },
+        { pc: 70, C: 133, F: 86, M: 90, T: 299 },
+        { pc: 65, C: 131, F: 80, M: 81, T: 294 },
+        { pc: 60, C: 126, F: 76, M: 77, T: 283 },
+        { pc: 55, C: 124, F: 74, M: 76, T: 273 },
+        { pc: 50, C: 117, F: 70, M: 72, T: 260 },
+        { pc: 45, C: 113, F: 65, M: 69, T: 248 },
+        { pc: 40, C: 112, F: 61, M: 65, T: 238 },
+        { pc: 35, C: 109, F: 59, M: 60, T: 234 },
+        { pc: 30, C: 105, F: 54, M: 58, T: 227 },
+        { pc: 25, C: 95, F: 50, M: 53, T: 213 },
+        { pc: 20, C: 91, F: 48, M: 44, T: 204 },
+        { pc: 15, C: 83, F: 44, M: 41, T: 195 },
+        { pc: 10, C: 78, F: 37, M: 37, T: 185 },
+        { pc: 5, C: 61, F: 35, M: 33, T: 150 }
+      ],
+      varones: [
+        { pc: 99, C: 162, F: 136, M: 149, T: 405 },
+        { pc: 95, C: 144, F: 108, M: 128, T: 368 },
+        { pc: 90, C: 133, F: 96, M: 112, T: 324 },
+        { pc: 85, C: 122, F: 90, M: 106, T: 299 },
+        { pc: 80, C: 117, F: 87, M: 102, T: 289 },
+        { pc: 75, C: 116, F: 79, M: 96, T: 264 },
+        { pc: 70, C: 106, F: 74, M: 90, T: 256 },
+        { pc: 65, C: 100, F: 65, M: 87, T: 238 },
+        { pc: 60, C: 96, F: 60, M: 84, T: 232 },
+        { pc: 55, C: 95, F: 58, M: 79, T: 222 },
+        { pc: 50, C: 90, F: 53, M: 72, T: 211 },
+        { pc: 45, C: 88, F: 51, M: 63, T: 204 },
+        { pc: 40, C: 83, F: 47, M: 62, T: 195 },
+        { pc: 35, C: 79, F: 42, M: 56, T: 193 },
+        { pc: 30, C: 77, F: 37, M: 53, T: 185 },
+        { pc: 25, C: 72, F: 35, M: 49, T: 175 },
+        { pc: 20, C: 63, F: 32, M: 37, T: 167 },
+        { pc: 15, C: 60, F: 26, M: 33, T: 150 },
+        { pc: 10, C: 53, F: 24, M: 31, T: 127 },
+        { pc: 5, C: 46, F: 21, M: 22, T: 104 }
+      ]
     },
 
     // Parámetros normativos para sistemas de respuesta (Tobal & Cano Vindel)
@@ -377,34 +408,30 @@ const interpretacion = {
      * @returns {number} Percentil (0-99)
      */
     obtenerCentil(puntuacion, escala, sexo = 'mujeres') {
-      const baremoSexo = this.baremos[sexo];
-      if (!baremoSexo || !baremoSexo[escala]) return 50; // Centil por defecto
+      const baremos = this.baremos[sexo];
+      if (!baremos || !Array.isArray(baremos)) return 50;
 
-      const tabla = baremoSexo[escala];
-      const puntuaciones = Object.keys(tabla).map(Number).sort((a, b) => b - a);
+      // Buscar en la tabla de percentiles
+      for (let i = 0; i < baremos.length; i++) {
+        const actual = baremos[i][escala];
 
-      // Si es mayor o igual al máximo
-      if (puntuacion >= puntuaciones[0]) return tabla[puntuaciones[0]];
+        // Si es mayor o igual, retornar este percentil
+        if (puntuacion >= actual) {
+          // Interpolación si no es el último
+          if (i > 0) {
+            const anterior = baremos[i - 1][escala];
+            const pcActual = baremos[i].pc;
+            const pcAnterior = baremos[i - 1].pc;
 
-      // Si es menor o igual al mínimo
-      if (puntuacion <= puntuaciones[puntuaciones.length - 1]) {
-        return tabla[puntuaciones[puntuaciones.length - 1]];
-      }
-
-      // Interpolación lineal entre dos valores
-      for (let i = 0; i < puntuaciones.length - 1; i++) {
-        const p1 = puntuaciones[i];
-        const p2 = puntuaciones[i + 1];
-
-        if (puntuacion >= p2 && puntuacion <= p1) {
-          const c1 = tabla[p1];
-          const c2 = tabla[p2];
-          const centil = c2 + ((puntuacion - p2) / (p1 - p2)) * (c1 - c2);
-          return Math.round(centil);
+            const centil = pcActual + ((puntuacion - actual) / (anterior - actual)) * (pcAnterior - pcActual);
+            return Math.round(centil);
+          }
+          return baremos[i].pc;
         }
       }
 
-      return 50; // Fallback
+      // Si es menor al mínimo
+      return 5;
     },
 
     calcular(datos) {
