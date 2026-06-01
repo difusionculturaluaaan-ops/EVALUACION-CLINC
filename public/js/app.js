@@ -930,9 +930,10 @@ const app = {
     let verdaderos = 0;
     let falsos = 0;
 
+    // Contar respuestas desde localStorage
     for (let i = 1; i <= this.mmpiState.totalItems; i++) {
       const resp = localStorage.getItem(`mmpi_r${i}`);
-      if (resp) {
+      if (resp && (resp === 'V' || resp === 'F')) {
         respondidos++;
         if (resp === 'V') verdaderos++;
         else if (resp === 'F') falsos++;
@@ -957,19 +958,50 @@ const app = {
     const progPct = document.getElementById('mmpi-progress-pct');
     if (progPct) progPct.textContent = `${Math.round(porcentaje)}%`;
 
-    // Activar botón de finalizar si está completo
+    // Activar botón de finalizar si está COMPLETO
     const btnFinish = document.getElementById('mmpi-btn-finish');
     if (btnFinish) {
-      if (respondidos === this.mmpiState.totalItems) {
+      const esCompleto = respondidos === this.mmpiState.totalItems;
+      if (esCompleto) {
         btnFinish.style.opacity = '1';
         btnFinish.style.pointerEvents = 'auto';
-        btnFinish.textContent = '✓ Todas respondidas - Validar T-scores →';
+        btnFinish.style.cursor = 'pointer';
+        btnFinish.textContent = '✓ Todas respondidas (338/338) - Validar T-scores →';
+        btnFinish.className = 'btn btn-primary btn-lg';
       } else {
         btnFinish.style.opacity = '0.35';
         btnFinish.style.pointerEvents = 'none';
-        btnFinish.textContent = `✓ Completa los ${this.mmpiState.totalItems - respondidos} restantes`;
+        btnFinish.style.cursor = 'not-allowed';
+        btnFinish.textContent = `⏳ Completa los ${this.mmpiState.totalItems - respondidos} restantes`;
       }
     }
+
+    // Log para debugging
+    console.log(`📊 MMPI Progreso: ${respondidos}/${this.mmpiState.totalItems} (${Math.round(porcentaje)}%) - V:${verdaderos}, F:${falsos}`);
+  },
+
+  /**
+   * Validar que todos los items de la página actual estén respondidos
+   */
+  validarPaginaMMPI() {
+    const pag = this.mmpiState.paginaActual;
+    const inicio = pag * this.mmpiState.itemsPorPagina + 1;
+    const fin = Math.min(inicio + this.mmpiState.itemsPorPagina - 1, this.mmpiState.totalItems);
+
+    for (let i = inicio; i <= fin; i++) {
+      const resp = localStorage.getItem(`mmpi_r${i}`);
+      if (!resp) {
+        const faltantes = [];
+        for (let j = inicio; j <= fin; j++) {
+          if (!localStorage.getItem(`mmpi_r${j}`)) {
+            faltantes.push(j);
+          }
+        }
+        this.mostrarToast(`⚠️ Completa los ítems faltantes: ${faltantes.join(', ')}`, 'warning');
+        return false;
+      }
+    }
+    return true;
   },
 
   /**
@@ -988,6 +1020,12 @@ const app = {
    */
   mmpiPaginaSiguiente() {
     const totalPaginas = Math.ceil(this.mmpiState.totalItems / this.mmpiState.itemsPorPagina);
+
+    // Validar que la página actual esté completa antes de avanzar
+    if (!this.validarPaginaMMPI()) {
+      return;
+    }
+
     if (this.mmpiState.paginaActual < totalPaginas - 1) {
       this.mmpiState.paginaActual++;
       this.mmpiActualizarPagina();
