@@ -13,10 +13,15 @@ const testRenderer = {
       return;
     }
 
-    container.innerHTML = items.map((texto, i) => `
+    container.innerHTML = items.map((texto, i) => {
+      // Detectar si el item ya tiene número (patrón: "N. texto")
+      const tieneNumero = /^\d+\.\s/.test(texto.trim());
+      const numeroHTML = tieneNumero ? '' : `<span class="test-item-number">${i + 1}.</span> `;
+
+      return `
       <div class="test-item" data-item="${i}">
         <div class="test-item-text">
-          <span class="test-item-number">${i + 1}.</span> ${texto}
+          ${numeroHTML}${texto}
         </div>
         <div class="opciones">
           ${[0, 1, 2, 3, 4].map(v => `
@@ -27,7 +32,8 @@ const testRenderer = {
           `).join('')}
         </div>
       </div>
-    `).join('');
+    `;
+    }).join('');
 
     // Agregar listeners para actualizar progreso
     this.agregarListenersProgreso(prefix, items.length);
