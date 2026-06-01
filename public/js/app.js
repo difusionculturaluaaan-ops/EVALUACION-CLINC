@@ -734,7 +734,7 @@ const app = {
         <div style="page-break-inside: avoid; margin-bottom: 10px;">
           <!-- Gráfico PCL-R -->
           <div style="margin-bottom: 10px; font-size: 9px;">
-            ${prueba.tipo === 'SCL90R' ? this.generarReporteSCL(prueba, subescalas) : prueba.tipo === 'PCLR' ? this.generarReportePCLR(prueba, subescalas) : this.generarReporteGenerico(prueba, subescalas)}
+            ${prueba.tipo === 'SCL90R' ? this.generarReporteSCL(prueba, subescalas) : prueba.tipo === 'PCLR' ? this.generarReportePCLR(prueba, subescalas) : prueba.tipo === 'SCID2' ? this.generarReporteSCID2(prueba, subescalas) : this.generarReporteGenerico(prueba, subescalas)}
           </div>
 
           <!-- INTERPRETACIÓN (dentro del contenedor principal) -->
@@ -1277,6 +1277,54 @@ const app = {
             <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 10px; ${totalPaciente > normas.totalMedio ? 'color: #dc2626; font-weight: bold;' : 'color: #276749;'}">${(totalPaciente - normas.totalMedio).toFixed(1)}</td>
           </tr>
         </table>
+      </div>
+    `;
+
+    return html;
+  },
+
+  /**
+   * Generar reporte SCID-II con tabla de escalas
+   */
+  generarReporteSCID2(prueba, subescalas) {
+    const escalasInfo = [
+      { letra: 'A', preguntas: '1 - 7', minimo: 4, nombre: 'TPE - Trastorno de la personalidad por evitación' },
+      { letra: 'B', preguntas: '8 - 15', minimo: 5, nombre: 'TPD - Trastorno de la personalidad por dependencia' },
+      { letra: 'C', preguntas: '16 - 26', minimo: 5, nombre: 'TOC - Trastorno obsesivo - compulsivo' },
+      { letra: 'D', preguntas: '27 - 35', minimo: 5, nombre: 'PA - Pasivo - agresivo' },
+      { letra: 'E', preguntas: '36 - 48', minimo: 5, nombre: 'AUT - Autodestructivo' },
+      { letra: 'F', preguntas: '49 - 56', minimo: 4, nombre: 'TPP - Trastorno paranoide de la personalidad' },
+      { letra: 'G', preguntas: '57 - 64', minimo: 5, nombre: 'TEZ - Trastorno esquizotípico de la personalidad' },
+      { letra: 'H', preguntas: '65 - 69', minimo: 4, nombre: 'TES - Trastorno esquizoide de la personalidad' },
+      { letra: 'I', preguntas: '70 - 79', minimo: 4, nombre: 'TH - Trastorno histriónico de la personalidad' },
+      { letra: 'J', preguntas: '80 - 90', minimo: 6, nombre: 'TN - Trastorno narcisista de la personalidad' },
+      { letra: 'K', preguntas: '91 - 108', minimo: 5, nombre: 'TL - Trastorno límite de la personalidad' },
+      { letra: 'L', preguntas: '109 - 120', minimo: 3, nombre: 'TA - Trastorno antisocial de la personalidad' }
+    ];
+
+    let html = `
+      <div style="margin: 4px 0; padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: #333;">
+        <h4 style="color: #333; font-size: 9px; margin: 0 0 6px 0; font-weight: bold;">ESCALA DE TRASTORNOS DE LA PERSONALIDAD</h4>
+        <table style="width: 100%; border-collapse: collapse; font-size: 7px;">
+          <tr style="background: #2c5aa0; color: white;">
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">Escala</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">Preguntas</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">Mínimo</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: left; font-weight: bold;">Trastorno de la Personalidad</th>
+          </tr>`;
+
+    escalasInfo.forEach((escala, idx) => {
+      const bgColor = idx % 2 === 0 ? '#f9f9f9' : 'white';
+      html += `<tr style="background: ${bgColor};">
+        <td style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">${escala.letra}</td>
+        <td style="border: 1px solid #999; padding: 3px; text-align: center;">${escala.preguntas}</td>
+        <td style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">${escala.minimo}</td>
+        <td style="border: 1px solid #999; padding: 3px; text-align: left;">${escala.nombre}</td>
+      </tr>`;
+    });
+
+    html += `</table>
+        <p style="margin: 4px 0 0 0; font-size: 6px; color: #666; font-style: italic;">Nota: Se consideran presentes cuando se alcanza o supera el número mínimo de respuestas afirmativas para cada escala.</p>
       </div>
     `;
 
