@@ -1785,10 +1785,10 @@ function generarSVGGraficoParaPDF() {
   if (!calcResults || calcResults.length === 0) return '<p>No hay datos para mostrar</p>';
 
   const numBars = calcResults.length;
-  const barMinWidth = 20;
-  const width = Math.max(750, numBars * barMinWidth + 130);
+  const barMinWidth = 18;
+  const width = numBars * barMinWidth + 120;
   const height = 400;
-  const padding = { top: 30, right: 15, bottom: 50, left: 50 };
+  const padding = { top: 30, right: 12, bottom: 50, left: 45 };
   const chartWidth = width - padding.left - padding.right;
   const chartHeight = height - padding.top - padding.bottom;
 
