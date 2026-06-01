@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MMPI-2 RF · Software de Evaluación</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 :root {
   --bg:        #0d1117;
@@ -656,6 +657,11 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
   </div>
 
   <div id="results-content" style="display:none">
+    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="generarPDF()">📥 Descargar PDF Completo</button>
+      <button class="btn btn-secondary" onclick="imprimirResultados()">🖨️ Imprimir</button>
+    </div>
+
     <div class="validity-grid" id="validity-grid"></div>
 
     <div class="card">
@@ -1575,6 +1581,279 @@ loadData();
 buildItemsGrid();
 buildTestPages();
 syncTestProgress();
+
+// ────────────────────────────────────────────────────────────────────────────
+// GENERAR PDF COMPLETO
+// ────────────────────────────────────────────────────────────────────────────
+
+function generarPDF() {
+  const nombre = document.getElementById('inp-nombre').value || 'Evaluado';
+  const fecha = document.getElementById('inp-fecha').value || new Date().toISOString().split('T')[0];
+
+  // Crear contenedor para el PDF
+  const pdfContent = document.createElement('div');
+  pdfContent.style.backgroundColor = 'white';
+  pdfContent.style.color = '#000';
+  pdfContent.style.padding = '20px';
+  pdfContent.style.fontFamily = 'Arial, sans-serif';
+
+  // Encabezado
+  pdfContent.innerHTML = `
+    <div style="border-bottom:2px solid #333;padding-bottom:15px;margin-bottom:20px">
+      <h1 style="margin:0;font-size:24px;color:#0d1117">MMPI-2 Forma Reestructurada (RF)</h1>
+      <p style="margin:5px 0;color:#666;font-size:13px">Informe de Evaluación Psicológica · Versión Digital</p>
+      <hr style="margin:10px 0;border:none;border-top:1px solid #ccc">
+    </div>
+
+    <!-- DATOS DEMOGRÁFICOS -->
+    <div style="margin-bottom:25px">
+      <h3 style="font-size:14px;font-weight:bold;margin-bottom:10px;border-bottom:2px solid #0d1117;padding-bottom:5px">DATOS DEL EVALUADO</h3>
+      <table style="width:100%;font-size:12px;border-collapse:collapse">
+        <tr style="border-bottom:1px solid #ddd">
+          <td style="padding:8px;font-weight:bold;width:25%">Nombre:</td>
+          <td style="padding:8px">${document.getElementById('inp-nombre').value || '—'}</td>
+          <td style="padding:8px;font-weight:bold;width:25%">Edad/Sexo:</td>
+          <td style="padding:8px">${document.getElementById('inp-edad').value || '—'}</td>
+        </tr>
+        <tr style="border-bottom:1px solid #ddd">
+          <td style="padding:8px;font-weight:bold">Fecha Evaluación:</td>
+          <td style="padding:8px">${fecha}</td>
+          <td style="padding:8px;font-weight:bold">Ocupación:</td>
+          <td style="padding:8px">${document.getElementById('inp-cargo').value || '—'}</td>
+        </tr>
+        <tr style="border-bottom:1px solid #ddd">
+          <td style="padding:8px;font-weight:bold">Institución:</td>
+          <td colspan="3" style="padding:8px">${document.getElementById('inp-inst').value || '—'}</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- DATOS DEL EVALUADOR -->
+    <div style="margin-bottom:25px">
+      <h3 style="font-size:14px;font-weight:bold;margin-bottom:10px;border-bottom:2px solid #0d1117;padding-bottom:5px">DATOS DEL EVALUADOR</h3>
+      <table style="width:100%;font-size:12px;border-collapse:collapse">
+        <tr style="border-bottom:1px solid #ddd">
+          <td style="padding:8px;font-weight:bold;width:25%">Psicólogo:</td>
+          <td colspan="3" style="padding:8px">${document.getElementById('inp-eval').value || '—'}</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- RESULTADOS DE ESCALAS -->
+    <div style="margin-bottom:25px">
+      <h3 style="font-size:14px;font-weight:bold;margin-bottom:10px;border-bottom:2px solid #0d1117;padding-bottom:5px">PUNTAJES POR ESCALA</h3>
+      <table style="width:100%;border-collapse:collapse;font-size:11px">
+        <thead>
+          <tr style="background:#f0f0f0;border-bottom:2px solid #333">
+            <th style="padding:8px;text-align:left;font-weight:bold">Categoría</th>
+            <th style="padding:8px;text-align:left;font-weight:bold">Escala</th>
+            <th style="padding:8px;text-align:center;font-weight:bold">Abrev.</th>
+            <th style="padding:8px;text-align:center;font-weight:bold">PD</th>
+            <th style="padding:8px;text-align:center;font-weight:bold">T</th>
+            <th style="padding:8px;text-align:left;font-weight:bold">Nivel</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${calcResults.map(r => {
+            const nivel = getNivel(r.t);
+            const nivelLabel = nivel.label;
+            return `
+              <tr style="border-bottom:1px solid #ddd">
+                <td style="padding:6px">${r.cat}</td>
+                <td style="padding:6px">${r.name}</td>
+                <td style="padding:6px;text-align:center">${r.abbr}</td>
+                <td style="padding:6px;text-align:center">${r.pd}</td>
+                <td style="padding:6px;text-align:center;font-weight:bold;color:${r.t >= 70 ? '#d32f2f' : r.t >= 60 ? '#f57c00' : r.t >= 45 ? '#fbc02d' : '#388e3c'}">${r.t}</td>
+                <td style="padding:6px;font-weight:bold;color:${r.t >= 70 ? '#d32f2f' : r.t >= 60 ? '#f57c00' : r.t >= 45 ? '#fbc02d' : '#388e3c'}">${nivelLabel}</td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <div style="page-break-before:always;margin-top:30px">
+      <h3 style="font-size:14px;font-weight:bold;margin-bottom:10px;border-bottom:2px solid #0d1117;padding-bottom:5px">PERFIL GRÁFICO</h3>
+      <div style="background:#f9f9f9;padding:15px;border-radius:5px;margin:15px 0">
+        <p style="text-align:center;color:#666;font-size:12px">
+          Gráfico de barras con T-scores por escala clínica.<br>
+          Línea roja (T=65) y línea naranja (T=70) indican puntos de corte clínicos.
+        </p>
+        <svg style="width:100%;height:300px;margin:20px 0" id="pdf-profile-chart"></svg>
+      </div>
+    </div>
+
+    <!-- INTERPRETACIÓN -->
+    <div style="page-break-before:always;margin-top:30px">
+      <h3 style="font-size:14px;font-weight:bold;margin-bottom:10px;border-bottom:2px solid #0d1117;padding-bottom:5px">INTERPRETACIÓN CLÍNICA</h3>
+      <div style="margin-bottom:15px;padding:10px;background:#fffacd;border-left:4px solid #fbc02d">
+        <strong style="color:#333">⚠️ Aviso Importante:</strong>
+        <p style="margin:5px 0 0 0;font-size:11px;color:#555">
+          Este informe es una guía automática generada por software. La interpretación final <strong>siempre debe ser realizada por un psicólogo</strong> con formación en evaluación psicológica. El software no reemplaza el juicio clínico profesional.
+        </p>
+      </div>
+      ${(() => {
+        const cats = [...new Set(calcResults.map(r => r.cat))];
+        return cats.map(cat => {
+          const scales = calcResults.filter(r => r.cat === cat);
+          return `
+            <div style="margin-bottom:20px">
+              <h4 style="font-size:12px;font-weight:bold;color:#0d1117;border-bottom:1px solid #ccc;padding-bottom:5px">${cat}</h4>
+              ${scales.map(r => {
+                const fn = INTERPRETATIONS[r.abbr];
+                const text = fn ? fn(r.t) : 'Sin interpretación disponible.';
+                const color = r.t >= 70 ? '#d32f2f' : r.t >= 60 ? '#f57c00' : '#666';
+                return `
+                  <div style="margin-bottom:10px;padding:8px;background:#f5f5f5;border-radius:3px">
+                    <strong style="color:${color}">${r.abbr} (T=${r.t})</strong>
+                    <p style="margin:5px 0 0 0;font-size:11px;line-height:1.5;color:#333">${text}</p>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `;
+        }).join('');
+      })()}
+    </div>
+
+    <div style="page-break-before:always;margin-top:30px;padding-top:20px;border-top:2px solid #ddd;font-size:10px;color:#999;text-align:center">
+      <p>Informe generado automáticamente por MMPI-2 RF Software · ${new Date().toLocaleString('es-ES')}</p>
+    </div>
+  `;
+
+  // Generar el gráfico de perfil para el PDF
+  generarGraficoPerfilSVG();
+
+  // Configurar opciones de html2pdf
+  const opt = {
+    margin: 10,
+    filename: `MMPI-2RF_${nombre}_${fecha}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+  };
+
+  // Generar PDF
+  html2pdf().set(opt).from(pdfContent).save();
+}
+
+function generarGraficoPerfilSVG() {
+  const svg = document.getElementById('pdf-profile-chart');
+  if (!svg) return;
+
+  const width = 800;
+  const height = 300;
+  const padding = { top: 20, right: 20, bottom: 40, left: 60 };
+  const chartWidth = width - padding.left - padding.right;
+  const chartHeight = height - padding.top - padding.bottom;
+
+  const MAX_T = 120, MIN_T = 20, RANGE = MAX_T - MIN_T;
+  const px = t => ((t - MIN_T) / RANGE) * chartHeight;
+
+  let svgContent = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+    <rect width="${width}" height="${height}" fill="white"/>
+  `;
+
+  // Grid lines and labels
+  [20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120].forEach(t => {
+    const y = padding.top + chartHeight - px(t);
+    svgContent += `
+      <line x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" stroke="#ddd" stroke-width="1"/>
+      <text x="10" y="${y + 4}" font-size="10" text-anchor="end">${t}</text>
+    `;
+  });
+
+  // Threshold lines
+  const y65 = padding.top + chartHeight - px(65);
+  const y70 = padding.top + chartHeight - px(70);
+  svgContent += `
+    <line x1="${padding.left}" y1="${y65}" x2="${width - padding.right}" y2="${y65}" stroke="#f85149" stroke-width="2" stroke-dasharray="4,4" opacity="0.5"/>
+    <line x1="${padding.left}" y1="${y70}" x2="${width - padding.right}" y2="${y70}" stroke="#f85149" stroke-width="2" opacity="0.7"/>
+  `;
+
+  // Bars
+  const barWidth = chartWidth / calcResults.length;
+  calcResults.forEach((r, idx) => {
+    const barHeight = Math.max(2, px(r.t));
+    const x = padding.left + idx * barWidth + barWidth / 2 - barWidth * 0.4;
+    const y = padding.top + chartHeight - barHeight;
+    const color = r.t >= 70 ? '#f85149' : r.t >= 60 ? '#e3b341' : r.t >= 45 ? '#3fb950' : '#58a6ff';
+
+    svgContent += `
+      <rect x="${x}" y="${y}" width="${barWidth * 0.8}" height="${barHeight}" fill="${color}" opacity="0.85"/>
+      <text x="${x + barWidth * 0.4}" y="${height - 15}" font-size="9" text-anchor="middle" fill="#333">${r.abbr}</text>
+    `;
+  });
+
+  svgContent += `</svg>`;
+  svg.innerHTML = svgContent;
+}
+
+function imprimirResultados() {
+  const printWindow = window.open('', '', 'width=900,height=1200');
+  const nombre = document.getElementById('inp-nombre').value || 'Evaluado';
+  const fecha = document.getElementById('inp-fecha').value || new Date().toISOString().split('T')[0];
+
+  const contenido = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>MMPI-2 RF - ${nombre}</title>
+      <style>
+        body { font-family: Arial, sans-serif; color: #000; margin: 20px; }
+        h1, h2, h3 { color: #0d1117; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background: #f0f0f0; font-weight: bold; }
+        .header { border-bottom: 2px solid #333; margin-bottom: 20px; padding-bottom: 15px; }
+        .section { margin-bottom: 25px; page-break-inside: avoid; }
+        .warning { background: #fffacd; border-left: 4px solid #fbc02d; padding: 10px; margin: 15px 0; }
+      </style>
+    </head>
+    <body onload="window.print(); window.close()">
+      <div class="header">
+        <h1>MMPI-2 Forma Reestructurada (RF)</h1>
+        <p>Informe de Evaluación Psicológica</p>
+      </div>
+
+      <div class="section">
+        <h3>DATOS DEL EVALUADO</h3>
+        <table>
+          <tr><td><strong>Nombre:</strong></td><td>${document.getElementById('inp-nombre').value || '—'}</td><td><strong>Fecha:</strong></td><td>${fecha}</td></tr>
+          <tr><td><strong>Cargo:</strong></td><td>${document.getElementById('inp-cargo').value || '—'}</td><td><strong>Edad/Sexo:</strong></td><td>${document.getElementById('inp-edad').value || '—'}</td></tr>
+        </table>
+      </div>
+
+      <div class="section">
+        <h3>EVALUADOR</h3>
+        <p><strong>${document.getElementById('inp-eval').value || '—'}</strong></p>
+      </div>
+
+      <div class="section">
+        <h3>PUNTAJES POR ESCALA</h3>
+        <table>
+          <thead>
+            <tr><th>Escala</th><th>Abrev.</th><th>PD</th><th>T</th><th>Nivel</th></tr>
+          </thead>
+          <tbody>
+            ${calcResults.map(r => {
+              const nivel = getNivel(r.t);
+              return `<tr><td>${r.name}</td><td>${r.abbr}</td><td>${r.pd}</td><td><strong>${r.t}</strong></td><td>${nivel.label}</td></tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="warning">
+        <strong>⚠️ Aviso:</strong> Este informe es una guía automática. La interpretación final debe ser realizada por un psicólogo con formación en evaluación psicológica.
+      </div>
+    </body>
+    </html>
+  `;
+
+  printWindow.document.write(contenido);
+  printWindow.document.close();
+}
 
 </script>
 </body>
