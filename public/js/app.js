@@ -1303,6 +1303,15 @@ const app = {
     ];
 
     let html = `
+      <!-- GRÁFICO SCID-II -->
+      <div style="margin: 4px 0; padding: 4px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: #333; page-break-inside: avoid;" class="reporte-analisis">
+        <h4 style="color: #333; font-size: 9px; margin: 0 0 3px 0; font-weight: bold;">ANÁLISIS: SCID-II</h4>
+        <div style="position: relative; width: 100%; height: 320px;">
+          <canvas id="chartReporte" style="width: 100%; height: 100%;"></canvas>
+        </div>
+      </div>
+
+      <!-- TABLA DE ESCALAS -->
       <div style="margin: 4px 0; padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: #333;">
         <h4 style="color: #333; font-size: 9px; margin: 0 0 6px 0; font-weight: bold;">ESCALA DE TRASTORNOS DE LA PERSONALIDAD</h4>
         <table style="width: 100%; border-collapse: collapse; font-size: 7px;">
