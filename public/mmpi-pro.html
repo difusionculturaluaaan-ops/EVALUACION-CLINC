@@ -1775,23 +1775,25 @@ function generarPDF() {
 }
 
 function generarSVGGraficoParaPDF() {
-  const width = 1000;
-  const height = 400;
-  const padding = { top: 30, right: 30, bottom: 60, left: 80 };
+  const width = 1600;
+  const height = 500;
+  const padding = { top: 40, right: 50, bottom: 80, left: 100 };
   const chartWidth = width - padding.left - padding.right;
   const chartHeight = height - padding.top - padding.bottom;
 
   const MAX_T = 120, MIN_T = 20, RANGE = MAX_T - MIN_T;
   const px = t => ((t - MIN_T) / RANGE) * chartHeight;
 
-  let svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;background:white">
+  let svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;background:white;display:block">
     <defs>
       <style>
         .grid-line { stroke: #e0e0e0; stroke-width: 1; }
-        .axis-label { font-family: Arial, sans-serif; font-size: 12px; fill: #333; }
-        .bar-label { font-family: Arial, sans-serif; font-size: 10px; fill: #333; text-anchor: middle; }
+        .axis-label { font-family: Arial, sans-serif; font-size: 14px; fill: #333; font-weight: 500; }
+        .bar-label { font-family: Arial, sans-serif; font-size: 12px; fill: #333; text-anchor: middle; }
+        .title { font-family: Arial, sans-serif; font-size: 16px; fill: #0d1117; font-weight: bold; }
       </style>
     </defs>
+    <text x="${width / 2}" y="25" text-anchor="middle" class="title">Perfil de T-Scores por Escala Clínica</text>
     <line x1="${padding.left}" y1="${padding.top}" x2="${padding.left}" y2="${padding.top + chartHeight}" stroke="#333" stroke-width="2"/>
     <line x1="${padding.left}" y1="${padding.top + chartHeight}" x2="${width - padding.right}" y2="${padding.top + chartHeight}" stroke="#333" stroke-width="2"/>`;
 
