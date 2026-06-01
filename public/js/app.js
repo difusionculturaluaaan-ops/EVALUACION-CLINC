@@ -954,7 +954,7 @@ const app = {
 
     const porcentaje = (respondidos / this.mmpiState.totalItems) * 100;
 
-    // Actualizar contadores
+    // Actualizar contadores (antiguos elementos)
     const counter = document.getElementById('mmpi-resp-counter');
     if (counter) counter.textContent = `${respondidos}/${this.mmpiState.totalItems}`;
 
@@ -970,7 +970,38 @@ const app = {
     const progPct = document.getElementById('mmpi-progress-pct');
     if (progPct) progPct.textContent = `${Math.round(porcentaje)}%`;
 
-    // Activar botón de finalizar si está COMPLETO
+    // Actualizar contadores (nuevos elementos del sistema de 5 pestañas)
+    const testProgCount = document.getElementById('mmpi-test-prog-count');
+    if (testProgCount) testProgCount.textContent = `${respondidos} / 338 respondidos`;
+
+    const testCountV = document.getElementById('mmpi-test-count-v');
+    if (testCountV) testCountV.textContent = verdaderos;
+
+    const testCountF = document.getElementById('mmpi-test-count-f');
+    if (testCountF) testCountF.textContent = falsos;
+
+    const testProgBar = document.getElementById('mmpi-test-prog-bar');
+    if (testProgBar) testProgBar.style.width = `${porcentaje}%`;
+
+    // Activar botón de calcular si está COMPLETO
+    const btnCalcular = document.getElementById('mmpi-btn-calcular');
+    if (btnCalcular) {
+      const esCompleto = respondidos === this.mmpiState.totalItems;
+      if (esCompleto) {
+        btnCalcular.style.opacity = '1';
+        btnCalcular.style.pointerEvents = 'auto';
+        btnCalcular.style.cursor = 'pointer';
+        btnCalcular.textContent = '⚡ Calcular Resultados';
+        btnCalcular.className = 'btn btn-primary';
+      } else {
+        btnCalcular.style.opacity = '0.35';
+        btnCalcular.style.pointerEvents = 'none';
+        btnCalcular.style.cursor = 'not-allowed';
+        btnCalcular.textContent = `⏳ Completa los ${this.mmpiState.totalItems - respondidos} restantes`;
+      }
+    }
+
+    // Activar botón de finalizar si está COMPLETO (anterior)
     const btnFinish = document.getElementById('mmpi-btn-finish');
     if (btnFinish) {
       const esCompleto = respondidos === this.mmpiState.totalItems;
@@ -1014,6 +1045,175 @@ const app = {
       }
     }
     return true;
+  },
+
+  /**
+   * Activar una pestaña del sistema de 5 pestañas (0-4)
+   */
+  mmpiActivarPestana(numPestana) {
+    // Ocultar todas las pestañas
+    for (let i = 0; i < 5; i++) {
+      const tab = document.getElementById(`mmpi-tab-${i}`);
+      if (tab) tab.style.display = 'none';
+
+      const btn = document.querySelectorAll('.mmpi-tab-btn')[i];
+      if (btn) {
+        btn.style.color = '#666';
+        btn.style.borderBottomColor = 'transparent';
+      }
+    }
+
+    // Mostrar pestaña seleccionada
+    const tabActiva = document.getElementById(`mmpi-tab-${numPestana}`);
+    if (tabActiva) tabActiva.style.display = 'block';
+
+    // Marcar botón activo
+    const btnActivo = document.querySelectorAll('.mmpi-tab-btn')[numPestana];
+    if (btnActivo) {
+      btnActivo.style.color = '#2c5aa0';
+      btnActivo.style.borderBottomColor = '#2c5aa0';
+    }
+
+    console.log(`📑 Pestaña MMPI activada: ${numPestana}`);
+  },
+
+  /**
+   * Calcular resultados del MMPI-2-RF y mostrarlos en las pestañas 2-4
+   */
+  mmpiCalcularYMostrar() {
+    console.log('⚙️  Calculando resultados MMPI-2-RF...');
+
+    // Validar que todos los items estén respondidos
+    let respondidos = 0;
+    for (let i = 1; i <= 338; i++) {
+      const resp = localStorage.getItem(`mmpi_r${i}`);
+      if (resp && (resp === 'V' || resp === 'F')) {
+        respondidos++;
+      }
+    }
+
+    if (respondidos < 338) {
+      this.mostrarToast(`⚠️ Faltan ${338 - respondidos} ítems por responder`, 'warning');
+      return;
+    }
+
+    // Obtener respuestas y calcular
+    const respuestas = tests_mmpi2rf.obtenerRespuestas();
+    const resultado = tests_mmpi2rf.calcular();
+    this.mmpiState.datosRF = resultado.datos;
+
+    // Mostrar mensaje de éxito
+    this.mostrarToast('✅ Resultados calculados exitosamente', 'success');
+
+    // Rellenar pestaña 1 (Ingreso de Datos) - resumen
+    const datosResumen = document.getElementById('mmpi-datos-resumen');
+    if (datosResumen) {
+      const now = new Date().toLocaleDateString('es-ES');
+      datosResumen.innerHTML = `
+        <div>
+          <label style="font-size: 11px; color: #999; text-transform: uppercase; font-weight: 600;">Paciente</label>
+          <p style="margin: 4px 0 0 0; color: #333;">${this.pacienteActivo?.nombre || 'Paciente'}</p>
+        </div>
+        <div>
+          <label style="font-size: 11px; color: #999; text-transform: uppercase; font-weight: 600;">Fecha de Evaluación</label>
+          <p style="margin: 4px 0 0 0; color: #333;">${now}</p>
+        </div>
+        <div>
+          <label style="font-size: 11px; color: #999; text-transform: uppercase; font-weight: 600;">Total de Items</label>
+          <p style="margin: 4px 0 0 0; color: #333;">338</p>
+        </div>
+        <div>
+          <label style="font-size: 11px; color: #999; text-transform: uppercase; font-weight: 600;">Items Respondidos</label>
+          <p style="margin: 4px 0 0 0; color: #27ae60; font-weight: 600;">338 ✓</p>
+        </div>
+      `;
+    }
+
+    // Rellenar pestaña 2 (Resultados) - tabla de escalas
+    const resultadosContent = document.getElementById('mmpi-resultados-contenedor');
+    if (resultadosContent && resultado.datos) {
+      let html = `<table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+        <thead>
+          <tr style="background: #f0f0f0; border-bottom: 2px solid #ddd;">
+            <th style="padding: 10px; text-align: left; font-weight: 600;">Escala</th>
+            <th style="padding: 10px; text-align: center; font-weight: 600;">PD</th>
+            <th style="padding: 10px; text-align: center; font-weight: 600;">T</th>
+            <th style="padding: 10px; text-align: left; font-weight: 600;">Interpretación</th>
+          </tr>
+        </thead>
+        <tbody>`;
+
+      // Iterar sobre los resultados
+      for (const [escala, datos] of Object.entries(resultado.datos)) {
+        if (typeof datos === 'object' && datos.t !== undefined) {
+          const tScore = Math.round(datos.t || 50);
+          let color = '#666';
+          let nivel = 'Normal';
+          if (tScore >= 70) { color = '#e74c3c'; nivel = 'MUY ALTO'; }
+          else if (tScore >= 60) { color = '#f39c12'; nivel = 'ALTO'; }
+          else if (tScore >= 45) { color = '#3498db'; nivel = 'Promedio'; }
+          else { color = '#27ae60'; nivel = 'Bajo'; }
+
+          html += `<tr style="border-bottom: 1px solid #e0e0e0;">
+            <td style="padding: 8px 10px; font-weight: 600;">${escala}</td>
+            <td style="padding: 8px 10px; text-align: center;">${datos.pd || '—'}</td>
+            <td style="padding: 8px 10px; text-align: center; color: ${color}; font-weight: 600;">${tScore}</td>
+            <td style="padding: 8px 10px; color: ${color};">${nivel}</td>
+          </tr>`;
+        }
+      }
+      html += '</tbody></table>';
+      resultadosContent.innerHTML = html;
+    }
+
+    // Rellenar pestaña 3 (Perfil Visual) - gráfico placeholder
+    const perfilContent = document.getElementById('mmpi-perfil-contenedor');
+    if (perfilContent) {
+      perfilContent.innerHTML = `
+        <div style="text-align: center; padding: 40px;">
+          <p style="font-size: 14px; font-weight: 600; color: #2c5aa0;">Perfil Gráfico MMPI-2-RF</p>
+          <p style="color: #999; font-size: 12px; margin: 12px 0;">Gráfico de barras con comparación de escalas</p>
+          <div style="background: #f0f0f0; height: 250px; border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-top: 20px;">
+            <p style="color: #999;">Visualización en desarrollo</p>
+          </div>
+        </div>
+      `;
+    }
+
+    // Rellenar pestaña 4 (Interpretación) - resumen interpretativo
+    const interpContent = document.getElementById('mmpi-interp-contenedor');
+    if (interpContent) {
+      interpContent.innerHTML = `
+        <div style="padding: 16px; background: #f9f9f9; border-left: 4px solid #2c5aa0; border-radius: 4px; margin-bottom: 16px;">
+          <p style="margin: 0; color: #333; font-size: 13px;"><strong>⚠️ Nota Clínica:</strong> Este informe es una guía automática. La interpretación final siempre debe ser realizada por un psicólogo con formación en evaluación psicoló. El software no reemplaza el juicio clínico profesional.</p>
+        </div>
+        <div style="background: white; border-radius: 6px; border: 1px solid #ddd; padding: 16px;">
+          <h4 style="margin: 0 0 12px 0; color: #2c5aa0;">Resumen de Interpretación</h4>
+          <p style="color: #666; font-size: 13px; line-height: 1.6;">
+            Se han calculado automáticamente los puntajes T de las 49 escalas del MMPI-2-RF basados en las 338 respuestas proporcionadas.
+            Cada escala proporciona información sobre diferentes aspectos de la personalidad y sintomatología psicológica del evaluado.
+          </p>
+          <p style="color: #666; font-size: 13px; margin-top: 12px; line-height: 1.6;">
+            Los resultados pueden ser revisados en la pestaña de "Resultados". Para una interpretación detallada de cada escala,
+            consulte con el profesional evaluador.
+          </p>
+        </div>
+      `;
+    }
+
+    // Activar pestaña de resultados (2)
+    this.mmpiActivarPestana(2);
+
+    // Habilitar botón de guardar
+    const btnGuardar = document.getElementById('mmpi-btn-guardar');
+    if (btnGuardar) {
+      btnGuardar.style.opacity = '1';
+      btnGuardar.style.pointerEvents = 'auto';
+      btnGuardar.style.cursor = 'pointer';
+      btnGuardar.textContent = '💾 Guardar Evaluación Completa';
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   },
 
   /**
