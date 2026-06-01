@@ -1079,6 +1079,131 @@ const app = {
       const subescalas = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas || {};
       const data = typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data || [];
 
+      // **CASO ESPECIAL: ISRA - Gráfico de Perfil con Centiles**
+      if (prueba.tipo === 'ISRA') {
+        // Obtener respuestas guardadas
+        const respuestas = app.israState._respuestas || {};
+        const totalC = respuestas.C ? respuestas.C.reduce((a, b) => a + (Number(b) || 0), 0) : 0;
+        const totalF = respuestas.F ? respuestas.F.reduce((a, b) => a + (Number(b) || 0), 0) : 0;
+        const totalM = respuestas.M ? respuestas.M.reduce((a, b) => a + (Number(b) || 0), 0) : 0;
+        const totalT = totalC + totalF + totalM;
+
+        // Determinar sexo del paciente
+        const sexo = (this.pacienteActivo?.sexo || 'mujeres').toLowerCase().includes('hombre') ? 'varones' : 'mujeres';
+
+        // Obtener centiles usando los baremos
+        const centilC = interpretacion.isra.obtenerCentil(totalC, 'C', sexo);
+        const centilF = interpretacion.isra.obtenerCentil(totalF, 'F', sexo);
+        const centilM = interpretacion.isra.obtenerCentil(totalM, 'M', sexo);
+        const centilT = interpretacion.isra.obtenerCentil(totalT, 'T', sexo);
+
+        // Crear gráfico de perfil ISRA
+        const ctx = canvasElement.getContext('2d');
+        const labels = ['C\n(Cognitivo)', 'F\n(Fisiológico)', 'M\n(Motor)', 'T\n(Total)'];
+        const centiles = [centilC, centilF, centilM, centilT];
+
+        canvasElement.chartInstance = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Centil del Paciente',
+              data: centiles,
+              backgroundColor: centiles.map(c => {
+                if (c >= 99) return '#8B0000'; // Rojo oscuro - Extrema
+                if (c >= 75) return '#FF8C00'; // Naranja - Severa
+                if (c >= 25) return '#FFD700'; // Amarillo - Normal
+                return '#228B22'; // Verde - Sin ansiedad
+              }),
+              borderColor: '#333',
+              borderWidth: 2,
+              barPercentage: 0.7
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'x',
+            plugins: {
+              legend: { display: false },
+              tooltip: { enabled: false }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 100,
+                title: { display: true, text: 'Percentil' },
+                ticks: {
+                  font: { size: 10 },
+                  callback: function(value) { return value; }
+                },
+                grid: { color: 'rgba(0,0,0,0.1)' }
+              },
+              x: {
+                ticks: { font: { size: 11, weight: 'bold' } }
+              }
+            }
+          },
+          plugins: [{
+            id: 'zonas-fondo',
+            afterDatasetsDraw(chart) {
+              const ctx = chart.ctx;
+              const yAxis = chart.scales.y;
+              const chartArea = chart.chartArea;
+
+              // Zonas de color de fondo
+              const zonas = [
+                { min: 0, max: 25, color: 'rgba(34, 139, 34, 0.1)' }, // Verde
+                { min: 25, max: 75, color: 'rgba(255, 215, 0, 0.1)' }, // Amarillo
+                { min: 75, max: 99, color: 'rgba(255, 140, 0, 0.1)' }, // Naranja
+                { min: 99, max: 100, color: 'rgba(139, 0, 0, 0.1)' }  // Rojo
+              ];
+
+              zonas.forEach(zona => {
+                const yStart = yAxis.getPixelForValue(zona.max);
+                const yEnd = yAxis.getPixelForValue(zona.min);
+                const height = yEnd - yStart;
+
+                ctx.fillStyle = zona.color;
+                ctx.fillRect(chartArea.left, yStart, chartArea.width, height);
+              });
+
+              // Líneas de percentiles
+              [25, 50, 75, 99].forEach(pc => {
+                const y = yAxis.getPixelForValue(pc);
+                ctx.strokeStyle = pc === 50 ? '#666' : '#ccc';
+                ctx.lineWidth = pc === 50 ? 2 : 1;
+                ctx.setLineDash(pc === 50 ? [5, 5] : []);
+                ctx.beginPath();
+                ctx.moveTo(chartArea.left, y);
+                ctx.lineTo(chartArea.right, y);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Etiqueta
+                ctx.fillStyle = '#666';
+                ctx.font = 'bold 9px Arial';
+                ctx.textAlign = 'right';
+                ctx.fillText(`Pc ${pc}`, chartArea.left - 5, y + 3);
+              });
+            }
+          }]
+        });
+
+        // Convertir a imagen para PDF
+        setTimeout(() => {
+          if (canvasElement.chartInstance && canvasElement.parentNode) {
+            const imgSrc = canvasElement.toDataURL('image/png');
+            const img = document.createElement('img');
+            img.src = imgSrc;
+            img.style.width = '100%';
+            img.style.height = 'auto';
+            canvasElement.parentNode.replaceChild(img, canvasElement);
+          }
+        }, 300);
+        return;
+      }
+
       // Obtener normas del archivo local basadas en tipo de test
       const normasLocales = this.getNormasLocales(prueba.tipo);
 
