@@ -736,6 +736,12 @@ const app = {
   iniciarMMPI(seccion) {
     this.mmpiState.seccionActual = seccion;
     if (seccion === 'RF') {
+      // Limpiar localStorage viejo del MMPI
+      for (let i = 1; i <= 338; i++) {
+        localStorage.removeItem(`mmpi_r${i}`);
+      }
+      // Resetear contador de página
+      this.mmpiState.paginaActual = 0;
       // Construir paginación
       this.construirPaginasMMPI();
       this.mmpiActualizarProgreso();
