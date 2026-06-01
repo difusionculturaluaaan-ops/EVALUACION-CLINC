@@ -1764,11 +1764,12 @@ function generarPDF() {
 
   // Configurar opciones de html2pdf con mejor paginación
   const opt = {
-    margin: [10, 10, 10, 10],
+    margin: [12, 12, 15, 12],
     filename: `MMPI-2RF_${nombre}_${fecha}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true },
-    jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4', compress: true }
+    image: { type: 'jpeg', quality: 0.95 },
+    html2canvas: { scale: 2, useCORS: true, allowTaint: true },
+    jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4', compress: true },
+    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
   };
 
   // Generar PDF
@@ -1779,49 +1780,60 @@ function generarGraficoPerfilSVG() {
   const svg = document.getElementById('pdf-profile-chart');
   if (!svg) return;
 
-  const width = 800;
-  const height = 300;
-  const padding = { top: 20, right: 20, bottom: 40, left: 60 };
+  const width = 1000;
+  const height = 400;
+  const padding = { top: 30, right: 30, bottom: 60, left: 80 };
   const chartWidth = width - padding.left - padding.right;
   const chartHeight = height - padding.top - padding.bottom;
 
   const MAX_T = 120, MIN_T = 20, RANGE = MAX_T - MIN_T;
   const px = t => ((t - MIN_T) / RANGE) * chartHeight;
 
-  let svgContent = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
-    <rect width="${width}" height="${height}" fill="white"/>
+  let svgContent = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" style="background:white">
+    <defs>
+      <style>
+        .grid-line { stroke: #e0e0e0; stroke-width: 1; }
+        .threshold-line { stroke-width: 2; }
+        .axis-label { font-family: Arial, sans-serif; font-size: 12px; fill: #333; }
+        .bar-label { font-family: Arial, sans-serif; font-size: 10px; fill: #333; text-anchor: middle; }
+      </style>
+    </defs>
   `;
+
+  // Eje Y
+  svgContent += `<line x1="${padding.left}" y1="${padding.top}" x2="${padding.left}" y2="${padding.top + chartHeight}" stroke="#333" stroke-width="2"/>`;
+  // Eje X
+  svgContent += `<line x1="${padding.left}" y1="${padding.top + chartHeight}" x2="${width - padding.right}" y2="${padding.top + chartHeight}" stroke="#333" stroke-width="2"/>`;
 
   // Grid lines and labels
   [20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120].forEach(t => {
     const y = padding.top + chartHeight - px(t);
-    svgContent += `
-      <line x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" stroke="#ddd" stroke-width="1"/>
-      <text x="10" y="${y + 4}" font-size="10" text-anchor="end">${t}</text>
-    `;
+    svgContent += `<line x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" class="grid-line"/>`;
+    svgContent += `<text x="${padding.left - 10}" y="${y + 4}" class="axis-label" text-anchor="end">${t}</text>`;
   });
 
   // Threshold lines
   const y65 = padding.top + chartHeight - px(65);
   const y70 = padding.top + chartHeight - px(70);
-  svgContent += `
-    <line x1="${padding.left}" y1="${y65}" x2="${width - padding.right}" y2="${y65}" stroke="#f85149" stroke-width="2" stroke-dasharray="4,4" opacity="0.5"/>
-    <line x1="${padding.left}" y1="${y70}" x2="${width - padding.right}" y2="${y70}" stroke="#f85149" stroke-width="2" opacity="0.7"/>
-  `;
+  svgContent += `<line x1="${padding.left}" y1="${y65}" x2="${width - padding.right}" y2="${y65}" stroke="#f85149" class="threshold-line" stroke-dasharray="5,5" opacity="0.6"/>`;
+  svgContent += `<line x1="${padding.left}" y1="${y70}" x2="${width - padding.right}" y2="${y70}" stroke="#f85149" class="threshold-line" opacity="0.8"/>`;
 
   // Bars
   const barWidth = chartWidth / calcResults.length;
+  const barPadding = barWidth * 0.1;
   calcResults.forEach((r, idx) => {
-    const barHeight = Math.max(2, px(r.t));
-    const x = padding.left + idx * barWidth + barWidth / 2 - barWidth * 0.4;
+    const barHeight = Math.max(3, px(r.t));
+    const x = padding.left + idx * barWidth + barPadding;
     const y = padding.top + chartHeight - barHeight;
     const color = r.t >= 70 ? '#f85149' : r.t >= 60 ? '#e3b341' : r.t >= 45 ? '#3fb950' : '#58a6ff';
 
-    svgContent += `
-      <rect x="${x}" y="${y}" width="${barWidth * 0.8}" height="${barHeight}" fill="${color}" opacity="0.85"/>
-      <text x="${x + barWidth * 0.4}" y="${height - 15}" font-size="9" text-anchor="middle" fill="#333">${r.abbr}</text>
-    `;
+    svgContent += `<rect x="${x}" y="${y}" width="${barWidth - 2 * barPadding}" height="${barHeight}" fill="${color}" opacity="0.85" stroke="#999" stroke-width="0.5"/>`;
+    svgContent += `<text x="${x + (barWidth - 2 * barPadding) / 2}" y="${padding.top + chartHeight + 20}" class="bar-label">${r.abbr}</text>`;
+    svgContent += `<text x="${x + (barWidth - 2 * barPadding) / 2}" y="${y - 5}" class="bar-label" font-weight="bold">${r.t}</text>`;
   });
+
+  // Título de eje Y
+  svgContent += `<text x="20" y="${padding.top + chartHeight / 2}" class="axis-label" text-anchor="middle" transform="rotate(-90 20 ${padding.top + chartHeight / 2})">T-Score</text>`;
 
   svgContent += `</svg>`;
   svg.innerHTML = svgContent;
