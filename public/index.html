@@ -61,10 +61,6 @@
       <span class="icon">😔</span>
       <span class="label">Hamilton (HAM-D)</span>
     </button>
-    <button class="nav-item" data-page="mmpi" onclick="app.iniciarTestConPaciente('mmpi')">
-      <span class="icon">🧠</span>
-      <span class="label">MMPI-2 (RF + T-scores)</span>
-    </button>
     <button class="nav-item" data-page="mmpi-pro" onclick="window.location.href='/mmpi-pro.html'">
       <span class="icon">✨</span>
       <span class="label">MMPI-2 PRO (Micro Sitio)</span>
@@ -333,124 +329,6 @@
     </div>
   </section>
 
-  <!-- Página: MMPI-2 Unificado (RF + T-scores) -->
-  <section id="page-mmpi" class="page">
-    <div class="test-page" style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
-      <div class="test-header" style="text-align: center; margin-bottom: 24px;">
-        <h2 style="margin: 0 0 8px 0; color: #1f3a70;">MMPI-2 Forma Reestructurada</h2>
-        <p style="font-size: 13px; color: #666; margin: 0;">Sistema de Evaluación Psicológica · 338 ítems</p>
-      </div>
-
-      <!-- Tabs Navigation -->
-      <div class="mmpi-tabs" style="display: flex; gap: 0; margin-bottom: 20px; border-bottom: 2px solid #ddd; flex-wrap: wrap;">
-        <button type="button" class="mmpi-tab-btn active" onclick="app.mmpiActivarPestana(0)" style="flex: 1; padding: 12px 16px; border: none; background: none; cursor: pointer; font-weight: 600; color: #666; border-bottom: 3px solid transparent; transition: all 0.2s; min-width: 140px;">
-          1️⃣ Aplicar Test
-        </button>
-        <button type="button" class="mmpi-tab-btn" onclick="app.mmpiActivarPestana(1)" style="flex: 1; padding: 12px 16px; border: none; background: none; cursor: pointer; font-weight: 600; color: #666; border-bottom: 3px solid transparent; transition: all 0.2s; min-width: 140px;">
-          2️⃣ Ingreso de Datos
-        </button>
-        <button type="button" class="mmpi-tab-btn" onclick="app.mmpiActivarPestana(2)" style="flex: 1; padding: 12px 16px; border: none; background: none; cursor: pointer; font-weight: 600; color: #666; border-bottom: 3px solid transparent; transition: all 0.2s; min-width: 140px;">
-          3️⃣ Resultados
-        </button>
-        <button type="button" class="mmpi-tab-btn" onclick="app.mmpiActivarPestana(3)" style="flex: 1; padding: 12px 16px; border: none; background: none; cursor: pointer; font-weight: 600; color: #666; border-bottom: 3px solid transparent; transition: all 0.2s; min-width: 140px;">
-          4️⃣ Perfil Visual
-        </button>
-        <button type="button" class="mmpi-tab-btn" onclick="app.mmpiActivarPestana(4)" style="flex: 1; padding: 12px 16px; border: none; background: none; cursor: pointer; font-weight: 600; color: #666; border-bottom: 3px solid transparent; transition: all 0.2s; min-width: 140px;">
-          5️⃣ Interpretación
-        </button>
-      </div>
-
-      <!-- TAB 0: APLICAR TEST (Items paginados) -->
-      <div id="mmpi-tab-0" class="mmpi-tab-panel active" style="display: block;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 12px; background: white; border-radius: 6px; border: 1px solid #ddd;">
-          <div>
-            <span style="font-size: 12px; color: #666;">Progreso del cuestionario</span>
-            <div style="margin-top: 6px; font-size: 14px; font-weight: bold; color: #2c5aa0;" id="mmpi-test-prog-count">0 / 338 respondidos</div>
-          </div>
-          <div style="display: flex; gap: 12px;">
-            <div style="text-align: center; background: #f0f7ff; border: 1px solid #2c5aa0; border-radius: 4px; padding: 8px 16px;">
-              <div style="font-size: 10px; color: #666;">Verdadero</div>
-              <div style="font-size: 18px; font-weight: bold; color: #27ae60;" id="mmpi-test-count-v">0</div>
-            </div>
-            <div style="text-align: center; background: #fff0f0; border: 1px solid #e74c3c; border-radius: 4px; padding: 8px 16px;">
-              <div style="font-size: 10px; color: #666;">Falso</div>
-              <div style="font-size: 18px; font-weight: bold; color: #e74c3c;" id="mmpi-test-count-f">0</div>
-            </div>
-            <button type="button" class="btn btn-primary" id="mmpi-btn-calcular" onclick="app.mmpiCalcularYMostrar()" style="padding: 8px 20px; opacity: 0.35; pointer-events: none; background: #2c5aa0; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">
-              ⚡ Calcular
-            </button>
-          </div>
-        </div>
-
-        <div style="width: 100%; height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden; margin-bottom: 20px;">
-          <div id="mmpi-test-prog-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #2c5aa0, #27ae60); transition: width 0.3s;"></div>
-        </div>
-
-        <!-- Items paginados -->
-        <div id="mmpi-pages-container" style="margin-bottom: 20px; background: white; border-radius: 6px; border: 1px solid #ddd; padding: 16px;"></div>
-
-        <!-- Navegación de páginas -->
-        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
-          <button type="button" class="btn btn-default" id="mmpi-btn-prev-page" onclick="app.mmpiPaginaAnterior()" style="padding: 10px 20px; opacity: 0.35; pointer-events: none; background: #f0f0f0; border: 1px solid #ddd; border-radius: 4px; cursor: pointer;">
-            ← Anterior
-          </button>
-          <span style="font-size: 12px; color: #666; font-weight: 600;" id="mmpi-page-indicator">Página 1 de 15</span>
-          <button type="button" class="btn btn-primary" id="mmpi-btn-next-page" onclick="app.mmpiPaginaSiguiente()" style="padding: 10px 20px; background: #2c5aa0; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">
-            Siguiente →
-          </button>
-        </div>
-      </div>
-
-      <!-- TAB 1: INGRESO DE DATOS -->
-      <div id="mmpi-tab-1" class="mmpi-tab-panel" style="display: none;">
-        <div style="background: white; border-radius: 6px; border: 1px solid #ddd; padding: 20px; margin-bottom: 20px;">
-          <h3 style="margin-top: 0; color: #1f3a70; border-bottom: 2px solid #ddd; padding-bottom: 12px;">Resumen de Evaluación</h3>
-          <div id="mmpi-datos-resumen" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
-            <div>
-              <label style="font-size: 11px; color: #999; text-transform: uppercase; font-weight: 600;">Paciente</label>
-              <p style="margin: 4px 0 0 0; color: #333;">Datos del paciente</p>
-            </div>
-            <div>
-              <label style="font-size: 11px; color: #999; text-transform: uppercase; font-weight: 600;">Fecha de Evaluación</label>
-              <p style="margin: 4px 0 0 0; color: #333;" id="mmpi-datos-fecha">—</p>
-            </div>
-          </div>
-        </div>
-        <div style="text-align: center;">
-          <p style="color: #666; font-size: 13px;">Los datos del paciente se recopilan al inicio. Los ítems responden a la evaluación en la pestaña anterior.</p>
-        </div>
-      </div>
-
-      <!-- TAB 2: RESULTADOS -->
-      <div id="mmpi-tab-2" class="mmpi-tab-panel" style="display: none;">
-        <div id="mmpi-resultados-contenedor" style="background: white; border-radius: 6px; border: 1px solid #ddd; padding: 20px;">
-          <p style="color: #666; text-align: center; font-size: 13px;">Complete el ingreso de datos y presione Calcular para ver los puntajes.</p>
-        </div>
-      </div>
-
-      <!-- TAB 3: PERFIL VISUAL -->
-      <div id="mmpi-tab-3" class="mmpi-tab-panel" style="display: none;">
-        <div id="mmpi-perfil-contenedor" style="background: white; border-radius: 6px; border: 1px solid #ddd; padding: 20px;">
-          <p style="color: #666; text-align: center; font-size: 13px;">Complete el ingreso de datos y presione Calcular para ver el gráfico.</p>
-        </div>
-      </div>
-
-      <!-- TAB 4: INTERPRETACIÓN -->
-      <div id="mmpi-tab-4" class="mmpi-tab-panel" style="display: none;">
-        <div id="mmpi-interp-contenedor" style="background: white; border-radius: 6px; border: 1px solid #ddd; padding: 20px;">
-          <p style="color: #666; text-align: center; font-size: 13px;">Complete el ingreso de datos y presione Calcular para ver la interpretación.</p>
-        </div>
-      </div>
-
-      <!-- Botón Guardar (al final) -->
-      <div style="margin-top: 24px; text-align: center; padding-top: 20px; border-top: 2px solid #ddd;">
-        <button type="button" class="btn btn-primary btn-lg" id="mmpi-btn-guardar" onclick="app.guardarPrueba('MMPI')" style="padding: 12px 40px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 14px; opacity: 0.35; pointer-events: none;">
-          💾 Guardar Evaluación Completa
-        </button>
-        <p style="font-size: 11px; color: #999; margin-top: 8px;">Completa todos los pasos para guardar</p>
-      </div>
-    </div>
-  </section>
 
   <!-- Página: ISRA (Cognitiva, Fisiológica, Motor - Unificado) -->
   <section id="page-isra" class="page">
