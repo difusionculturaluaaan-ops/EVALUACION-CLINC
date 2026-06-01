@@ -834,9 +834,71 @@ const app = {
           promedioReferencia = mediaRef;
         }
       } else if (prueba.tipo === 'SCID2') {
-        // SCID-II: total de respuestas sí
-        promedioPaciente = prueba.total || 0;
-        promedioReferencia = (119 * 0.3).toFixed(1);
+        // SCID-II: gráfico de 12 escalas (A-L) con Paciente vs Referencia
+        const escalasData = this.calcularRespuestasPorEscalaSCID2(data);
+        const labels = Object.entries(escalasData).map(([_, e]) => e.label);
+        const valoresPaciente = Object.entries(escalasData).map(([_, e]) => e.count);
+        const valoresReferencia = Object.entries(escalasData).map(([_, e]) => e.minimo);
+
+        const maxValor = Math.max(...valoresPaciente, ...valoresReferencia) + 2;
+        const ctx = canvasElement.getContext('2d');
+
+        canvasElement.chartInstance = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Paciente',
+                data: valoresPaciente,
+                backgroundColor: '#e74c3c',
+                borderColor: '#c0392b',
+                borderWidth: 1
+              },
+              {
+                label: 'Referencia (Mínimo)',
+                data: valoresReferencia,
+                backgroundColor: '#27ae60',
+                borderColor: '#229954',
+                borderWidth: 1
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: true,
+                position: 'top',
+                labels: { font: { size: 10 }, padding: 10 }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: maxValor,
+                ticks: { font: { size: 8 } },
+                grid: { color: 'rgba(0, 0, 0, 0.05)' }
+              },
+              x: {
+                ticks: { font: { size: 9 } }
+              }
+            }
+          }
+        });
+
+        setTimeout(() => {
+          if (canvasElement.chartInstance && canvasElement.parentNode) {
+            const imgSrc = canvasElement.toDataURL('image/png');
+            const img = document.createElement('img');
+            img.src = imgSrc;
+            img.style.width = '100%';
+            img.style.height = 'auto';
+            canvasElement.parentNode.replaceChild(img, canvasElement);
+          }
+        }, 400);
+        return;
       } else {
         // Fallback: promedio simple
         if (Array.isArray(data) && data.length > 0) {
@@ -1374,6 +1436,40 @@ const app = {
     }
 
     return { texto, color };
+  },
+
+  /**
+   * Calcular respuestas afirmativas por escala SCID-II (A-L)
+   */
+  calcularRespuestasPorEscalaSCID2(data) {
+    const data_array = Array.isArray(data) ? data : (typeof data === 'string' ? JSON.parse(data) : []);
+
+    // Definir rangos de preguntas por escala (1-indexado en base de datos)
+    const escalas = {
+      'A': { rango: [0, 6], label: 'TPE', minimo: 4 },
+      'B': { rango: [7, 14], label: 'TPD', minimo: 5 },
+      'C': { rango: [15, 25], label: 'TOC', minimo: 5 },
+      'D': { rango: [26, 34], label: 'PA', minimo: 5 },
+      'E': { rango: [35, 47], label: 'AUT', minimo: 5 },
+      'F': { rango: [48, 55], label: 'TPP', minimo: 4 },
+      'G': { rango: [56, 63], label: 'TEZ', minimo: 5 },
+      'H': { rango: [64, 68], label: 'TES', minimo: 4 },
+      'I': { rango: [69, 78], label: 'TH', minimo: 4 },
+      'J': { rango: [79, 89], label: 'TN', minimo: 6 },
+      'K': { rango: [90, 107], label: 'TL', minimo: 5 },
+      'L': { rango: [108, 119], label: 'TA', minimo: 3 }
+    };
+
+    const resultado = {};
+    for (const [key, escala] of Object.entries(escalas)) {
+      const [inicio, fin] = escala.rango;
+      let count = 0;
+      for (let i = inicio; i <= fin; i++) {
+        if (data_array[i] === 1) count++;
+      }
+      resultado[key] = { count, minimo: escala.minimo, label: escala.label };
+    }
+    return resultado;
   },
 
   /**
