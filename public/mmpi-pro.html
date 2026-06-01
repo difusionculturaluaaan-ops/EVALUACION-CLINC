@@ -1684,7 +1684,7 @@ function generarPDF() {
           Gráfico de barras con T-scores por escala clínica<br>
           Línea roja (T=65) y naranja (T=70) = puntos de corte clínicos
         </p>
-        <svg style="width:100%;height:350px;margin:0 auto;display:block" id="pdf-profile-chart"></svg>
+        ${generarSVGGraficoParaPDF()}
       </div>
       <p style="margin-top:15px;font-size:10px;color:#666;background:#f5f5f5;padding:10px;border-radius:3px">
         <strong>Interpretación del gráfico:</strong> Las barras azules indican T-scores dentro del rango promedio.
@@ -1759,9 +1759,6 @@ function generarPDF() {
 
   pdfContent.innerHTML = html;
 
-  // Generar el gráfico de perfil para el PDF
-  generarGraficoPerfilSVG();
-
   // Configurar opciones de html2pdf con mejor paginación
   const opt = {
     margin: [12, 12, 15, 12],
@@ -1774,6 +1771,56 @@ function generarPDF() {
 
   // Generar PDF
   html2pdf().set(opt).from(pdfContent).save();
+}
+
+function generarSVGGraficoParaPDF() {
+  const width = 1000;
+  const height = 400;
+  const padding = { top: 30, right: 30, bottom: 60, left: 80 };
+  const chartWidth = width - padding.left - padding.right;
+  const chartHeight = height - padding.top - padding.bottom;
+
+  const MAX_T = 120, MIN_T = 20, RANGE = MAX_T - MIN_T;
+  const px = t => ((t - MIN_T) / RANGE) * chartHeight;
+
+  let svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;background:white">
+    <defs>
+      <style>
+        .grid-line { stroke: #e0e0e0; stroke-width: 1; }
+        .axis-label { font-family: Arial, sans-serif; font-size: 12px; fill: #333; }
+        .bar-label { font-family: Arial, sans-serif; font-size: 10px; fill: #333; text-anchor: middle; }
+      </style>
+    </defs>
+    <line x1="${padding.left}" y1="${padding.top}" x2="${padding.left}" y2="${padding.top + chartHeight}" stroke="#333" stroke-width="2"/>
+    <line x1="${padding.left}" y1="${padding.top + chartHeight}" x2="${width - padding.right}" y2="${padding.top + chartHeight}" stroke="#333" stroke-width="2"/>`;
+
+  // Grid lines
+  [20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120].forEach(t => {
+    const y = padding.top + chartHeight - px(t);
+    svg += `<line x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" class="grid-line"/>`;
+    svg += `<text x="${padding.left - 10}" y="${y + 4}" class="axis-label" text-anchor="end">${t}</text>`;
+  });
+
+  // Threshold
+  const y70 = padding.top + chartHeight - px(70);
+  svg += `<line x1="${padding.left}" y1="${y70}" x2="${width - padding.right}" y2="${y70}" stroke="#f85149" stroke-width="2" opacity="0.8"/>`;
+
+  // Bars
+  const barWidth = chartWidth / calcResults.length;
+  const barPadding = barWidth * 0.1;
+  calcResults.forEach((r, idx) => {
+    const barHeight = Math.max(3, px(r.t));
+    const x = padding.left + idx * barWidth + barPadding;
+    const y = padding.top + chartHeight - barHeight;
+    const color = r.t >= 70 ? '#f85149' : r.t >= 60 ? '#e3b341' : r.t >= 45 ? '#3fb950' : '#58a6ff';
+
+    svg += `<rect x="${x}" y="${y}" width="${barWidth - 2 * barPadding}" height="${barHeight}" fill="${color}" opacity="0.85" stroke="#999" stroke-width="0.5"/>`;
+    svg += `<text x="${x + (barWidth - 2 * barPadding) / 2}" y="${padding.top + chartHeight + 20}" class="bar-label">${r.abbr}</text>`;
+    svg += `<text x="${x + (barWidth - 2 * barPadding) / 2}" y="${y - 5}" class="bar-label" font-weight="bold">${r.t}</text>`;
+  });
+
+  svg += `</svg>`;
+  return svg;
 }
 
 function generarGraficoPerfilSVG() {
