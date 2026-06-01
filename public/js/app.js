@@ -782,6 +782,9 @@ const app = {
       // Calcular T-scores automáticamente desde las respuestas del RF
       const resultRF = tests_mmpi2rf.calcular();
       this.mmpiState.datosRF = resultRF.datos;
+
+      // Mostrar toast de éxito
+      this.mostrarToast('✅ T-scores calculados automáticamente. Revisa y ajusta si es necesario.', 'success');
     }
 
     this.mmpiState.seccionActual = seccion;
