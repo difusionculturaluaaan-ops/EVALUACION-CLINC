@@ -790,7 +790,7 @@ const app = {
     if (seccion === 'RF') {
       if (rfSection) rfSection.style.display = 'block';
       if (rfProgress) rfProgress.style.display = 'block';
-      tests_mmpi2rf.init();
+      // No llamar a init aquí, ya se llamó en iniciarMMPI
     } else if (seccion === 'SCORES') {
       if (scoresSection) scoresSection.style.display = 'block';
       tests_mmpi2.init();
