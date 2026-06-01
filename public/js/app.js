@@ -9,6 +9,7 @@ const app = {
     'SCL90R': tests_scl90r,
     'HAMILTON': tests_hamilton,
     'MMPI2': tests_mmpi2,
+    'MMPI2RF': tests_mmpi2rf,
     'TDS': tests_tds,
     'ISRA': {
       nombre: 'ISRA (Cognitivo + Fisiológico + Motor)',
@@ -97,6 +98,7 @@ const app = {
     'scl90r': 'SCL90R',
     'hamilton': 'HAMILTON',
     'mmpi2': 'MMPI2',
+    'mmpi2rf': 'MMPI2RF',
     'tds': 'TDS',
     'isra': 'ISRA',
     'pclr': 'PCLR',

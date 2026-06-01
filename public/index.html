@@ -65,6 +65,10 @@
       <span class="icon">🧠</span>
       <span class="label">MMPI-2</span>
     </button>
+    <button class="nav-item" data-page="mmpi2rf" onclick="app.iniciarTestConPaciente('mmpi2rf')">
+      <span class="icon">📋</span>
+      <span class="label">MMPI-2-RF (338 ítems)</span>
+    </button>
     <button class="nav-item" data-page="isra" onclick="app.iniciarTestConPaciente('isra')">
       <span class="icon">🧠</span>
       <span class="label">ISRA (C+F+M)</span>
@@ -340,6 +344,28 @@
       <button type="button" class="btn btn-primary btn-lg" onclick="app.guardarPrueba('MMPI2')">
         Guardar Perfil MMPI-2
       </button>
+    </div>
+  </section>
+
+  <!-- Página: MMPI-2-RF (338 Items) -->
+  <section id="page-mmpi2rf" class="page">
+    <div class="test-page">
+      <div class="test-header">
+        <h2>MMPI-2-RF (Forma Reestructurada - 338 Items)</h2>
+        <p class="help-text">Responde cada pregunta con <strong>Verdadero (V)</strong> o <strong>Falso (F)</strong>. Este test requiere administración formal en contexto clínico.</p>
+        <div style="margin-top: 8px; font-size: 12px; color: #666;">
+          <p id="mmpi2rf-counter" style="margin: 0;">Progreso: 0 / 338</p>
+        </div>
+        <div style="width: 100%; height: 8px; background: #eee; border-radius: 4px; margin-top: 4px; overflow: hidden;">
+          <div id="mmpi2rf-progress" style="width: 0%; height: 100%; background: #27ae60; transition: width 0.3s;"></div>
+        </div>
+      </div>
+      <div id="mmpi2rf-container" class="test-items-container"></div>
+      <div style="margin-top: 20px; text-align: center;">
+        <button type="button" class="btn btn-primary btn-lg" onclick="app.guardarPrueba('MMPI2RF')">
+          Guardar Respuestas MMPI-2-RF
+        </button>
+      </div>
     </div>
   </section>
 
@@ -636,6 +662,7 @@
 <script src="/js/tests/scl90r.js"></script>
 <script src="/js/tests/hamilton.js"></script>
 <script src="/js/tests/mmpi2.js"></script>
+<script src="/js/tests/mmpi2rf.js"></script>
 <script src="/js/tests/isra.js"></script>
 <script src="/js/tests/isra-f.js"></script>
 <script src="/js/tests/isra-m.js"></script>
