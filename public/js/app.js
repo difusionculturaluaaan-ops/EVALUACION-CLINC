@@ -1020,7 +1020,7 @@ const app = {
         <div style="page-break-inside: avoid; margin-bottom: 10px;">
           <!-- Gráfico PCL-R -->
           <div style="margin-bottom: 10px; font-size: 9px;">
-            ${prueba.tipo === 'SCL90R' ? this.generarReporteSCL(prueba, subescalas) : prueba.tipo === 'PCLR' ? this.generarReportePCLR(prueba, subescalas) : prueba.tipo === 'SCID2' ? this.generarReporteSCID2(prueba, subescalas) : prueba.tipo === 'MMPI2' ? this.generarReporteMMPI2(prueba, subescalas) : this.generarReporteGenerico(prueba, subescalas)}
+            ${prueba.tipo === 'SCL90R' ? this.generarReporteSCL(prueba, subescalas) : prueba.tipo === 'PCLR' ? this.generarReportePCLR(prueba, subescalas) : prueba.tipo === 'SCID2' ? this.generarReporteSCID2(prueba, subescalas) : prueba.tipo === 'MMPI2' ? this.generarReporteMMPI2(prueba, subescalas) : prueba.tipo === 'ISRA' ? this.generarReporteISRA(prueba, subescalas) : this.generarReporteGenerico(prueba, subescalas)}
           </div>
 
           <!-- INTERPRETACIÓN (dentro del contenedor principal) -->
@@ -1893,6 +1893,95 @@ const app = {
 
     html += `</table>
         <p style="margin: 4px 0 0 0; font-size: 6px; color: #666; font-style: italic;">Nota: T-scores < 45 o > 55 indican desviación significativa de la media poblacional (T=50).</p>
+      </div>
+    `;
+
+    return html;
+  },
+
+  /**
+   * Generar reporte ISRA con gráfico de perfil y tabla comparativa
+   */
+  generarReporteISRA(prueba, subescalas) {
+    // Obtener respuestas y calcular totales
+    const respuestas = app.israState._respuestas || {};
+    const totalC = respuestas.C ? respuestas.C.reduce((a, b) => a + (Number(b) || 0), 0) : 0;
+    const totalF = respuestas.F ? respuestas.F.reduce((a, b) => a + (Number(b) || 0), 0) : 0;
+    const totalM = respuestas.M ? respuestas.M.reduce((a, b) => a + (Number(b) || 0), 0) : 0;
+    const totalT = totalC + totalF + totalM;
+
+    // Determinar sexo del paciente
+    const sexo = (this.pacienteActivo?.sexo || 'mujeres').toLowerCase().includes('hombre') ? 'varones' : 'mujeres';
+
+    // Obtener centiles
+    const centilC = interpretacion.isra.obtenerCentil(totalC, 'C', sexo);
+    const centilF = interpretacion.isra.obtenerCentil(totalF, 'F', sexo);
+    const centilM = interpretacion.isra.obtenerCentil(totalM, 'M', sexo);
+    const centilT = interpretacion.isra.obtenerCentil(totalT, 'T', sexo);
+
+    // Función para obtener interpretación según centil
+    const obtenerInterpretacion = (centil) => {
+      if (centil >= 99) return { texto: 'Extrema', color: 'color: #8B0000;' };
+      if (centil >= 75) return { texto: 'Severa', color: 'color: #FF8C00;' };
+      if (centil >= 25) return { texto: 'Normal', color: 'color: #228B22;' };
+      return { texto: 'Sin ansiedad', color: 'color: #228B22;' };
+    };
+
+    const interpC = obtenerInterpretacion(centilC);
+    const interpF = obtenerInterpretacion(centilF);
+    const interpM = obtenerInterpretacion(centilM);
+    const interpT = obtenerInterpretacion(centilT);
+
+    let html = `
+      <!-- GRÁFICO ISRA -->
+      <div style="margin: 4px 0; padding: 4px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: #333; page-break-inside: avoid;" class="reporte-analisis">
+        <h4 style="color: #333; font-size: 9px; margin: 0 0 3px 0; font-weight: bold;">ANÁLISIS: ISRA (Perfil de Centiles)</h4>
+        <div style="position: relative; width: 100%; height: 320px;">
+          <canvas id="chartReporte" style="width: 100%; height: 100%;"></canvas>
+        </div>
+      </div>
+
+      <!-- TABLA COMPARATIVA ISRA -->
+      <div style="margin: 4px 0; padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: #333;">
+        <h4 style="color: #333; font-size: 9px; margin: 0 0 6px 0; font-weight: bold;">DATOS COMPARATIVOS</h4>
+        <table style="width: 100%; border-collapse: collapse; font-size: 7px;">
+          <tr style="background: #2c5aa0; color: white;">
+            <th style="border: 1px solid #999; padding: 3px; text-align: left; font-weight: bold;">Escala</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">Valor</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">Ref.</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">Centil</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: left; font-weight: bold;">Estado</th>
+          </tr>
+          <tr style="background: #f9f9f9;">
+            <td style="border: 1px solid #999; padding: 3px; font-weight: bold;">C (Cognitivo)</td>
+            <td style="border: 1px solid #999; padding: 3px; text-align: center;">${totalC}</td>
+            <td style="border: 1px solid #999; padding: 3px; text-align: center;">71.78</td>
+            <td style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">${centilC}</td>
+            <td style="border: 1px solid #999; padding: 3px; text-align: left; ${interpC.color}">${interpC.texto}</td>
+          </tr>
+          <tr style="background: white;">
+            <td style="border: 1px solid #999; padding: 3px; font-weight: bold;">F (Fisiológico)</td>
+            <td style="border: 1px solid #999; padding: 3px; text-align: center;">${totalF}</td>
+            <td style="border: 1px solid #999; padding: 3px; text-align: center;">33.36</td>
+            <td style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">${centilF}</td>
+            <td style="border: 1px solid #999; padding: 3px; text-align: left; ${interpF.color}">${interpF.texto}</td>
+          </tr>
+          <tr style="background: #f9f9f9;">
+            <td style="border: 1px solid #999; padding: 3px; font-weight: bold;">M (Motor)</td>
+            <td style="border: 1px solid #999; padding: 3px; text-align: center;">${totalM}</td>
+            <td style="border: 1px solid #999; padding: 3px; text-align: center;">49.84</td>
+            <td style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">${centilM}</td>
+            <td style="border: 1px solid #999; padding: 3px; text-align: left; ${interpM.color}">${interpM.texto}</td>
+          </tr>
+          <tr style="background: white; font-weight: bold;">
+            <td style="border: 1px solid #999; padding: 3px; font-weight: bold;">TOTAL</td>
+            <td style="border: 1px solid #999; padding: 3px; text-align: center;">${totalT}</td>
+            <td style="border: 1px solid #999; padding: 3px; text-align: center;">154.98</td>
+            <td style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">${centilT}</td>
+            <td style="border: 1px solid #999; padding: 3px; text-align: left; ${interpT.color}">${interpT.texto}</td>
+          </tr>
+        </table>
+        <p style="margin: 4px 0 0 0; font-size: 6px; color: #666; font-style: italic;">Nota: Ref. = Media población normal. Centil indica posición respecto a población general.</p>
       </div>
     `;
 
