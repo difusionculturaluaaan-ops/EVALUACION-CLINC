@@ -734,7 +734,7 @@ const app = {
         <div style="page-break-inside: avoid; margin-bottom: 10px;">
           <!-- Gráfico PCL-R -->
           <div style="margin-bottom: 10px; font-size: 9px;">
-            ${prueba.tipo === 'SCL90R' ? this.generarReporteSCL(prueba, subescalas) : prueba.tipo === 'PCLR' ? this.generarReportePCLR(prueba, subescalas) : prueba.tipo === 'SCID2' ? this.generarReporteSCID2(prueba, subescalas) : this.generarReporteGenerico(prueba, subescalas)}
+            ${prueba.tipo === 'SCL90R' ? this.generarReporteSCL(prueba, subescalas) : prueba.tipo === 'PCLR' ? this.generarReportePCLR(prueba, subescalas) : prueba.tipo === 'SCID2' ? this.generarReporteSCID2(prueba, subescalas) : prueba.tipo === 'MMPI2' ? this.generarReporteMMPI2(prueba, subescalas) : this.generarReporteGenerico(prueba, subescalas)}
           </div>
 
           <!-- INTERPRETACIÓN (dentro del contenedor principal) -->
@@ -857,6 +857,88 @@ const app = {
               },
               {
                 label: 'Referencia (Mínimo)',
+                data: valoresReferencia,
+                backgroundColor: '#27ae60',
+                borderColor: '#229954',
+                borderWidth: 1
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: true,
+                position: 'top',
+                labels: { font: { size: 10 }, padding: 10 }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: maxValor,
+                ticks: { font: { size: 8 } },
+                grid: { color: 'rgba(0, 0, 0, 0.05)' }
+              },
+              x: {
+                ticks: { font: { size: 9 } }
+              }
+            }
+          }
+        });
+
+        setTimeout(() => {
+          if (canvasElement.chartInstance && canvasElement.parentNode) {
+            const imgSrc = canvasElement.toDataURL('image/png');
+            const img = document.createElement('img');
+            img.src = imgSrc;
+            img.style.width = '100%';
+            img.style.height = 'auto';
+            canvasElement.parentNode.replaceChild(img, canvasElement);
+          }
+        }, 400);
+        return;
+      } else if (prueba.tipo === 'MMPI2') {
+        // MMPI-2: gráfico de 13 escalas con Paciente vs Referencia (T=50)
+        const escalasInfo = [
+          { id: 'L', label: 'L' },
+          { id: 'F', label: 'F' },
+          { id: 'K', label: 'K' },
+          { id: 'Hs', label: 'Hs' },
+          { id: 'D', label: 'D' },
+          { id: 'Hy', label: 'Hy' },
+          { id: 'Pd', label: 'Pd' },
+          { id: 'Mf', label: 'Mf' },
+          { id: 'Pa', label: 'Pa' },
+          { id: 'Pt', label: 'Pt' },
+          { id: 'Sc', label: 'Sc' },
+          { id: 'Ma', label: 'Ma' },
+          { id: 'Si', label: 'Si' }
+        ];
+
+        const dataObj = typeof data === 'string' ? JSON.parse(data) : (typeof data === 'object' ? data : {});
+        const labels = escalasInfo.map(e => e.label);
+        const valoresPaciente = escalasInfo.map(e => Number(dataObj[e.id]) || 0);
+        const valoresReferencia = Array(13).fill(50);
+
+        const maxValor = Math.max(...valoresPaciente, ...valoresReferencia) + 5;
+        const ctx = canvasElement.getContext('2d');
+
+        canvasElement.chartInstance = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Paciente',
+                data: valoresPaciente,
+                backgroundColor: '#e74c3c',
+                borderColor: '#c0392b',
+                borderWidth: 1
+              },
+              {
+                label: 'Referencia (T=50)',
                 data: valoresReferencia,
                 backgroundColor: '#27ae60',
                 borderColor: '#229954',
@@ -1334,6 +1416,72 @@ const app = {
 
     html += `</table>
         <p style="margin: 4px 0 0 0; font-size: 6px; color: #666; font-style: italic;">Nota: Se consideran presentes cuando se alcanza o supera el número mínimo de respuestas afirmativas para cada escala.</p>
+      </div>
+    `;
+
+    return html;
+  },
+
+  /**
+   * Generar reporte MMPI-2 con gráfica de 13 escalas
+   */
+  generarReporteMMPI2(prueba, subescalas) {
+    const escalasInfo = [
+      { id: 'L', nombre: 'L — Mentira', tipo: 'Validez' },
+      { id: 'F', nombre: 'F — Infrecuencia', tipo: 'Validez' },
+      { id: 'K', nombre: 'K — Corrección', tipo: 'Validez' },
+      { id: 'Hs', nombre: 'Hs — Hipocondría', tipo: 'Clínica' },
+      { id: 'D', nombre: 'D — Depresión', tipo: 'Clínica' },
+      { id: 'Hy', nombre: 'Hy — Histeria', tipo: 'Clínica' },
+      { id: 'Pd', nombre: 'Pd — Des. Psicopática', tipo: 'Clínica' },
+      { id: 'Mf', nombre: 'Mf — Masc./Fem.', tipo: 'Clínica' },
+      { id: 'Pa', nombre: 'Pa — Paranoia', tipo: 'Clínica' },
+      { id: 'Pt', nombre: 'Pt — Psicastenia', tipo: 'Clínica' },
+      { id: 'Sc', nombre: 'Sc — Esquizofrenia', tipo: 'Clínica' },
+      { id: 'Ma', nombre: 'Ma — Hipomanía', tipo: 'Clínica' },
+      { id: 'Si', nombre: 'Si — Introversión', tipo: 'Clínica' }
+    ];
+
+    const data = typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data || {};
+    const valoresPaciente = escalasInfo.map(e => Number(data[e.id]) || 0);
+    const valoresReferencia = Array(13).fill(50); // T-score de referencia es 50
+
+    let html = `
+      <!-- GRÁFICO MMPI-2 -->
+      <div style="margin: 4px 0; padding: 4px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: #333; page-break-inside: avoid;" class="reporte-analisis">
+        <h4 style="color: #333; font-size: 9px; margin: 0 0 3px 0; font-weight: bold;">ANÁLISIS: MMPI-2 (13 Escalas)</h4>
+        <div style="position: relative; width: 100%; height: 320px;">
+          <canvas id="chartReporte" style="width: 100%; height: 100%;"></canvas>
+        </div>
+      </div>
+
+      <!-- TABLA DE ESCALAS MMPI-2 -->
+      <div style="margin: 4px 0; padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: #333;">
+        <h4 style="color: #333; font-size: 9px; margin: 0 0 6px 0; font-weight: bold;">ESCALAS MMPI-2</h4>
+        <table style="width: 100%; border-collapse: collapse; font-size: 7px;">
+          <tr style="background: #2c5aa0; color: white;">
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">Escala</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">T-Score</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">Ref.</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: left; font-weight: bold;">Descripción</th>
+          </tr>`;
+
+    escalasInfo.forEach((escala, idx) => {
+      const bgColor = idx % 2 === 0 ? '#f9f9f9' : 'white';
+      const tScore = Number(data[escala.id]) || 0;
+      const diferencia = tScore - 50;
+      const diferenciaStyle = diferencia > 10 ? 'color: #e74c3c; font-weight: bold;' : diferencia < -10 ? 'color: #3498db; font-weight: bold;' : '';
+
+      html += `<tr style="background: ${bgColor};">
+        <td style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">${escala.id}</td>
+        <td style="border: 1px solid #999; padding: 3px; text-align: center; ${diferenciaStyle}">${tScore}</td>
+        <td style="border: 1px solid #999; padding: 3px; text-align: center;">50</td>
+        <td style="border: 1px solid #999; padding: 3px; text-align: left;">${escala.nombre} (${escala.tipo})</td>
+      </tr>`;
+    });
+
+    html += `</table>
+        <p style="margin: 4px 0 0 0; font-size: 6px; color: #666; font-style: italic;">Nota: T-scores < 45 o > 55 indican desviación significativa de la media poblacional (T=50).</p>
       </div>
     `;
 
