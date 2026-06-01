@@ -1903,12 +1903,11 @@ const app = {
    * Generar reporte ISRA con gráfico de perfil y tabla comparativa
    */
   generarReporteISRA(prueba, subescalas) {
-    // Obtener respuestas y calcular totales
-    const respuestas = app.israState._respuestas || {};
-    const totalC = respuestas.C ? respuestas.C.reduce((a, b) => a + (Number(b) || 0), 0) : 0;
-    const totalF = respuestas.F ? respuestas.F.reduce((a, b) => a + (Number(b) || 0), 0) : 0;
-    const totalM = respuestas.M ? respuestas.M.reduce((a, b) => a + (Number(b) || 0), 0) : 0;
-    const totalT = totalC + totalF + totalM;
+    // Obtener totales desde subescalas (que vienen de la BD)
+    const totalC = (subescalas?.C?.total) || (prueba.subescalas?.C?.total) || 0;
+    const totalF = (subescalas?.F?.total) || (prueba.subescalas?.F?.total) || 0;
+    const totalM = (subescalas?.M?.total) || (prueba.subescalas?.M?.total) || 0;
+    const totalT = prueba.total || (totalC + totalF + totalM) || 0;
 
     // Determinar sexo del paciente
     const sexo = (this.pacienteActivo?.sexo || 'mujeres').toLowerCase().includes('hombre') ? 'varones' : 'mujeres';
