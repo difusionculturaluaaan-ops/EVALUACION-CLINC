@@ -61,13 +61,9 @@
       <span class="icon">😔</span>
       <span class="label">Hamilton (HAM-D)</span>
     </button>
-    <button class="nav-item" data-page="mmpi2" onclick="app.iniciarTestConPaciente('mmpi2')">
+    <button class="nav-item" data-page="mmpi" onclick="app.iniciarTestConPaciente('mmpi')">
       <span class="icon">🧠</span>
-      <span class="label">MMPI-2</span>
-    </button>
-    <button class="nav-item" data-page="mmpi2rf" onclick="app.iniciarTestConPaciente('mmpi2rf')">
-      <span class="icon">📋</span>
-      <span class="label">MMPI-2-RF (338 ítems)</span>
+      <span class="label">MMPI-2 (RF + T-scores)</span>
     </button>
     <button class="nav-item" data-page="isra" onclick="app.iniciarTestConPaciente('isra')">
       <span class="icon">🧠</span>
@@ -333,38 +329,52 @@
     </div>
   </section>
 
-  <!-- Página: MMPI-2 -->
-  <section id="page-mmpi2" class="page">
+  <!-- Página: MMPI-2 Unificado (RF + T-scores) -->
+  <section id="page-mmpi" class="page">
     <div class="test-page">
       <div class="test-header">
         <h2>MMPI-2 (Inventario Multifásico de Personalidad de Minnesota)</h2>
-        <p class="help-text">Ingresa los T-scores para cada escala. El MMPI-2 completo debe administrarse en contexto clínico formal.</p>
-      </div>
-      <div id="mmpi-container" class="mmpi-grid"></div>
-      <button type="button" class="btn btn-primary btn-lg" onclick="app.guardarPrueba('MMPI2')">
-        Guardar Perfil MMPI-2
-      </button>
-    </div>
-  </section>
+        <p style="font-size: 12px; color: #666; margin: 8px 0;">Paso 1: Contesta los 338 ítems del MMPI-2-RF → Paso 2: Valida los T-scores</p>
 
-  <!-- Página: MMPI-2-RF (338 Items) -->
-  <section id="page-mmpi2rf" class="page">
-    <div class="test-page">
-      <div class="test-header">
-        <h2>MMPI-2-RF (Forma Reestructurada - 338 Items)</h2>
-        <p class="help-text">Responde cada pregunta con <strong>Verdadero (V)</strong> o <strong>Falso (F)</strong>. Este test requiere administración formal en contexto clínico.</p>
-        <div style="margin-top: 8px; font-size: 12px; color: #666;">
-          <p id="mmpi2rf-counter" style="margin: 0;">Progreso: 0 / 338</p>
+        <!-- Tabs para seleccionar sección -->
+        <div class="test-tabs" style="margin: 12px 0; border-bottom: 2px solid #ddd;">
+          <button type="button" class="tab-btn" id="tab-mmpi-rf" onclick="app.cambiarSeccionMMPI('RF')" style="padding: 10px 20px; border: none; background: none; cursor: pointer; font-weight: bold; color: #2c5aa0; border-bottom: 3px solid #2c5aa0;">📋 MMPI-2-RF (Items)</button>
+          <button type="button" class="tab-btn" id="tab-mmpi-scores" onclick="app.cambiarSeccionMMPI('SCORES')" style="padding: 10px 20px; border: none; background: none; cursor: pointer; font-weight: bold; color: #999;">📊 MMPI-2 (T-Scores)</button>
         </div>
-        <div style="width: 100%; height: 8px; background: #eee; border-radius: 4px; margin-top: 4px; overflow: hidden;">
-          <div id="mmpi2rf-progress" style="width: 0%; height: 100%; background: #27ae60; transition: width 0.3s;"></div>
+
+        <!-- Progreso para RF -->
+        <div id="mmpi-rf-progress-container" style="margin-top: 8px; font-size: 12px; color: #666;">
+          <p id="mmpi2rf-counter" style="margin: 0;">Progreso: 0 / 338</p>
+          <div style="width: 100%; height: 8px; background: #eee; border-radius: 4px; margin-top: 4px; overflow: hidden;">
+            <div id="mmpi2rf-progress" style="width: 0%; height: 100%; background: #27ae60; transition: width 0.3s;"></div>
+          </div>
         </div>
       </div>
-      <div id="mmpi2rf-container" class="test-items-container"></div>
-      <div style="margin-top: 20px; text-align: center;">
-        <button type="button" class="btn btn-primary btn-lg" onclick="app.guardarPrueba('MMPI2RF')">
-          Guardar Respuestas MMPI-2-RF
-        </button>
+
+      <!-- Sección 1: MMPI-2-RF (Items) -->
+      <div id="mmpi-rf-section" style="display: block;">
+        <div id="mmpi2rf-container" class="test-items-container"></div>
+        <div style="margin-top: 20px; text-align: center;">
+          <button type="button" class="btn btn-primary" onclick="app.cambiarSeccionMMPI('SCORES')" style="padding: 12px 30px;">
+            Siguiente: Validar T-scores →
+          </button>
+        </div>
+      </div>
+
+      <!-- Sección 2: MMPI-2 (T-scores) -->
+      <div id="mmpi-scores-section" style="display: none;">
+        <p style="font-size: 11px; color: #666; margin: 8px 0; padding: 8px; background: #f0f7ff; border-left: 3px solid #2c5aa0;">
+          <strong>Los T-scores se calculan automáticamente</strong> a partir de las respuestas del MMPI-2-RF. Puedes revisarlos y ajustarlos si necesario.
+        </p>
+        <div id="mmpi-container" class="mmpi-grid"></div>
+        <div style="margin-top: 20px; text-align: center;">
+          <button type="button" class="btn btn-default" onclick="app.cambiarSeccionMMPI('RF')" style="padding: 12px 30px; margin-right: 10px;">
+            ← Anterior: Items
+          </button>
+          <button type="button" class="btn btn-primary btn-lg" onclick="app.guardarPrueba('MMPI')">
+            Guardar Evaluación MMPI-2 Completa
+          </button>
+        </div>
       </div>
     </div>
   </section>
