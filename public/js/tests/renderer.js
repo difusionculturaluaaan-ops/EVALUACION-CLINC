@@ -216,7 +216,7 @@ const testRenderer = {
     container.innerHTML = items.map((texto, i) => `
       <div class="test-item" data-item="${i}">
         <div class="test-item-text">
-          <span class="test-item-number">${i + 1}.</span> ${texto}
+          ${texto}
         </div>
         <div class="opciones-binarias">
           <label class="opcion-label">
