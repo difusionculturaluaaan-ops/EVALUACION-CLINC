@@ -10,6 +10,40 @@ const app = {
     'HAMILTON': tests_hamilton,
     'MMPI2': tests_mmpi2,
     'TDS': tests_tds,
+    'ISRA': {
+      nombre: 'ISRA (Cognitivo + Fisiológico + Motor)',
+      tipo: 'ISRA',
+      items: [], // Placeholder
+      init() { app.iniciarISRA('C'); },
+      obtenerRespuestas() {
+        const C = app.obtenerRespuestasISRA(tests_isra.items, 'isra-c');
+        const F = app.obtenerRespuestasISRA(tests_isra_f.items, 'isra-f');
+        const M = app.obtenerRespuestasISRA(tests_isra_m.items, 'isra-m');
+        return { C, F, M };
+      },
+      validar() {
+        const respuestas = this.obtenerRespuestas();
+        const errores = [];
+        if (!respuestas.C || respuestas.C.filter(r => r !== null).length < tests_isra.items.length) errores.push('Sección C incompleta');
+        if (!respuestas.F || respuestas.F.filter(r => r !== null).length < tests_isra_f.items.length) errores.push('Sección F incompleta');
+        if (!respuestas.M || respuestas.M.filter(r => r !== null).length < tests_isra_m.items.length) errores.push('Sección M incompleta');
+        return errores;
+      },
+      calcular() {
+        const respuestas = this.obtenerRespuestas();
+        const totalC = respuestas.C ? respuestas.C.reduce((a, b) => a + (Number(b) || 0), 0) : 0;
+        const totalF = respuestas.F ? respuestas.F.reduce((a, b) => a + (Number(b) || 0), 0) : 0;
+        const totalM = respuestas.M ? respuestas.M.reduce((a, b) => a + (Number(b) || 0), 0) : 0;
+        const total = totalC + totalF + totalM;
+        return {
+          total,
+          datos: [totalC, totalF, totalM],
+          C: { total: totalC, items: respuestas.C },
+          F: { total: totalF, items: respuestas.F },
+          M: { total: totalM, items: respuestas.M }
+        };
+      }
+    },
     'ISRA_C': tests_isra,
     'ISRA_F': tests_isra_f,
     'ISRA_M': tests_isra_m,
@@ -24,12 +58,18 @@ const app = {
     'hamilton': 'HAMILTON',
     'mmpi2': 'MMPI2',
     'tds': 'TDS',
-    'isra-c': 'ISRA_C',
-    'isra-f': 'ISRA_F',
-    'isra-m': 'ISRA_M',
+    'isra': 'ISRA',
     'pclr': 'PCLR',
     'egep5': 'EGEP5',
     'scid2': 'SCID2'
+  },
+
+  // Estado actual del ISRA
+  israState: {
+    seccionActual: 'C', // C, F, M
+    datosC: null,
+    datosF: null,
+    datosM: null
   },
 
   /**
@@ -387,6 +427,112 @@ const app = {
         document.getElementById('f-nombre')?.focus();
       }, 300);
     }
+  },
+
+  /**
+   * Iniciar ISRA en una sección específica (C, F, M)
+   */
+  iniciarISRA(seccion) {
+    this.israState.seccionActual = seccion;
+    this.mostrarSeccionISRA(seccion);
+  },
+
+  /**
+   * Mostrar una sección de ISRA
+   */
+  mostrarSeccionISRA(seccion) {
+    // Ocultar todas las secciones
+    document.getElementById('isra-section-c')?.style.display = 'none';
+    document.getElementById('isra-section-f')?.style.display = 'none';
+    document.getElementById('isra-section-m')?.style.display = 'none';
+
+    // Mostrar la sección actual
+    const sectionEl = document.getElementById(`isra-section-${seccion.toLowerCase()}`);
+    if (sectionEl) sectionEl.style.display = 'block';
+
+    // Actualizar tabs
+    document.getElementById('tab-isra-c')?.style.color = seccion === 'C' ? '#2c5aa0' : '#999';
+    document.getElementById('tab-isra-c')?.style.borderBottomColor = seccion === 'C' ? '#2c5aa0' : 'transparent';
+    document.getElementById('tab-isra-f')?.style.color = seccion === 'F' ? '#2c5aa0' : '#999';
+    document.getElementById('tab-isra-f')?.style.borderBottomColor = seccion === 'F' ? '#2c5aa0' : 'transparent';
+    document.getElementById('tab-isra-m')?.style.color = seccion === 'M' ? '#2c5aa0' : '#999';
+    document.getElementById('tab-isra-m')?.style.borderBottomColor = seccion === 'M' ? '#2c5aa0' : 'transparent';
+
+    // Actualizar botones de navegación
+    const btnPrev = document.getElementById('isra-prev-btn');
+    const btnNext = document.getElementById('isra-next-btn');
+    const btnFinish = document.getElementById('isra-finish-btn');
+
+    if (seccion === 'C') {
+      btnPrev.style.display = 'none';
+      btnNext.style.display = 'block';
+      btnFinish.style.display = 'none';
+    } else if (seccion === 'F') {
+      btnPrev.style.display = 'block';
+      btnNext.style.display = 'block';
+      btnFinish.style.display = 'none';
+    } else if (seccion === 'M') {
+      btnPrev.style.display = 'block';
+      btnNext.style.display = 'none';
+      btnFinish.style.display = 'block';
+    }
+
+    // Renderizar items de la sección
+    const tests = {
+      'C': tests_isra,
+      'F': tests_isra_f,
+      'M': tests_isra_m
+    };
+    const testObj = tests[seccion];
+    const prefix = `isra-${seccion.toLowerCase()}`;
+
+    if (testObj && testObj.items) {
+      testRenderer.renderLikert04(`isra-container`, testObj.items, prefix);
+    }
+  },
+
+  /**
+   * Cambiar a una sección de ISRA desde las tabs
+   */
+  cambiarSeccionISRA(seccion) {
+    this.iniciarISRA(seccion);
+  },
+
+  /**
+   * Ir a la siguiente sección de ISRA
+   */
+  irSeccionISRASiguiente() {
+    const actual = this.israState.seccionActual;
+    if (actual === 'C') {
+      this.iniciarISRA('F');
+    } else if (actual === 'F') {
+      this.iniciarISRA('M');
+    }
+  },
+
+  /**
+   * Ir a la sección anterior de ISRA
+   */
+  irSeccionISRAAnterior() {
+    const actual = this.israState.seccionActual;
+    if (actual === 'M') {
+      this.iniciarISRA('F');
+    } else if (actual === 'F') {
+      this.iniciarISRA('C');
+    }
+  },
+
+  /**
+   * Obtener respuestas de ISRA para una sección
+   */
+  obtenerRespuestasISRA(items, prefix) {
+    if (!items || items.length === 0) return [];
+    const data = [];
+    for (let i = 0; i < items.length; i++) {
+      const sel = document.querySelector(`input[name="${prefix}_r${i}"]:checked`);
+      data.push(sel ? parseInt(sel.value) : null);
+    }
+    return data;
   },
 
   /**
