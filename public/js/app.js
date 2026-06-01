@@ -442,21 +442,33 @@ const app = {
    */
   mostrarSeccionISRA(seccion) {
     // Ocultar todas las secciones
-    document.getElementById('isra-section-c')?.style.display = 'none';
-    document.getElementById('isra-section-f')?.style.display = 'none';
-    document.getElementById('isra-section-m')?.style.display = 'none';
+    const sC = document.getElementById('isra-section-c');
+    const sF = document.getElementById('isra-section-f');
+    const sM = document.getElementById('isra-section-m');
+    if (sC) sC.style.display = 'none';
+    if (sF) sF.style.display = 'none';
+    if (sM) sM.style.display = 'none';
 
     // Mostrar la sección actual
     const sectionEl = document.getElementById(`isra-section-${seccion.toLowerCase()}`);
     if (sectionEl) sectionEl.style.display = 'block';
 
     // Actualizar tabs
-    document.getElementById('tab-isra-c')?.style.color = seccion === 'C' ? '#2c5aa0' : '#999';
-    document.getElementById('tab-isra-c')?.style.borderBottomColor = seccion === 'C' ? '#2c5aa0' : 'transparent';
-    document.getElementById('tab-isra-f')?.style.color = seccion === 'F' ? '#2c5aa0' : '#999';
-    document.getElementById('tab-isra-f')?.style.borderBottomColor = seccion === 'F' ? '#2c5aa0' : 'transparent';
-    document.getElementById('tab-isra-m')?.style.color = seccion === 'M' ? '#2c5aa0' : '#999';
-    document.getElementById('tab-isra-m')?.style.borderBottomColor = seccion === 'M' ? '#2c5aa0' : 'transparent';
+    const tabC = document.getElementById('tab-isra-c');
+    const tabF = document.getElementById('tab-isra-f');
+    const tabM = document.getElementById('tab-isra-m');
+    if (tabC) {
+      tabC.style.color = seccion === 'C' ? '#2c5aa0' : '#999';
+      tabC.style.borderBottomColor = seccion === 'C' ? '#2c5aa0' : 'transparent';
+    }
+    if (tabF) {
+      tabF.style.color = seccion === 'F' ? '#2c5aa0' : '#999';
+      tabF.style.borderBottomColor = seccion === 'F' ? '#2c5aa0' : 'transparent';
+    }
+    if (tabM) {
+      tabM.style.color = seccion === 'M' ? '#2c5aa0' : '#999';
+      tabM.style.borderBottomColor = seccion === 'M' ? '#2c5aa0' : 'transparent';
+    }
 
     // Actualizar botones de navegación
     const btnPrev = document.getElementById('isra-prev-btn');
