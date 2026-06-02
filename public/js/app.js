@@ -3949,11 +3949,15 @@ const app = {
    */
   generarInterpretacion(tipoTest, total) {
     try {
+      // MMPI-2 no tiene interpretación simple (se interpreta por escalas)
+      if (tipoTest === 'MMPI2' || tipoTest === 'MMPI') {
+        return null;
+      }
+
       // Mapeo de tipos de test a métodos de interpretación
       const mapeoInterpretacion = {
         'HAMILTON': 'hamD17',
         'SCL90R': 'scl90R',
-        'MMPI2': 'mmpi2',
         'ISRA': 'isra',
         'TDS': 'tds',
         'PCLR': 'pclR',
