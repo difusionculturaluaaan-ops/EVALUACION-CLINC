@@ -491,6 +491,18 @@ const app = {
   /**
    * Iniciar un test - crear/seleccionar paciente primero
    */
+  /**
+   * Abrir MMPI-2 PRO con paciente seleccionado
+   */
+  abrirMMPI2Pro() {
+    if (!this.pacienteActivo) {
+      this.mostrarToast('⚠️ Selecciona un paciente primero', 'warning');
+      return;
+    }
+    // Pasar paciente_id en URL
+    window.location.href = `/mmpi-pro.html?paciente_id=${this.pacienteActivo.id}`;
+  },
+
   iniciarTestConPaciente(pageId) {
     if (this.pacienteActivo) {
       // Si hay paciente activo, ir directamente al test

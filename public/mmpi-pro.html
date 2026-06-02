@@ -661,6 +661,7 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
   <div id="results-content" style="display:none">
     <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
       <button class="btn btn-primary" onclick="generarPDF()">📥 Descargar PDF Completo</button>
+      <button class="btn btn-primary" id="btn-guardar-expediente" onclick="guardarEnExpediente()" style="background:#27ae60">💾 Guardar en Expediente</button>
     </div>
 
     <div class="validity-grid" id="validity-grid"></div>
@@ -1444,6 +1445,95 @@ function handleImport(evt) {
   };
   reader.readAsText(file);
 }
+
+// ===== INTEGRACIÓN CON EXPEDIENTE =====
+let pacienteIdActual = null;
+
+function getPacienteIdFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('paciente_id');
+}
+
+async function guardarEnExpediente() {
+  const pacienteId = pacienteIdActual;
+
+  if (!pacienteId) {
+    alert('Error: No hay paciente seleccionado. Por favor, accede desde la app principal.');
+    return;
+  }
+
+  if (!calcResults || calcResults.length === 0) {
+    alert('⚠️ Primero calcula los resultados antes de guardar.');
+    return;
+  }
+
+  // Construir objeto de subescalas como lo espera la API
+  const subescalas = {
+    subescalas: {}
+  };
+
+  calcResults.forEach(result => {
+    subescalas.subescalas[result.abbr] = {
+      pd: result.pd,
+      t: result.t,
+      media: result.t  // Para compatibilidad con gráficos
+    };
+  });
+
+  // Guardar en API
+  const btn = document.getElementById('btn-guardar-expediente');
+  const btnOriginalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '⏳ Guardando...';
+
+  try {
+    const response = await fetch('/api/pruebas', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+      },
+      body: JSON.stringify({
+        paciente_id: pacienteId,
+        tipo: 'MMPI2',
+        data: responses.slice(1),  // Copiar respuestas sin el índice 0
+        total: calcResults.reduce((sum, r) => sum + r.pd, 0),
+        subescalas: subescalas
+      })
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.error || `HTTP ${response.status}`);
+    }
+
+    const result = await response.json();
+    alert(`✅ Test guardado en el expediente de ${result.paciente?.nombre || 'Paciente'}`);
+    btn.textContent = '✅ Guardado';
+
+    // Redirigir a la app principal después de 2 segundos
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 2000);
+
+  } catch (error) {
+    console.error('Error al guardar:', error);
+    alert(`❌ Error al guardar: ${error.message}`);
+    btn.disabled = false;
+    btn.textContent = btnOriginalText;
+  }
+}
+
+// Inicializar paciente_id desde URL
+window.addEventListener('load', () => {
+  pacienteIdActual = getPacienteIdFromURL();
+
+  // Si hay paciente_id, mostrar que está conectado
+  if (pacienteIdActual) {
+    const btn = document.getElementById('btn-guardar-expediente');
+    if (btn) btn.style.display = 'block';
+  }
+});
 
 const ITEMS_PER_PAGE = 24;
 let currentTestPage = 0;
