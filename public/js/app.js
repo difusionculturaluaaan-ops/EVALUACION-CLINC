@@ -3945,6 +3945,28 @@ const app = {
   },
 
   /**
+   * Abrir reporte de una prueba específica
+   */
+  async abrirReportePrueba(pruebaId) {
+    try {
+      const response = await fetch(`/api/pruebas/${pruebaId}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
+      });
+
+      if (!response.ok) {
+        this.mostrarToast('Error al cargar el reporte', 'error');
+        return;
+      }
+
+      const prueba = await response.json();
+      await this.mostrarReporteDetallado(prueba, this.pacienteActivo);
+    } catch (error) {
+      console.error('Error al abrir reporte:', error);
+      this.mostrarToast('Error al cargar el reporte', 'error');
+    }
+  },
+
+  /**
    * Generar interpretación basada en el tipo de test y puntuación
    */
   generarInterpretacion(tipoTest, total) {
@@ -4056,7 +4078,7 @@ const app = {
           </div>
 
           <div class="estudio-actions">
-            <button class="btn-ver-reporte" onclick="app.mostrarReporteDetallado(${JSON.stringify(prueba).replace(/"/g, '&quot;')}, ${JSON.stringify(this.pacienteActivo).replace(/"/g, '&quot;')})">
+            <button class="btn-ver-reporte" data-prueba-id="${prueba.id}" onclick="app.abrirReportePrueba(this.getAttribute('data-prueba-id'))">
               📋 Ver Reporte
             </button>
             ${estado === 'borrador' ? `
