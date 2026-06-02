@@ -2106,21 +2106,23 @@ const app = {
         }
       });
 
-      // Convertir a imagen estática después de renderizar
+      // Convertir a imagen estática después de renderizar (PATRÓN CONSISTENTE)
       setTimeout(() => {
         if (canvasElement.chartInstance) {
           const imagenDataUrl = canvasElement.toDataURL('image/png');
           const img = document.createElement('img');
           img.src = imagenDataUrl;
           img.style.width = '100%';
-          img.style.height = '400px';
+          img.style.height = '100%';  // Altura dinámica del contenedor
           img.style.display = 'block';
 
-          canvasElement.parentNode.replaceChild(img, canvasElement);
+          const parentElement = canvasElement.parentNode;
+          const containerHeight = parentElement.offsetHeight;
+          parentElement.replaceChild(img, canvasElement);
           canvasElement.chartInstance.destroy();
-          console.log('✓ Gráfico convertido a imagen estática');
+          console.log(`✓ Gráfico convertido a imagen (${containerHeight}px)`);
         }
-      }, 100);
+      }, 500);  // 500ms para que Chart.js termine completamente
 
       console.log('✓ Gráfica comparativa renderizada para', prueba.tipo);
     } catch (error) {
