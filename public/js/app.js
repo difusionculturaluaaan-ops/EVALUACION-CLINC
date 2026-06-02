@@ -2133,8 +2133,8 @@ const app = {
    */
   renderGraficoPerfil(prueba, subescalas) {
     try {
-      // Encontrar canvas de gráfico de perfil
-      const canvas = document.querySelector('[id^="chartPerfil"]');
+      // Encontrar canvas de gráfico de perfil (ID estático: chartPerfilComparativo)
+      const canvas = document.getElementById('chartPerfilComparativo');
       if (!canvas || typeof Chart === 'undefined') return;
 
       const testType = {
@@ -2357,7 +2357,7 @@ const app = {
       <div style="margin: 4px 0; padding: 4px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 3px; color: #333;" class="reporte-analisis">
         <h4 style="color: #333; font-size: 9px; margin: 0 0 3px 0; font-weight: bold;">Perfil de Subescalas (Paciente vs Población Normal)</h4>
         <div style="position: relative; width: 100%; height: 250px;">
-          <canvas id="chartPerfil-${Date.now()}" style="width: 100%; height: 100%;"></canvas>
+          <canvas id="chartPerfilComparativo" style="width: 100%; height: 100%;"></canvas>
         </div>
       </div>
     `;
