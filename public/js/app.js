@@ -1832,17 +1832,22 @@ const app = {
           }]
         });
 
-        // Convertir a imagen para PDF
+        // Convertir a imagen para PDF (PATRÓN CONSISTENTE)
         setTimeout(() => {
           if (canvasElement.chartInstance && canvasElement.parentNode) {
             const imgSrc = canvasElement.toDataURL('image/png');
             const img = document.createElement('img');
             img.src = imgSrc;
             img.style.width = '100%';
-            img.style.height = 'auto';
-            canvasElement.parentNode.replaceChild(img, canvasElement);
+            img.style.height = '100%';  // Altura dinámica del contenedor
+            img.style.display = 'block';
+
+            const parentElement = canvasElement.parentNode;
+            const containerHeight = parentElement.offsetHeight;
+            parentElement.replaceChild(img, canvasElement);
+            console.log(`✓ Gráfico ISRA convertido a imagen (${containerHeight}px)`);
           }
-        }, 300);
+        }, 500);  // 500ms para que Chart.js termine completamente
         return;
       }
 
@@ -1947,10 +1952,15 @@ const app = {
             const img = document.createElement('img');
             img.src = imgSrc;
             img.style.width = '100%';
-            img.style.height = 'auto';
-            canvasElement.parentNode.replaceChild(img, canvasElement);
+            img.style.height = '100%';  // Altura dinámica del contenedor
+            img.style.display = 'block';
+
+            const parentElement = canvasElement.parentNode;
+            const containerHeight = parentElement.offsetHeight;
+            parentElement.replaceChild(img, canvasElement);
+            console.log(`✓ Gráfico SCID-II convertido a imagen (${containerHeight}px)`);
           }
-        }, 400);
+        }, 500);  // 500ms para que Chart.js termine completamente
         return;
       } else if (prueba.tipo === 'MMPI2' || prueba.tipo === 'MMPI') {
         // MMPI-2: gráfico de 13 escalas con Paciente vs Referencia (T=50)
@@ -2029,10 +2039,15 @@ const app = {
             const img = document.createElement('img');
             img.src = imgSrc;
             img.style.width = '100%';
-            img.style.height = 'auto';
-            canvasElement.parentNode.replaceChild(img, canvasElement);
+            img.style.height = '100%';  // Altura dinámica del contenedor
+            img.style.display = 'block';
+
+            const parentElement = canvasElement.parentNode;
+            const containerHeight = parentElement.offsetHeight;
+            parentElement.replaceChild(img, canvasElement);
+            console.log(`✓ Gráfico MMPI-2 convertido a imagen (${containerHeight}px)`);
           }
-        }, 400);
+        }, 500);  // 500ms para que Chart.js termine completamente
         return;
       } else {
         // Fallback: promedio simple
