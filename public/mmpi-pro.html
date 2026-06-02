@@ -1268,7 +1268,7 @@ function renderResults() {
 function renderProfile() {
   const chart = document.getElementById('profile-chart');
   const MAX_T = 120, MIN_T = 20, RANGE = MAX_T - MIN_T;
-  const H = 280;
+  const H = 350;
 
   const px = t => ((t - MIN_T) / RANGE) * H;
 
@@ -1785,10 +1785,10 @@ function generarSVGGraficoParaPDF() {
   const numBars = calcResults.length;
   const barMinWidth = 36;
   const width = numBars * barMinWidth + 140;
-  const height = 480;
   const padding = { top: 35, right: 15, bottom: 65, left: 40 };
+  const chartHeight = 350;
+  const height = chartHeight + padding.top + padding.bottom;
   const chartWidth = width - padding.left - padding.right;
-  const chartHeight = height - padding.top - padding.bottom;
 
   const MAX_T = 120, MIN_T = 20, RANGE = MAX_T - MIN_T;
   const px = t => ((t - MIN_T) / RANGE) * chartHeight;
@@ -1827,7 +1827,7 @@ function generarSVGGraficoParaPDF() {
 
     const color = r.t >= 70 ? '#f85149' : r.t >= 60 ? '#e3b341' : r.t >= 45 ? '#3fb950' : '#58a6ff';
 
-    svg += `<rect x="${x}" y="${y}" width="${barActualWidth}" height="${barHeight}" fill="${color}" opacity="0.8" stroke="none"/>`;
+    svg += `<rect x="${x}" y="${y}" width="${barActualWidth}" height="${barHeight}" fill="${color}" opacity="0.85" stroke="none"/>`;
     svg += `<text x="${x + barActualWidth / 2}" y="${padding.top + chartHeight + 15}" class="bar-label">${r.abbr}</text>`;
     svg += `<text x="${x + barActualWidth / 2}" y="${y - 3}" class="bar-label" style="font-weight:bold;font-size:9px">${r.t}</text>`;
   });
