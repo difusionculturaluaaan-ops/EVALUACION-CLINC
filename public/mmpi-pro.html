@@ -1497,6 +1497,12 @@ async function guardarEnExpediente() {
       }
 
       const pacienteData = await pacienteResponse.json();
+      console.log('📦 Respuesta de crear paciente:', pacienteData);
+
+      if (!pacienteData || !pacienteData.id) {
+        throw new Error('Respuesta inválida del servidor: sin ID de paciente');
+      }
+
       pacienteId = pacienteData.id;
       btn.textContent = '⏳ Generando PDF...';
     } catch (error) {
