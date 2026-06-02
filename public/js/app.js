@@ -1623,7 +1623,7 @@ const app = {
             for (let i = 0; i < len; i++) {
               bytes[i] = binaryString.charCodeAt(i);
             }
-            const blob = new Blob([bytes.buffer], { type: 'application/pdf' });
+            const blob = new Blob([bytes], { type: 'application/pdf' });
             const blobUrl = URL.createObjectURL(blob);
 
             console.log('✅ Blob URL creado:', blobUrl);
@@ -3481,7 +3481,7 @@ const app = {
             for (let i = 0; i < len; i++) {
               bytes[i] = binaryString.charCodeAt(i);
             }
-            const blob = new Blob([bytes.buffer], { type: 'application/pdf' });
+            const blob = new Blob([bytes], { type: 'application/pdf' });
             const blobUrl = URL.createObjectURL(blob);
 
             const link = document.createElement('a');
