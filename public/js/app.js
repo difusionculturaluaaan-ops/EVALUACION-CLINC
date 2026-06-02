@@ -1637,7 +1637,7 @@ const app = {
                 <p>Tu navegador no puede mostrar PDFs. <a href="${blobUrl}" download="MMPI-2.pdf">Descargar PDF</a></p>
               </object>
             `;
-            modal.style.display = 'block';
+            modal.classList.add('active');
             console.log('✅ Modal abierto con object tag');
             return;
           } catch (error) {
