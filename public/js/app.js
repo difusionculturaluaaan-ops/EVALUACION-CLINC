@@ -3390,6 +3390,24 @@ const app = {
         return;
       }
 
+      // PARA MMPI-2: Si existe PDF guardado del micrositio, descargarlo directamente
+      if (this.pruebaActiva?.tipo === 'MMPI2' || this.pruebaActiva?.tipo === 'MMPI') {
+        const subescalas = this.pruebaActiva.subescalas;
+        const pdfFilename = subescalas?.pdf_filename || (typeof subescalas === 'string' ? JSON.parse(subescalas)?.pdf_filename : null);
+
+        if (pdfFilename) {
+          // Descargar PDF guardado del micrositio
+          const link = document.createElement('a');
+          link.href = `/pdfs/${pdfFilename}`;
+          link.download = pdfFilename;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          this.mostrarToast('Descargando PDF del micrositio...', 'success');
+          return;
+        }
+      }
+
       // Verificar si hay datos de validación profesional
       const datosGuardados = localStorage.getItem('datos_profesional');
       if (!datosGuardados && !this.datosValidacionProfesional) {
