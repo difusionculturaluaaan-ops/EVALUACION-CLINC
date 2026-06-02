@@ -2154,10 +2154,17 @@ const app = {
       // Preparar datos según tipo de test
       let datos = {};
       if (testType === 'SCL90R') {
-        // SCL-90-R: usar subescalas
+        // SCL-90-R: extraer solo las 9 escalas (sin índices globales)
         const escalas = ['SOM', 'OC', 'SI', 'DEP', 'ANX', 'HOS', 'PHOB', 'PAR', 'PSY'];
+        const subescalasData = typeof subescalas === 'string' ? JSON.parse(subescalas) : subescalas;
         escalas.forEach(escala => {
-          datos[escala] = subescalas[escala] || { media: 0 };
+          if (subescalasData.subescalas && subescalasData.subescalas[escala]) {
+            datos[escala] = subescalasData.subescalas[escala];
+          } else if (subescalasData[escala]) {
+            datos[escala] = subescalasData[escala];
+          } else {
+            datos[escala] = { media: 0 };
+          }
         });
       } else if (testType === 'MMPI2') {
         // MMPI-2: usar escalas clínicas T-scores
@@ -2716,13 +2723,13 @@ const app = {
       const { nombre, cedula, especialidad, diagnostico } = datosValidacion;
 
       return `
-        <!-- VALIDACIÓN PROFESIONAL -->
+        <!-- VALIDACIÓN -->
         <div id="validacion-profesional-section" style="background: #f0f4f8; padding: 8px; margin-top: 15px; margin-bottom: 10px; border: 1px solid #2c5aa0; border-radius: 3px;">
-          <h3 style="margin: 0 0 6px 0; color: #2c5aa0; font-size: 12px; font-weight: bold; border-bottom: 1px solid #2c5aa0; padding-bottom: 4px; text-decoration: underline;">VALIDACIÓN PROFESIONAL</h3>
+          <h3 style="margin: 0 0 6px 0; color: #2c5aa0; font-size: 12px; font-weight: bold; border-bottom: 1px solid #2c5aa0; padding-bottom: 4px; text-decoration: underline;">VALIDACIÓN</h3>
 
           <table style="width: 100%; font-size: 13px; border-collapse: collapse; line-height: 1.4; table-layout: fixed;">
             <tr>
-              <td style="width: 30%; padding: 3px; color: #000; font-weight: bold; word-wrap: break-word;"><strong>Profesional:</strong></td>
+              <td style="width: 30%; padding: 3px; color: #000; font-weight: bold; word-wrap: break-word;"><strong>Evaluador:</strong></td>
               <td style="padding: 3px; color: #000; word-wrap: break-word;">${nombre || '—'}</td>
               <td style="width: 20%; padding: 3px; color: #000; font-weight: bold; word-wrap: break-word;"><strong>Cédula:</strong></td>
               <td style="padding: 3px; color: #000; word-wrap: break-word;">${cedula || '—'}</td>
@@ -2738,8 +2745,8 @@ const app = {
           </table>
 
           <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid #ddd; text-align: center;">
-            <p style="margin: 0; font-size: 9px; color: #666;">Validado profesionalmente</p>
-            <p style="margin: 2px 0 0 0; font-size: 8px; color: #999;">El profesional se responsabiliza profesionalmente del contenido de este reporte</p>
+            <p style="margin: 0; font-size: 9px; color: #666;">Validado</p>
+            <p style="margin: 2px 0 0 0; font-size: 8px; color: #999;">El evaluador se responsabiliza del contenido de este reporte</p>
           </div>
         </div>
       `;
@@ -3306,8 +3313,8 @@ const app = {
           </table>
 
           <div class="validation">
-            <h3 style="margin-top: 0;">✓ VALIDACIÓN PROFESIONAL</h3>
-            <p><strong>Profesional:</strong> ${datosValidacion.nombre}</p>
+            <h3 style="margin-top: 0;">✓ VALIDACIÓN</h3>
+            <p><strong>Evaluador:</strong> ${datosValidacion.nombre}</p>
             <p><strong>Cédula/Licencia:</strong> ${datosValidacion.cedula}</p>
             <p><strong>Especialidad:</strong> ${datosValidacion.especialidad}</p>
             <p><strong>Diagnóstico/Conclusiones:</strong></p>
