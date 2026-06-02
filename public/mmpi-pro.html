@@ -1477,6 +1477,11 @@ async function guardarEnExpediente() {
 
     try {
       // Crear nuevo paciente/expediente
+      // Extraer edad (número) del campo combinado "32 años · Femenino"
+      const edadText = document.getElementById('inp-edad').value || '';
+      const edadMatch = edadText.match(/^\d+/);
+      const edad = edadMatch ? parseInt(edadMatch[0]) : null;
+
       const pacienteResponse = await fetch('/api/pacientes', {
         method: 'POST',
         headers: {
@@ -1485,7 +1490,7 @@ async function guardarEnExpediente() {
         },
         body: JSON.stringify({
           nombre: nombre,
-          edad: document.getElementById('inp-edad').value || null,
+          edad: edad,
           sexo: null,
           estado_civil: null,
           medicamentos: document.getElementById('inp-cargo').value || null,
