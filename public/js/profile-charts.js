@@ -12,8 +12,7 @@ const profileCharts = {
   configs: {
     SCL90R: {
       title: 'Perfil SCL-90-R (Subescalas)',
-      labels: ['Somatización', 'Obsesión-Compulsión', 'Sensibilidad Interp.', 'Depresión', 'Ansiedad',
-               'Hostilidad', 'Ansiedad Fóbica', 'Ideación Paranoide', 'Psicoticismo'],
+      labels: ['SOM', 'OC', 'SI', 'DEP', 'ANS', 'HOST', 'AF', 'IP', 'PSI'],
       yMax: 4,
       yLabel: 'Puntuación Media',
       colorPaciente: '#dc2626',
