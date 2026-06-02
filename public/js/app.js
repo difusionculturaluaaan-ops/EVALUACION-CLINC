@@ -2536,69 +2536,18 @@ const app = {
   },
 
   /**
-   * Generar reporte MMPI-2 con gráfica de 13 escalas
+   * MMPI-2 usa el micrositio (mmpi-pro.html)
+   * El PDF se genera en el micrositio y se guarda en el expediente
+   * No generar HTML aquí - los datos se almacenan solo en la BD
    */
   generarReporteMMPI2(prueba, subescalas) {
-    const escalasInfo = [
-      { id: 'L', nombre: 'L — Mentira', tipo: 'Validez' },
-      { id: 'F', nombre: 'F — Infrecuencia', tipo: 'Validez' },
-      { id: 'K', nombre: 'K — Corrección', tipo: 'Validez' },
-      { id: 'Hs', nombre: 'Hs — Hipocondría', tipo: 'Clínica' },
-      { id: 'D', nombre: 'D — Depresión', tipo: 'Clínica' },
-      { id: 'Hy', nombre: 'Hy — Histeria', tipo: 'Clínica' },
-      { id: 'Pd', nombre: 'Pd — Des. Psicopática', tipo: 'Clínica' },
-      { id: 'Mf', nombre: 'Mf — Masc./Fem.', tipo: 'Clínica' },
-      { id: 'Pa', nombre: 'Pa — Paranoia', tipo: 'Clínica' },
-      { id: 'Pt', nombre: 'Pt — Psicastenia', tipo: 'Clínica' },
-      { id: 'Sc', nombre: 'Sc — Esquizofrenia', tipo: 'Clínica' },
-      { id: 'Ma', nombre: 'Ma — Hipomanía', tipo: 'Clínica' },
-      { id: 'Si', nombre: 'Si — Introversión', tipo: 'Clínica' }
-    ];
-
-    const data = typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data || {};
-    const valoresPaciente = escalasInfo.map(e => Number(data[e.id]) || 0);
-    const valoresReferencia = Array(13).fill(50); // T-score de referencia es 50
-
-    let html = `
-      <!-- GRÁFICO MMPI-2 -->
-      <div style="margin: 4px 0; padding: 4px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: #333; page-break-inside: avoid;" class="reporte-analisis">
-        <h4 style="color: #333; font-size: 9px; margin: 0 0 3px 0; font-weight: bold;">ANÁLISIS: MMPI-2 (13 Escalas)</h4>
-        <div style="position: relative; width: 100%; height: 320px;">
-          <canvas id="chartReporte" style="width: 100%; height: 100%;"></canvas>
-        </div>
-      </div>
-
-      <!-- TABLA DE ESCALAS MMPI-2 -->
-      <div style="margin: 4px 0; padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: #333;">
-        <h4 style="color: #333; font-size: 9px; margin: 0 0 6px 0; font-weight: bold;">ESCALAS MMPI-2</h4>
-        <table style="width: 100%; border-collapse: collapse; font-size: 7px;">
-          <tr style="background: #2c5aa0; color: white;">
-            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">Escala</th>
-            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">T-Score</th>
-            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">Ref.</th>
-            <th style="border: 1px solid #999; padding: 3px; text-align: left; font-weight: bold;">Descripción</th>
-          </tr>`;
-
-    escalasInfo.forEach((escala, idx) => {
-      const bgColor = idx % 2 === 0 ? '#f9f9f9' : 'white';
-      const tScore = Number(data[escala.id]) || 0;
-      const diferencia = tScore - 50;
-      const diferenciaStyle = diferencia > 10 ? 'color: #e74c3c; font-weight: bold;' : diferencia < -10 ? 'color: #3498db; font-weight: bold;' : '';
-
-      html += `<tr style="background: ${bgColor};">
-        <td style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">${escala.id}</td>
-        <td style="border: 1px solid #999; padding: 3px; text-align: center; ${diferenciaStyle}">${tScore}</td>
-        <td style="border: 1px solid #999; padding: 3px; text-align: center;">50</td>
-        <td style="border: 1px solid #999; padding: 3px; text-align: left;">${escala.nombre} (${escala.tipo})</td>
-      </tr>`;
-    });
-
-    html += `</table>
-        <p style="margin: 4px 0 0 0; font-size: 6px; color: #666; font-style: italic;">Nota: T-scores < 45 o > 55 indican desviación significativa de la media poblacional (T=50).</p>
+    // Placeholder: MMPI-2 se maneja completamente en el micrositio
+    return `
+      <div style="margin: 10px 0; padding: 15px; background: #e8f4f8; border-left: 4px solid #2c5aa0; border-radius: 3px; color: #333;">
+        <p style="margin: 0; font-size: 10px; font-weight: bold;">📋 MMPI-2 Forma Reestructurada (RF)</p>
+        <p style="margin: 5px 0 0 0; font-size: 9px;">Para ver los resultados completos con gráfico, abre el test desde el micrositio.</p>
       </div>
     `;
-
-    return html;
   },
 
   /**
