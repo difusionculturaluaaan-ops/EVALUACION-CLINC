@@ -1642,7 +1642,7 @@ const app = {
         <!-- RESULTADOS + INTERPRETACIÓN (AGRUPADOS) -->
         <div style="page-break-inside: avoid; margin-bottom: 10px;">
           <!-- Gráfico PCL-R -->
-          <div style="margin-bottom: 10px; font-size: 9px;">
+          <div style="margin-bottom: 20px; font-size: 9px;">
             ${prueba.tipo === 'SCL90R' ? this.generarReporteSCL(prueba, subescalas) : prueba.tipo === 'PCLR' ? this.generarReportePCLR(prueba, subescalas) : prueba.tipo === 'SCID2' ? this.generarReporteSCID2(prueba, subescalas) : (prueba.tipo === 'MMPI2' || prueba.tipo === 'MMPI') ? this.generarReporteMMPI2(prueba, subescalas) : prueba.tipo === 'ISRA' ? this.generarReporteISRA(prueba, subescalas) : this.generarReporteGenerico(prueba, subescalas)}
           </div>
 
@@ -1658,7 +1658,7 @@ const app = {
         </div>
 
         <!-- FOOTER -->
-        <div style="border-top: 1px solid #ddd; padding-top: 6px; margin-top: 10px; font-size: 7px; color: #999; text-align: center;">
+        <div style="padding-top: 4px; margin-top: 6px; font-size: 7px; color: #999; text-align: center;">
           <p style="margin: 0;">Evaluación Clínica Psicológica | Generado: ${new Date().toLocaleDateString('es-CO')}</p>
         </div>
       </div>
@@ -2184,6 +2184,26 @@ const app = {
       // Renderizar gráfico de perfil
       if (profileCharts && canvas) {
         profileCharts.crearGraficoPerfil(canvas.id, testType, datos);
+
+        // Convertir a imagen estática después de renderizar (PATRÓN PCL-R)
+        // Esto asegura que el gráfico se vea en el PDF
+        setTimeout(() => {
+          try {
+            const imagenDataUrl = canvas.toDataURL('image/png');
+            const img = document.createElement('img');
+            img.src = imagenDataUrl;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.display = 'block';
+
+            const parent = canvas.parentNode;
+            const containerHeight = parent.offsetHeight; // Usar altura real del contenedor
+            parent.replaceChild(img, canvas);
+            console.log(`✓ Gráfico de perfil convertido a imagen (${containerHeight}px)`);
+          } catch (convertError) {
+            console.warn('No se pudo convertir canvas a imagen:', convertError);
+          }
+        }, 500);
       }
 
     } catch (error) {
@@ -2314,8 +2334,9 @@ const app = {
     };
 
     escalasOrdenadas.forEach((escala, idx) => {
-      // Acceder a la propiedad .media del objeto subescalas
-      const valor = subescalas[escala]?.media || 0;
+      // Acceder correctamente: subescalas.subescalas (estructura anidada)
+      const subescalasData = subescalas.subescalas || subescalas;
+      const valor = subescalasData[escala]?.media || 0;
       const norma = normas[escala];
       const bgColor = '#ffffff';
       html += `<tr style="background: ${bgColor};">
@@ -2354,9 +2375,9 @@ const app = {
         </table>
       </div>
 
-      <div style="margin: 4px 0; padding: 4px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 3px; color: #333;" class="reporte-analisis">
-        <h4 style="color: #333; font-size: 9px; margin: 0 0 3px 0; font-weight: bold;">Perfil de Subescalas (Paciente vs Población Normal)</h4>
-        <div style="position: relative; width: 100%; height: 250px;">
+      <div style="margin: 4px 0 14px 0; padding: 6px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 3px; color: #333; page-break-inside: avoid;" class="reporte-analisis">
+        <h4 style="color: #333; font-size: 8px; margin: 0 0 4px 0; font-weight: bold;">Perfil de Subescalas (Paciente vs Población Normal)</h4>
+        <div style="position: relative; width: 100%; height: 260px;">
           <canvas id="chartPerfilComparativo" style="width: 100%; height: 100%;"></canvas>
         </div>
       </div>
