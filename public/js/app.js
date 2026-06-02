@@ -3378,6 +3378,9 @@ const app = {
 
       this.mostrarToast('Generando PDF...', 'info');
 
+      // ESPERAR A QUE LOS GRÁFICOS ESTÉN COMPLETAMENTE RENDERIZADOS
+      await new Promise(resolve => setTimeout(resolve, 500));
+
       // Clonar el contenido
       const elemento = contenido.cloneNode(true);
       console.log('Contenido clonado');
