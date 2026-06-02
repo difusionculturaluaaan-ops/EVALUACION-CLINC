@@ -3458,21 +3458,47 @@ const app = {
         return;
       }
 
-      // PARA MMPI-2: Si existe PDF guardado del micrositio, descargarlo directamente
+      // PARA MMPI-2: Si existe PDF guardado como base64, descargarlo desde el blob
       if (this.pruebaActiva?.tipo === 'MMPI2' || this.pruebaActiva?.tipo === 'MMPI') {
-        const subescalas = this.pruebaActiva.subescalas;
-        const pdfFilename = subescalas?.pdf_filename || (typeof subescalas === 'string' ? JSON.parse(subescalas)?.pdf_filename : null);
+        let pdfBase64 = this.pruebaActiva.pdf_base64;
 
-        if (pdfFilename) {
-          // Descargar PDF guardado del micrositio
-          const link = document.createElement('a');
-          link.href = `/pdfs/${pdfFilename}`;
-          link.download = pdfFilename;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          this.mostrarToast('Descargando PDF del micrositio...', 'success');
-          return;
+        if (!pdfBase64 && this.pruebaActiva.subescalas) {
+          let subescalas = this.pruebaActiva.subescalas;
+          if (typeof subescalas === 'string') {
+            try {
+              subescalas = JSON.parse(subescalas);
+            } catch (e) {}
+          }
+          pdfBase64 = subescalas?.pdf_base64;
+        }
+
+        if (pdfBase64) {
+          // Convertir base64 a blob y descargar
+          try {
+            const binaryString = atob(pdfBase64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+              bytes[i] = binaryString.charCodeAt(i);
+            }
+            const blob = new Blob([bytes.buffer], { type: 'application/pdf' });
+            const blobUrl = URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = `MMPI-2_${new Date().getTime()}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(blobUrl);
+
+            this.mostrarToast('✅ PDF descargado correctamente', 'success');
+            return;
+          } catch (error) {
+            console.error('Error al descargar PDF MMPI-2:', error);
+            this.mostrarToast('Error al descargar PDF', 'error');
+            return;
+          }
         }
       }
 
