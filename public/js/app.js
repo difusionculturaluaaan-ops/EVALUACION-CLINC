@@ -3451,7 +3451,7 @@ const app = {
 
       // Intentar convertir canvas a imagen de alta resolución
       try {
-        // Convertir chart principal (altura ajustada por tipo)
+        // Convertir chart principal (altura según tipo de test)
         const canvasOriginal = document.querySelector('canvas#chartReporte');
         const canvasClonado = elemento.querySelector('canvas#chartReporte');
 
@@ -3459,13 +3459,17 @@ const app = {
           const imagenDataUrl = await this.capturarCanvasAltaResolucion(canvasOriginal);
           console.log('✓ Canvas principal convertido a alta resolución');
 
+          // Detectar tipo de reporte por el contenedor
+          const containerHeight = canvasClonado.parentNode?.offsetHeight || 320;
+
+          // Usar altura real del contenedor (MMPI-2: 320px, otros: 400px, etc)
           const img = document.createElement('img');
           img.src = imagenDataUrl;
           img.style.width = '100%';
-          img.style.height = '400px';  // Altura fija para gráficos genéricos
+          img.style.height = `${containerHeight}px`;  // Usar altura real del contenedor
 
           canvasClonado.parentNode.replaceChild(img, canvasClonado);
-          console.log(`✓ Canvas principal reemplazado por imagen (400px)`);
+          console.log(`✓ Canvas principal reemplazado por imagen (${containerHeight}px)`);
         }
 
         // Convertir chart comparativo (PCL-R)
