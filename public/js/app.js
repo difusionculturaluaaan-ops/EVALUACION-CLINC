@@ -1594,12 +1594,22 @@ const app = {
       }
 
       // PARA MMPI-2: Si existe PDF guardado del micrositio, mostrar SOLO ese PDF
-      if ((prueba.tipo === 'MMPI2' || prueba.tipo === 'MMPI') &&
-          (prueba.pdf_filename || (typeof prueba.subescalas === 'string' && JSON.parse(prueba.subescalas)?.pdf_filename))) {
-        const subescalas = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas;
+      if (prueba.tipo === 'MMPI2' || prueba.tipo === 'MMPI') {
+        // Parsear subescalas (puede venir como string o como objeto)
+        let subescalas = prueba.subescalas;
+        if (typeof subescalas === 'string') {
+          try {
+            subescalas = JSON.parse(subescalas);
+          } catch (e) {
+            subescalas = {};
+          }
+        }
+
+        // Obtener pdf_filename
         const pdfFilename = prueba.pdf_filename || subescalas?.pdf_filename;
 
         if (pdfFilename) {
+          console.log('✅ Mostrando PDF MMPI-2:', pdfFilename);
           contenido.innerHTML = `
             <iframe
               src="/pdfs/${pdfFilename}"
