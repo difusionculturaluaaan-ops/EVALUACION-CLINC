@@ -3451,7 +3451,7 @@ const app = {
 
       // Intentar convertir canvas a imagen de alta resolución
       try {
-        // Convertir chart principal (CAPTURAR ALTURA REAL DEL CONTENEDOR)
+        // Convertir chart principal (altura ajustada por tipo)
         const canvasOriginal = document.querySelector('canvas#chartReporte');
         const canvasClonado = elemento.querySelector('canvas#chartReporte');
 
@@ -3462,14 +3462,13 @@ const app = {
           const img = document.createElement('img');
           img.src = imagenDataUrl;
           img.style.width = '100%';
-          img.style.height = '100%';  // Altura dinámica del contenedor
+          img.style.height = '400px';  // Altura fija para gráficos genéricos
 
-          const containerHeight = canvasClonado.parentNode?.offsetHeight || 400;
           canvasClonado.parentNode.replaceChild(img, canvasClonado);
-          console.log(`✓ Canvas principal reemplazado por imagen (${containerHeight}px)`);
+          console.log(`✓ Canvas principal reemplazado por imagen (400px)`);
         }
 
-        // Convertir chart comparativo (PCL-R) - CAPTURAR ALTURA REAL
+        // Convertir chart comparativo (PCL-R)
         const canvasComparativoOriginal = document.querySelector('canvas#chartComparativoPCLR');
         const canvasComparativoClonado = elemento.querySelector('canvas#chartComparativoPCLR');
 
@@ -3480,14 +3479,13 @@ const app = {
           const imgComparativa = document.createElement('img');
           imgComparativa.src = imagenComparativaUrl;
           imgComparativa.style.width = '100%';
-          imgComparativa.style.height = '100%';  // Altura dinámica del contenedor
+          imgComparativa.style.height = '320px';  // Altura fija para PCL-R
 
-          const containerHeight = canvasComparativoClonado.parentNode?.offsetHeight || 320;
           canvasComparativoClonado.parentNode.replaceChild(imgComparativa, canvasComparativoClonado);
-          console.log(`✓ Canvas comparativo reemplazado por imagen (${containerHeight}px)`);
+          console.log(`✓ Canvas comparativo reemplazado por imagen (320px)`);
         }
 
-        // Convertir gráfico de perfil (Paciente vs Población Normal) - CAPTURAR ALTURA REAL
+        // Convertir gráfico de perfil (Paciente vs Población Normal)
         const canvasPerfilOriginal = document.getElementById('chartPerfilComparativo');
         const canvasPerfilClonado = elemento.getElementById('chartPerfilComparativo');
 
@@ -3498,11 +3496,10 @@ const app = {
           const imgPerfil = document.createElement('img');
           imgPerfil.src = imagenPerfilUrl;
           imgPerfil.style.width = '100%';
-          imgPerfil.style.height = '100%';  // Altura dinámica del contenedor
+          imgPerfil.style.height = '260px';  // Altura fija para gráfico de perfil
 
-          const containerHeight = canvasPerfilClonado.parentNode?.offsetHeight || 260;
           canvasPerfilClonado.parentNode.replaceChild(imgPerfil, canvasPerfilClonado);
-          console.log(`✓ Canvas de perfil reemplazado por imagen (${containerHeight}px)`);
+          console.log(`✓ Canvas de perfil reemplazado por imagen (260px)`);
         } else {
           console.warn('Canvas de perfil no encontrado - original:', !!canvasPerfilOriginal, 'clonado:', !!canvasPerfilClonado);
         }
