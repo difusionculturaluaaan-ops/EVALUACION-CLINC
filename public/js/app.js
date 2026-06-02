@@ -1615,31 +1615,35 @@ const app = {
           console.log('✅ Mostrando PDF MMPI-2 desde base64');
           console.log('   Tamaño base64:', pdfBase64.length);
 
-          // Convertir base64 a blob para evitar restricciones de data: URL
+          // Crear blob desde base64 (compatible con archivos grandes)
           try {
             const binaryString = atob(pdfBase64);
-            const bytes = new Uint8Array(binaryString.length);
-            for (let i = 0; i < binaryString.length; i++) {
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
               bytes[i] = binaryString.charCodeAt(i);
             }
-            const blob = new Blob([bytes], { type: 'application/pdf' });
+            const blob = new Blob([bytes.buffer], { type: 'application/pdf' });
             const blobUrl = URL.createObjectURL(blob);
 
+            console.log('✅ Blob URL creado:', blobUrl);
+
+            // Usar <object> en lugar de <iframe> para mejor compatibilidad
             contenido.innerHTML = `
-              <div style="width: 100%; height: 85vh; background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
-                <iframe
-                  src="${blobUrl}"
-                  style="width: 100%; height: 100%; border: none;"
-                  title="PDF MMPI-2"
-                  onload="console.log('✅ PDF cargado en iframe')">
-                </iframe>
-              </div>
+              <object
+                data="${blobUrl}"
+                type="application/pdf"
+                style="width: 100%; height: 85vh; border: none;">
+                <p>Tu navegador no puede mostrar PDFs. <a href="${blobUrl}" download="MMPI-2.pdf">Descargar PDF</a></p>
+              </object>
             `;
             modal.style.display = 'block';
-            console.log('✅ Modal abierto con blob URL');
+            console.log('✅ Modal abierto con object tag');
             return;
           } catch (error) {
-            console.error('❌ Error al convertir base64 a blob:', error);
+            console.error('❌ Error al procesar PDF:', error);
+            contenido.innerHTML = '<p style="color: red; padding: 20px;">Error al cargar PDF: ' + error.message + '</p>';
+            modal.style.display = 'block';
           }
         } else {
           console.log('❌ No se encontró pdf_base64');
@@ -2611,26 +2615,27 @@ const app = {
 
     if (pdfBase64) {
       try {
-        // Convertir base64 a blob para mejor compatibilidad
+        // Convertir base64 a blob
         const binaryString = atob(pdfBase64);
-        const bytes = new Uint8Array(binaryString.length);
-        for (let i = 0; i < binaryString.length; i++) {
+        const len = binaryString.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
           bytes[i] = binaryString.charCodeAt(i);
         }
-        const blob = new Blob([bytes], { type: 'application/pdf' });
+        const blob = new Blob([bytes.buffer], { type: 'application/pdf' });
         const blobUrl = URL.createObjectURL(blob);
 
         return `
-          <iframe
-            src="${blobUrl}"
-            style="width: 100%; height: 100vh; border: none;"
-            title="PDF MMPI-2"
-            onload="console.log('✅ PDF MMPI-2 cargado')">
-          </iframe>
+          <object
+            data="${blobUrl}"
+            type="application/pdf"
+            style="width: 100%; height: 100vh; border: none;">
+            <p>Tu navegador no puede mostrar PDFs. <a href="${blobUrl}" download="MMPI-2.pdf">Descargar PDF</a></p>
+          </object>
         `;
       } catch (error) {
         console.error('Error al mostrar PDF MMPI-2:', error);
-        return `<div style="padding: 20px; color: red;">Error al cargar PDF</div>`;
+        return `<div style="padding: 20px; color: red;">Error al cargar PDF: ${error.message}</div>`;
       }
     }
 
