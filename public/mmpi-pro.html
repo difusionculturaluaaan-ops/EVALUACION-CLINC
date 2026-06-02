@@ -1486,9 +1486,8 @@ async function guardarEnExpediente() {
         body: JSON.stringify({
           nombre: nombre,
           edad: document.getElementById('inp-edad').value || null,
-          sexo: document.getElementById('inp-sexo').value || null,
-          ocupacion: document.getElementById('inp-ocupacion').value || null,
-          institucion: document.getElementById('inp-institucion').value || null
+          ocupacion: document.getElementById('inp-cargo').value || null,
+          institucion: document.getElementById('inp-inst').value || null
         })
       });
 
