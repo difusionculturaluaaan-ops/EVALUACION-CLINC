@@ -1638,6 +1638,13 @@ const app = {
               </object>
             `;
             modal.classList.add('active');
+
+            // Ocultar botón "Descargar Reporte" SOLO para MMPI-2
+            const btnDescargar = document.getElementById('btn-descargar-reporte');
+            if (btnDescargar) {
+              btnDescargar.style.display = 'none';
+            }
+
             console.log('✅ Modal abierto con object tag');
             return;
           } catch (error) {
@@ -3116,6 +3123,11 @@ const app = {
    */
   cerrarModal() {
     document.getElementById('modal-reporte')?.classList.remove('active');
+    // Mostrar botón "Descargar Reporte" nuevamente (por si estaba oculto por MMPI-2)
+    const btnDescargar = document.getElementById('btn-descargar-reporte');
+    if (btnDescargar) {
+      btnDescargar.style.display = 'block';
+    }
   },
 
   /**
