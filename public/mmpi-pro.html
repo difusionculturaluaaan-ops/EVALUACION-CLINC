@@ -1493,12 +1493,26 @@ async function guardarEnExpediente() {
         })
       });
 
+      console.log('🔍 Status de respuesta:', pacienteResponse.status, pacienteResponse.ok);
+      const pacienteText = await pacienteResponse.text();
+      console.log('📝 Texto de respuesta:', pacienteText);
+
       if (!pacienteResponse.ok) {
-        const error = await pacienteResponse.json().catch(() => ({}));
-        throw new Error(error.error || `HTTP ${pacienteResponse.status}`);
+        try {
+          const error = JSON.parse(pacienteText);
+          throw new Error(error.error || `HTTP ${pacienteResponse.status}`);
+        } catch (e) {
+          throw new Error(`HTTP ${pacienteResponse.status}: ${pacienteText}`);
+        }
       }
 
-      const pacienteData = await pacienteResponse.json();
+      let pacienteData;
+      try {
+        pacienteData = JSON.parse(pacienteText);
+      } catch (e) {
+        throw new Error(`Respuesta JSON inválida: ${pacienteText}`);
+      }
+
       console.log('📦 Respuesta de crear paciente:', pacienteData);
 
       if (!pacienteData || !pacienteData.id) {
