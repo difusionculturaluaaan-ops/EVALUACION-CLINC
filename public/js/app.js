@@ -1593,27 +1593,29 @@ const app = {
         return;
       }
 
-      // PARA MMPI-2: Si existe PDF guardado del micrositio, mostrar SOLO ese PDF
+      // PARA MMPI-2: Si existe PDF guardado como base64, mostrar SOLO ese PDF
       if (prueba.tipo === 'MMPI2' || prueba.tipo === 'MMPI') {
-        // Parsear subescalas (puede venir como string o como objeto)
-        let subescalas = prueba.subescalas;
-        if (typeof subescalas === 'string') {
-          try {
-            subescalas = JSON.parse(subescalas);
-          } catch (e) {
-            subescalas = {};
+        let pdfBase64 = prueba.pdf_base64;
+
+        // Si no está en prueba, buscar en subescalas
+        if (!pdfBase64 && prueba.subescalas) {
+          let subescalas = prueba.subescalas;
+          if (typeof subescalas === 'string') {
+            try {
+              subescalas = JSON.parse(subescalas);
+            } catch (e) {
+              subescalas = {};
+            }
           }
+          pdfBase64 = subescalas?.pdf_base64;
         }
 
-        // Obtener pdf_filename
-        const pdfFilename = prueba.pdf_filename || subescalas?.pdf_filename;
-
-        if (pdfFilename) {
-          console.log('✅ Mostrando PDF MMPI-2:', pdfFilename);
+        if (pdfBase64) {
+          console.log('✅ Mostrando PDF MMPI-2 desde base64');
           contenido.innerHTML = `
             <iframe
-              src="/pdfs/${pdfFilename}"
-              style="width: 100%; height: 85vh; border: none; border-radius: 3px;"
+              src="data:application/pdf;base64,${pdfBase64}"
+              style="width: 100%; height: 85vh; border: none;"
               title="PDF MMPI-2">
             </iframe>
           `;
@@ -2568,30 +2570,28 @@ const app = {
    * MMPI-2: Mostrar PDF del micrositio si está disponible
    */
   generarReporteMMPI2(prueba, subescalas) {
-    // Si existe PDF guardado (desde archivo), mostrarlo en un iframe SOLAMENTE
-    if (prueba.pdf_filename || (subescalas && subescalas.pdf_filename)) {
-      const pdfFilename = prueba.pdf_filename || subescalas.pdf_filename;
-      // Retornar solo el iframe, sin estructura adicional
-      return `
-        <iframe
-          src="/pdfs/${pdfFilename}"
-          style="width: 100%; height: 100vh; border: none; border-radius: 3px;"
-          title="PDF MMPI-2">
-        </iframe>
-      `;
+    // Si existe PDF guardado como base64, mostrarlo en un iframe SOLAMENTE
+    let pdfBase64 = prueba.pdf_base64;
+
+    // Si no está en prueba.pdf_base64, buscar en subescalas
+    if (!pdfBase64 && subescalas) {
+      if (typeof subescalas === 'string') {
+        try {
+          const parsed = JSON.parse(subescalas);
+          pdfBase64 = parsed.pdf_base64;
+        } catch (e) {}
+      } else {
+        pdfBase64 = subescalas.pdf_base64;
+      }
     }
 
-    // Si existe PDF guardado (base64 - compatibilidad), mostrarlo en un iframe
-    if (prueba.pdf_base64) {
+    if (pdfBase64) {
       return `
-        <div style="margin: 4px 0; padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 3px; page-break-inside: avoid;">
-          <h4 style="color: #333; font-size: 10px; margin: 0 0 8px 0; font-weight: bold;">📊 MMPI-2 Forma Reestructurada (RF)</h4>
-          <iframe
-            src="data:application/pdf;base64,${prueba.pdf_base64}"
-            style="width: 100%; height: 600px; border: 1px solid #ddd; border-radius: 3px;"
-            title="PDF MMPI-2">
-          </iframe>
-        </div>
+        <iframe
+          src="data:application/pdf;base64,${pdfBase64}"
+          style="width: 100%; height: 100vh; border: none;"
+          title="PDF MMPI-2">
+        </iframe>
       `;
     }
 

@@ -1,7 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const fs = require('fs');
-const path = require('path');
 const {
   pool,
   getPacienteByIdTenant,
@@ -184,41 +182,6 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// POST: Guardar PDF en servidor
-router.post('/upload-pdf', async (req, res) => {
-  try {
-    const tenant_id = req.tenant_id;
-    const { pdf_base64, filename } = req.body;
-
-    if (!pdf_base64) {
-      return res.status(400).json({ error: 'No PDF provided' });
-    }
-
-    // Crear directorio si no existe
-    const pdfDir = path.join(__dirname, '../public/pdfs');
-    if (!fs.existsSync(pdfDir)) {
-      fs.mkdirSync(pdfDir, { recursive: true });
-    }
-
-    // Generar nombre único de archivo
-    const timestamp = Date.now();
-    const sanitizedFilename = (filename || 'document').replace(/[^a-z0-9._-]/gi, '_');
-    const pdfFilename = `${timestamp}_${sanitizedFilename}`;
-    const pdfPath = path.join(pdfDir, pdfFilename);
-
-    // Convertir base64 a buffer y guardar
-    const buffer = Buffer.from(pdf_base64, 'base64');
-    fs.writeFileSync(pdfPath, buffer);
-
-    res.json({
-      success: true,
-      filename: pdfFilename,
-      url: `/pdfs/${pdfFilename}`
-    });
-  } catch (error) {
-    console.error('Error al guardar PDF:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
+// Endpoint eliminado: /upload-pdf (se guarda base64 en BD directamente)
 
 module.exports = router;

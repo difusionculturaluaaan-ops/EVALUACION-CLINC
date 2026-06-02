@@ -1505,27 +1505,7 @@ async function guardarEnExpediente() {
       reader.readAsDataURL(pdfBlob);
     });
 
-    // 3. Guardar PDF en servidor
-    const uploadResp = await fetch('/api/pruebas/upload-pdf', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
-      },
-      body: JSON.stringify({
-        pdf_base64: pdfBase64,
-        filename: `MMPI2RF_${nombre}_${fecha}.pdf`
-      })
-    });
-
-    if (!uploadResp.ok) {
-      throw new Error('Error al guardar PDF en servidor');
-    }
-
-    const uploadData = await uploadResp.json();
-    const pdfFilename = uploadData.filename;
-
-    // 3. Guardar prueba con referencia al archivo
+    // 3. Guardar prueba CON base64 del PDF
     const response = await fetch('/api/pruebas', {
       method: 'POST',
       headers: {
@@ -1538,7 +1518,7 @@ async function guardarEnExpediente() {
         data: responses.slice(1),
         total: calcResults.reduce((sum, r) => sum + r.pd, 0),
         subescalas: subescalas,
-        pdf_filename: pdfFilename  // Guardar nombre del archivo
+        pdf_base64: pdfBase64  // Guardar PDF como base64 directamente
       })
     });
 
