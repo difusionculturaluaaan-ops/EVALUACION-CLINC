@@ -1570,14 +1570,14 @@ async function generarPDFBlob(nombre, fecha) {
           <td style="padding:8px">${document.getElementById('inp-edad').value || '—'}</td>
         </tr>
         <tr style="border-bottom:1px solid #ddd">
-          <td style="padding:8px;font-weight:bold">Fecha Evaluación:</td>
-          <td style="padding:8px">${fecha}</td>
-          <td style="padding:8px;font-weight:bold">Ocupación:</td>
-          <td style="padding:8px">${document.getElementById('inp-cargo').value || '—'}</td>
+          <td style="padding:8px;font-weight:bold;color:#000">Fecha Evaluación:</td>
+          <td style="padding:8px;color:#000">${fecha}</td>
+          <td style="padding:8px;font-weight:bold;color:#000">Ocupación:</td>
+          <td style="padding:8px;color:#000">${document.getElementById('inp-cargo').value || '—'}</td>
         </tr>
         <tr style="border-bottom:1px solid #ddd">
-          <td style="padding:8px;font-weight:bold">Institución:</td>
-          <td colspan="3" style="padding:8px">${document.getElementById('inp-inst').value || '—'}</td>
+          <td style="padding:8px;font-weight:bold;color:#000">Institución:</td>
+          <td colspan="3" style="padding:8px;color:#000">${document.getElementById('inp-inst').value || '—'}</td>
         </tr>
       </table>
     </div>
@@ -1586,8 +1586,8 @@ async function generarPDFBlob(nombre, fecha) {
       <h3 style="font-size:14px;font-weight:bold;margin-bottom:10px;border-bottom:2px solid #0d1117;padding-bottom:5px">DATOS DEL EVALUADOR</h3>
       <table style="width:100%;font-size:12px;border-collapse:collapse">
         <tr style="border-bottom:1px solid #ddd">
-          <td style="padding:8px;font-weight:bold;width:25%">Psicólogo:</td>
-          <td colspan="3" style="padding:8px">${document.getElementById('inp-eval').value || '—'}</td>
+          <td style="padding:8px;font-weight:bold;width:25%;color:#000">Psicólogo:</td>
+          <td colspan="3" style="padding:8px;color:#000">${document.getElementById('inp-eval').value || '—'}</td>
         </tr>
       </table>
     </div>
@@ -1855,20 +1855,20 @@ function generarPDF() {
       <h3 style="font-size:14px;font-weight:bold;margin-bottom:10px;border-bottom:2px solid #0d1117;padding-bottom:5px">DATOS DEL EVALUADO</h3>
       <table style="width:100%;font-size:12px;border-collapse:collapse">
         <tr style="border-bottom:1px solid #ddd">
-          <td style="padding:8px;font-weight:bold;width:25%">Nombre:</td>
-          <td style="padding:8px">${document.getElementById('inp-nombre').value || '—'}</td>
-          <td style="padding:8px;font-weight:bold;width:25%">Edad/Sexo:</td>
-          <td style="padding:8px">${document.getElementById('inp-edad').value || '—'}</td>
+          <td style="padding:8px;font-weight:bold;width:25%;color:#000">Nombre:</td>
+          <td style="padding:8px;color:#000">${document.getElementById('inp-nombre').value || '—'}</td>
+          <td style="padding:8px;font-weight:bold;width:25%;color:#000">Edad/Sexo:</td>
+          <td style="padding:8px;color:#000">${document.getElementById('inp-edad').value || '—'}</td>
         </tr>
         <tr style="border-bottom:1px solid #ddd">
-          <td style="padding:8px;font-weight:bold">Fecha Evaluación:</td>
-          <td style="padding:8px">${fecha}</td>
-          <td style="padding:8px;font-weight:bold">Ocupación:</td>
-          <td style="padding:8px">${document.getElementById('inp-cargo').value || '—'}</td>
+          <td style="padding:8px;font-weight:bold;color:#000">Fecha Evaluación:</td>
+          <td style="padding:8px;color:#000">${fecha}</td>
+          <td style="padding:8px;font-weight:bold;color:#000">Ocupación:</td>
+          <td style="padding:8px;color:#000">${document.getElementById('inp-cargo').value || '—'}</td>
         </tr>
         <tr style="border-bottom:1px solid #ddd">
-          <td style="padding:8px;font-weight:bold">Institución:</td>
-          <td colspan="3" style="padding:8px">${document.getElementById('inp-inst').value || '—'}</td>
+          <td style="padding:8px;font-weight:bold;color:#000">Institución:</td>
+          <td colspan="3" style="padding:8px;color:#000">${document.getElementById('inp-inst').value || '—'}</td>
         </tr>
       </table>
     </div>
@@ -1877,8 +1877,8 @@ function generarPDF() {
       <h3 style="font-size:14px;font-weight:bold;margin-bottom:10px;border-bottom:2px solid #0d1117;padding-bottom:5px">DATOS DEL EVALUADOR</h3>
       <table style="width:100%;font-size:12px;border-collapse:collapse">
         <tr style="border-bottom:1px solid #ddd">
-          <td style="padding:8px;font-weight:bold;width:25%">Psicólogo:</td>
-          <td colspan="3" style="padding:8px">${document.getElementById('inp-eval').value || '—'}</td>
+          <td style="padding:8px;font-weight:bold;width:25%;color:#000">Psicólogo:</td>
+          <td colspan="3" style="padding:8px;color:#000">${document.getElementById('inp-eval').value || '—'}</td>
         </tr>
       </table>
     </div>
@@ -1889,12 +1889,12 @@ function generarPDF() {
       <table style="width:100%;border-collapse:collapse;font-size:10px">
         <thead>
           <tr style="background:#f0f0f0;border-bottom:2px solid #333">
-            <th style="padding:6px;text-align:left;font-weight:bold">Categoría</th>
-            <th style="padding:6px;text-align:left;font-weight:bold">Escala</th>
-            <th style="padding:6px;text-align:center;font-weight:bold">Abrev.</th>
-            <th style="padding:6px;text-align:center;font-weight:bold">PD</th>
-            <th style="padding:6px;text-align:center;font-weight:bold">T</th>
-            <th style="padding:6px;text-align:left;font-weight:bold">Nivel</th>
+            <th style="padding:6px;text-align:left;font-weight:bold;color:#000">Categoría</th>
+            <th style="padding:6px;text-align:left;font-weight:bold;color:#000">Escala</th>
+            <th style="padding:6px;text-align:center;font-weight:bold;color:#000">Abrev.</th>
+            <th style="padding:6px;text-align:center;font-weight:bold;color:#000">PD</th>
+            <th style="padding:6px;text-align:center;font-weight:bold;color:#000">T</th>
+            <th style="padding:6px;text-align:left;font-weight:bold;color:#000">Nivel</th>
           </tr>
         </thead>
         <tbody>
@@ -1903,10 +1903,10 @@ function generarPDF() {
             const nivelLabel = nivel.label;
             return `
               <tr style="border-bottom:1px solid #eee">
-                <td style="padding:6px;font-size:9px">${r.cat}</td>
-                <td style="padding:6px;font-size:9px">${r.name}</td>
-                <td style="padding:6px;text-align:center;font-size:9px;font-weight:bold">${r.abbr}</td>
-                <td style="padding:6px;text-align:center;font-size:9px">${r.pd}</td>
+                <td style="padding:6px;font-size:9px;color:#000">${r.cat}</td>
+                <td style="padding:6px;font-size:9px;color:#000">${r.name}</td>
+                <td style="padding:6px;text-align:center;font-size:9px;font-weight:bold;color:#000">${r.abbr}</td>
+                <td style="padding:6px;text-align:center;font-size:9px;color:#000">${r.pd}</td>
                 <td style="padding:6px;text-align:center;font-weight:bold;color:${r.t >= 70 ? '#d32f2f' : r.t >= 60 ? '#f57c00' : r.t >= 45 ? '#fbc02d' : '#388e3c'}">${r.t}</td>
                 <td style="padding:6px;font-weight:bold;font-size:9px;color:${r.t >= 70 ? '#d32f2f' : r.t >= 60 ? '#f57c00' : r.t >= 45 ? '#fbc02d' : '#388e3c'}">${nivelLabel}</td>
               </tr>
