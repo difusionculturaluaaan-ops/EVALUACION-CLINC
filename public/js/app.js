@@ -3451,7 +3451,7 @@ const app = {
 
       // Intentar convertir canvas a imagen de alta resolución
       try {
-        // Convertir chart principal (PATRÓN SCL-90R: altura 100% dinámica)
+        // Convertir chart principal (altura según tipo: MMPI-2/SCID-II=320px, genérico=500px)
         const canvasOriginal = document.querySelector('canvas#chartReporte');
         const canvasClonado = elemento.querySelector('canvas#chartReporte');
 
@@ -3459,15 +3459,24 @@ const app = {
           const imagenDataUrl = await this.capturarCanvasAltaResolucion(canvasOriginal);
           console.log('✓ Canvas principal convertido a alta resolución');
 
+          // Detectar tipo de gráfico por el H4 anterior
+          const h4Anterior = canvasClonado.parentNode?.previousElementSibling;
+          const textoH4 = h4Anterior?.textContent || '';
+
+          // Altura según tipo de gráfico
+          let alturaGrafico = 400;  // Por defecto para genéricos
+          if (textoH4.includes('MMPI-2') || textoH4.includes('SCID-II')) {
+            alturaGrafico = 500;  // Más alto para gráficos de múltiples escalas
+          }
+
           const img = document.createElement('img');
           img.src = imagenDataUrl;
           img.style.width = '100%';
-          img.style.height = '100%';  // ALTURA DINÁMICA - respeta el contenedor
+          img.style.height = `${alturaGrafico}px`;  // Altura FIJA según tipo
           img.style.display = 'block';
 
-          const containerHeight = canvasClonado.parentNode?.offsetHeight;
           canvasClonado.parentNode.replaceChild(img, canvasClonado);
-          console.log(`✓ Canvas principal reemplazado por imagen (${containerHeight}px)`);
+          console.log(`✓ Canvas principal reemplazado por imagen (${alturaGrafico}px)`);
         }
 
         // Convertir chart comparativo (PCL-R) - PATRÓN SCL-90R: altura 100%
