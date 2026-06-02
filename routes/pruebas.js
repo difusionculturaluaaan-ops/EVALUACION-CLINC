@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const fs = require('fs');
+const path = require('path');
 const {
   pool,
   getPacienteByIdTenant,
@@ -183,9 +185,6 @@ router.delete('/:id', async (req, res) => {
 });
 
 // POST: Guardar PDF en servidor
-const fs = require('fs');
-const path = require('path');
-
 router.post('/upload-pdf', async (req, res) => {
   try {
     const tenant_id = req.tenant_id;
