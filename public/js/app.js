@@ -1593,6 +1593,25 @@ const app = {
         return;
       }
 
+      // PARA MMPI-2: Si existe PDF guardado del micrositio, mostrar SOLO ese PDF
+      if ((prueba.tipo === 'MMPI2' || prueba.tipo === 'MMPI') &&
+          (prueba.pdf_filename || (typeof prueba.subescalas === 'string' && JSON.parse(prueba.subescalas)?.pdf_filename))) {
+        const subescalas = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas;
+        const pdfFilename = prueba.pdf_filename || subescalas?.pdf_filename;
+
+        if (pdfFilename) {
+          contenido.innerHTML = `
+            <iframe
+              src="/pdfs/${pdfFilename}"
+              style="width: 100%; height: 85vh; border: none; border-radius: 3px;"
+              title="PDF MMPI-2">
+            </iframe>
+          `;
+          modal.style.display = 'block';
+          return;
+        }
+      }
+
     // Parsear datos si están en JSON
     const subescalas = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas;
 
@@ -2539,21 +2558,16 @@ const app = {
    * MMPI-2: Mostrar PDF del micrositio si está disponible
    */
   generarReporteMMPI2(prueba, subescalas) {
-    // Si existe PDF guardado (desde archivo), mostrarlo en un iframe
+    // Si existe PDF guardado (desde archivo), mostrarlo en un iframe SOLAMENTE
     if (prueba.pdf_filename || (subescalas && subescalas.pdf_filename)) {
       const pdfFilename = prueba.pdf_filename || subescalas.pdf_filename;
+      // Retornar solo el iframe, sin estructura adicional
       return `
-        <div style="margin: 4px 0; padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 3px; page-break-inside: avoid;">
-          <h4 style="color: #333; font-size: 10px; margin: 0 0 8px 0; font-weight: bold;">📊 MMPI-2 Forma Reestructurada (RF)</h4>
-          <iframe
-            src="/pdfs/${pdfFilename}"
-            style="width: 100%; height: 600px; border: 1px solid #ddd; border-radius: 3px;"
-            title="PDF MMPI-2">
-          </iframe>
-          <p style="margin: 8px 0 0 0; font-size: 8px; color: #666;">
-            📥 <a href="/pdfs/${pdfFilename}" target="_blank" download>Descargar PDF</a>
-          </p>
-        </div>
+        <iframe
+          src="/pdfs/${pdfFilename}"
+          style="width: 100%; height: 100vh; border: none; border-radius: 3px;"
+          title="PDF MMPI-2">
+        </iframe>
       `;
     }
 
