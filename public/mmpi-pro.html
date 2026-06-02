@@ -1494,26 +1494,19 @@ async function guardarEnExpediente() {
       });
 
       console.log('🔍 Status de respuesta:', pacienteResponse.status, pacienteResponse.ok);
-      const pacienteText = await pacienteResponse.text();
-      console.log('📝 Texto de respuesta:', pacienteText);
-
-      if (!pacienteResponse.ok) {
-        try {
-          const error = JSON.parse(pacienteText);
-          throw new Error(error.error || `HTTP ${pacienteResponse.status}`);
-        } catch (e) {
-          throw new Error(`HTTP ${pacienteResponse.status}: ${pacienteText}`);
-        }
-      }
 
       let pacienteData;
       try {
-        pacienteData = JSON.parse(pacienteText);
+        pacienteData = await pacienteResponse.json();
+        console.log('📦 Respuesta de crear paciente:', pacienteData);
       } catch (e) {
-        throw new Error(`Respuesta JSON inválida: ${pacienteText}`);
+        console.error('❌ Error al parsear JSON:', e);
+        throw new Error(`Respuesta JSON inválida: ${e.message}`);
       }
 
-      console.log('📦 Respuesta de crear paciente:', pacienteData);
+      if (!pacienteResponse.ok) {
+        throw new Error(pacienteData?.error || `HTTP ${pacienteResponse.status}`);
+      }
 
       if (!pacienteData || !pacienteData.id) {
         throw new Error('Respuesta inválida del servidor: sin ID de paciente');
