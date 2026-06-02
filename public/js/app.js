@@ -1604,6 +1604,7 @@ const app = {
             try {
               subescalas = JSON.parse(subescalas);
             } catch (e) {
+              console.log('Error parseando subescalas:', e);
               subescalas = {};
             }
           }
@@ -1612,15 +1613,26 @@ const app = {
 
         if (pdfBase64) {
           console.log('✅ Mostrando PDF MMPI-2 desde base64');
+          console.log('   Tamaño base64:', pdfBase64.length);
+          console.log('   Primeros 50 chars:', pdfBase64.substring(0, 50));
+
           contenido.innerHTML = `
-            <iframe
-              src="data:application/pdf;base64,${pdfBase64}"
-              style="width: 100%; height: 85vh; border: none;"
-              title="PDF MMPI-2">
-            </iframe>
+            <div style="width: 100%; height: 85vh; background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+              <iframe
+                src="data:application/pdf;base64,${pdfBase64}"
+                style="width: 100%; height: 100%; border: none;"
+                title="PDF MMPI-2"
+                onload="console.log('✅ iframe cargado')">
+              </iframe>
+            </div>
           `;
           modal.style.display = 'block';
+          console.log('✅ Modal abierto');
           return;
+        } else {
+          console.log('❌ No se encontró pdf_base64');
+          console.log('   prueba.pdf_base64:', prueba.pdf_base64);
+          console.log('   prueba.subescalas:', prueba.subescalas);
         }
       }
 
