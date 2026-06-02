@@ -50,6 +50,10 @@ router.post('/', async (req, res) => {
       observaciones
     });
 
+    if (!paciente) {
+      return res.status(500).json({ error: 'Error al crear paciente en la BD (retornó null)' });
+    }
+
     res.status(201).json(paciente);
   } catch (error) {
     console.error('Error al crear paciente:', error);

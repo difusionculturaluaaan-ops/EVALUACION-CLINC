@@ -355,8 +355,8 @@ async function crearPaciente(datos) {
     );
     return result.rows[0] || null;
   } catch (err) {
-    console.error('Error al crear paciente:', err);
-    return null;
+    console.error('❌ Error al crear paciente en DB:', err.message, err.code);
+    throw err;
   }
 }
 
