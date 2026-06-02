@@ -14,7 +14,7 @@ const {
 // POST: Guardar una nueva prueba (solo del tenant autenticado)
 router.post('/', async (req, res) => {
   try {
-    const { paciente_id, tipo, data, total, subescalas, pdf_base64 } = req.body;
+    const { paciente_id, tipo, data, total, subescalas, pdf_base64, pdf_filename } = req.body;
     const tenant_id = req.tenant_id;
 
     if (!paciente_id || !tipo || !data) {
@@ -32,8 +32,13 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'data debe ser un array' });
     }
 
-    // Guardar prueba con PDF si está disponible
-    const subescalasConPDF = pdf_base64 ? { ...subescalas, pdf_base64 } : subescalas;
+    // Guardar prueba con PDF si está disponible (base64 o filename)
+    const subescalasConPDF = pdf_base64
+      ? { ...subescalas, pdf_base64 }
+      : pdf_filename
+      ? { ...subescalas, pdf_filename }
+      : subescalas;
+
     const prueba = await guardarPrueba(paciente_id, tipo, data, total, subescalasConPDF);
     res.status(201).json(prueba);
   } catch (error) {
@@ -173,6 +178,46 @@ router.delete('/:id', async (req, res) => {
     res.json({ success: true, message: 'Prueba eliminada' });
   } catch (error) {
     console.error('Error al eliminar:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// POST: Guardar PDF en servidor
+const fs = require('fs');
+const path = require('path');
+
+router.post('/upload-pdf', async (req, res) => {
+  try {
+    const tenant_id = req.tenant_id;
+    const { pdf_base64, filename } = req.body;
+
+    if (!pdf_base64) {
+      return res.status(400).json({ error: 'No PDF provided' });
+    }
+
+    // Crear directorio si no existe
+    const pdfDir = path.join(__dirname, '../public/pdfs');
+    if (!fs.existsSync(pdfDir)) {
+      fs.mkdirSync(pdfDir, { recursive: true });
+    }
+
+    // Generar nombre único de archivo
+    const timestamp = Date.now();
+    const sanitizedFilename = (filename || 'document').replace(/[^a-z0-9._-]/gi, '_');
+    const pdfFilename = `${timestamp}_${sanitizedFilename}`;
+    const pdfPath = path.join(pdfDir, pdfFilename);
+
+    // Convertir base64 a buffer y guardar
+    const buffer = Buffer.from(pdf_base64, 'base64');
+    fs.writeFileSync(pdfPath, buffer);
+
+    res.json({
+      success: true,
+      filename: pdfFilename,
+      url: `/pdfs/${pdfFilename}`
+    });
+  } catch (error) {
+    console.error('Error al guardar PDF:', error);
     res.status(500).json({ error: error.message });
   }
 });

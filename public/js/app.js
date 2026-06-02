@@ -2539,7 +2539,25 @@ const app = {
    * MMPI-2: Mostrar PDF del micrositio si está disponible
    */
   generarReporteMMPI2(prueba, subescalas) {
-    // Si existe PDF guardado (base64), mostrarlo en un iframe
+    // Si existe PDF guardado (desde archivo), mostrarlo en un iframe
+    if (prueba.pdf_filename || (subescalas && subescalas.pdf_filename)) {
+      const pdfFilename = prueba.pdf_filename || subescalas.pdf_filename;
+      return `
+        <div style="margin: 4px 0; padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 3px; page-break-inside: avoid;">
+          <h4 style="color: #333; font-size: 10px; margin: 0 0 8px 0; font-weight: bold;">📊 MMPI-2 Forma Reestructurada (RF)</h4>
+          <iframe
+            src="/pdfs/${pdfFilename}"
+            style="width: 100%; height: 600px; border: 1px solid #ddd; border-radius: 3px;"
+            title="PDF MMPI-2">
+          </iframe>
+          <p style="margin: 8px 0 0 0; font-size: 8px; color: #666;">
+            📥 <a href="/pdfs/${pdfFilename}" target="_blank" download>Descargar PDF</a>
+          </p>
+        </div>
+      `;
+    }
+
+    // Si existe PDF guardado (base64 - compatibilidad), mostrarlo en un iframe
     if (prueba.pdf_base64) {
       return `
         <div style="margin: 4px 0; padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 3px; page-break-inside: avoid;">
