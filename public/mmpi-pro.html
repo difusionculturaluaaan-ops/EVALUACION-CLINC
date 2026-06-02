@@ -1455,16 +1455,58 @@ function getPacienteIdFromURL() {
 }
 
 async function guardarEnExpediente() {
-  const pacienteId = pacienteIdActual;
-
-  if (!pacienteId) {
-    alert('Error: No hay paciente seleccionado. Por favor, accede desde la app principal.');
-    return;
-  }
+  let pacienteId = pacienteIdActual;
 
   if (!calcResults || calcResults.length === 0) {
     alert('⚠️ Primero calcula los resultados antes de guardar.');
     return;
+  }
+
+  // Si no hay paciente_id, crear uno nuevo
+  if (!pacienteId) {
+    const nombre = document.getElementById('inp-nombre').value?.trim();
+    if (!nombre) {
+      alert('⚠️ Por favor, ingresa el nombre del paciente.');
+      return;
+    }
+
+    const btn = document.getElementById('btn-guardar-expediente');
+    const btnOriginalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '⏳ Creando expediente...';
+
+    try {
+      // Crear nuevo paciente/expediente
+      const pacienteResponse = await fetch('/api/pacientes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+        },
+        body: JSON.stringify({
+          nombre: nombre,
+          edad: document.getElementById('inp-edad').value || null,
+          sexo: document.getElementById('inp-sexo').value || null,
+          ocupacion: document.getElementById('inp-ocupacion').value || null,
+          institucion: document.getElementById('inp-institucion').value || null
+        })
+      });
+
+      if (!pacienteResponse.ok) {
+        const error = await pacienteResponse.json().catch(() => ({}));
+        throw new Error(error.error || `HTTP ${pacienteResponse.status}`);
+      }
+
+      const pacienteData = await pacienteResponse.json();
+      pacienteId = pacienteData.id;
+      btn.textContent = '⏳ Generando PDF...';
+    } catch (error) {
+      console.error('Error al crear expediente:', error);
+      alert(`❌ Error al crear expediente: ${error.message}`);
+      btn.disabled = false;
+      btn.textContent = btnOriginalText;
+      return;
+    }
   }
 
   // Construir objeto de subescalas como lo espera la API

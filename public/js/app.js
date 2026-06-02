@@ -495,12 +495,12 @@ const app = {
    * Abrir MMPI-2 PRO con paciente seleccionado
    */
   abrirMMPI2Pro() {
-    if (!this.pacienteActivo) {
-      this.mostrarToast('⚠️ Selecciona un paciente primero', 'warning');
-      return;
+    // Si hay paciente activo, pasar su ID; si no, abrir sin ID (registrará en micrositio)
+    if (this.pacienteActivo) {
+      window.location.href = `/mmpi-pro.html?paciente_id=${this.pacienteActivo.id}`;
+    } else {
+      window.location.href = `/mmpi-pro.html`;
     }
-    // Pasar paciente_id en URL
-    window.location.href = `/mmpi-pro.html?paciente_id=${this.pacienteActivo.id}`;
   },
 
   iniciarTestConPaciente(pageId) {
