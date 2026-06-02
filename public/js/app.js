@@ -2536,16 +2536,32 @@ const app = {
   },
 
   /**
-   * MMPI-2 usa el micrositio (mmpi-pro.html)
-   * El PDF se genera en el micrositio y se guarda en el expediente
-   * No generar HTML aquí - los datos se almacenan solo en la BD
+   * MMPI-2: Mostrar PDF del micrositio si está disponible
    */
   generarReporteMMPI2(prueba, subescalas) {
-    // Placeholder: MMPI-2 se maneja completamente en el micrositio
+    // Si existe PDF guardado (base64), mostrarlo en un iframe
+    if (prueba.pdf_base64) {
+      return `
+        <div style="margin: 4px 0; padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 3px; page-break-inside: avoid;">
+          <h4 style="color: #333; font-size: 10px; margin: 0 0 8px 0; font-weight: bold;">📊 MMPI-2 Forma Reestructurada (RF)</h4>
+          <iframe
+            src="data:application/pdf;base64,${prueba.pdf_base64}"
+            style="width: 100%; height: 600px; border: 1px solid #ddd; border-radius: 3px;"
+            title="PDF MMPI-2">
+          </iframe>
+        </div>
+      `;
+    }
+
+    // Si no hay PDF, mostrar opción para abrir micrositio
+    const data = typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data || {};
+    const tScores = Object.entries(data).map(([key, val]) => `${key}: ${val}`).join(', ');
+
     return `
       <div style="margin: 10px 0; padding: 15px; background: #e8f4f8; border-left: 4px solid #2c5aa0; border-radius: 3px; color: #333;">
-        <p style="margin: 0; font-size: 10px; font-weight: bold;">📋 MMPI-2 Forma Reestructurada (RF)</p>
-        <p style="margin: 5px 0 0 0; font-size: 9px;">Para ver los resultados completos con gráfico, abre el test desde el micrositio.</p>
+        <p style="margin: 0 0 8px 0; font-size: 10px; font-weight: bold;">📋 MMPI-2 Forma Reestructurada (RF)</p>
+        <p style="margin: 0; font-size: 9px;">T-Scores: ${tScores}</p>
+        <p style="margin: 5px 0 0 0; font-size: 9px; font-style: italic;">Para ver el gráfico completo del micrositio, abre el test nuevamente.</p>
       </div>
     `;
   },
