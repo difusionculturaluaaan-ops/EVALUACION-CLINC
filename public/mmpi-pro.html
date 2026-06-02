@@ -1597,11 +1597,11 @@ async function generarPDFBlob(nombre, fecha) {
       <table style="width:100%;font-size:11px;border-collapse:collapse">
         <thead>
           <tr style="background:#f0f0f0;border-bottom:2px solid #333">
-            <th style="padding:8px;text-align:left">Categoría</th>
-            <th style="padding:8px;text-align:left">Escala</th>
-            <th style="padding:8px;text-align:center">PD</th>
-            <th style="padding:8px;text-align:center">T</th>
-            <th style="padding:8px;text-align:left">Nivel</th>
+            <th style="padding:8px;text-align:left;color:#000">Categoría</th>
+            <th style="padding:8px;text-align:left;color:#000">Escala</th>
+            <th style="padding:8px;text-align:center;color:#000">PD</th>
+            <th style="padding:8px;text-align:center;color:#000">T</th>
+            <th style="padding:8px;text-align:left;color:#000">Nivel</th>
           </tr>
         </thead>
         <tbody>
@@ -1609,10 +1609,10 @@ async function generarPDFBlob(nombre, fecha) {
             const nivel = r.t >= 70 ? 'MUY ALTO' : r.t >= 60 ? 'ALTO' : r.t >= 45 ? 'MEDIO' : 'BAJO';
             return `
               <tr style="border-bottom:1px solid #ddd">
-                <td style="padding:8px">${r.cat}</td>
-                <td style="padding:8px"><strong>${r.abbr}</strong></td>
-                <td style="padding:8px;text-align:center">${r.pd}</td>
-                <td style="padding:8px;text-align:center"><strong>${r.t}</strong></td>
+                <td style="padding:8px;color:#000">${r.cat}</td>
+                <td style="padding:8px;color:#000"><strong>${r.abbr}</strong></td>
+                <td style="padding:8px;text-align:center;color:#000">${r.pd}</td>
+                <td style="padding:8px;text-align:center;color:#000"><strong>${r.t}</strong></td>
                 <td style="padding:8px;color:${r.t >= 70 ? '#d32f2f' : r.t >= 60 ? '#f57c00' : '#388e3c'}">${nivel}</td>
               </tr>
             `;
