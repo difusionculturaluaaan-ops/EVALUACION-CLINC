@@ -2282,9 +2282,9 @@ const app = {
    */
   generarReporteSCL(prueba, subescalas) {
     const escalasMap = {
-      'SOM': 'Somatización', 'OBS': 'Obsesivo – Compulsivo', 'INT': 'Susceptibilidad Interpersonal',
-      'DEP': 'Depresión', 'ANS': 'Ansiedad', 'HOS': 'Hostilidad', 'FOB': 'Ansiedad Fóbica',
-      'PAR': 'Ideación Paranoide', 'PSI': 'Psicotisismo'
+      'SOM': 'Somatización', 'OC': 'Obsesión-Compulsión', 'SI': 'Sensibilidad Interpersonal',
+      'DEP': 'Depresión', 'ANX': 'Ansiedad', 'HOS': 'Hostilidad', 'PHOB': 'Ansiedad Fóbica',
+      'PAR': 'Ideación Paranoide', 'PSY': 'Psicoticismo'
     };
 
     let html = `
@@ -2297,22 +2297,23 @@ const app = {
             <th style="border: 1px solid #999; padding: 3px; text-align: center; font-size: 8px; font-weight: bold;">D. Est.</th>
           </tr>`;
 
-    const escalasOrdenadas = ['SOM', 'OBS', 'INT', 'DEP', 'ANS', 'HOS', 'FOB', 'PAR', 'PSI'];
+    const escalasOrdenadas = ['SOM', 'OC', 'SI', 'DEP', 'ANX', 'HOS', 'PHOB', 'PAR', 'PSY'];
     const normas = {
-      'SOM': { media: 0.36, ds: 0.42 }, 'OBS': { media: 0.39, ds: 0.45 },
-      'INT': { media: 0.29, ds: 0.39 }, 'DEP': { media: 0.36, ds: 0.44 },
-      'ANS': { media: 0.30, ds: 0.37 }, 'HOS': { media: 0.30, ds: 0.40 },
-      'FOB': { media: 0.13, ds: 0.31 }, 'PAR': { media: 0.34, ds: 0.44 },
-      'PSI': { media: 0.14, ds: 0.25 }
+      'SOM': { media: 0.47, ds: 0.52 }, 'OC': { media: 0.59, ds: 0.55 },
+      'SI': { media: 0.47, ds: 0.52 }, 'DEP': { media: 0.59, ds: 0.59 },
+      'ANX': { media: 0.39, ds: 0.44 }, 'HOS': { media: 0.46, ds: 0.55 },
+      'PHOB': { media: 0.15, ds: 0.31 }, 'PAR': { media: 0.47, ds: 0.52 },
+      'PSY': { media: 0.19, ds: 0.36 }
     };
 
     escalasOrdenadas.forEach((escala, idx) => {
-      const valor = Number(subescalas[escala]) || 0;
+      // Acceder a la propiedad .media del objeto subescalas
+      const valor = subescalas[escala]?.media || 0;
       const norma = normas[escala];
       const bgColor = '#ffffff';
       html += `<tr style="background: ${bgColor};">
         <td style="border: 1px solid #ddd; padding: 3px; font-weight: bold; font-size: 8px;">${escalasMap[escala]}</td>
-        <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${valor.toFixed(2)}</td>
+        <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${Number(valor).toFixed(2)}</td>
         <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${norma.media.toFixed(2)}</td>
         <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${norma.ds.toFixed(2)}</td>
       </tr>`;
@@ -2329,19 +2330,19 @@ const app = {
             <th style="border: 1px solid #999; padding: 3px; text-align: center; font-size: 8px; font-weight: bold;">Ref.</th>
           </tr>
           <tr>
-            <td style="border: 1px solid #ddd; padding: 3px; font-size: 8px;"><strong>IST</strong></td>
-            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${(subescalas.IST || 0).toFixed(2)}</td>
-            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">0.31</td>
+            <td style="border: 1px solid #ddd; padding: 3px; font-size: 8px;"><strong>IST (GSI)</strong></td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${(subescalas.IST || 0).toFixed(3)}</td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${subescalas.indicesGlobales?.GSI?.media || 0.44}</td>
           </tr>
           <tr>
-            <td style="border: 1px solid #ddd; padding: 3px; font-size: 8px;"><strong>TSP</strong></td>
-            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${prueba.total || 0}</td>
-            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">19.29</td>
+            <td style="border: 1px solid #ddd; padding: 3px; font-size: 8px;"><strong>TSP (PST)</strong></td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${subescalas.TSP || 0}</td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${subescalas.indicesGlobales?.PST?.media || 26.9}</td>
           </tr>
           <tr>
-            <td style="border: 1px solid #ddd; padding: 3px; font-size: 8px;"><strong>MRSP</strong></td>
-            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${(subescalas.MRSP || 0).toFixed(2)}</td>
-            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">1.32</td>
+            <td style="border: 1px solid #ddd; padding: 3px; font-size: 8px;"><strong>MRSP (PSDI)</strong></td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${(subescalas.MRSP || 0).toFixed(3)}</td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${subescalas.indicesGlobales?.PSDI?.media || 1.55}</td>
           </tr>
         </table>
       </div>

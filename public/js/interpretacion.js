@@ -110,7 +110,8 @@ const interpretacion = {
         subescalas[key] = {
           nombre: sub.name,
           suma: suma,
-          media: media.toFixed(2),
+          media: media,  // Mantener como número (no .toFixed)
+          mediaStr: media.toFixed(2),  // Versión string para mostrar
           mediaNormal: norma.media,
           ds: norma.ds,
           corte: norma.corte,
@@ -126,9 +127,12 @@ const interpretacion = {
 
       return {
         subescalas,
-        GSI: GSI.toFixed(3),
-        PST: PST,
-        PSDI: PSDI.toFixed(3),
+        // Índices mapeados correctamente (IST=GSI, TSP=PST, MRSP=PSDI)
+        IST: GSI,  // Global Severity Index
+        TSP: PST,  // Positive Symptom Total
+        MRSP: PSDI,  // Mean Symptom Response Index
+        GSI: GSI,  // También guardar con nombre original
+        PSDI: PSDI,
         indicesGlobales: {
           GSI: { valor: GSI.toFixed(3), media: this.indicesGlobales.GSI.media, corte: this.indicesGlobales.GSI.corte },
           PST: { valor: PST, media: this.indicesGlobales.PST.media, corte: this.indicesGlobales.PST.corte },
