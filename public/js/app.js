@@ -529,36 +529,16 @@ const app = {
   },
 
   iniciarTestConPaciente(pageId) {
-    if (this.pacienteActivo) {
-      // Si hay paciente activo, ir directamente al test
-      this.showPage(pageId);
-      // Mostrar botón del paciente en la pantalla del test
-      setTimeout(() => this.mostrarBotonPaciente(), 100);
-    } else {
-      // Si no hay paciente, guardar el test y abrir formulario de nueva ficha
-      this.testEnEspera = pageId;
-
-      // Obtener nombre del test
-      const testType = this.pageTestMap[pageId];
-      const test = this.testsDisponibles[testType];
-      const testNombre = test?.nombre || pageId;
-
-      // Actualizar título y botón del formulario
-      const formTitulo = document.getElementById('form-titulo');
-      const btnContinuar = document.getElementById('btn-continuar');
-      if (formTitulo) {
-        formTitulo.textContent = `Registrar Paciente para ${testNombre}`;
-      }
-      if (btnContinuar) {
-        btnContinuar.textContent = `Registrar y Comenzar ${testNombre}`;
-      }
-
-      this.showPage('nuevo');
-      // Enfocar en el campo de nombre para mejor UX
-      setTimeout(() => {
-        document.getElementById('f-nombre')?.focus();
-      }, 300);
+    if (!this.pacienteActivo) {
+      // Mostrar mensaje y opción de crear paciente
+      this.mostrarToast('❌ Primero debes crear o seleccionar un paciente', 'error');
+      return;
     }
+
+    // Ir directamente al test
+    this.showPage(pageId);
+    // Mostrar botón del paciente en la pantalla del test
+    setTimeout(() => this.mostrarBotonPaciente(), 100);
   },
 
   /**
@@ -870,7 +850,7 @@ const app = {
    */
   iniciarCUIDA() {
     if (!this.pacienteActivo) {
-      this.mostrarToast('Error: Paciente no seleccionado', 'error');
+      this.mostrarToast('❌ Primero debes crear o seleccionar un paciente', 'error');
       return;
     }
     tests_cuida.init();
