@@ -377,11 +377,11 @@ const app = {
       });
     });
 
-    // Cerrar modales al hacer click fuera
+    // Cerrar modales al hacer click fuera (en el fondo oscuro)
     document.querySelectorAll('.modal').forEach(modal => {
       modal.addEventListener('click', (e) => {
         if (e.target === modal) {
-          modal.style.display = 'none';
+          modal.classList.remove('active');
         }
       });
     });
@@ -4408,19 +4408,19 @@ const app = {
     document.getElementById('crear-telefono').value = '';
     document.getElementById('crear-notas').value = '';
 
-    // Mostrar modal
+    // Mostrar modal (agregar clase "active")
     const modal = document.getElementById('modal-crear-paciente');
     if (modal) {
-      modal.style.display = 'flex';
+      modal.classList.add('active');
       // Focus en nombre
-      setTimeout(() => document.getElementById('crear-nombre').focus(), 100);
+      setTimeout(() => document.getElementById('crear-nombre').focus(), 300);
     }
   },
 
   cerrarModalCrearPaciente() {
     const modal = document.getElementById('modal-crear-paciente');
     if (modal) {
-      modal.style.display = 'none';
+      modal.classList.remove('active');
     }
   },
 
