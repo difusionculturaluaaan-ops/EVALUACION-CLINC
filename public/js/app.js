@@ -400,6 +400,9 @@ const app = {
       localStorage.removeItem('pacienteActivo');
       this.limpiarBotonPaciente();
       this.loadDashboard();
+    } else if (pageId === 'expedientes') {
+      // Cargar expedientes al abrir la página
+      this.loadExpedientes();
     } else if (this.pageTestMap[pageId]) {
       this.initTest(pageId);
     }
