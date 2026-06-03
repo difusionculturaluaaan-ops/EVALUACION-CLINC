@@ -77,6 +77,7 @@ class AuthManager {
       // Notificar y redirigir
       notifications.success(`¡Bienvenido ${data.usuario.nombre}!`);
       console.log('✓ Login exitoso:', data.usuario.nombre);
+      console.log(`🏥 Tenant ID: ${data.tenant_id}`);
       setTimeout(() => {
         window.location.href = '/index.html';
       }, 500);
