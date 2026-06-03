@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CUIDA — Sistema Digital</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+:root {
+  --navy:#111827;
+  --blue:#5a8fd0;
+  --blue-light:#7da3d4;
+  --blue-dark:#3d5f9d;
+  --green:#10b981;
+  --green-light:#34d399;
+  --cyan:#06b6d4;
+  --red:#ef4444;
+  --warning:#f59e0b;
+  --cream:#f8fafb;
+  --white:#fff;
+  --text:#111827;
+  --muted:#4b5563;
+  --text-light:#9ca3af;
+  --border:#e5e7eb;
+  --shadow:0 4px 12px rgba(0,0,0,.08);
+  --zone-low:#dbeafe;
+  --zone-mid:#d1fae5;
+  --zone-high:#fef3c7;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--text);min-height:100vh}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,.12)}
+.hdr-inner{max-width:960px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.hdr h1{font-family:'Inter',sans-serif;font-size:1.25rem;font-weight:700;color:#fff;letter-spacing:.02em}
+.hdr p{font-size:.72rem;color:rgba(255,255,255,.5);margin-top:2px}
+.prog-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:150px}
+.prog-label{font-size:.7rem;color:rgba(255,255,255,.5)}
+.prog-bar-out{width:150px;height:5px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden}
+.prog-bar-in{height:100%;background:var(--green);border-radius:3px;transition:width .3s}
+.prog-count{font-size:.78rem;color:#fff;font-weight:600}
+
+/* TABS */
+.tab-nav{background:rgba(90,143,208,.05);border-top:1px solid var(--border)}
+.tab-nav-inner{max-width:960px;margin:0 auto;display:flex}
+.tb{background:transparent;border:none;cursor:pointer;color:#fff;font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;padding:12px 18px;border-bottom:2px solid transparent;transition:all .2s;text-transform:uppercase;letter-spacing:.04em;opacity:.7}
+.tb:hover{color:#fff;opacity:1}
+.tb.active{color:#fff;opacity:1;border-bottom-color:#fff;background:rgba(255,255,255,.1)}
+
+/* SCREENS */
+.screen{display:none}.screen.active{display:block}
+.wrap{max-width:960px;margin:0 auto;padding:28px 24px 100px}
+
+/* CARDS */
+.card{background:var(--white);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:20px;border:1px solid var(--border)}
+.card-hdr{background:linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
+.card-hdr h3{font-family:'Inter',sans-serif;font-size:.95rem;font-weight:700;color:#fff;letter-spacing:.02em}
+.card-hdr span{font-size:.72rem;color:rgba(255,255,255,.5)}
+.card-body{padding:22px}
+
+/* INTRO */
+.intro-hero{background:linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);padding:40px 40px;text-align:center}
+.logo-mark{font-family:'Inter',sans-serif;font-size:3.5rem;font-weight:700;color:var(--green);letter-spacing:.08em;line-height:1}
+.logo-sub{font-size:.75rem;color:rgba(255,255,255,.6);letter-spacing:.15em;text-transform:uppercase;margin-top:8px}
+.intro-body{padding:32px 36px}
+.intro-body h2{font-family:'Inter',sans-serif;font-size:1.2rem;color:var(--blue-dark);margin-bottom:10px;font-weight:700}
+.intro-body>p{font-size:.9rem;color:var(--muted);line-height:1.7;margin-bottom:24px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.fg .full{grid-column:1/-1}
+.fl{display:block;font-size:.73rem;font-weight:700;color:var(--blue-dark);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+input,select,textarea{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:.92rem;color:var(--text);background:#fafaf8;outline:none;transition:border-color .2s,box-shadow .2s}
+input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(90,143,208,.12);background:var(--white)}
+.instr{background:rgba(90,143,208,.05);border-left:3px solid var(--blue);border-radius:0 8px 8px 0;padding:14px 18px;margin-bottom:24px}
+.instr p{font-size:.87rem;line-height:1.7;color:var(--text)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;border-radius:9px;padding:11px 22px;font-family:'Inter',sans-serif;font-size:.92rem;font-weight:700;cursor:pointer;border:none;transition:all .18s;letter-spacing:.01em}
+.btn-navy{background:var(--blue);color:var(--white)}.btn-navy:hover{background:var(--blue-dark)}
+.btn-red{background:var(--red);color:var(--white)}.btn-red:hover{background:#dc2626}
+.btn-out{background:transparent;color:var(--blue);border:1.5px solid var(--border)}.btn-out:hover{border-color:var(--blue);background:rgba(90,143,208,.05)}
+.btn:active{transform:scale(.98)}
+
+/* QUESTIONNAIRE */
+.sec-div{display:flex;align-items:center;gap:12px;margin:24px 0 0}
+.sec-num{background:var(--blue);color:#fff;font-size:.76rem;font-weight:700;padding:4px 11px;border-radius:20px;letter-spacing:.05em;white-space:nowrap}
+.sec-line{flex:1;height:1px;background:var(--border)}
+.sc-hdr{display:grid;grid-template-columns:34px 1fr 100px 100px 100px 100px;background:linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);border-radius:10px 10px 0 0;padding:9px 0;position:sticky;top:85px;z-index:50;box-shadow:var(--shadow)}
+.sh-n,.sh-t{padding:0 10px;font-size:.72rem;font-weight:700;color:rgba(255,255,255,.6);letter-spacing:.04em}
+.sh-o{text-align:center;font-size:.68rem;font-weight:700;color:rgba(255,255,255,.9);padding:0 4px;line-height:1.3}
+.qblock{border-radius:0 0 10px 10px;overflow:hidden;box-shadow:var(--shadow);margin-bottom:4px}
+.qrow{display:grid;grid-template-columns:34px 1fr 100px 100px 100px 100px;align-items:center;min-height:50px;border-bottom:1px solid var(--border);background:var(--white);transition:background .1s}
+.qrow:last-child{border-bottom:none}
+.qrow:hover{background:#f3f4f6}
+.qrow.done{background:#f0fdf4}
+.qrow.done:hover{background:#dcfce7}
+.q-n{padding:10px 7px 10px 13px;font-size:.73rem;font-weight:700;color:var(--muted);text-align:right}
+.q-t{padding:11px 13px;font-size:.88rem;line-height:1.48;color:var(--text)}
+.q-o{display:flex;align-items:center;justify-content:center}
+.q-o input[type=radio]{display:none}
+.q-o label{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;border:2px solid var(--border);cursor:pointer;background:var(--white);transition:all .15s}
+.q-o label:hover{border-color:var(--blue);background:rgba(90,143,208,.05)}
+.q-o input[type=radio]:checked+label{background:var(--blue);border-color:var(--blue)}
+.q-o input[type=radio]:checked+label::after{content:'';width:8px;height:8px;background:var(--green);border-radius:50%}
+
+/* LIVE PROFILE PANEL */
+.live-panel{position:fixed;right:0;top:85px;bottom:60px;width:280px;background:var(--white);border-left:1.5px solid var(--border);overflow-y:auto;z-index:90;box-shadow:-4px 0 20px rgba(0,0,0,.08);display:none}
+.lp-hdr{background:linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.lp-hdr h4{font-family:'Inter',sans-serif;font-size:.85rem;color:#fff;font-weight:700}
+.lp-hdr span{font-size:.7rem;color:rgba(255,255,255,.5)}
+.lp-body{padding:12px}
+.lp-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #f0f0f0}
+.lp-row:last-child{border:none}
+.lp-abbr{font-size:.72rem;font-weight:700;color:var(--blue);width:28px;flex-shrink:0;font-family:'Inter',sans-serif}
+.lp-name{font-size:.75rem;color:var(--text);flex:1;line-height:1.3}
+.lp-en{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0}
+.lp-en.low{background:var(--zone-low);color:#0369a1}
+.lp-en.mid{background:var(--zone-mid);color:#065f46}
+.lp-en.high{background:var(--zone-high);color:#92400e}
+.lp-en.empty{background:#f3f4f6;color:#9ca3af}
+.lp-bar{flex:0 0 60px;height:6px;background:#f0f0f0;border-radius:3px;overflow:hidden}
+.lp-bar-in{height:100%;border-radius:3px;transition:width .4s}
+.lp-bar-in.low{background:#7dd3fc}
+.lp-bar-in.mid{background:#6ee7b7}
+.lp-bar-in.high{background:#fcd34d}
+
+/* Floating submit bar */
+.sub-bar{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1.5px solid var(--border);padding:11px 24px;display:flex;align-items:center;justify-content:space-between;gap:14px;z-index:200;box-shadow:0 -4px 20px rgba(0,0,0,.10)}
+.bi{font-size:.84rem;color:var(--muted)}.bi strong{color:var(--blue);font-weight:700}
+.bw{font-size:.78rem;color:var(--red);display:none;margin-top:2px}
+
+/* Toggle live panel btn */
+.lp-toggle{position:fixed;right:284px;top:110px;background:var(--blue);color:#fff;border:none;border-radius:8px 0 0 8px;padding:8px 10px;cursor:pointer;font-size:.72rem;font-weight:700;letter-spacing:.04em;writing-mode:vertical-rl;text-orientation:mixed;z-index:95;display:none}
+
+/* REPORT */
+.meta-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.mc{padding:12px 16px;border:1.5px solid var(--border);border-radius:10px;background:#fafaf8}
+.mc .ml{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:3px}
+.mc .mv{font-size:.95rem;font-weight:700;color:var(--blue-dark)}
+.p-legend{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px}
+.pl-i{display:flex;align-items:center;gap:5px;font-size:.73rem;color:var(--muted)}
+.pl-d{width:13px;height:13px;border-radius:3px;flex-shrink:0}
+table.pt{width:100%;border-collapse:collapse}
+table.pt th{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:8px 8px;text-align:center;border-bottom:2px solid var(--border)}
+table.pt th.l{text-align:left}
+table.pt td{padding:3px 2px;vertical-align:middle}
+td.ta{font-size:.73rem;font-weight:700;color:var(--blue);padding:0 5px;white-space:nowrap;font-family:'Inter',sans-serif}
+td.tn{font-size:.8rem;color:var(--text);padding:0 7px 0 2px;white-space:nowrap}
+td.tp{font-size:.8rem;font-weight:700;color:var(--blue-dark);text-align:center;padding:0 5px;width:40px}
+td.te{text-align:center;width:36px;padding:0 3px}
+.en-b{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-size:.78rem;font-weight:700;background:var(--blue);color:#fff;border:2px solid var(--blue)}
+.en-b.low{background:var(--zone-low);color:#0369a1;border-color:#7dd3fc}
+.en-b.mid{background:var(--zone-mid);color:#065f46;border-color:#6ee7b7}
+.en-b.high{background:var(--zone-high);color:#92400e;border-color:#fcd34d}
+.en-b.empty{background:#f3f4f6;color:#9ca3af;border-color:#d1d5db;font-size:.68rem}
+td.tb2{padding:0 8px}
+.br{position:relative;height:26px;display:flex;align-items:center;margin:2px 0}
+.bz{position:absolute;inset:0;display:flex}
+.bz div{height:100%}
+.bz .bl{flex:0 0 25%;background:var(--zone-low)}
+.bz .bm{flex:0 0 50%;background:var(--zone-mid)}
+.bz .bh{flex:0 0 25%;background:var(--zone-high)}
+.btk{position:absolute;inset:0}
+.btk div{position:absolute;top:0;bottom:0;width:1px;background:rgba(255,255,255,.7)}
+.bdot{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--blue);border:2px solid var(--white);box-shadow:0 1px 4px rgba(0,0,0,.3);transform:translateX(-50%);z-index:2}
+.bar-axis{display:flex;justify-content:space-between;padding:3px 0 0}
+.bar-axis span{font-size:.68rem;color:var(--muted);font-weight:700}
+tr.pt-sec td{padding:4px 5px 2px}
+.sec-tag{display:inline-block;background:var(--blue);color:#fff;font-size:.66rem;font-weight:700;letter-spacing:.06em;padding:3px 9px;border-radius:20px;text-transform:uppercase}
+tr.pt-div td{padding:7px 0 3px}
+tr.pt-div .dl{height:2px;background:var(--border);border-radius:2px}
+.idx-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+.idx-chip{display:flex;flex-direction:column;align-items:center;padding:9px 16px;background:#fafaf8;border:1.5px solid var(--border);border-radius:10px;gap:2px}
+.ic-lbl{font-size:.7rem;font-weight:700;color:var(--muted);letter-spacing:.04em}
+.ic-val{font-size:1.2rem;font-weight:700;color:var(--blue-dark)}
+.ic-st{font-size:.68rem;font-weight:700;border-radius:20px;padding:2px 8px}
+.ic-ok{background:var(--zone-mid);color:#065f46}
+.ic-warn{background:var(--zone-high);color:#92400e}
+.resp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:1px;background:var(--border)}
+.rc{background:var(--white);padding:5px 3px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:1px}
+.rn{font-size:.6rem;color:var(--muted);font-weight:500}
+.rv{font-size:.82rem;font-weight:700}
+.rc.v1 .rv{color:#dc2626}.rc.v2 .rv{color:#f59e0b}.rc.v3 .rv{color:#3b82f6}.rc.v4 .rv{color:#10b981}
+.rpt-sec{margin-bottom:18px}
+.rpt-sec h4{font-family:'Inter',sans-serif;font-size:.95rem;color:var(--blue-dark);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);font-weight:700}
+.rpt-txt{font-size:.88rem;line-height:1.75;color:var(--text)}
+.reb{margin-bottom:14px}
+.reb-hdr{display:flex;align-items:center;gap:9px;margin-bottom:5px}
+.reb-ab{font-size:.75rem;font-weight:700;color:var(--blue);width:28px;font-family:'Inter',sans-serif}
+.reb-nm{font-size:.86rem;font-weight:700;color:var(--blue-dark)}
+.reb-tx{font-size:.85rem;line-height:1.7;color:var(--text);padding-left:37px}
+@media print{
+  .hdr,.tab-nav,.sub-bar,.live-panel,.lp-toggle,#tab-datos,#tab-capture,.no-print{display:none!important}
+  #tab-reporte{display:block!important;padding:0;max-width:100%}
+  body{background:white}
+  .card,.profile-card{box-shadow:none;border:1px solid #ccc;break-inside:avoid}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  .bz .bl{background:var(--zone-low)!important}
+  .bz .bm{background:var(--zone-mid)!important}
+  .bz .bh{background:var(--zone-high)!important}
+  .bdot{background:var(--blue)!important;border-color:#fff!important}
+  .en-b{background:var(--blue)!important;color:#fff!important}
+  .en-b.low{background:var(--zone-low)!important;color:#0369a1!important}
+  .en-b.mid{background:var(--zone-mid)!important;color:#065f46!important}
+  .en-b.high{background:var(--zone-high)!important;color:#92400e!important}
+  .en-b.empty{background:#f3f4f6!important;color:#9ca3af!important}
+  .card-hdr{background:linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%)!important}
+  .card-hdr h3{color:#fff!important}
+  .card-hdr span{color:rgba(255,255,255,.5)!important}
+  .sec-tag{background:var(--blue)!important;color:#fff!important}
+  .ic-ok{background:var(--zone-mid)!important;color:#065f46!important}
+  .ic-warn{background:var(--zone-high)!important;color:#92400e!important}
+}
+@media(max-width:900px){.live-panel,.lp-toggle{display:none!important}}
+@media(max-width:700px){
+  .sc-hdr,.qrow{grid-template-columns:28px 1fr 70px 70px 70px 70px}
+  .fg{grid-template-columns:1fr}.fg .full{grid-column:1}
+  .meta-bar{grid-template-columns:1fr 1fr}
+  .intro-body{padding:22px 18px}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-inner">
+    <div><h1>CUIDA — Sistema Digital</h1><p>Captura · Perfil en tiempo real · Reporte</p></div>
+    <div class="prog-wrap" id="prog-wrap" style="display:none">
+      <span class="prog-label">Completado</span>
+      <div class="prog-bar-out"><div class="prog-bar-in" id="prog-bar"></div></div>
+      <span class="prog-count" id="prog-count">0 / 189</span>
+    </div>
+  </div>
+  <nav class="tab-nav"><div class="tab-nav-inner">
+    <button class="tb active" onclick="goTab('datos')" id="tbn-datos">📋 Datos</button>
+    <button class="tb" onclick="startQ()" id="tbn-capture">📝 Cuestionario</button>
+    <button class="tb" onclick="goTab('reporte')" id="tbn-reporte">📊 Reporte</button>
+  </div></nav>
+</header>
+
+<!-- LIVE PROFILE PANEL -->
+<div class="live-panel" id="live-panel">
+  <div class="lp-hdr"><h4>Perfil en tiempo real</h4><span id="lp-pct">0%</span></div>
+  <div class="lp-body" id="lp-body"></div>
+</div>
+<button class="lp-toggle" id="lp-toggle" onclick="togglePanel()">PERFIL</button>
+
+<!-- ── TAB DATOS ── -->
+<div id="tab-datos" class="screen active">
+  <div class="wrap" style="max-width:680px">
+    <div class="card">
+      <div class="intro-hero">
+        <div class="logo-mark">CUIDA</div>
+        <div class="logo-sub">Cuestionario para la Evaluación de Adoptantes, Cuidadores, Tutores y Mediadores</div>
+      </div>
+      <div class="intro-body">
+        <h2>Datos del caso</h2>
+        <p>Complete la información antes de iniciar. El perfil se calculará en tiempo real conforme se van respondiendo las preguntas.</p>
+        <div class="fg">
+          <div class="full"><label class="fl">Nombre completo</label><input id="f-nombre" type="text" placeholder="Nombre y apellidos"></div>
+          <div><label class="fl">Edad</label><input id="f-edad" type="text" placeholder="Años"></div>
+          <div><label class="fl">Sexo</label><select id="f-sexo"><option value="">Seleccionar…</option><option>Masculino</option><option>Femenino</option><option>Otro</option></select></div>
+          <div><label class="fl">Fecha de aplicación</label><input id="f-fecha" type="date"></div>
+          <div><label class="fl">Baremo</label><select id="f-baremo"><option value="">Seleccionar…</option><option>Población adoptante, varones + mujeres</option><option>Forense (custodia menores, competencia parental), varones y mujeres</option><option>Cuidadores de personas dependientes</option><option>Acogimiento familiar</option></select></div>
+          <div><label class="fl">Psicólogo responsable</label><input id="f-resp" type="text" placeholder="Nombre del evaluador"></div>
+          <div class="full"><label class="fl">N.º expediente</label><input id="f-exp" type="text" placeholder="Opcional"></div>
+        </div>
+        <div class="instr"><p>A continuación encontrará una serie de preguntas relacionadas con su forma de pensar y actuar. <strong>No hay respuestas correctas ni incorrectas.</strong> Responda con sinceridad. Todas las respuestas son confidenciales. Seleccione la alternativa que mejor se ajuste a su realidad.</p></div>
+        <button class="btn btn-navy" onclick="startQ()">Iniciar cuestionario <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TAB CUESTIONARIO ── -->
+<div id="tab-capture" class="screen">
+  <div class="wrap" style="padding-right:300px" id="q-wrap">
+    <div id="q-container"></div>
+  </div>
+  <div class="sub-bar">
+    <div>
+      <div class="bi">Respondidas: <strong id="bar-ct">0</strong> de <strong>189</strong></div>
+      <div class="bw" id="bar-w">⚠️ Hay preguntas sin responder.</div>
+    </div>
+    <div style="display:flex;gap:9px;flex-wrap:wrap">
+      <button class="btn btn-out" onclick="scrollFirst()">↳ Sin responder</button>
+      <button class="btn btn-red" onclick="finishQ()">Ver reporte <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TAB REPORTE ── -->
+<div id="tab-reporte" class="screen">
+  <div class="wrap">
+    <div class="card" id="rpt-hdr"></div>
+    <div class="card" id="rpt-chart">
+      <div class="card-hdr"><h3>Perfil Gráfico — Eneatipos</h3><span>media=5, DT=2</span></div>
+      <div class="card-body">
+        <div class="p-legend">
+          <div class="pl-i"><div class="pl-d" style="background:var(--zone-low)"></div>Bajo (1–3)</div>
+          <div class="pl-i"><div class="pl-d" style="background:var(--zone-mid)"></div>Normal (4–6)</div>
+          <div class="pl-i"><div class="pl-d" style="background:var(--zone-high)"></div>Alto (7–9)</div>
+        </div>
+        <div style="overflow-x:auto"><div id="rpt-chart-tbl"></div></div>
+      </div>
+    </div>
+    <div class="card" id="rpt-validez"></div>
+    <div class="card">
+      <div class="card-hdr"><h3>Tabla de Respuestas (189 ítems)</h3></div>
+      <div class="card-body" style="padding:10px"><div class="resp-grid" id="resp-grid"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><h3>Informe Interpretativo</h3><span>Generado automáticamente</span></div>
+      <div class="card-body" id="rpt-informe"></div>
+    </div>
+    <div class="no-print" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
+      <button class="btn btn-navy" onclick="guardarCUIDA()"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Guardar Evaluación</button>
+      <button class="btn btn-out" onclick="window.print()"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-6 0v4m-3-4h6"/></svg> Imprimir / PDF</button>
+      <button class="btn btn-out" onclick="goTab('capture')">⟲ Volver al cuestionario</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────── SCORING DATA (from CUIDA_SOFTWARE.xlsx) ───────────
+const INVERSE_ITEMS = new Set([2,6,7,9,11,15,18,19,22,23,26,27,28,30,31,32,37,38,39,40,41,42,43,44,45,48,49,54,56,58,60,61,62,68,71,74,75,76,77,78,79,81,85,87,88,89,91,93,95,96,97,99,100,102,103,104,105,108,109,117,119,120,121,124,128,129,134,138,140,141,145,147,149,150,151,153,156,159,161,164,166,168,171,173,174,175,177,179,181,182,188]);
+
+const SCALE_DEF = {
+  Al:{items:[14,20,61,70,102,113,115,119,135,157,164],denom:44},
+  Ap:{items:[10,16,74,99,107,110,131,138,156,159],denom:40},
+  As:{items:[4,12,40,43,47,85,111,126,137,143,148,161,177],denom:52},
+  At:{items:[3,6,68,87,92,96,109,114,127,134,176,181,186],denom:52},
+  Rp:{items:[22,33,35,50,76,79,84,102,122,165,172,178],denom:48},
+  Em:{items:[24,38,46,49,65,66,80,106,116,133],denom:40},
+  Ee:{items:[2,7,37,44,72,93,98,103,158,160,166,174,184],denom:52},
+  In:{items:[21,62,64,67,83,97,118,169,170,185],denom:40},
+  Fl:{items:[13,15,18,42,73,86,121,125,145,152,153,187],denom:48},
+  Rf:{items:[32,52,57,58,82,94,101,104,120,140,142,182],denom:48},
+  Sc:{items:[1,8,28,30,34,53,63,69,71,81,90,173,188],denom:52},
+  Tf:{items:[39,54,60,75,105,124,141,154,168,175],denom:40},
+  Ag:{items:[26,55,117,128,136,139,144,147,150,171,183],denom:44},
+  Dl:{items:[19,23,29,31,45,48,56,77,132,146,163],denom:44},
+  Ds:{items:[5,9,25,36,41],denom:20},
+};
+const PD_TO_EN=[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,8,8,8,8,8,8,9,9,9,9,9,9,9,9];
+function pdToEn(pd){return PD_TO_EN[Math.min(100,Math.max(0,Math.round(pd)))]||1}
+function enLevel(en){if(!en)return'empty';if(en<=3)return'low';if(en<=6)return'mid';return'high'}
+
+const ESCALAS_PRIM=[
+  {abbr:'Al',name:'Altruismo'},
+  {abbr:'Ap',name:'Apertura'},
+  {abbr:'As',name:'Asertividad'},
+  {abbr:'At',name:'Autoestima'},
+  {abbr:'Rp',name:'C. de resolver problemas'},
+  {abbr:'Em',name:'Empatía'},
+  {abbr:'Ee',name:'Equilibrio emocional'},
+  {abbr:'In',name:'Independencia'},
+  {abbr:'Fl',name:'Flexibilidad'},
+  {abbr:'Rf',name:'Reflexividad'},
+  {abbr:'Sc',name:'Sociabilidad'},
+  {abbr:'Tf',name:'Tolerancia a la frustración'},
+  {abbr:'Ag',name:'C. vínculos afectivos / apego'},
+  {abbr:'Dl',name:'C. resolución del duelo'},
+];
+const ESCALAS_SEC=[
+  {abbr:'Cre',name:'Cuidado responsable'},
+  {abbr:'Caf',name:'Cuidado afectivo'},
+  {abbr:'Sen',name:'Sensibilidad hacia los demás'},
+  {abbr:'Agr',name:'Agresividad'},
+];
+
+const INTERP={
+  Al:{low:'Persona centrada en sí misma; no tiene en cuenta las necesidades de los demás y muestra reticencia a comprometerse activamente con ellos.',mid:'Se compromete con las necesidades ajenas cuando lo cree adecuado y oportuno, de forma similar a la mayoría de las personas.',high:'Presenta una clara tendencia a ayudar a los demás de forma desinteresada. Le puede afectar el sufrimiento ajeno y puede dar prioridad a las peticiones de otros, encontrando a veces un sentido a la vida en el compromiso con los demás.'},
+  Ap:{low:'Rechaza los cambios y las situaciones nuevas; se siente más segura ante lo conocido y evita participar en experiencias nuevas.',mid:'Habitualmente se adapta bien a los cambios, manteniendo equilibrio entre lo nuevo y lo conocido. Ha incorporado ideas y valores nuevos en algunos aspectos mientras se mantiene apegada a lo tradicional en otros.',high:'Se adapta bien a los cambios y situaciones nuevas. Suele participar en experiencias novedosas, es tolerante hacia valores y culturas distintas y se muestra poco convencional.'},
+  As:{low:'Es incapaz de admitir cumplidos, tiene dificultades para decir «no» y le cuesta afrontar las críticas adecuadamente.',mid:'Habitualmente consigue defender sus derechos aceptando los de los demás. Cuando recibe halagos suele aceptarlos con naturalidad.',high:'Tiene una capacidad muy marcada de dialogar y negociar en situaciones de conflicto, defendiendo sus posturas con argumentos y respetando los derechos ajenos.'},
+  At:{low:'Cree que no tiene cualidades dignas de aprecio; se siente fracasada y es incapaz de percibir en sí misma cualidades positivas.',mid:'Posee una adecuada aceptación de sí misma; suele sentirse segura y reconoce tanto sus aptitudes como sus carencias.',high:'Está satisfecha consigo misma, reconoce claramente su valía y se acepta como es, lo que la lleva a una satisfacción personal notable.'},
+  Rp:{low:'Es poco resolutiva: se bloquea ante las dificultades y su escasa capacidad de planificación la lleva a tomar decisiones que no dan solución a las necesidades generadas.',mid:'En ocasiones toma decisiones acertadas gracias a su capacidad de planificar y decidir; en otras no consigue controlar sus impulsos, lo que la puede llevar a decisiones inadecuadas.',high:'Es capaz de identificar y resolver situaciones conflictivas con facilidad. Acostumbra a planificar sus acciones y a manejar situaciones cambiantes con eficacia.'},
+  Em:{low:'Tiene falta de aceptación y comprensión de los otros; carece de interés por las razones que mueven a los demás a actuar.',mid:'Tiende a comprender a los demás y procura no herir sus sentimientos. Es fácil de confiar por su interés en las necesidades del otro.',high:'Tiene gran facilidad para ponerse en el lugar del otro. Siempre respeta los sentimientos de los demás y la expresión de sus emociones.'},
+  Ee:{low:'Tiene cambios de humor muy acusados y presenta dificultades para controlar sus emociones ante situaciones estresantes o conflictivas.',mid:'Suele manejar sus emociones de manera suficientemente adaptativa; su control de impulsos normalmente es adecuado, lo que le permite tomar decisiones de forma reflexiva.',high:'Tiene tendencia a no irritarse incluso en situaciones muy tensas. Se muestra calmada, serena e impasible, con un control elevado de sus emociones.'},
+  In:{low:'Necesita la aprobación de los demás para actuar y busca con frecuencia su ayuda para sentirse segura.',mid:'Su capacidad para seguir sus propias decisiones y actuar autónomamente es similar a la de la mayoría de las personas.',high:'Toma sus propias decisiones y asume sus responsabilidades actuando en base a su criterio propio, sin necesitar la aprobación de quienes la rodean.'},
+  Fl:{low:'Le cuesta aceptar los puntos de vista diferentes a los suyos y se muestra rígida ante situaciones que no tiene bajo su control.',mid:'Dependiendo de los factores disposicionales puede actuar en ocasiones con flexibilidad y en otras con cierta rigidez.',high:'Acepta con naturalidad los puntos de vista diferentes a los suyos y apenas se altera cuando alguna situación perturba su vida cotidiana. Su capacidad de adaptación es muy buena.'},
+  Rf:{low:'Son personas incapaces de controlar sus impulsos; no soportan la tranquilidad de los demás y tienden a tomar decisiones precipitadas sin pensar en las consecuencias.',mid:'Las personas que obtienen puntuaciones medias suelen tener comportamientos reflexivos, aunque en ocasiones puedan tener la tentación de dejarse llevar por sus impulsos.',high:'Antes de tomar una decisión piensa mucho las cosas e intenta tener en cuenta todas las posibles consecuencias, sopesando ventajas e inconvenientes.'},
+  Sc:{low:'Son personas con muchas dificultades para relacionarse con otras personas en situaciones sociales, así como para iniciar y mantener conversaciones.',mid:'Son personas con una capacidad adecuada para relacionarse con los demás y disfrutar de los amigos.',high:'Le gusta mucho estar con amigos, conversar y organizar actividades sociales. Se siente cómoda en situaciones que requieren relacionarse con personas desconocidas.'},
+  Tf:{low:'No soporta que las cosas no le salgan tal como espera; si ocurre algo que no tiene previsto se siente angustiada.',mid:'En algunas ocasiones suele alterarse si los planes se modifican, pero también puede analizar y reflexionar, siendo capaz de aceptar variaciones.',high:'Ante una alteración de planes se adapta muy fácilmente y acepta cualquier interrupción sin perturbarse significativamente.'},
+  Ag:{low:'Tiene un apego inseguro que puede manifestarse como apego ansioso o evitativo, con dificultades para comprometerse emocionalmente.',mid:'En general su apego es seguro; suele sentirse cómoda en la cercanía, tanto física como emocional, con otras personas.',high:'Implica un apego seguro con gran capacidad para dar estabilidad y contención a la persona cuidada. Es capaz de tener relaciones de intimidad sin perder su espacio personal.'},
+  Dl:{low:'No puede reconocer aspectos negativos de lo perdido, lo que indicaría una incapacidad para superar los hechos o situaciones traumáticas.',mid:'Indica una adecuada elaboración del duelo; suele reconocer y expresar los sentimientos provocados por las pérdidas y los supera en un tiempo razonable.',high:'Se sobrepone con prontitud y energía a las pérdidas o los cambios que le sobrevienen, habiendo sabido identificar, aceptar y expresar los sentimientos que estos provocan.'},
+  Ds:{low:'Esta puntuación puede darse tanto si las personas no tienen ningún interés por dar buena imagen como si desean ser muy sinceras en sus contestaciones.',mid:'Estas personas quieren dar una imagen adecuada pero intentan ser sinceras al mismo tiempo. Les preocupa la valoración que se haga de ellas.',high:'El evaluado tiene la necesidad de dar una buena imagen, lo cual puede conllevar a negar comportamientos realizados en su vida con el fin de aparecer de un modo socialmente muy adecuado. Revisar validez del protocolo.'},
+  Cre:{low:'Personas que en sus relaciones de cuidado suelen ser poco reflexivas, flexibles y resolutivas; poco perseverantes en la consecución de sus objetivos.',mid:'El sujeto manifiesta tener un cuidado responsable en términos medios, similar a la mayoría.',high:'Personas que en sus relaciones de cuidado suelen ser reflexivas, resolutivas y flexibles; tienden a cumplir sus obligaciones y son perseverantes.'},
+  Caf:{low:'Personas que en sus relaciones de cuidado suelen estar poco satisfechas consigo mismas y tienen dificultades para aceptar los sentimientos ajenos.',mid:'Personas que en sus relaciones de cuidado tienden a estar medianamente satisfechas consigo mismas.',high:'Personas que en sus relaciones de cuidado tienden a estar satisfechas consigo mismas, son capaces de aceptar los sentimientos ajenos y se muestran calmadas ante las situaciones cotidianas.'},
+  Sen:{low:'Personas que tienden a sentirse poco afectadas por las necesidades ajenas y que suelen implicarse escasamente en los problemas de los demás.',mid:'Personas que se preocupan medianamente por los demás, se sienten afectadas por las necesidades ajenas y se implican medianamente en sus problemas.',high:'Personas que se preocupan por los demás, se sienten afectadas por sus necesidades y se implican en sus problemas. Son sensibles, cálidas y amables.'},
+  Agr:{low:'Personas que controlan sus impulsos, son flexibles, toleran la frustración de forma adecuada y tienen habilidades saludables para manejar conflictos.',mid:'Personas que controlan medianamente sus conflictos, algo flexibles y que no siempre controlan su frustración.',high:'Personas con estilo de acercamiento impositivo, con escasa capacidad para contener impulsos, insuficiente flexibilidad y poca tolerancia a la frustración. Valorar en el contexto clínico.'},
+};
+
+const QS=["Me gusta conocer gente nueva","Tengo problemas para dormir","Estoy satisfecho de cómo soy","Si alguien me insulta intento averiguar por qué lo hace","A veces juzgo a los demás sin conocerlos","Me disgusta mi aspecto físico","Tengo cambios de humor con bastante facilidad","Me gusta reunirme con mis amigos y conversar","Siempre hago lo que digo","Me gusta participar en experiencias nuevas","Soy una persona tranquila","Intento no herir los sentimientos de los demás","No me molesta cambiar a última hora los planes previstos para las vacaciones","Comprometerme con la gente necesitada me sirve para encontrar un sentido a la vida","Cuando coordino alguna tarea renuncio si los demás no siguen mis instrucciones","Me gustan los cambios porque rompen la monotonía","Sé leer y escribir","No soporto que me lleven la contraria","Me apena pensar en las relaciones amorosas que tuve en el pasado","Cuando alguien me necesita dejo de hacer lo que estoy haciendo en ese momento para ayudarle","No hago las cosas sólo para satisfacer a los demás","La gente que me rodea raramente me hace partícipe de sus problemas","Cuando dejo una relación importante, tardo muchos años en olvidarla","Intento ponerme en el lugar de los demás para comprenderles mejor","Tiendo a abarcar tantas cosas que acabo agotado","No me gusta hacerme cargo de los problemas y de la economía familiar","Hago todo lo posible por salirme con la mía","Me cuesta mucho participar en reuniones de grupo","Ya no me resulta doloroso pensar en las cosas a las que he tenido que renunciar con los años","Cuando voy de viaje evito relacionarme con otros viajeros","Me cuesta aceptar que mi relación de pareja no sea como al principio","Desconfío de las personas demasiado generosas","Mi actitud ante la vida me ha impedido resolver los problemas adecuadamente","Me relaciono fácilmente con otras personas, aunque no tengamos intereses comunes","Cuando emprendo alguna acción antes he valorado los pros y los contras","Nunca me he quedado con dinero de más al recibir el vuelto de una compra","Me altero fácilmente cuando algo inesperado perturba mi vida cotidiana","Los sentimientos de los demás no me preocupan","Abandono fácilmente las tareas cuando me encuentro con ciertas dificultades","Me pongo nervioso cuando alguien me halaga","Habitualmente compro cosas que no necesito sólo porque me apetece","Me siento angustiado cuando en mi vida ocurre algo que no tengo previsto","Si presto algo y me lo devuelven estropeado, soy incapaz de decirlo","Tan pronto me siento lleno de vitalidad como profundamente cansado","Sigue siendo difícil para mí vivir con la ausencia de un ser querido","Tengo facilidad para ponerme en el lugar de los demás","Cuando alguien me critica injustamente me defiendo dialogando","Creo que las despedidas me resultan más difíciles que al resto de las personas","Me cuesta darme cuenta de si una persona se siente bien o no","En situaciones de emergencia soy capaz de pensar con tranquilidad","Nunca he visto a nadie que tuviese los ojos marrones","Evito realizar una acción cuando no tengo muy claras sus consecuencias","Me resulta bastante fácil intimar con las personas","Cuando no consigo mi objetivo la situación me resulta insoportable","Raramente pienso que me gustaría volver a la infancia","Creo que nunca superaré del todo la pérdida de esa persona que fue tan importante para mí","Suelo llevar a cabo las decisiones que previamente he tomado","A veces me entusiasmo tanto con alguna idea nueva que ni pienso en los inconvenientes que puede tener","Me siento incómodo cuando alguien se acerca demasiado","Tengo tendencia a enojarme cuando las cosas no me salen bien","Las dificultades de otros países no nos incumben, es algo que deben de solucionar sólo ellos","Soy una persona a la que los demás utilizan","Me es fácil conectar con la gente","No me preocupa ser rechazado por los demás","Cuando doy una fiesta consigo que mis invitados se relacionen bien entre sí","Respeto los sentimientos y emociones de los demás, aunque sean diferentes a los míos","Me comporto según lo que pienso en lugar de actuar como esperan los demás","Pienso que no hay nada en mí que merezca la pena","Suelo disfrutar con la mayoría de los actos sociales a los que me invitan","Necesito ayudar a los demás","En un grupo en que no conozco a nadie me cuesta trabajo iniciar la conversación","No suelo ponerme nervioso cuando tengo que esperar para hacer algo","Cuando surge algún imprevisto no me importa dejar lo que esté haciendo en ese momento","Me cuesta trabajo probar comidas nuevas","Cuando me censuran en presencia de otros me siento muy lastimado","Me cuesta encontrar nuevas soluciones a los problemas habituales","En ocasiones se me saltan las lágrimas cuando recuerdo acontecimientos tristes de mi pasado","Me comprometo a hacer tantas cosas que luego me arrepiento de haberlas aceptado","Cuando se me acumulan los problemas me bloqueo y no sé qué hacer","Identifico fácilmente tanto las emociones negativas como positivas de los demás","En una boda, me siento incómodo cuando comparto mesa con personas desconocidas","Para formarme una opinión tengo en cuenta los diferentes puntos de vista que me ofrecen","Me preocupa que los demás no me quieran","Cuando surge un problema prefiero que lo resuelva otro","Me cuesta mucho pedir favores","Cuando estoy ocupado en algo acepto con tranquilidad cualquier interrupción","A veces pienso que no valgo para nada","En general me gusta la gente","Nunca bebo líquidos","Me encanta organizar fiestas con amigos","En alguna ocasión me he quedado con algo que no era mío","No me cuesta trabajo asumir los cambios de mi cuerpo","Cuando estoy solo me siento triste","Antes de tomar una decisión suelo tener en cuenta todas las posibilidades","Si mi hijo adolescente me propusiera algo excepcional, en principio estaría dispuesto a escucharle","Considero que tengo menos cualidades que el resto de las personas","Necesito sentirme arropado por alguien","Es muy raro que algo o alguien me haga perder los estribos","Me siento incómodo con la gente que es diferente a mí","Alguna vez he llegado tarde a trabajar por haberme quedado dormido","No suelo responder ante las provocaciones","Si alguien me pide ayuda por cualquier motivo intento poner una excusa","Las cosas sin importancia me alteran más de lo que debieran","Cuando creo tener razón impongo mi criterio","Me resulta frustrante que las cosas no salgan como espero","Los demás me consideran una persona en quien pueden confiar sus intimidades","Me atraen mucho las situaciones que resultan nuevas e inesperadas","Cuando hago favores a los demás deben agradecérmelo","Con frecuencia pienso que no he hecho las cosas debidamente","Desde siempre me han atraído las culturas que son diferentes a la mía","Me resulta difícil respetar el turno de palabra cuando alguien está hablando","No he visto ningún coche","Nunca será suficiente todo lo que podamos hacer por los más desfavorecidos","Suelo valorarme positivamente","Me conmueve mucho observar el sufrimiento de los más débiles","Conecto fácilmente con los sentimientos de las personas","Me cuesta mucho desprenderme de los objetivos de mi infancia","No me importa lo que piensen los demás sobre mis opiniones","El que haya organizaciones que presten ayuda a otros países me parece un gasto innecesario","Suelo reaccionar sin pensar mucho en lo que hago","Los límites y las normas nunca deben ser cuestionados o negociados con los hijos","Ante situaciones problemáticas o peligrosas me altero menos que los demás","No me suelo alterar por pequeñeces","Sufro cuando deseo tener o comprar algo que no puedo","Solo me interesan aquellas cosas que están relacionadas con mi campo de interés","Si en un restaurante recibo un mal servicio hago la reclamación oportuna","Suelo reconocer las cualidades positivas que tengo","Pienso que los demás van a estar a mi lado cuando les necesite","No entiendo cómo algunas personas pueden llorar delante de otras","Alguna vez me han dado ganas de pegar a alguien","Cuando viajo me gusta ir a lugares que no conozco","Si pierdo algo que me gusta mucho, enseguida consigo olvidarme de ello","Me cuesta detectar cuál es el estado de ánimo de los demás","Pienso que, en general, soy un fracasado","Todo el mundo debería colaborar con asociaciones humanitarias o benéficas","No me cuesta comprometerme emocionalmente con otras personas","Acepto con naturalidad que alguien diga cosas positivas de mí","Me cuesta comprender otras religiones","Si alguien me atrae encuentro la forma de establecer comunicación con él","Hago las cosas sin pararme a pensar","Como espero demasiado de los demás, enseguida me desilusiono","No me molesta que las personas se tomen mucho tiempo para explicar las cosas","Cuando creo en algo lo defiendo con argumentos, sin enfrentarme","Cuando me siento mal busco inmediatamente la ayuda de alguien","Me altero con facilidad cuando alguna situación rompe mi rutina","No me cuesta sobreponerme ante la pérdida de algo que quiero","Me siento aliviado cuando evito comprometerme emocionalmente con otras personas","Cuando alguien hace algo que no me agrada se lo digo abiertamente","Nunca he deteriorado o roto nada que no fuese mío","Antes de tomar cualquier decisión necesito comunicárselo a mi familia y amigos para que me den su aprobación","Mis hábitos son siempre buenos y deseables","Las normas que se establecen con los hijos se deben mantener en cualquier circunstancia","Me molesta que las personas que me rodean no hagan bien sus tareas","Aunque no consiga lo que quiero, me quedo tranquilo","Mis éxitos son la justa recompensa de mi esfuerzo y mi trabajo","Nunca me han interesado la forma de vida y la cultura de otros pueblos","Cuando consigo información privilegiada la comparto con todo aquel que la necesita","No tengo cambios de humor sin un motivo que los justifique","Estoy de acuerdo con la expresión: \"Más vale lo malo conocido que lo bueno por conocer\"","No me suelo preocupar por cosas sin importancia","Tengo mucha dificultad para expresar mis opiniones","Siempre hay personas en quien se puede confiar completamente","La ausencia de algunos seres queridos no me impide disfrutar plenamente de las cosas","Solo deberían interesarnos los problemas propios y no tanto los ajenos","Soy capaz de organizar el tiempo cuando tengo que realizar más de una tarea","Últimamente lloro con bastante facilidad","Nunca hablo mal de nadie","Cuando no alcanzo un objetivo que me he propuesto me cuesta mucho aceptarlo","Me siento bien dejándome llevar por los demás","Puedo hacer las cosas sin necesitar la aprobación de los demás","Me cuesta aceptar que mis padres se hagan viejos","Ante una situación límite mantengo la calma","Me resulta difícil establecer nuevas relaciones","Me enfurezco cuando alguien dice algo negativo de mí","Cuando tengo problemas intento evadirme","Tengo muchas razones para sentirme contento conmigo mismo","Me cuesta mucho decir que no","En situaciones difíciles considero las diferentes alternativas que hay para afrontarlas","En alguna ocasión he revelado algo que me habían confiado en secreto","A veces miento","Me cuesta mucho percibir las cualidades positivas que tengo","Suelo hablar sin pensar demasiado lo que digo","Me siento mal cuando no tengo relaciones afectivas duraderas con otras personas","Sé controlar mis sentimientos y no dejo que estos me desborden","No me importa que los demás piensen de mí","Me considero capaz de hacer las cosas tan bien como los demás","Ni en situaciones muy tensas me irrito","Me cuesta trabajo relacionarme con la gente cuando estoy en algún acto social","Con la cantidad de niños que necesitan un hogar es absurdo traer un hijo al mundo"];
+
+// ─────────── STATE ───────────
+const ANS = new Array(189).fill(0);
+let panelOpen = false;
+
+// ─────────── SCORING ENGINE ───────────
+function itemScore(i1idx, rawVal) {
+  if (!rawVal) return 0;
+  return INVERSE_ITEMS.has(i1idx) ? (5 - rawVal) : rawVal;
+}
+
+function calcScales() {
+  const scores = {};
+  for (const [abbr, def] of Object.entries(SCALE_DEF)) {
+    let sum = 0, answered = 0;
+    for (const item of def.items) {
+      if (ANS[item-1] > 0) { sum += itemScore(item, ANS[item-1]); answered++; }
+    }
+    const pd = answered > 0 ? Math.round(sum / def.denom * 100) : null;
+    scores[abbr] = { pd, en: pd !== null ? pdToEn(pd) : null, answered, total: def.items.length };
+  }
+  const e = k => scores[k]?.en || 0;
+  const avg = (...keys) => { const vs = keys.map(e).filter(v=>v>0); return vs.length ? Math.round(vs.reduce((a,b)=>a+b,0)/vs.length) : null; };
+  scores.Cre = { en: avg('In','Rf','Tf','Ee','Fl','At'), pd: null };
+  scores.Caf = { en: avg('Em','Ee','Ag','Ag','As','Dl','Rp'), pd: null };
+  scores.Sen = { en: avg('Ee','Fl','Em','Ag','Ag','Al','Ap'), pd: null };
+  const agr_en = avg('As','In','Rf','Tf');
+  scores.Agr = { en: agr_en ? Math.max(1, Math.min(9, 10 - agr_en)) : null, pd: null };
+  const invItems = [17, 51, 112];
+  let invScore = 0;
+  for (const item of invItems) {
+    if (ANS[item-1] >= 3) invScore++;
+  }
+  scores.Inv = { pd: invScore, en: invScore === 0 ? 'Normal' : 'Revisar' };
+  scores.Inc = { pd: '–', en: 'N/A' };
+  return scores;
+}
+
+// ─────────── LIVE PANEL ───────────
+function buildLivePanel() {
+  const scores = calcScales();
+  const answered = ANS.filter(a=>a>0).length;
+  const pct = Math.round(answered/189*100);
+  document.getElementById('lp-pct').textContent = pct + '%';
+
+  let html = '';
+  const allScales = [...ESCALAS_PRIM, ...ESCALAS_SEC];
+  for (const esc of allScales) {
+    const s = scores[esc.abbr];
+    const en = s?.en;
+    const lvl = typeof en === 'number' ? enLevel(en) : 'empty';
+    const barW = typeof en === 'number' ? Math.round((en-1)/8*100) : 0;
+    html += `<div class="lp-row">
+      <span class="lp-abbr">${esc.abbr}</span>
+      <span class="lp-name">${esc.name}</span>
+      <div class="lp-en ${lvl}">${typeof en==='number' ? en : '–'}</div>
+      <div class="lp-bar"><div class="lp-bar-in ${lvl}" style="width:${barW}%"></div></div>
+    </div>`;
+  }
+  document.getElementById('lp-body').innerHTML = html;
+}
+
+// ─────────── QUESTIONNAIRE ───────────
+const OPTS=[{v:1,l:'En\ndesacuerdo'},{v:2,l:'Algo en\ndesacuerdo'},{v:3,l:'Algo de\nacuerdo'},{v:4,l:'De\nacuerdo'}];
+
+function buildQ() {
+  if (document.getElementById('q-container').children.length > 0) return;
+  const c = document.getElementById('q-container');
+  const BLK = 30;
+  for (let b=0;b<Math.ceil(QS.length/BLK);b++) {
+    const s=b*BLK, e=Math.min(s+BLK,QS.length);
+    const sd=document.createElement('div'); sd.className='sec-div';
+    sd.innerHTML=`<span class="sec-num">Preguntas ${s+1}–${e}</span><div class="sec-line"></div>`;
+    c.appendChild(sd);
+    const hdr=document.createElement('div'); hdr.className='sc-hdr';
+    hdr.innerHTML=`<div class="sh-n">#</div><div class="sh-t">Enunciado</div>${OPTS.map(o=>`<div class="sh-o">${o.l.replace('\n','<br>')}</div>`).join('')}`;
+    c.appendChild(hdr);
+    const blk=document.createElement('div'); blk.className='qblock';
+    for (let i=s;i<e;i++) {
+      const row=document.createElement('div'); row.className='qrow'; row.id=`qr-${i}`;
+      row.innerHTML=`<div class="q-n">${i+1}</div><div class="q-t">${QS[i]}</div>${OPTS.map(o=>`<div class="q-o"><input type="radio" name="q${i}" id="q${i}v${o.v}" value="${o.v}" onchange="setAns(${i},${o.v})"><label for="q${i}v${o.v}"></label></div>`).join('')}`;
+      blk.appendChild(row);
+    }
+    c.appendChild(blk);
+  }
+}
+
+function setAns(i, v) {
+  ANS[i] = v;
+  document.getElementById(`qr-${i}`)?.classList.add('done');
+  updateProg();
+  buildLivePanel();
+}
+
+function updateProg() {
+  const n=ANS.filter(a=>a>0).length;
+  const p=(n/189*100).toFixed(1);
+  document.getElementById('prog-bar').style.width=p+'%';
+  document.getElementById('prog-count').textContent=n+' / 189';
+  document.getElementById('bar-ct').textContent=n;
+}
+
+function scrollFirst() {
+  const idx=ANS.findIndex(a=>a===0);
+  if(idx>=0) document.getElementById(`qr-${idx}`)?.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function togglePanel() {
+  panelOpen = !panelOpen;
+  document.getElementById('live-panel').style.display = panelOpen ? 'block' : 'none';
+  document.getElementById('q-wrap').style.paddingRight = panelOpen ? '300px' : '24px';
+}
+
+function finishQ() {
+  const u=ANS.filter(a=>a===0).length;
+  if(u>0) document.getElementById('bar-w').style.display='block';
+  buildReport();
+  goTab('reporte');
+  window.scrollTo(0,0);
+}
+
+// ─────────── REPORT ───────────
+function buildReport() {
+  const scores = calcScales();
+  const nombre=document.getElementById('f-nombre').value||'–';
+  const edad=document.getElementById('f-edad').value||'–';
+  const sexo=document.getElementById('f-sexo').value||'–';
+  const fecha=document.getElementById('f-fecha').value||'–';
+  const baremo=document.getElementById('f-baremo').value||'–';
+  const resp=document.getElementById('f-resp').value||'–';
+  const exp=document.getElementById('f-exp').value||'';
+  const answered=ANS.filter(a=>a>0).length;
+
+  document.getElementById('rpt-hdr').innerHTML=`
+    <div class="card-hdr"><h3>Informe CUIDA${exp?' – Exp: '+exp:''}</h3><span>${new Date().toLocaleDateString('es-MX')}</span></div>
+    <div class="card-body">
+      <div class="meta-bar">
+        <div class="mc"><div class="ml">Nombre</div><div class="mv" style="font-size:.9rem">${nombre}</div></div>
+        <div class="mc"><div class="ml">Edad</div><div class="mv">${edad} años</div></div>
+        <div class="mc"><div class="ml">Sexo</div><div class="mv">${sexo}</div></div>
+        <div class="mc"><div class="ml">Fecha</div><div class="mv">${fecha}</div></div>
+        <div class="mc" style="grid-column:1/-1"><div class="ml">Baremo</div><div class="mv" style="font-size:.85rem">${baremo}</div></div>
+        <div class="mc"><div class="ml">Responsable</div><div class="mv" style="font-size:.85rem">${resp}</div></div>
+        <div class="mc"><div class="ml">Completado</div><div class="mv">${answered}/189 (${Math.round(answered/189*100)}%)</div></div>
+        <div class="mc"><div class="ml">Invalidez</div><div class="mv">${scores.Inv.pd} ítem(s) inválido(s)</div></div>
+      </div>
+    </div>`;
+
+  function scaleRow(esc) {
+    const s=scores[esc.abbr]; const en=typeof s?.en==='number'?s.en:null;
+    const lvl=enLevel(en); const pct=en?Math.round((en-1)/8*100):null;
+    const pdStr=s?.pd!==null&&s?.pd!==undefined?Math.round(s.pd):'–';
+    return `<tr>
+      <td class="ta">${esc.abbr}</td><td class="tn">${esc.name}</td>
+      <td class="tp">${pdStr}</td>
+      <td class="te"><span class="en-b ${en?lvl:'empty'}">${en||'–'}</span></td>
+      <td class="tb2"><div class="br">
+        <div class="bz"><div class="bl"></div><div class="bm"></div><div class="bh"></div></div>
+        <div class="btk"><div style="left:0%"></div><div style="left:25%"></div><div style="left:50%"></div><div style="left:75%"></div><div style="left:100%"></div></div>
+        ${pct!==null?`<div class="bdot" style="left:${pct}%"></div>`:''}
+      </div></td>
+    </tr>`;
+  }
+  let rows=`<tr class="pt-sec"><td colspan="5"><span class="sec-tag">Escalas Primarias</span></td></tr>`;
+  ESCALAS_PRIM.forEach(e=>{rows+=scaleRow(e);});
+  rows+=`<tr class="pt-div"><td colspan="5"><div class="dl"></div></td></tr>`;
+  rows+=`<tr class="pt-sec"><td colspan="5"><span class="sec-tag">Factores de Segundo Orden</span></td></tr>`;
+  ESCALAS_SEC.forEach(e=>{rows+=scaleRow(e);});
+  rows+=`<tr><td colspan="4"></td><td class="tb2"><div class="bar-axis"><span>1</span><span>3</span><span>5</span><span>7</span><span>9</span></div></td></tr>`;
+  document.getElementById('rpt-chart-tbl').innerHTML=`<table class="pt"><thead><tr><th class="l" colspan="2">Escala</th><th>PD</th><th>En</th><th style="min-width:280px;text-align:left;padding-left:8px">Perfil</th></tr></thead><tbody>${rows}</tbody></table>`;
+
+  const dsEn=scores.Ds?.en||'–'; const invPd=scores.Inv?.pd; const invSt=invPd===0?'ic-ok':'ic-warn';
+  document.getElementById('rpt-validez').innerHTML=`
+    <div class="card-hdr"><h3>Validez del Protocolo</h3></div>
+    <div class="card-body">
+      <p class="rpt-txt">Los índices de control evalúan si el protocolo puede considerarse válido para su interpretación clínica.</p>
+      <div class="idx-row">
+        <div class="idx-chip"><span class="ic-lbl">Ds – Deseabilidad social</span><span class="ic-val">${typeof dsEn==='number'?dsEn:'–'}</span><span class="ic-st ${enLevel(dsEn)==='high'?'ic-warn':'ic-ok'}">${enLevel(dsEn)==='high'?'Revisar':'Normal'}</span></div>
+        <div class="idx-chip"><span class="ic-lbl">Inv – Invalidez</span><span class="ic-val">${invPd}</span><span class="ic-st ${invSt}">${invPd===0?'Normal':'Revisar'}</span></div>
+        <div class="idx-chip"><span class="ic-lbl">Inc – Inconsistencia</span><span class="ic-val">–</span><span class="ic-st ic-ok">Calcular en TEAcorrige</span></div>
+      </div>
+    </div>`;
+
+  let grid='';
+  for(let i=0;i<189;i++){const v=ANS[i];grid+=`<div class="rc ${v>0?'v'+v:''}">\n<span class="rn">${i+1}</span><span class="rv">${v>0?v:'–'}</span></div>`;}
+  document.getElementById('resp-grid').innerHTML=grid;
+
+  let inf=`<div class="rpt-sec"><h4>Introducción</h4><p class="rpt-txt">El CUIDA evalúa las características más relevantes para el establecimiento competente y funcional de relaciones de cuidado en contextos de adopción, acogimiento, tutela, custodia de menores o atención a personas dependientes. El presente informe ha sido generado automáticamente a partir de las respuestas al cuestionario. El profesional deberá contrastar estas sugerencias interpretativas con el conjunto de información disponible y determinar su idoneidad.</p></div>`;
+  inf+=`<div class="rpt-sec"><h4>Factores de Segundo Orden</h4>`;
+  for(const esc of ESCALAS_SEC){
+    const s=scores[esc.abbr]; const en=typeof s?.en==='number'?s.en:null; const lvl=enLevel(en);
+    const txt=INTERP[esc.abbr]?.[lvl]||'Puntuación no calculable con los ítems disponibles.';
+    inf+=`<div class="reb"><div class="reb-hdr"><span class="reb-ab">${esc.abbr}</span><span class="reb-nm">${esc.name}</span><span class="en-b ${en?lvl:'empty'}" style="width:22px;height:22px;font-size:.72rem">${en||'–'}</span></div><div class="reb-tx">${txt}</div></div>`;
+  }
+  inf+=`</div><div class="rpt-sec"><h4>Escalas Primarias</h4>`;
+  for(const esc of ESCALAS_PRIM){
+    const s=scores[esc.abbr]; const en=typeof s?.en==='number'?s.en:null; const lvl=enLevel(en);
+    const txt=INTERP[esc.abbr]?.[lvl]||'Puntuación no calculable con los ítems disponibles.';
+    inf+=`<div class="reb"><div class="reb-hdr"><span class="reb-ab">${esc.abbr}</span><span class="reb-nm">${esc.name}</span><span class="en-b ${en?lvl:'empty'}" style="width:22px;height:22px;font-size:.72rem">${en||'–'}</span></div><div class="reb-tx">${txt}</div></div>`;
+  }
+  inf+=`</div><div class="rpt-sec"><h4>Nota Metodológica</h4><p class="rpt-txt">Las puntuaciones en eneatipo constituyen una escala típica con media 5 y desviación típica 2. La tabla de conversión PD–En utilizada proviene de la hoja de cálculo del instrumento. El Índice de Inconsistencia de respuestas requiere verificación adicional en TEAcorrige. La validez de las conclusiones depende de la sinceridad con la que la persona evaluada contestó la prueba. Este informe debe ser interpretado exclusivamente por un psicólogo debidamente capacitado.</p></div>`;
+  document.getElementById('rpt-informe').innerHTML=inf;
+}
+
+// ─────────── NAV ───────────
+function goTab(t) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  document.getElementById('tbn-'+t).classList.add('active');
+}
+
+function startQ() {
+  buildQ();
+  buildLivePanel();
+  document.getElementById('live-panel').style.display='block';
+  document.getElementById('lp-toggle').style.display='block';
+  document.getElementById('prog-wrap').style.display='flex';
+  panelOpen=true;
+  goTab('capture');
+}
+
+function newCase() {
+  if(!confirm('¿Iniciar nuevo caso? Se perderán los datos actuales.'))return;
+  ANS.fill(0);
+  ['f-nombre','f-edad','f-sexo','f-fecha','f-baremo','f-resp','f-exp'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('prog-wrap').style.display='none';
+  document.getElementById('live-panel').style.display='none';
+  document.getElementById('lp-toggle').style.display='none';
+  document.getElementById('q-container').innerHTML='';
+  updateProg();
+  panelOpen=false;
+  goTab('datos');
+}
+
+// ─────────── INTEGRACIÓN CON BD ───────────
+let pacienteId = null;
+let pacienteDatos = null;
+let authToken = null;
+
+function obtenerParametrosURL() {
+  const params = new URLSearchParams(window.location.search);
+  pacienteId = params.get('paciente_id');
+  authToken = params.get('token') || localStorage.getItem('auth_token');
+
+  // Guardar token en localStorage si viene en URL
+  if (authToken) {
+    localStorage.setItem('auth_token', authToken);
+  }
+
+  console.log(`📍 Paciente ID: ${pacienteId}, Token: ${authToken ? '✓' : '✗'}`);
+  return pacienteId;
+}
+
+async function cargarDatosPaciente() {
+  if (!pacienteId) {
+    console.log('⚠️ Sin paciente_id, mostrar formulario vacío');
+    return;
+  }
+
+  try {
+    console.log(`🔄 Cargando datos del paciente ${pacienteId}...`);
+    const token = authToken || localStorage.getItem('auth_token');
+    const response = await fetch(`/api/pacientes/${pacienteId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      console.error(`❌ Error ${response.status} al cargar paciente`);
+      return;
+    }
+
+    const paciente = await response.json();
+    pacienteDatos = paciente;
+    console.log('✓ Datos del paciente:', paciente);
+
+    // Precarga automática
+    document.getElementById('f-nombre').value = paciente.nombre || '';
+    document.getElementById('f-edad').value = paciente.edad || '';
+    document.getElementById('f-sexo').value = paciente.sexo || '';
+    // Fecha actual si no tiene
+    document.getElementById('f-fecha').value = new Date().toISOString().split('T')[0];
+
+    // Desabilitar campos de paciente (solo lectura)
+    document.getElementById('f-nombre').disabled = true;
+    document.getElementById('f-edad').disabled = true;
+    document.getElementById('f-sexo').disabled = true;
+
+    console.log('✓ Datos del paciente precargados');
+
+  } catch (error) {
+    console.error('❌ Error al cargar paciente:', error);
+  }
+}
+
+function calcularCUIDALocal() {
+  const respuestas = ANS;
+  const escalasResult = {};
+
+  // Definir escalas localmente
+  const escalasLocal = {
+    Al: { items: [14,20,61,70,102,113,115,119,135,157,164], denom: 44 },
+    Ap: { items: [10,16,74,99,107,110,131,138,156,159], denom: 40 },
+    As: { items: [4,12,40,43,47,85,111,126,137,143,148,161,177], denom: 52 },
+    At: { items: [3,6,68,87,92,96,109,114,127,134,176,181,186], denom: 52 },
+    Rp: { items: [22,33,35,50,76,79,84,102,122,165,172,178], denom: 48 },
+    Em: { items: [24,38,46,49,65,66,80,106,116,133], denom: 40 },
+    Ee: { items: [2,7,37,44,72,93,98,103,158,160,166,174,184], denom: 52 },
+    In: { items: [21,62,64,67,83,97,118,169,170,185], denom: 40 },
+    Fl: { items: [13,15,18,42,73,86,121,125,145,152,153,187], denom: 48 },
+    Rf: { items: [32,52,57,58,82,94,101,104,120,140,142,182], denom: 48 },
+    Sc: { items: [1,8,28,30,34,53,63,69,71,81,90,173,188], denom: 52 },
+    Tf: { items: [39,54,60,75,105,124,141,154,168,175], denom: 40 },
+    Ag: { items: [26,55,117,128,136,139,144,147,150,171,183], denom: 44 },
+    Dl: { items: [19,23,29,31,45,48,56,77,132,146,163], denom: 44 },
+    Ds: { items: [5,9,25,36,41], denom: 20 }
+  };
+
+  for (const [abbr, def] of Object.entries(escalasLocal)) {
+    let sum = 0, answered = 0;
+    for (const item of def.items) {
+      const valor = respuestas[item - 1];
+      if (valor > 0) {
+        const scored = INVERSE_ITEMS.has(item) ? (5 - valor) : valor;
+        sum += scored;
+        answered++;
+      }
+    }
+    const pd = answered > 0 ? Math.round(sum / def.denom * 100) : null;
+    const en = pd !== null ? PD_TO_EN[Math.min(100, Math.max(0, pd))] : null;
+    escalasResult[abbr] = { en, pd, answered, total: def.items.length };
+  }
+
+  const e = k => escalasResult[k]?.en || 0;
+  const avg = (...keys) => { const vs = keys.map(e).filter(v=>v>0); return vs.length ? Math.round(vs.reduce((a,b)=>a+b,0)/vs.length) : null; };
+  escalasResult.Cre = { en: avg('In','Rf','Tf','Ee','Fl','At'), pd: null };
+  escalasResult.Caf = { en: avg('Em','Ee','Ag','Ag','As','Dl','Rp'), pd: null };
+  escalasResult.Sen = { en: avg('Ee','Fl','Em','Ag','Ag','Al','Ap'), pd: null };
+  const agr_en = avg('As','In','Rf','Tf');
+  escalasResult.Agr = { en: agr_en ? Math.max(1, Math.min(9, 10 - agr_en)) : null, pd: null };
+
+  return { escalas: escalasResult, total: respuestas.filter(r => r > 0).length };
+}
+
+async function guardarCUIDA() {
+  // Validar respuestas
+  const sinResponder = ANS.filter(a => a === 0).length;
+  if (sinResponder > 0) {
+    alert(`⚠️ Faltan ${sinResponder} ítems por responder`);
+    return;
+  }
+
+  // Validar paciente
+  if (!pacienteId) {
+    alert('Error: Paciente no identificado');
+    return;
+  }
+
+  try {
+    // Calcular resultado
+    const resultado = calcularCUIDALocal();
+
+    // Preparar datos para enviar
+    const payload = {
+      paciente_id: parseInt(pacienteId),
+      tipo: 'CUIDA',
+      data: ANS,
+      total: resultado.total,
+      subescalas: resultado.escalas
+    };
+
+    console.log('📤 Enviando CUIDA a BD:', payload);
+
+    // Enviar a API
+    const token = authToken || localStorage.getItem('auth_token');
+    const response = await fetch('/api/pruebas', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || `Error ${response.status}`);
+    }
+
+    const pruebaGuardada = await response.json();
+    console.log('✅ CUIDA guardado:', pruebaGuardada);
+
+    // Mostrar confirmación
+    alert('✅ CUIDA guardado correctamente');
+
+    // Volver al expediente después de 1 segundo
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 1000);
+
+  } catch (error) {
+    console.error('❌ Error al guardar CUIDA:', error);
+    alert(`Error al guardar: ${error.message}`);
+  }
+}
+
+// Inicialización
+obtenerParametrosURL();
+cargarDatosPaciente().then(() => {
+  // Después de cargar datos del paciente
+  buildQ();
+  buildLivePanel();
+});
+</script>
+</body>
+</html>

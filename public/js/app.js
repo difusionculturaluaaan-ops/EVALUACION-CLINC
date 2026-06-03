@@ -4425,6 +4425,7 @@ const app = {
   },
 
   async guardarNuevoPaciente() {
+    // Función async para manejar la creación de paciente
     const nombre = document.getElementById('crear-nombre').value.trim();
     const edad = parseInt(document.getElementById('crear-edad').value) || null;
     const sexo = document.getElementById('crear-sexo').value;
