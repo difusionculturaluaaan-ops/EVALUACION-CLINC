@@ -12,6 +12,22 @@
       "dest": "server.js"
     },
     {
+      "src": "/js/(.*)",
+      "dest": "/public/js/$1"
+    },
+    {
+      "src": "/css/(.*)",
+      "dest": "/public/css/$1"
+    },
+    {
+      "src": "/auth.html",
+      "dest": "/public/auth.html"
+    },
+    {
+      "src": "/(.*)\\.html",
+      "dest": "/public/$1.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "server.js"
     }
