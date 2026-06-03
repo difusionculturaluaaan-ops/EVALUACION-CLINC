@@ -2414,9 +2414,13 @@ const app = {
       'PAR': 'Ideación Paranoide', 'PSY': 'Psicoticismo'
     };
 
-    // Verificar si hay datos reales
+    // Verificar si hay datos reales (valores > 0 en al menos una escala)
     const subescalasData = subescalas?.subescalas || subescalas || {};
-    const tieneData = Object.keys(subescalasData).length > 0 && Object.values(subescalasData).some(v => v);
+    const escalasOrdenadas = ['SOM', 'OC', 'SI', 'DEP', 'ANX', 'HOS', 'PHOB', 'PAR', 'PSY'];
+    const tieneData = escalasOrdenadas.some(e => {
+      const valor = subescalasData[e]?.media || 0;
+      return Number(valor) > 0;
+    });
 
     let html = `
       <div style="margin: 4px 0;">
