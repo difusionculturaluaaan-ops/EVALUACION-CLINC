@@ -1375,12 +1375,14 @@ function saveInfo() {
 
 function loadData() {
   try {
-    // Si es un test NUEVO (sin paciente_id en URL), limpiar localStorage
+    // Si es un test NUEVO (sin paciente_id en URL), limpiar localStorage y responses
     const pacienteId = new URLSearchParams(window.location.search).get('paciente_id');
     if (!pacienteId) {
       // Nuevo test - limpiar datos anteriores
       localStorage.removeItem('mmpi_responses');
       localStorage.removeItem('mmpi_info');
+      // Limpiar también el array responses en memoria
+      for (let i = 0; i <= 338; i++) responses[i] = null;
       return;
     }
 
