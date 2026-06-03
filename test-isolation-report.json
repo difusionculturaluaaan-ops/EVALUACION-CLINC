@@ -1,0 +1,62 @@
+{
+  "timestamp": "2026-06-03T15:26:54.725Z",
+  "verdict": "PASS",
+  "tests": [
+    {
+      "name": "mmpi2rf.js",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "name": "mmpi2.js",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "name": "scl90r.js",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "name": "hamilton.js",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "name": "pclr.js",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "name": "scid2.js",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "name": "isra.js",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "name": "isra-f.js",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "name": "isra-m.js",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "name": "tds.js",
+      "passed": true,
+      "issues": []
+    },
+    {
+      "name": "egep5.js",
+      "passed": true,
+      "issues": []
+    }
+  ],
+  "summary": "11/11 tests passed"
+}

@@ -5,7 +5,10 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "verify:isolation": "node .claude/skills/test-isolation-verifier/verifier.js",
+    "verify:isolation-all": "node .claude/skills/test-isolation-verifier/verifier.js all",
+    "verify:isolation-branch": "node .claude/skills/test-isolation-verifier/verifier.js branch"
   },
   "keywords": [
     "evaluación",
