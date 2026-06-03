@@ -2706,13 +2706,19 @@ const app = {
       'Al', 'Ap', 'As', 'At', 'Rp', 'Em', 'Ee', 'In', 'Fl', 'Rf', 'Sc', 'Tf', 'Ag', 'Dl'
     ];
 
-    // Nombres de escalas
+    // Nombres de escalas y su interpretación
     const nombres = {
       'Al': 'Altruismo', 'Ap': 'Apertura', 'As': 'Asertividad', 'At': 'Autoestima',
       'Rp': 'C. resolver problemas', 'Em': 'Empatía', 'Ee': 'Equilibrio emocional', 'In': 'Independencia',
       'Fl': 'Flexibilidad', 'Rf': 'Reflexividad', 'Sc': 'Sociabilidad', 'Tf': 'Tolerancia frustración',
       'Ag': 'C. vínculos afectivos', 'Dl': 'C. resolución duelo',
       'Cre': 'Cuidado responsable', 'Caf': 'Cuidado afectivo', 'Sen': 'Sensibilidad', 'Agr': 'Agresividad'
+    };
+
+    const interpretaciones = {
+      'bajo': 'Puntuación baja: Necesita desarrollo en esta área',
+      'medio': 'Puntuación media: Competencia adecuada',
+      'alto': 'Puntuación alta: Competencia consolidada'
     };
 
     const colorizar = (en) => {
@@ -2722,16 +2728,61 @@ const app = {
       return '#92400e'; // Alto
     };
 
+    const getNivelTexto = (en) => {
+      if (!en) return '–';
+      if (en <= 3) return 'Bajo';
+      if (en <= 6) return 'Medio';
+      return 'Alto';
+    };
+
+    // Datos del evaluador
+    const evaluador = localStorage.getItem('nombre') || 'No especificado';
+    const fecha = new Date(prueba.fecha || Date.now()).toLocaleDateString('es-ES');
+
+    // Generar gráfico simple con barras ASCII
+    const generarGraficoBarras = () => {
+      let grafico = '<svg width="100%" height="200" style="margin: 10px 0; border: 1px solid #ddd; border-radius: 3px;">';
+      const maxEn = 9;
+      const barraAncho = (100 / escalas_prim.length) - 2;
+      let x = 1;
+
+      escalas_prim.forEach((esc, idx) => {
+        const en = datos[esc]?.en || 0;
+        const altura = (en / maxEn) * 150;
+        const color = colorizar(en);
+        const y = 150 - altura;
+
+        grafico += `
+          <rect x="${x}%" y="${y}" width="${barraAncho}%" height="${altura}" fill="${color}" stroke="#ddd"/>
+          <text x="${x + barraAncho/2}%" y="170" font-size="8" text-anchor="middle">${esc}</text>
+          <text x="${x + barraAncho/2}%" y="${y - 3}" font-size="7" text-anchor="middle" font-weight="bold">${en || '–'}</text>
+        `;
+        x += barraAncho + 2;
+      });
+
+      grafico += '</svg>';
+      return grafico;
+    };
+
     let html = `
       <div style="margin: 10px 0; padding: 15px; background: #f0fdf4; border-left: 4px solid #10b981; border-radius: 3px; color: #333;">
-        <h4 style="margin: 0 0 10px 0; font-size: 10px; font-weight: bold; color: #111827;">📋 CUIDA - Evaluación de Cuidadores</h4>
+        <h4 style="margin: 0 0 10px 0; font-size: 11px; font-weight: bold; color: #111827;">📋 CUIDA - Evaluación de Cuidadores</h4>
 
-        <h5 style="margin: 8px 0 6px 0; font-size: 9px; font-weight: bold; color: #111827;">Escalas Primarias</h5>
-        <table style="width: 100%; border-collapse: collapse; font-size: 8px; margin-bottom: 10px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; font-size: 8px;">
+          <div><strong>Evaluador:</strong> ${evaluador}</div>
+          <div><strong>Fecha:</strong> ${fecha}</div>
+        </div>
+
+        <h5 style="margin: 10px 0 8px 0; font-size: 9px; font-weight: bold; color: #111827;">Perfil Gráfico de Escalas Primarias</h5>
+        ${generarGraficoBarras()}
+
+        <h5 style="margin: 10px 0 6px 0; font-size: 9px; font-weight: bold; color: #111827;">Escalas Primarias - Resultados Detallados</h5>
+        <table style="width: 100%; border-collapse: collapse; font-size: 7.5px; margin-bottom: 10px;">
           <tr style="background: #e5eee8;">
             <th style="padding: 4px 6px; text-align: left; border: 1px solid #d1d5db;">Escala</th>
             <th style="padding: 4px 6px; text-align: center; border: 1px solid #d1d5db;">PD</th>
             <th style="padding: 4px 6px; text-align: center; border: 1px solid #d1d5db;">En</th>
+            <th style="padding: 4px 6px; text-align: center; border: 1px solid #d1d5db;">Nivel</th>
           </tr>
     `;
 
@@ -2739,12 +2790,14 @@ const app = {
       const d = datos[esc];
       const pd = d?.pd !== null ? Math.round(d?.pd || 0) : '–';
       const en = d?.en || '–';
+      const nivel = getNivelTexto(en);
       const color = colorizar(en);
       html += `
         <tr>
           <td style="padding: 3px 6px; border: 1px solid #d1d5db;">${nombres[esc]}</td>
           <td style="padding: 3px 6px; border: 1px solid #d1d5db; text-align: center;">${pd}</td>
-          <td style="padding: 3px 6px; border: 1px solid #d1d5db; text-align: center; font-weight: bold; ${color ? `color: ${color};` : ''}">${en}</td>
+          <td style="padding: 3px 6px; border: 1px solid #d1d5db; text-align: center; font-weight: bold; color: ${color};">${en}</td>
+          <td style="padding: 3px 6px; border: 1px solid #d1d5db; text-align: center; font-size: 7px;">${nivel}</td>
         </tr>
       `;
     });
@@ -2752,22 +2805,25 @@ const app = {
     html += `
         </table>
 
-        <h5 style="margin: 8px 0 6px 0; font-size: 9px; font-weight: bold; color: #111827;">Escalas Secundarias</h5>
-        <table style="width: 100%; border-collapse: collapse; font-size: 8px;">
+        <h5 style="margin: 10px 0 6px 0; font-size: 9px; font-weight: bold; color: #111827;">Escalas Secundarias (Factores)</h5>
+        <table style="width: 100%; border-collapse: collapse; font-size: 7.5px; margin-bottom: 10px;">
           <tr style="background: #dcfce7;">
             <th style="padding: 4px 6px; text-align: left; border: 1px solid #d1d5db;">Factor</th>
             <th style="padding: 4px 6px; text-align: center; border: 1px solid #d1d5db;">En</th>
+            <th style="padding: 4px 6px; text-align: center; border: 1px solid #d1d5db;">Nivel</th>
           </tr>
     `;
 
     ['Cre', 'Caf', 'Sen', 'Agr'].forEach(esc => {
       const d = datos[esc];
       const en = d?.en || '–';
+      const nivel = getNivelTexto(en);
       const color = colorizar(en);
       html += `
         <tr>
           <td style="padding: 3px 6px; border: 1px solid #d1d5db;">${nombres[esc]}</td>
-          <td style="padding: 3px 6px; border: 1px solid #d1d5db; text-align: center; font-weight: bold; ${color ? `color: ${color};` : ''}">${en}</td>
+          <td style="padding: 3px 6px; border: 1px solid #d1d5db; text-align: center; font-weight: bold; color: ${color};">${en}</td>
+          <td style="padding: 3px 6px; border: 1px solid #d1d5db; text-align: center; font-size: 7px;">${nivel}</td>
         </tr>
       `;
     });
@@ -2776,9 +2832,17 @@ const app = {
     html += `
         </table>
 
-        <p style="margin: 8px 0 0 0; font-size: 8px; color: #4b5563;">
-          <strong>Validez:</strong> ${invalidez === 0 ? 'Normal' : 'Revisar (ítems inválidos: ' + invalidez + ')'} |
-          <strong>189 ítems completados</strong>
+        <h5 style="margin: 10px 0 6px 0; font-size: 9px; font-weight: bold; color: #111827;">Análisis de Validez</h5>
+        <div style="padding: 8px; background: #fef3c7; border: 1px solid #fcd34d; border-radius: 3px; font-size: 8px;">
+          <strong>Validez:</strong> ${invalidez === 0 ? 'Normal - Protocolo válido' : 'Revisar - Ítems inválidos: ' + invalidez}<br/>
+          <strong>Items completados:</strong> 189/189 (100%)<br/>
+          <strong>Fecha de aplicación:</strong> ${fecha}
+        </div>
+
+        <h5 style="margin: 10px 0 6px 0; font-size: 9px; font-weight: bold; color: #111827;">Interpretación General</h5>
+        <p style="margin: 0; font-size: 8px; color: #4b5563; line-height: 1.4;">
+          El perfil CUIDA evalúa habilidades de cuidador. Puntuaciones altas indican competencias consolidadas en cuidado responsable,
+          afectivo, sensibilidad y baja agresividad. Puntuaciones bajas sugieren áreas que requieren desarrollo o capacitación.
         </p>
       </div>
     `;
