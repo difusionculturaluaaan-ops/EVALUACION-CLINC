@@ -10,6 +10,22 @@
     {
       "src": "/api/(.*)",
       "dest": "server.js"
+    },
+    {
+      "src": "/auth.html",
+      "dest": "/public/auth.html"
+    },
+    {
+      "src": "/mmpi-pro.html",
+      "dest": "/public/mmpi-pro.html"
+    },
+    {
+      "src": "/admin-simple.html",
+      "dest": "/public/admin-simple.html"
+    },
+    {
+      "src": "^/(?!api)(.*)$",
+      "dest": "/public/index.html"
     }
   ]
 }
