@@ -3883,16 +3883,25 @@ const app = {
         return;
       }
 
+      // Verificar si hay datos reales
+      const subescalas = typeof pruebaSCL.subescalas === 'string'
+        ? JSON.parse(pruebaSCL.subescalas)
+        : pruebaSCL.subescalas;
+
+      const escalas = ['SOM', 'OBS', 'INT', 'DEP', 'ANS', 'HOS', 'FOB', 'PAR', 'PSI'];
+      const tieneData = escalas.some(e => Number(subescalas[e]) > 0);
+
+      if (!tieneData) {
+        document.getElementById('dashboard-chart-section').style.display = 'none';
+        return;
+      }
+
       document.getElementById('dashboard-chart-section').style.display = 'block';
       document.getElementById('chart-title').textContent = `${paciente.nombre} · SCL-90-R`;
       document.getElementById('chart-subtitle').textContent = 'Comparativa contra norma poblacional';
 
       // Crear gráfica SVG simple
       const container = document.getElementById('dashboard-chart-container');
-      const subescalas = typeof pruebaSCL.subescalas === 'string'
-        ? JSON.parse(pruebaSCL.subescalas)
-        : pruebaSCL.subescalas;
-
       const chartHTML = this.generarGraficaSCL(subescalas);
       container.innerHTML = chartHTML;
     } catch (error) {
