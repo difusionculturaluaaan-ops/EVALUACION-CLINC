@@ -443,8 +443,7 @@ const app = {
     }
 
     if (!this.pacienteActivo) {
-      this.mostrarToast('⚠️ Debe crear o seleccionar un paciente primero', 'warning');
-      this.showPage('nuevo');
+      this.mostrarToast('❌ Primero debes crear o seleccionar un paciente', 'error');
       return;
     }
 

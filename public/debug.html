@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Debug - Verificar Función Crear Paciente</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+    .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+    h1 { color: #333; }
+    .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+    .ok { background: #d4edda; color: #155724; }
+    .error { background: #f8d7da; color: #721c24; }
+    .warning { background: #fff3cd; color: #856404; }
+    code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; }
+    button { padding: 10px 20px; font-size: 16px; cursor: pointer; background: #5a8fd0; color: white; border: none; border-radius: 4px; margin: 10px 0; }
+    button:hover { background: #3d5f9d; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🔍 Debug - Crear Paciente</h1>
+
+  <h2>Verificaciones:</h2>
+
+  <div id="check1" class="status">⏳ Verificando si app existe...</div>
+  <div id="check2" class="status">⏳ Verificando función mostrarModalCrearPaciente...</div>
+  <div id="check3" class="status">⏳ Verificando si está autenticado...</div>
+  <div id="check4" class="status">⏳ Verificando modal HTML...</div>
+
+  <h2>Pruebas:</h2>
+  <button onclick="testearFuncion()">🧪 Probar función directamente</button>
+  <button onclick="abrirIndex()">🔗 Ir a Index.html</button>
+  <button onclick="limpiarConsola()">🧹 Limpiar Consola</button>
+
+  <h2>Consola JavaScript:</h2>
+  <div id="console" style="background: #1e1e1e; color: #00ff00; padding: 15px; border-radius: 4px; font-family: monospace; height: 300px; overflow-y: auto;">
+  </div>
+</div>
+
+<script>
+const consoleDiv = document.getElementById('console');
+
+function log(msg, type = 'info') {
+  const now = new Date().toLocaleTimeString();
+  const color = type === 'error' ? '#ff6b6b' : type === 'ok' ? '#51cf66' : '#00ff00';
+  const line = `<div style="color: ${color};">[${now}] ${msg}</div>`;
+  consoleDiv.innerHTML += line;
+  consoleDiv.scrollTop = consoleDiv.scrollHeight;
+}
+
+// Verificación 1: ¿Existe app?
+setTimeout(() => {
+  if (typeof app !== 'undefined') {
+    document.getElementById('check1').innerHTML = '✅ app existe';
+    document.getElementById('check1').className = 'status ok';
+    log('✅ app existe', 'ok');
+  } else {
+    document.getElementById('check1').innerHTML = '❌ app NO existe';
+    document.getElementById('check1').className = 'status error';
+    log('❌ app NO está definido - app.js no cargó correctamente', 'error');
+  }
+}, 500);
+
+// Verificación 2: ¿Existe la función?
+setTimeout(() => {
+  if (typeof app !== 'undefined' && typeof app.mostrarModalCrearPaciente === 'function') {
+    document.getElementById('check2').innerHTML = '✅ mostrarModalCrearPaciente existe';
+    document.getElementById('check2').className = 'status ok';
+    log('✅ Función mostrarModalCrearPaciente disponible', 'ok');
+  } else {
+    document.getElementById('check2').innerHTML = '❌ mostrarModalCrearPaciente NO existe';
+    document.getElementById('check2').className = 'status error';
+    log('❌ Función no existe', 'error');
+  }
+}, 500);
+
+// Verificación 3: ¿Está autenticado?
+setTimeout(() => {
+  const token = localStorage.getItem('auth_token');
+  const tenant = localStorage.getItem('tenant_id');
+  if (token && tenant) {
+    document.getElementById('check3').innerHTML = '✅ Autenticado (token + tenant)';
+    document.getElementById('check3').className = 'status ok';
+    log('✅ Autenticado correctamente', 'ok');
+  } else {
+    document.getElementById('check3').innerHTML = '❌ NO autenticado';
+    document.getElementById('check3').className = 'status error';
+    log('❌ No hay token o tenant_id en localStorage', 'error');
+  }
+}, 500);
+
+// Verificación 4: ¿Existe modal HTML?
+setTimeout(() => {
+  const modal = document.getElementById('modal-crear-paciente');
+  if (modal) {
+    document.getElementById('check4').innerHTML = '✅ Modal HTML existe';
+    document.getElementById('check4').className = 'status ok';
+    log('✅ Modal con ID "modal-crear-paciente" encontrado', 'ok');
+  } else {
+    document.getElementById('check4').innerHTML = '❌ Modal NO existe';
+    document.getElementById('check4').className = 'status error';
+    log('❌ No se encontró modal con ID "modal-crear-paciente"', 'error');
+  }
+}, 500);
+
+function testearFuncion() {
+  log('Intentando llamar a app.mostrarModalCrearPaciente()...', 'info');
+  try {
+    if (typeof app === 'undefined') {
+      log('❌ ERROR: app no existe', 'error');
+      return;
+    }
+    if (typeof app.mostrarModalCrearPaciente !== 'function') {
+      log('❌ ERROR: mostrarModalCrearPaciente no es una función', 'error');
+      return;
+    }
+    app.mostrarModalCrearPaciente();
+    log('✅ Función ejecutada sin errores', 'ok');
+  } catch (error) {
+    log(`❌ ERROR: ${error.message}`, 'error');
+  }
+}
+
+function abrirIndex() {
+  window.location.href = '/';
+}
+
+function limpiarConsola() {
+  consoleDiv.innerHTML = '';
+  log('Consola limpiada', 'info');
+}
+
+log('Page loaded. Verificando...');
+</script>
+
+</body>
+</html>
