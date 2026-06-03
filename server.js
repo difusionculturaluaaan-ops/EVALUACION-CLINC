@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 const { initDb } = require('./db/schema');
 const { seedNormas } = require('./db/seed-normas');
 const authRoutes = require('./routes/auth');
@@ -23,14 +24,22 @@ app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
 // Servir archivos estáticos desde public con MIME types correctos
-const publicPath = path.join(process.cwd(), 'public');
+// En Vercel, usar __dirname que está disponible en Node
+const publicPath = path.join(__dirname, 'public');
 console.log(`📁 Sirviendo archivos estáticos desde: ${publicPath}`);
+
+// Verificar que el directorio existe
+if (fs.existsSync(publicPath)) {
+  console.log(`✓ Directorio /public encontrado`);
+} else {
+  console.warn(`⚠️ Directorio /public NO encontrado en: ${publicPath}`);
+}
+
 app.use(express.static(publicPath, {
   setHeaders: (res, filePath) => {
     if (filePath.endsWith('.js')) {
       res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-    }
-    if (filePath.endsWith('.css')) {
+    } else if (filePath.endsWith('.css')) {
       res.setHeader('Content-Type', 'text/css; charset=utf-8');
     }
   }
