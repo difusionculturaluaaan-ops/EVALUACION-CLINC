@@ -1772,6 +1772,9 @@ const app = {
       if (prueba.tipo === 'PCLR') {
         this.renderChartComparativoPCLR(prueba);
       }
+      if (prueba.tipo === 'CUIDA') {
+        this.renderGraficoCUIDA(prueba, subescalas);
+      }
     }, 300);
 
     console.log('✓ Reporte detallado renderizado');
@@ -2324,6 +2327,90 @@ const app = {
   },
 
   /**
+   * Renderizar gráfico CUIDA: Barras de escalas primarias
+   */
+  renderGraficoCUIDA(prueba, subescalas) {
+    try {
+      const canvas = document.getElementById('chartCUIDA');
+      if (!canvas || typeof Chart === 'undefined') return;
+
+      const datos = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : subescalas || {};
+
+      // Escalas primarias
+      const escalas_prim = ['Al', 'Ap', 'As', 'At', 'Rp', 'Em', 'Ee', 'In', 'Fl', 'Rf', 'Sc', 'Tf', 'Ag', 'Dl'];
+      const labels = escalas_prim;
+      const valores = escalas_prim.map(e => datos[e]?.en || 0);
+
+      const colorizar = (en) => {
+        if (!en) return '#999';
+        if (en <= 3) return '#0369a1'; // Bajo
+        if (en <= 6) return '#065f46'; // Medio
+        return '#92400e'; // Alto
+      };
+
+      const colores = valores.map(v => colorizar(v));
+
+      const ctx = canvas.getContext('2d');
+      canvas.chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Eneatipo',
+            data: valores,
+            backgroundColor: colores,
+            borderColor: '#333',
+            borderWidth: 1,
+            barPercentage: 0.7
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          indexAxis: 'x',
+          plugins: {
+            legend: { display: true, labels: { font: { size: 11 } } },
+            tooltip: { enabled: true, callbacks: { label: (c) => `Eneatipo: ${c.parsed.y}` } }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 9,
+              ticks: { font: { size: 10 }, stepSize: 1 },
+              title: { display: true, text: 'Eneatipo', font: { size: 11 } }
+            },
+            x: {
+              ticks: { font: { size: 9 } }
+            }
+          }
+        }
+      });
+
+      // Convertir a imagen después de renderizar
+      setTimeout(() => {
+        if (canvas.chartInstance && canvas.parentNode) {
+          const imgSrc = canvas.toDataURL('image/png');
+          const img = document.createElement('img');
+          img.src = imgSrc;
+          img.style.width = '100%';
+          img.style.height = 'auto';
+          img.style.display = 'block';
+          img.style.border = '1px solid #ddd';
+          img.style.borderRadius = '3px';
+          img.style.margin = '10px 0';
+
+          const parentElement = canvas.parentNode;
+          parentElement.replaceChild(img, canvas);
+          console.log('✓ Gráfico CUIDA convertido a imagen');
+        }
+      }, 500);
+
+    } catch (error) {
+      console.error('Error al renderizar gráfico CUIDA:', error);
+    }
+  },
+
+  /**
    * Renderizar gráfica comparativa PCL-R: Paciente vs Población General
    */
   async renderChartComparativoPCLR(prueba) {
@@ -2739,64 +2826,9 @@ const app = {
     const evaluador = localStorage.getItem('nombre') || 'No especificado';
     const fecha = new Date(prueba.fecha || Date.now()).toLocaleDateString('es-ES');
 
-    // Generar gráfico con Chart.js
+    // Placeholder para gráfico (se renderiza después con renderGraficoCUIDA)
     const generarGraficoBarras = () => {
-      // Crear canvas temporal
-      const canvas = document.createElement('canvas');
-      canvas.width = 800;
-      canvas.height = 250;
-
-      if (typeof Chart === 'undefined') {
-        return '<p style="color: #999; font-size: 8px;">Gráfico no disponible</p>';
-      }
-
-      try {
-        const ctx = canvas.getContext('2d');
-        const labels = escalas_prim.map(e => e);
-        const valores = escalas_prim.map(e => datos[e]?.en || 0);
-        const colores = valores.map(v => colorizar(v));
-
-        const chart = new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: labels,
-            datasets: [{
-              label: 'Eneatipo',
-              data: valores,
-              backgroundColor: colores,
-              borderColor: '#333',
-              borderWidth: 1,
-              barPercentage: 0.8
-            }]
-          },
-          options: {
-            responsive: false,
-            maintainAspectRatio: false,
-            indexAxis: 'x',
-            plugins: {
-              legend: { display: true, labels: { font: { size: 10 } } },
-              tooltip: { enabled: true }
-            },
-            scales: {
-              y: {
-                beginAtZero: true,
-                max: 9,
-                ticks: { font: { size: 10 }, stepSize: 1 }
-              },
-              x: {
-                ticks: { font: { size: 9 } }
-              }
-            }
-          }
-        });
-
-        // Convertir a imagen base64
-        const imgSrc = canvas.toDataURL('image/png');
-        return `<img src="${imgSrc}" style="width: 100%; height: auto; border: 1px solid #ddd; border-radius: 3px; margin: 10px 0;">`;
-      } catch (e) {
-        console.error('Error al generar gráfico CUIDA:', e);
-        return '<p style="color: #999; font-size: 8px;">Error al generar el gráfico</p>';
-      }
+      return '<canvas id="chartCUIDA" style="max-width: 100%; height: 250px; display: block; margin: 10px 0; border: 1px solid #ddd; border-radius: 3px;"></canvas>';
     };
 
     let html = `
