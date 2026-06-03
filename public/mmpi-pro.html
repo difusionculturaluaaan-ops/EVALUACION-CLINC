@@ -1706,9 +1706,55 @@ async function generarPDFBlob(nombre, fecha) {
       </div>
     </div>
 
+    <!-- INTERPRETACIÓN CLÍNICA DETALLADA -->
+    <div style="page-break-before:always;margin-top:30px">
+      <h3 style="font-size:14px;font-weight:bold;margin-bottom:10px;border-bottom:2px solid #0d1117;padding-bottom:5px;color:#000">INTERPRETACIÓN CLÍNICA DETALLADA</h3>
+      <div style="margin-bottom:15px;padding:10px;background:#fffacd;border-left:4px solid #fbc02d;border-radius:3px">
+        <strong style="color:#333">⚠️ AVISO IMPORTANTE:</strong>
+        <p style="margin:5px 0 0 0;font-size:11px;color:#555;line-height:1.5;color:#000">
+          Este informe es una guía automática generada por software de evaluación psicométrica.
+          La interpretación clínica final <strong>SIEMPRE debe ser realizada por un psicólogo colegiado</strong>
+          con formación especializada en evaluación psicológica. El software no reemplaza el juicio clínico profesional
+          ni las decisiones diagnósticas que corresponden únicamente al profesional.
+        </p>
+      </div>
+
+      ${(() => {
+        const cats = [...new Set(calcResults.map(r => r.cat))];
+        return cats.map((cat, catIdx) => {
+          const scales = calcResults.filter(r => r.cat === cat);
+          const needsPageBreak = catIdx > 0 && catIdx % 3 === 0;
+          return \`
+            <div style="\${needsPageBreak ? 'page-break-before:always;' : ''}margin-bottom:25px">
+              <h4 style="font-size:13px;font-weight:bold;color:#0d1117;background:#e8f4f8;padding:8px;border-radius:3px;margin-bottom:10px">
+                \${cat.toUpperCase()}
+              </h4>
+              <div style="margin-left:10px">
+                \${scales.map(r => {
+                  const fn = INTERPRETATIONS[r.abbr];
+                  const text = fn ? fn(r.t) : 'Sin interpretación disponible.';
+                  const color = r.t >= 70 ? '#d32f2f' : r.t >= 60 ? '#f57c00' : r.t >= 45 ? '#fbc02d' : '#388e3c';
+                  const bgColor = r.t >= 70 ? '#ffebee' : r.t >= 60 ? '#fff3e0' : '#f5f5f5';
+                  return \`
+                    <div style="margin-bottom:12px;padding:10px;background:\${bgColor};border-left:4px solid \${color};border-radius:3px">
+                      <div style="margin-bottom:5px">
+                        <strong style="color:\${color};font-size:12px;color:#000">\${r.abbr} (\${r.name})</strong>
+                        <span style="float:right;font-weight:bold;color:\${color}">T = \${r.t} | PD = \${r.pd}</span>
+                      </div>
+                      <p style="margin:5px 0 0 0;font-size:11px;line-height:1.6;color:#333;color:#000">\${text}</p>
+                    </div>
+                  \`;
+                }).join('')}
+              </div>
+            </div>
+          \`;
+        }).join('');
+      })()}
+    </div>
+
     <div style="page-break-before:always;margin-top:30px;padding:20px;border:1px solid #ddd;border-radius:5px;background:#f9f9f9">
-      <h3 style="font-size:14px;font-weight:bold;margin-bottom:10px;border-bottom:2px solid #0d1117;padding-bottom:5px">RECOMENDACIONES</h3>
-      <ul style="font-size:11px;line-height:1.8;color:#333">
+      <h3 style="font-size:14px;font-weight:bold;margin-bottom:10px;border-bottom:2px solid #0d1117;padding-bottom:5px;color:#000">RECOMENDACIONES</h3>
+      <ul style="font-size:11px;line-height:1.8;color:#333;color:#000">
         <li>Este protocolo debe ser interpretado únicamente por profesionales con formación especializada.</li>
         <li>Los resultados deben integrarse con información clínica adicional e instrumentos complementarios.</li>
         <li>Considerar factores sociodemográficos, educacionales y culturales en la interpretación final.</li>
