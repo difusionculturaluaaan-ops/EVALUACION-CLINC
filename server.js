@@ -23,17 +23,33 @@ app.use(cors());
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
-// Servir archivos estáticos desde public con MIME types correctos
-// En Vercel, usar __dirname que está disponible en Node
-const publicPath = path.join(__dirname, 'public');
-console.log(`📁 Sirviendo archivos estáticos desde: ${publicPath}`);
+// Servir archivos estáticos desde public
+// En Vercel, intentar múltiples rutas posibles
+let publicPath = null;
 
-// Verificar que el directorio existe
-if (fs.existsSync(publicPath)) {
-  console.log(`✓ Directorio /public encontrado`);
-} else {
-  console.warn(`⚠️ Directorio /public NO encontrado en: ${publicPath}`);
+// Intento 1: __dirname/public (ambiente local)
+if (fs.existsSync(path.join(__dirname, 'public'))) {
+  publicPath = path.join(__dirname, 'public');
+  console.log(`✓ Usando __dirname/public`);
 }
+// Intento 2: ./public (ruta relativa desde CWD)
+else if (fs.existsSync(path.join(process.cwd(), 'public'))) {
+  publicPath = path.join(process.cwd(), 'public');
+  console.log(`✓ Usando process.cwd()/public`);
+}
+// Intento 3: /public (raíz relativa)
+else if (fs.existsSync('./public')) {
+  publicPath = './public';
+  console.log(`✓ Usando ./public`);
+}
+else {
+  console.error('❌ No se encontró directorio /public');
+  console.log(`   __dirname: ${__dirname}`);
+  console.log(`   process.cwd(): ${process.cwd()}`);
+  process.exit(1);
+}
+
+console.log(`📁 Sirviendo archivos estáticos desde: ${publicPath}`);
 
 app.use(express.static(publicPath, {
   setHeaders: (res, filePath) => {
