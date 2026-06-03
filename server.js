@@ -23,14 +23,14 @@ app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
 // Servir archivos estáticos desde public con MIME types correctos
-const publicPath = path.resolve(path.join(__dirname, 'public'));
+const publicPath = path.join(process.cwd(), 'public');
 console.log(`📁 Sirviendo archivos estáticos desde: ${publicPath}`);
 app.use(express.static(publicPath, {
-  setHeaders: (res, path) => {
-    if (path.endsWith('.js')) {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.js')) {
       res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
     }
-    if (path.endsWith('.css')) {
+    if (filePath.endsWith('.css')) {
       res.setHeader('Content-Type', 'text/css; charset=utf-8');
     }
   }
