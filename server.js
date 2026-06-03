@@ -24,41 +24,26 @@ app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
 // Servir archivos estáticos desde public
-// En Vercel, intentar múltiples rutas posibles
-let publicPath = null;
-
-// Intento 1: __dirname/public (ambiente local)
-if (fs.existsSync(path.join(__dirname, 'public'))) {
-  publicPath = path.join(__dirname, 'public');
-  console.log(`✓ Usando __dirname/public`);
-}
-// Intento 2: ./public (ruta relativa desde CWD)
-else if (fs.existsSync(path.join(process.cwd(), 'public'))) {
-  publicPath = path.join(process.cwd(), 'public');
-  console.log(`✓ Usando process.cwd()/public`);
-}
-// Intento 3: /public (raíz relativa)
-else if (fs.existsSync('./public')) {
-  publicPath = './public';
-  console.log(`✓ Usando ./public`);
-}
-else {
-  console.error('❌ No se encontró directorio /public');
-  console.log(`   __dirname: ${__dirname}`);
-  console.log(`   process.cwd(): ${process.cwd()}`);
-  process.exit(1);
-}
-
-console.log(`📁 Sirviendo archivos estáticos desde: ${publicPath}`);
+// SIMPLE Y ROBUSTO: dejar que express.static() maneje todo
+const publicPath = path.join(__dirname, 'public');
 
 app.use(express.static(publicPath, {
+  // Asegurar que los archivos no se cacheen indefinidamente
+  maxAge: '1d',
   setHeaders: (res, filePath) => {
+    // Establecer Content-Type explícito para evitar errores MIME
     if (filePath.endsWith('.js')) {
       res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
     } else if (filePath.endsWith('.css')) {
       res.setHeader('Content-Type', 'text/css; charset=utf-8');
+    } else if (filePath.endsWith('.html')) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
     }
-  }
+    // Permitir que Vercel cachee pero requiera validación
+    res.setHeader('Cache-Control', 'public, max-age=86400, must-revalidate');
+  },
+  // Si un archivo no existe, NO intentar múltiples variantes
+  dotfiles: 'allow'
 }));
 
 // Headers para UTF-8 (solo para rutas API, no para archivos estáticos)
