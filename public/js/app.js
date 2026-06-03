@@ -2739,29 +2739,64 @@ const app = {
     const evaluador = localStorage.getItem('nombre') || 'No especificado';
     const fecha = new Date(prueba.fecha || Date.now()).toLocaleDateString('es-ES');
 
-    // Generar gráfico simple con barras ASCII
+    // Generar gráfico con Chart.js
     const generarGraficoBarras = () => {
-      let grafico = '<svg width="100%" height="200" style="margin: 10px 0; border: 1px solid #ddd; border-radius: 3px;">';
-      const maxEn = 9;
-      const barraAncho = (100 / escalas_prim.length) - 2;
-      let x = 1;
+      // Crear canvas temporal
+      const canvas = document.createElement('canvas');
+      canvas.width = 800;
+      canvas.height = 250;
 
-      escalas_prim.forEach((esc, idx) => {
-        const en = datos[esc]?.en || 0;
-        const altura = (en / maxEn) * 150;
-        const color = colorizar(en);
-        const y = 150 - altura;
+      if (typeof Chart === 'undefined') {
+        return '<p style="color: #999; font-size: 8px;">Gráfico no disponible</p>';
+      }
 
-        grafico += `
-          <rect x="${x}%" y="${y}" width="${barraAncho}%" height="${altura}" fill="${color}" stroke="#ddd"/>
-          <text x="${x + barraAncho/2}%" y="170" font-size="8" text-anchor="middle">${esc}</text>
-          <text x="${x + barraAncho/2}%" y="${y - 3}" font-size="7" text-anchor="middle" font-weight="bold">${en || '–'}</text>
-        `;
-        x += barraAncho + 2;
-      });
+      try {
+        const ctx = canvas.getContext('2d');
+        const labels = escalas_prim.map(e => e);
+        const valores = escalas_prim.map(e => datos[e]?.en || 0);
+        const colores = valores.map(v => colorizar(v));
 
-      grafico += '</svg>';
-      return grafico;
+        const chart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Eneatipo',
+              data: valores,
+              backgroundColor: colores,
+              borderColor: '#333',
+              borderWidth: 1,
+              barPercentage: 0.8
+            }]
+          },
+          options: {
+            responsive: false,
+            maintainAspectRatio: false,
+            indexAxis: 'x',
+            plugins: {
+              legend: { display: true, labels: { font: { size: 10 } } },
+              tooltip: { enabled: true }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 9,
+                ticks: { font: { size: 10 }, stepSize: 1 }
+              },
+              x: {
+                ticks: { font: { size: 9 } }
+              }
+            }
+          }
+        });
+
+        // Convertir a imagen base64
+        const imgSrc = canvas.toDataURL('image/png');
+        return `<img src="${imgSrc}" style="width: 100%; height: auto; border: 1px solid #ddd; border-radius: 3px; margin: 10px 0;">`;
+      } catch (e) {
+        console.error('Error al generar gráfico CUIDA:', e);
+        return '<p style="color: #999; font-size: 8px;">Error al generar el gráfico</p>';
+      }
     };
 
     let html = `
