@@ -2422,7 +2422,19 @@ const app = {
       return Number(valor) > 0;
     });
 
-    let html = `
+    let html = '';
+
+    // Si no hay datos, mostrar mensaje
+    if (!tieneData) {
+      html = `
+        <div style="margin: 10px 0; padding: 12px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 3px; color: #856404;">
+          <p style="margin: 0; font-size: 9px; font-weight: bold;">⚠️ Test sin completar</p>
+          <p style="margin: 4px 0 0 0; font-size: 8px;">Para visualizar resultados y gráficos comparativos, complete el cuestionario con todas las respuestas.</p>
+        </div>
+      `;
+    } else {
+      // Si hay datos, mostrar tablas y gráfico
+      html = `
       <div style="margin: 4px 0;">
         <table style="width: 100%; border-collapse: collapse;">
           <tr style="background: #00bcd4; color: white;">
@@ -2432,64 +2444,63 @@ const app = {
             <th style="border: 1px solid #999; padding: 3px; text-align: center; font-size: 8px; font-weight: bold;">D. Est.</th>
           </tr>`;
 
-    const escalasOrdenadas = ['SOM', 'OC', 'SI', 'DEP', 'ANX', 'HOS', 'PHOB', 'PAR', 'PSY'];
-    const normas = {
-      'SOM': { media: 0.47, ds: 0.52 }, 'OC': { media: 0.59, ds: 0.55 },
-      'SI': { media: 0.47, ds: 0.52 }, 'DEP': { media: 0.59, ds: 0.59 },
-      'ANX': { media: 0.39, ds: 0.44 }, 'HOS': { media: 0.46, ds: 0.55 },
-      'PHOB': { media: 0.15, ds: 0.31 }, 'PAR': { media: 0.47, ds: 0.52 },
-      'PSY': { media: 0.19, ds: 0.36 }
-    };
+      const escalasOrdenadas = ['SOM', 'OC', 'SI', 'DEP', 'ANX', 'HOS', 'PHOB', 'PAR', 'PSY'];
+      const normas = {
+        'SOM': { media: 0.47, ds: 0.52 }, 'OC': { media: 0.59, ds: 0.55 },
+        'SI': { media: 0.47, ds: 0.52 }, 'DEP': { media: 0.59, ds: 0.59 },
+        'ANX': { media: 0.39, ds: 0.44 }, 'HOS': { media: 0.46, ds: 0.55 },
+        'PHOB': { media: 0.15, ds: 0.31 }, 'PAR': { media: 0.47, ds: 0.52 },
+        'PSY': { media: 0.19, ds: 0.36 }
+      };
 
-    escalasOrdenadas.forEach((escala, idx) => {
-      const valor = subescalasData[escala]?.media || 0;
-      const norma = normas[escala];
-      const bgColor = '#ffffff';
-      html += `<tr style="background: ${bgColor};">
-        <td style="border: 1px solid #ddd; padding: 3px; font-weight: bold; font-size: 8px;">${escalasMap[escala]}</td>
-        <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${Number(valor).toFixed(2)}</td>
-        <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${norma.media.toFixed(2)}</td>
-        <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${norma.ds.toFixed(2)}</td>
-      </tr>`;
-    });
+      escalasOrdenadas.forEach((escala, idx) => {
+        const valor = subescalasData[escala]?.media || 0;
+        const norma = normas[escala];
+        const bgColor = '#ffffff';
+        html += `<tr style="background: ${bgColor};">
+          <td style="border: 1px solid #ddd; padding: 3px; font-weight: bold; font-size: 8px;">${escalasMap[escala]}</td>
+          <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${Number(valor).toFixed(2)}</td>
+          <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${norma.media.toFixed(2)}</td>
+          <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${norma.ds.toFixed(2)}</td>
+        </tr>`;
+      });
 
-    html += `</table>
-      </div>
-
-      <div style="margin: 4px 0;">
-        <table style="width: 100%; border-collapse: collapse;">
-          <tr style="background: #666; color: white;">
-            <th style="border: 1px solid #999; padding: 3px; text-align: left; font-size: 8px; font-weight: bold;">Índices</th>
-            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-size: 8px; font-weight: bold;">Paciente</th>
-            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-size: 8px; font-weight: bold;">Ref.</th>
-          </tr>
-          <tr>
-            <td style="border: 1px solid #ddd; padding: 3px; font-size: 8px;"><strong>IST (GSI)</strong></td>
-            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${(subescalas.IST || 0).toFixed(3)}</td>
-            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${subescalas.indicesGlobales?.GSI?.media || 0.44}</td>
-          </tr>
-          <tr>
-            <td style="border: 1px solid #ddd; padding: 3px; font-size: 8px;"><strong>TSP (PST)</strong></td>
-            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${subescalas.TSP || 0}</td>
-            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${subescalas.indicesGlobales?.PST?.media || 26.9}</td>
-          </tr>
-          <tr>
-            <td style="border: 1px solid #ddd; padding: 3px; font-size: 8px;"><strong>MRSP (PSDI)</strong></td>
-            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${(subescalas.MRSP || 0).toFixed(3)}</td>
-            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${subescalas.indicesGlobales?.PSDI?.media || 1.55}</td>
-          </tr>
-        </table>
-      </div>
-
-      ${tieneData ? `
-      <div style="margin: 4px 0 14px 0; padding: 6px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 3px; color: #333; page-break-inside: avoid;" class="reporte-analisis">
-        <h4 style="color: #333; font-size: 8px; margin: 0 0 4px 0; font-weight: bold;">Perfil de Subescalas (Paciente vs Población Normal)</h4>
-        <div style="position: relative; width: 100%; height: 260px;">
-          <canvas id="chartPerfilComparativo" style="width: 100%; height: 100%;"></canvas>
+      html += `</table>
         </div>
-      </div>
-      ` : ''}
-    `;
+
+        <div style="margin: 4px 0;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr style="background: #666; color: white;">
+              <th style="border: 1px solid #999; padding: 3px; text-align: left; font-size: 8px; font-weight: bold;">Índices</th>
+              <th style="border: 1px solid #999; padding: 3px; text-align: center; font-size: 8px; font-weight: bold;">Paciente</th>
+              <th style="border: 1px solid #999; padding: 3px; text-align: center; font-size: 8px; font-weight: bold;">Ref.</th>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #ddd; padding: 3px; font-size: 8px;"><strong>IST (GSI)</strong></td>
+              <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${(subescalas.IST || 0).toFixed(3)}</td>
+              <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${subescalas.indicesGlobales?.GSI?.media || 0.44}</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #ddd; padding: 3px; font-size: 8px;"><strong>TSP (PST)</strong></td>
+              <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${subescalas.TSP || 0}</td>
+              <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${subescalas.indicesGlobales?.PST?.media || 26.9}</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #ddd; padding: 3px; font-size: 8px;"><strong>MRSP (PSDI)</strong></td>
+              <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${(subescalas.MRSP || 0).toFixed(3)}</td>
+              <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${subescalas.indicesGlobales?.PSDI?.media || 1.55}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div style="margin: 4px 0 14px 0; padding: 6px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 3px; color: #333; page-break-inside: avoid;" class="reporte-analisis">
+          <h4 style="color: #333; font-size: 8px; margin: 0 0 4px 0; font-weight: bold;">Perfil de Subescalas (Paciente vs Población Normal)</h4>
+          <div style="position: relative; width: 100%; height: 260px;">
+            <canvas id="chartPerfilComparativo" style="width: 100%; height: 100%;"></canvas>
+          </div>
+        </div>
+      `;
+    }
 
     return html;
   },
