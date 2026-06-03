@@ -2414,6 +2414,10 @@ const app = {
       'PAR': 'Ideación Paranoide', 'PSY': 'Psicoticismo'
     };
 
+    // Verificar si hay datos reales
+    const subescalasData = subescalas?.subescalas || subescalas || {};
+    const tieneData = Object.keys(subescalasData).length > 0 && Object.values(subescalasData).some(v => v);
+
     let html = `
       <div style="margin: 4px 0;">
         <table style="width: 100%; border-collapse: collapse;">
@@ -2434,8 +2438,6 @@ const app = {
     };
 
     escalasOrdenadas.forEach((escala, idx) => {
-      // Acceder correctamente: subescalas.subescalas (estructura anidada)
-      const subescalasData = subescalas.subescalas || subescalas;
       const valor = subescalasData[escala]?.media || 0;
       const norma = normas[escala];
       const bgColor = '#ffffff';
@@ -2475,12 +2477,14 @@ const app = {
         </table>
       </div>
 
+      ${tieneData ? `
       <div style="margin: 4px 0 14px 0; padding: 6px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 3px; color: #333; page-break-inside: avoid;" class="reporte-analisis">
         <h4 style="color: #333; font-size: 8px; margin: 0 0 4px 0; font-weight: bold;">Perfil de Subescalas (Paciente vs Población Normal)</h4>
         <div style="position: relative; width: 100%; height: 260px;">
           <canvas id="chartPerfilComparativo" style="width: 100%; height: 100%;"></canvas>
         </div>
       </div>
+      ` : ''}
     `;
 
     return html;
