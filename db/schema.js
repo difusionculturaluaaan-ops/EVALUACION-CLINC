@@ -234,8 +234,8 @@ async function crearUsuario(tenant_id, email, nombre, password_hash, rol = 'prof
     );
     return result.rows[0] || null;
   } catch (err) {
-    console.error('Error al crear usuario:', err);
-    return null;
+    console.error('❌ Error al crear usuario:', err.message, `Code: ${err.code}`);
+    throw err;
   }
 }
 
