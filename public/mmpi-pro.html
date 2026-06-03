@@ -1375,6 +1375,16 @@ function saveInfo() {
 
 function loadData() {
   try {
+    // Si es un test NUEVO (sin paciente_id en URL), limpiar localStorage
+    const pacienteId = new URLSearchParams(window.location.search).get('paciente_id');
+    if (!pacienteId) {
+      // Nuevo test - limpiar datos anteriores
+      localStorage.removeItem('mmpi_responses');
+      localStorage.removeItem('mmpi_info');
+      return;
+    }
+
+    // Si hay paciente_id, restaurar datos guardados (continuar test anterior)
     const info = JSON.parse(localStorage.getItem('mmpi_info') || '{}');
     if (info.nombre) document.getElementById('inp-nombre').value = info.nombre;
     if (info.fecha)  document.getElementById('inp-fecha').value  = info.fecha;
