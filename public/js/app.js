@@ -132,7 +132,19 @@ const app = {
     'ISRA_M': tests_isra_m,
     'PCLR': tests_pclr,
     'EGEP5': tests_egep5,
-    'SCID2': tests_scid2
+    'SCID2': tests_scid2,
+    'CUIDA': {
+      nombre: 'CUIDA (Evaluación de Cuidadores)',
+      tipo: 'CUIDA',
+      init() { app.iniciarCUIDA(); },
+      obtenerRespuestas() { return tests_cuida.obtenerRespuestas(); },
+      validar() {
+        const sinResponder = tests_cuida.validar();
+        if (sinResponder.length > 0) return [`Completa todos los 189 ítems (faltan ${sinResponder.length})`];
+        return [];
+      },
+      calcular() { return tests_cuida.calcular(); }
+    }
   },
 
   // Mapeo de página a test
@@ -146,7 +158,8 @@ const app = {
     'isra': 'ISRA',
     'pclr': 'PCLR',
     'egep5': 'EGEP5',
-    'scid2': 'SCID2'
+    'scid2': 'SCID2',
+    'cuida': 'CUIDA'
   },
 
   // Estado actual del ISRA
@@ -361,6 +374,15 @@ const app = {
     document.querySelectorAll('input[name="status-filter"]').forEach(input => {
       input.addEventListener('change', () => {
         this.loadExpedientes();
+      });
+    });
+
+    // Cerrar modales al hacer click fuera
+    document.querySelectorAll('.modal').forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.style.display = 'none';
+        }
       });
     });
   },
@@ -841,6 +863,19 @@ const app = {
       tabScores.style.color = seccion === 'SCORES' ? '#2c5aa0' : '#999';
       tabScores.style.borderBottomColor = seccion === 'SCORES' ? '#2c5aa0' : 'transparent';
     }
+  },
+
+  /**
+   * Iniciar CUIDA en micrositio
+   */
+  iniciarCUIDA() {
+    if (!this.pacienteActivo) {
+      this.mostrarToast('Error: Paciente no seleccionado', 'error');
+      return;
+    }
+    tests_cuida.init();
+    const token = localStorage.getItem('auth_token') || '';
+    window.location.href = `/cuida.html?paciente_id=${this.pacienteActivo.id}&token=${encodeURIComponent(token)}`;
   },
 
   /**
@@ -1724,7 +1759,7 @@ const app = {
         <div style="page-break-inside: avoid; margin-bottom: 10px;">
           <!-- Gráfico PCL-R -->
           <div style="margin-bottom: 20px; font-size: 9px;">
-            ${prueba.tipo === 'SCL90R' ? this.generarReporteSCL(prueba, subescalas) : prueba.tipo === 'PCLR' ? this.generarReportePCLR(prueba, subescalas) : prueba.tipo === 'SCID2' ? this.generarReporteSCID2(prueba, subescalas) : (prueba.tipo === 'MMPI2' || prueba.tipo === 'MMPI') ? this.generarReporteMMPI2(prueba, subescalas) : prueba.tipo === 'ISRA' ? this.generarReporteISRA(prueba, subescalas) : this.generarReporteGenerico(prueba, subescalas)}
+            ${prueba.tipo === 'SCL90R' ? this.generarReporteSCL(prueba, subescalas) : prueba.tipo === 'PCLR' ? this.generarReportePCLR(prueba, subescalas) : prueba.tipo === 'SCID2' ? this.generarReporteSCID2(prueba, subescalas) : (prueba.tipo === 'MMPI2' || prueba.tipo === 'MMPI') ? this.generarReporteMMPI2(prueba, subescalas) : prueba.tipo === 'CUIDA' ? this.generarReporteCUIDA(prueba, subescalas) : prueba.tipo === 'ISRA' ? this.generarReporteISRA(prueba, subescalas) : this.generarReporteGenerico(prueba, subescalas)}
           </div>
 
           <!-- INTERPRETACIÓN (dentro del contenedor principal) -->
@@ -2679,6 +2714,97 @@ const app = {
         <p style="margin: 5px 0 0 0; font-size: 9px; font-style: italic;">Para ver el gráfico completo del micrositio, abre el test nuevamente.</p>
       </div>
     `;
+  },
+
+  /**
+   * Generar reporte CUIDA con tabla de escalas y eneatipos
+   */
+  generarReporteCUIDA(prueba, subescalas) {
+    const datos = typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data || {};
+
+    // Escalas primarias
+    const escalas_prim = [
+      'Al', 'Ap', 'As', 'At', 'Rp', 'Em', 'Ee', 'In', 'Fl', 'Rf', 'Sc', 'Tf', 'Ag', 'Dl'
+    ];
+
+    // Nombres de escalas
+    const nombres = {
+      'Al': 'Altruismo', 'Ap': 'Apertura', 'As': 'Asertividad', 'At': 'Autoestima',
+      'Rp': 'C. resolver problemas', 'Em': 'Empatía', 'Ee': 'Equilibrio emocional', 'In': 'Independencia',
+      'Fl': 'Flexibilidad', 'Rf': 'Reflexividad', 'Sc': 'Sociabilidad', 'Tf': 'Tolerancia frustración',
+      'Ag': 'C. vínculos afectivos', 'Dl': 'C. resolución duelo',
+      'Cre': 'Cuidado responsable', 'Caf': 'Cuidado afectivo', 'Sen': 'Sensibilidad', 'Agr': 'Agresividad'
+    };
+
+    const colorizar = (en) => {
+      if (!en) return '#999';
+      if (en <= 3) return '#0369a1'; // Bajo
+      if (en <= 6) return '#065f46'; // Medio
+      return '#92400e'; // Alto
+    };
+
+    let html = `
+      <div style="margin: 10px 0; padding: 15px; background: #f0fdf4; border-left: 4px solid #10b981; border-radius: 3px; color: #333;">
+        <h4 style="margin: 0 0 10px 0; font-size: 10px; font-weight: bold; color: #111827;">📋 CUIDA - Evaluación de Cuidadores</h4>
+
+        <h5 style="margin: 8px 0 6px 0; font-size: 9px; font-weight: bold; color: #111827;">Escalas Primarias</h5>
+        <table style="width: 100%; border-collapse: collapse; font-size: 8px; margin-bottom: 10px;">
+          <tr style="background: #e5eee8;">
+            <th style="padding: 4px 6px; text-align: left; border: 1px solid #d1d5db;">Escala</th>
+            <th style="padding: 4px 6px; text-align: center; border: 1px solid #d1d5db;">PD</th>
+            <th style="padding: 4px 6px; text-align: center; border: 1px solid #d1d5db;">En</th>
+          </tr>
+    `;
+
+    escalas_prim.forEach(esc => {
+      const d = datos[esc];
+      const pd = d?.pd !== null ? Math.round(d?.pd || 0) : '–';
+      const en = d?.en || '–';
+      const color = colorizar(en);
+      html += `
+        <tr>
+          <td style="padding: 3px 6px; border: 1px solid #d1d5db;">${nombres[esc]}</td>
+          <td style="padding: 3px 6px; border: 1px solid #d1d5db; text-align: center;">${pd}</td>
+          <td style="padding: 3px 6px; border: 1px solid #d1d5db; text-align: center; font-weight: bold; ${color ? `color: ${color};` : ''}">${en}</td>
+        </tr>
+      `;
+    });
+
+    html += `
+        </table>
+
+        <h5 style="margin: 8px 0 6px 0; font-size: 9px; font-weight: bold; color: #111827;">Escalas Secundarias</h5>
+        <table style="width: 100%; border-collapse: collapse; font-size: 8px;">
+          <tr style="background: #dcfce7;">
+            <th style="padding: 4px 6px; text-align: left; border: 1px solid #d1d5db;">Factor</th>
+            <th style="padding: 4px 6px; text-align: center; border: 1px solid #d1d5db;">En</th>
+          </tr>
+    `;
+
+    ['Cre', 'Caf', 'Sen', 'Agr'].forEach(esc => {
+      const d = datos[esc];
+      const en = d?.en || '–';
+      const color = colorizar(en);
+      html += `
+        <tr>
+          <td style="padding: 3px 6px; border: 1px solid #d1d5db;">${nombres[esc]}</td>
+          <td style="padding: 3px 6px; border: 1px solid #d1d5db; text-align: center; font-weight: bold; ${color ? `color: ${color};` : ''}">${en}</td>
+        </tr>
+      `;
+    });
+
+    const invalidez = datos.Inv?.pd || 0;
+    html += `
+        </table>
+
+        <p style="margin: 8px 0 0 0; font-size: 8px; color: #4b5563;">
+          <strong>Validez:</strong> ${invalidez === 0 ? 'Normal' : 'Revisar (ítems inválidos: ' + invalidez + ')'} |
+          <strong>189 ítems completados</strong>
+        </p>
+      </div>
+    `;
+
+    return html;
   },
 
   /**
@@ -4268,6 +4394,92 @@ const app = {
     setTimeout(() => {
       toast.classList.remove('show');
     }, 4000);
+  },
+
+  /**
+   * Modal: Crear Paciente
+   */
+  mostrarModalCrearPaciente() {
+    // Limpiar formulario
+    document.getElementById('crear-nombre').value = '';
+    document.getElementById('crear-edad').value = '';
+    document.getElementById('crear-sexo').value = '';
+    document.getElementById('crear-email').value = '';
+    document.getElementById('crear-telefono').value = '';
+    document.getElementById('crear-notas').value = '';
+
+    // Mostrar modal
+    const modal = document.getElementById('modal-crear-paciente');
+    if (modal) {
+      modal.style.display = 'flex';
+      // Focus en nombre
+      setTimeout(() => document.getElementById('crear-nombre').focus(), 100);
+    }
+  },
+
+  cerrarModalCrearPaciente() {
+    const modal = document.getElementById('modal-crear-paciente');
+    if (modal) {
+      modal.style.display = 'none';
+    }
+  },
+
+  async guardarNuevoPaciente() {
+    const nombre = document.getElementById('crear-nombre').value.trim();
+    const edad = parseInt(document.getElementById('crear-edad').value) || null;
+    const sexo = document.getElementById('crear-sexo').value;
+    const email = document.getElementById('crear-email').value.trim();
+    const telefono = document.getElementById('crear-telefono').value.trim();
+    const notas = document.getElementById('crear-notas').value.trim();
+
+    // Validaciones
+    if (!nombre) {
+      this.mostrarToast('❌ El nombre es requerido', 'error');
+      document.getElementById('crear-nombre').focus();
+      return;
+    }
+
+    if (!edad || edad < 0 || edad > 150) {
+      this.mostrarToast('❌ Ingresa una edad válida (0-150)', 'error');
+      document.getElementById('crear-edad').focus();
+      return;
+    }
+
+    if (!sexo) {
+      this.mostrarToast('❌ Selecciona un sexo', 'error');
+      document.getElementById('crear-sexo').focus();
+      return;
+    }
+
+    try {
+      // Llamar API para crear paciente
+      const nuevoPaciente = await api.crearPaciente({
+        nombre,
+        edad,
+        sexo,
+        email: email || null,
+        telefono: telefono || null,
+        observaciones: notas || null
+      });
+
+      this.mostrarToast(`✅ Paciente "${nombre}" creado correctamente`, 'success');
+
+      // Cerrar modal
+      this.cerrarModalCrearPaciente();
+
+      // Recargar expedientes
+      this.loadExpedientes();
+
+      // Seleccionar el nuevo paciente automáticamente
+      if (nuevoPaciente && nuevoPaciente.id) {
+        this.pacienteActivo = nuevoPaciente;
+        this.mostrarToast(`Paciente ${nombre} seleccionado`, 'info');
+      }
+
+    } catch (error) {
+      console.error('Error al crear paciente:', error);
+      this.mostrarToast(`❌ Error: ${error.message}`, 'error');
+    }
   },
 
   /**
