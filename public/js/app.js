@@ -3883,6 +3883,27 @@ const app = {
         } else {
           console.warn('Canvas de perfil no encontrado - original:', !!canvasPerfilOriginal, 'clonado:', !!canvasPerfilClonado);
         }
+
+        // Convertir gráfico CUIDA - Barras de escalas primarias
+        const canvasCUIDAsync = document.getElementById('chartCUIDA');
+        const canvasCUIDClonado = elemento.getElementById('chartCUIDA');
+
+        if (canvasCUIDAsync && canvasCUIDClonado) {
+          const imagenCUIDUrl = await this.capturarCanvasAltaResolucion(canvasCUIDAsync);
+          console.log('✓ Canvas CUIDA convertido a alta resolución');
+
+          const imgCUIDA = document.createElement('img');
+          imgCUIDA.src = imagenCUIDUrl;
+          imgCUIDA.style.width = '100%';
+          imgCUIDA.style.height = '250px';  // Altura fija para CUIDA
+          imgCUIDA.style.display = 'block';
+          imgCUIDA.style.border = '1px solid #ddd';
+          imgCUIDA.style.borderRadius = '3px';
+          imgCUIDA.style.margin = '10px 0';
+
+          canvasCUIDClonado.parentNode.replaceChild(imgCUIDA, canvasCUIDClonado);
+          console.log('✓ Canvas CUIDA reemplazado por imagen (250px)');
+        }
       } catch (canvasError) {
         console.warn('Advertencia: no se pudo procesar los canvas:', canvasError.message);
       }
