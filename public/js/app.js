@@ -2796,7 +2796,9 @@ const app = {
    * Generar reporte CUIDA con tabla de escalas y eneatipos
    */
   generarReporteCUIDA(prueba, subescalas) {
-    const datos = typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data || {};
+    // Usar subescalas.escalas si existe, sino usar prueba.data
+    const rawData = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : subescalas || {};
+    const datos = rawData.escalas || (typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data || {});
 
     // Escalas primarias
     const escalas_prim = [
@@ -2916,10 +2918,39 @@ const app = {
           <strong>Fecha de aplicación:</strong> ${fecha}
         </div>
 
-        <h5 style="margin: 10px 0 6px 0; font-size: 9px; font-weight: bold; color: #111827;">Interpretación General</h5>
-        <p style="margin: 0; font-size: 8px; color: #4b5563; line-height: 1.4;">
-          El perfil CUIDA evalúa habilidades de cuidador. Puntuaciones altas indican competencias consolidadas en cuidado responsable,
-          afectivo, sensibilidad y baja agresividad. Puntuaciones bajas sugieren áreas que requieren desarrollo o capacitación.
+        <h5 style="margin: 10px 0 6px 0; font-size: 9px; font-weight: bold; color: #111827;">Informe Interpretativo</h5>
+        <p style="margin: 0 0 6px 0; font-size: 8px; color: #4b5563; line-height: 1.4;">
+          El perfil CUIDA evalúa 14 habilidades fundamentales de cuidador distribuidas en cuatro factores de segundo orden.
+          Los eneatipos oscilan entre 1 (bajo) y 9 (alto), con media=5 y desviación típica=2.
+        </p>
+
+        <div style="margin: 6px 0; padding: 6px; background: #f3f4f6; border-radius: 3px; font-size: 8px;">
+          <strong style="color: #111827;">Fortalezas identificadas:</strong><br/>`;
+
+    // Enumerar fortalezas (escalas con En >= 7)
+    const fortalezas = escalas_prim.filter(esc => datos[esc]?.en >= 7);
+    if (fortalezas.length > 0) {
+      html += fortalezas.map(esc => `• ${nombres[esc]}: Eneatipo ${datos[esc].en}`).join('<br/>');
+    } else {
+      html += 'Sin puntuaciones muy altas registradas.';
+    }
+
+    html += `<br/><br/><strong style="color: #111827;">Áreas de desarrollo:</strong><br/>`;
+
+    // Enumerar áreas de desarrollo (escalas con En <= 3)
+    const desarrollo = escalas_prim.filter(esc => datos[esc]?.en <= 3);
+    if (desarrollo.length > 0) {
+      html += desarrollo.map(esc => `• ${nombres[esc]}: Eneatipo ${datos[esc].en}`).join('<br/>');
+    } else {
+      html += 'Sin puntuaciones muy bajas registradas.';
+    }
+
+    html += `
+        </div>
+
+        <p style="margin: 6px 0 0 0; font-size: 8px; color: #4b5563; line-height: 1.4;">
+          <strong>Recomendación:</strong> Las competencias con puntuaciones bajas pueden mejorarse mediante formación,
+          práctica y retroalimentación. Se sugiere enfoque en aquellas áreas identificadas como de desarrollo.
         </p>
       </div>
     `;
