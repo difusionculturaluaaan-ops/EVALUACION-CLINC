@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CUIDA — Sistema Digital</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 :root {
@@ -739,6 +740,46 @@ function calcularCUIDALocal() {
   return { escalas: escalasResult, total: respuestas.filter(r => r > 0).length };
 }
 
+// Generar PDF del reporte CUIDA
+async function generarPDFCUIDA() {
+  try {
+    const pdfContent = document.getElementById('rpt-container');
+    if (!pdfContent) throw new Error('No se encontró contenido del reporte');
+
+    const opt = {
+      margin: [5, 8, 5, 8],
+      filename: `CUIDA_${new Date().getTime()}.pdf`,
+      image: { type: 'jpeg', quality: 0.99 },
+      html2canvas: { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', logging: false },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    };
+
+    return new Promise((resolve, reject) => {
+      html2pdf()
+        .set(opt)
+        .from(pdfContent.innerHTML)
+        .outputPdf('blob')
+        .then(blob => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const base64 = reader.result.split(',')[1];
+            resolve(base64);
+          };
+          reader.onerror = () => reject(new Error('Error al leer PDF'));
+          reader.readAsDataURL(blob);
+        })
+        .catch(err => {
+          console.error('html2pdf error:', err);
+          reject(new Error(`Error generando PDF: ${err.message}`));
+        });
+    });
+  } catch (error) {
+    console.error('Error en generarPDFCUIDA:', error);
+    throw error;
+  }
+}
+
 async function guardarCUIDA() {
   // Validar respuestas
   const sinResponder = ANS.filter(a => a === 0).length;
@@ -754,8 +795,15 @@ async function guardarCUIDA() {
   }
 
   try {
+    alert('Generando PDF...');
+
     // Calcular resultado
     const resultado = calcularCUIDALocal();
+
+    // Generar PDF
+    console.log('📄 Generando PDF CUIDA...');
+    const pdfBase64 = await generarPDFCUIDA();
+    console.log('✅ PDF generado correctamente');
 
     // Preparar datos para enviar
     const payload = {
@@ -763,10 +811,11 @@ async function guardarCUIDA() {
       tipo: 'CUIDA',
       data: ANS,
       total: resultado.total,
-      subescalas: resultado.escalas
+      subescalas: resultado.escalas,
+      pdf_base64: pdfBase64
     };
 
-    console.log('📤 Enviando CUIDA a BD:', payload);
+    console.log('📤 Enviando CUIDA + PDF a BD:', { paciente_id: payload.paciente_id, tipo: payload.tipo, pdf_size: pdfBase64.length });
 
     // Enviar a API
     const token = authToken || localStorage.getItem('auth_token');
