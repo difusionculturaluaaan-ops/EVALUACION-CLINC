@@ -1676,8 +1676,14 @@ const app = {
         }
       }
 
-      // PARA CUIDA: Si existe PDF guardado como base64, mostrar SOLO ese PDF
+      // PARA CUIDA: Ocultar botón "Descargar Reporte" SIEMPRE
       if (prueba.tipo === 'CUIDA') {
+        const btnDescargar = document.getElementById('btn-descargar-reporte');
+        if (btnDescargar) {
+          btnDescargar.style.display = 'none';
+        }
+
+        // Si existe PDF guardado, mostrar SOLO ese PDF
         let pdfBase64 = prueba.pdf_base64;
 
         // Si no está en prueba, buscar en subescalas
@@ -1721,12 +1727,6 @@ const app = {
               </object>
             `;
             modal.classList.add('active');
-
-            // Ocultar botón "Descargar Reporte" para CUIDA
-            const btnDescargar = document.getElementById('btn-descargar-reporte');
-            if (btnDescargar) {
-              btnDescargar.style.display = 'none';
-            }
 
             console.log('✅ Modal abierto con PDF CUIDA');
             return;
