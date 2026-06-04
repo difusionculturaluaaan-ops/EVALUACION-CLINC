@@ -3813,6 +3813,50 @@ const app = {
         }
       }
 
+      // PARA CUIDA: Si existe PDF guardado como base64, descargarlo desde el blob
+      if (this.pruebaActiva?.tipo === 'CUIDA') {
+        let pdfBase64 = this.pruebaActiva.pdf_base64;
+
+        if (!pdfBase64 && this.pruebaActiva.subescalas) {
+          let subescalas = this.pruebaActiva.subescalas;
+          if (typeof subescalas === 'string') {
+            try {
+              subescalas = JSON.parse(subescalas);
+            } catch (e) {}
+          }
+          pdfBase64 = subescalas?.pdf_base64;
+        }
+
+        if (pdfBase64) {
+          // Convertir base64 a blob y descargar
+          try {
+            const binaryString = atob(pdfBase64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+              bytes[i] = binaryString.charCodeAt(i);
+            }
+            const blob = new Blob([bytes], { type: 'application/pdf' });
+            const blobUrl = URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = `CUIDA_${new Date().getTime()}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(blobUrl);
+
+            this.mostrarToast('✅ PDF descargado correctamente', 'success');
+            return;
+          } catch (error) {
+            console.error('Error al descargar PDF CUIDA:', error);
+            this.mostrarToast('Error al descargar PDF', 'error');
+            return;
+          }
+        }
+      }
+
       // Verificar si hay datos de validación profesional
       const datosGuardados = localStorage.getItem('datos_profesional');
       if (!datosGuardados && !this.datosValidacionProfesional) {
