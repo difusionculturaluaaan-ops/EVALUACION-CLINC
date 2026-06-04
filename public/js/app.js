@@ -2334,7 +2334,11 @@ const app = {
       const container = document.getElementById('chartCUIDA');
       if (!container) return;
 
-      const datos = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : subescalas || {};
+      const rawData = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : subescalas || {};
+      // Acceder a la propiedad escalas si existe, sino usar el objeto completo
+      const datos = rawData.escalas || rawData;
+
+      console.log('🔍 renderGraficoCUIDA - datos recibidos:', { rawData, datos });
 
       // Escalas primarias (14 escalas)
       const escalas = [
