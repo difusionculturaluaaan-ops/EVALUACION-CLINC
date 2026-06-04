@@ -1036,13 +1036,23 @@ async function guardarCUIDA() {
     console.log('✅ CUIDA guardado:', pruebaGuardada);
 
     // Mostrar confirmación (sin bloquear)
-    btnGuardar.textContent = '✅ Guardado';
+    btnGuardar.textContent = '✅ Guardado correctamente';
     btnGuardar.style.backgroundColor = '#4CAF50';
 
-    // Volver al expediente después de 2 segundos
-    setTimeout(() => {
-      window.location.href = '/';
-    }, 2000);
+    // Agregar botón para volver manualmente
+    const btnVolver = document.createElement('button');
+    btnVolver.className = 'btn btn-navy';
+    btnVolver.textContent = '👈 Volver al expediente';
+    btnVolver.onclick = () => window.location.href = '/';
+    btnVolver.style.marginLeft = '10px';
+    btnGuardar.parentElement.appendChild(btnVolver);
+
+    // Mensaje de éxito
+    const successMsg = document.createElement('div');
+    successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 15px; border-radius: 4px; z-index: 9999; font-weight: bold;';
+    successMsg.textContent = '✅ PDF generado y guardado correctamente en el expediente';
+    document.body.appendChild(successMsg);
+    setTimeout(() => successMsg.remove(), 5000);
 
   } catch (error) {
     console.error('❌ Error al guardar CUIDA:', error);
