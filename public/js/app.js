@@ -1676,7 +1676,7 @@ const app = {
         }
       }
 
-      // PARA CUIDA: Mostrar SOLO PDF del micrositio (como MMPI-2)
+      // PARA CUIDA: Ocultar botón "Descargar Reporte" SIEMPRE
       if (prueba.tipo === 'CUIDA') {
         console.log('📋 CUIDA - Estructura completa de prueba:', prueba);
         console.log('📋 CUIDA - Keys en prueba:', Object.keys(prueba));
@@ -1686,26 +1686,21 @@ const app = {
           btnDescargar.style.display = 'none';
         }
 
-        // Buscar PDF guardado en la estructura de prueba
+        // Si existe PDF guardado, mostrar SOLO ese PDF
         let pdfBase64 = prueba.pdf_base64;
-        console.log('🔍 CUIDA - Buscando pdfBase64 en prueba.pdf_base64:', !!pdfBase64);
 
         // Si no está en prueba, buscar en subescalas
         if (!pdfBase64 && prueba.subescalas) {
           let subescalas = prueba.subescalas;
-          console.log('🔍 CUIDA - subescalas tipo:', typeof subescalas);
-
           if (typeof subescalas === 'string') {
             try {
               subescalas = JSON.parse(subescalas);
-              console.log('✅ CUIDA - subescalas parseada');
             } catch (e) {
-              console.log('❌ CUIDA - Error parseando subescalas:', e);
+              console.log('Error parseando subescalas:', e);
               subescalas = {};
             }
           }
           pdfBase64 = subescalas?.pdf_base64;
-          console.log('🔍 CUIDA - pdfBase64 en subescalas:', !!pdfBase64);
         }
 
         if (pdfBase64) {
@@ -1742,13 +1737,7 @@ const app = {
             console.error('❌ Error al procesar PDF CUIDA:', error);
             contenido.innerHTML = '<p style="color: red; padding: 20px;">Error al cargar PDF: ' + error.message + '</p>';
             modal.classList.add('active');
-            return;
           }
-        } else {
-          console.warn('⚠️ CUIDA - No se encontró pdfBase64, mostrando error');
-          contenido.innerHTML = '<p style="color: orange; padding: 20px;">⚠️ El PDF del test CUIDA aún no se ha generado. Por favor, completa el test primero.</p>';
-          modal.classList.add('active');
-          return;
         }
       }
 
