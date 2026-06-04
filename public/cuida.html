@@ -488,6 +488,10 @@ tr.pt-div .dl{height:2px;background:var(--border);border-radius:2px}
 <!-- ── TAB REPORTE ── -->
 <div id="tab-reporte" class="screen">
   <div class="wrap">
+    <!-- Logo Header (solo en PDF, no en pantalla) -->
+    <div id="pdf-logo-header" style="display:none;text-align:center;margin-bottom:20px;padding:15px;border-bottom:2px solid var(--border)">
+      <img id="pdf-logo-img" src="" style="max-width:120px;max-height:80px;object-fit:contain" alt="Logo Institución">
+    </div>
     <div class="card" id="rpt-hdr"></div>
     <div class="card" id="rpt-chart">
       <div class="card-hdr"><h3>Perfil Gráfico — Eneatipos</h3><span>media=5, DT=2</span></div>
@@ -941,6 +945,17 @@ async function generarPDFCUIDA() {
     const pdfContent = document.getElementById('tab-reporte');
     if (!pdfContent) throw new Error('No se encontró contenido del reporte');
 
+    // Cargar logo del tenant
+    const logoUrl = localStorage.getItem('tenant_logo_url');
+    if (logoUrl) {
+      const logoHeader = document.getElementById('pdf-logo-header');
+      const logoImg = document.getElementById('pdf-logo-img');
+      if (logoHeader && logoImg) {
+        logoImg.src = logoUrl;
+        logoHeader.style.display = 'block';
+      }
+    }
+
     const opt = {
       margin: [5, 8, 5, 8],
       filename: `CUIDA_${new Date().getTime()}.pdf`,
@@ -967,6 +982,11 @@ async function generarPDFCUIDA() {
         .catch(err => {
           console.error('html2pdf error:', err);
           reject(new Error(`Error generando PDF: ${err.message}`));
+        })
+        .finally(() => {
+          // Ocultar logo después de generar PDF (para no afectar la pantalla)
+          const logoHeader = document.getElementById('pdf-logo-header');
+          if (logoHeader) logoHeader.style.display = 'none';
         });
     });
   } catch (error) {
