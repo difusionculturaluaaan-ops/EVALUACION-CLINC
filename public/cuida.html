@@ -795,7 +795,11 @@ async function guardarCUIDA() {
   }
 
   try {
-    alert('Generando PDF...');
+    // Mostrar estado de carga
+    const btnGuardar = document.querySelector('button:contains("Guardar")') || event.target;
+    const textoOriginal = btnGuardar.textContent;
+    btnGuardar.disabled = true;
+    btnGuardar.textContent = '⏳ Generando PDF...';
 
     // Calcular resultado
     const resultado = calcularCUIDALocal();
@@ -836,17 +840,25 @@ async function guardarCUIDA() {
     const pruebaGuardada = await response.json();
     console.log('✅ CUIDA guardado:', pruebaGuardada);
 
-    // Mostrar confirmación
-    alert('✅ CUIDA guardado correctamente');
+    // Mostrar confirmación (sin bloquear)
+    btnGuardar.textContent = '✅ Guardado';
+    btnGuardar.style.backgroundColor = '#4CAF50';
 
-    // Volver al expediente después de 1 segundo
+    // Volver al expediente después de 2 segundos
     setTimeout(() => {
       window.location.href = '/';
-    }, 1000);
+    }, 2000);
 
   } catch (error) {
     console.error('❌ Error al guardar CUIDA:', error);
-    alert(`Error al guardar: ${error.message}`);
+    btnGuardar.disabled = false;
+    btnGuardar.textContent = textoOriginal;
+    // Mostrar error sin alert()
+    const errorMsg = document.createElement('div');
+    errorMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #f44336; color: white; padding: 15px; border-radius: 4px; z-index: 9999;';
+    errorMsg.textContent = `Error: ${error.message}`;
+    document.body.appendChild(errorMsg);
+    setTimeout(() => errorMsg.remove(), 5000);
   }
 }
 

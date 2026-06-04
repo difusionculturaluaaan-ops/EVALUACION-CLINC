@@ -1733,7 +1733,7 @@ const app = {
           } catch (error) {
             console.error('❌ Error al procesar PDF CUIDA:', error);
             contenido.innerHTML = '<p style="color: red; padding: 20px;">Error al cargar PDF: ' + error.message + '</p>';
-            modal.style.display = 'block';
+            modal.classList.add('active');
           }
         }
       }
