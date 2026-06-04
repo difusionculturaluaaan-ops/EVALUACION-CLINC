@@ -743,7 +743,7 @@ function calcularCUIDALocal() {
 // Generar PDF del reporte CUIDA
 async function generarPDFCUIDA() {
   try {
-    const pdfContent = document.getElementById('rpt-container');
+    const pdfContent = document.getElementById('tab-reporte');
     if (!pdfContent) throw new Error('No se encontró contenido del reporte');
 
     const opt = {
