@@ -1676,6 +1676,68 @@ const app = {
         }
       }
 
+      // PARA CUIDA: Si existe PDF guardado como base64, mostrar SOLO ese PDF
+      if (prueba.tipo === 'CUIDA') {
+        let pdfBase64 = prueba.pdf_base64;
+
+        // Si no está en prueba, buscar en subescalas
+        if (!pdfBase64 && prueba.subescalas) {
+          let subescalas = prueba.subescalas;
+          if (typeof subescalas === 'string') {
+            try {
+              subescalas = JSON.parse(subescalas);
+            } catch (e) {
+              console.log('Error parseando subescalas:', e);
+              subescalas = {};
+            }
+          }
+          pdfBase64 = subescalas?.pdf_base64;
+        }
+
+        if (pdfBase64) {
+          console.log('✅ Mostrando PDF CUIDA desde base64');
+          console.log('   Tamaño base64:', pdfBase64.length);
+
+          // Crear blob desde base64
+          try {
+            const binaryString = atob(pdfBase64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+              bytes[i] = binaryString.charCodeAt(i);
+            }
+            const blob = new Blob([bytes], { type: 'application/pdf' });
+            const blobUrl = URL.createObjectURL(blob);
+
+            console.log('✅ Blob URL creado:', blobUrl);
+
+            // Mostrar PDF en viewer
+            contenido.innerHTML = `
+              <object
+                data="${blobUrl}"
+                type="application/pdf"
+                style="width: 100%; height: 85vh; border: none;">
+                <p>Tu navegador no puede mostrar PDFs. <a href="${blobUrl}" download="CUIDA.pdf">Descargar PDF</a></p>
+              </object>
+            `;
+            modal.classList.add('active');
+
+            // Ocultar botón "Descargar Reporte" para CUIDA
+            const btnDescargar = document.getElementById('btn-descargar-reporte');
+            if (btnDescargar) {
+              btnDescargar.style.display = 'none';
+            }
+
+            console.log('✅ Modal abierto con PDF CUIDA');
+            return;
+          } catch (error) {
+            console.error('❌ Error al procesar PDF CUIDA:', error);
+            contenido.innerHTML = '<p style="color: red; padding: 20px;">Error al cargar PDF: ' + error.message + '</p>';
+            modal.style.display = 'block';
+          }
+        }
+      }
+
     // Parsear datos si están en JSON
     const subescalas = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas;
 
