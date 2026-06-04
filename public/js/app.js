@@ -1678,6 +1678,9 @@ const app = {
 
       // PARA CUIDA: Mostrar SOLO PDF del micrositio (como MMPI-2)
       if (prueba.tipo === 'CUIDA') {
+        console.log('📋 CUIDA - Estructura completa de prueba:', prueba);
+        console.log('📋 CUIDA - Keys en prueba:', Object.keys(prueba));
+
         const btnDescargar = document.getElementById('btn-descargar-reporte');
         if (btnDescargar) {
           btnDescargar.style.display = 'none';
