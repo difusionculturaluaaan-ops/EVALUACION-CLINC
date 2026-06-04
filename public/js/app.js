@@ -2327,83 +2327,89 @@ const app = {
   },
 
   /**
-   * Renderizar gráfico CUIDA: Barras de escalas primarias
+   * Renderizar gráfico CUIDA: Barras de escalas primarias con puntos de eneatipo
    */
   renderGraficoCUIDA(prueba, subescalas) {
     try {
-      const canvas = document.getElementById('chartCUIDA');
-      if (!canvas || typeof Chart === 'undefined') return;
+      const container = document.getElementById('chartCUIDA');
+      if (!container) return;
 
       const datos = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : subescalas || {};
 
-      // Escalas primarias
-      const escalas_prim = ['Al', 'Ap', 'As', 'At', 'Rp', 'Em', 'Ee', 'In', 'Fl', 'Rf', 'Sc', 'Tf', 'Ag', 'Dl'];
-      const labels = escalas_prim;
-      const valores = escalas_prim.map(e => datos[e]?.en || 0);
+      // Escalas primarias (14 escalas)
+      const escalas = [
+        { abbr: 'Al', name: 'Altruismo' },
+        { abbr: 'Ap', name: 'Apertura' },
+        { abbr: 'As', name: 'Asertividad' },
+        { abbr: 'At', name: 'Autoestima' },
+        { abbr: 'Rp', name: 'C. de resolver problemas' },
+        { abbr: 'Em', name: 'Empatía' },
+        { abbr: 'Ee', name: 'Equilibrio emocional' },
+        { abbr: 'In', name: 'Independencia' },
+        { abbr: 'Fl', name: 'Flexibilidad' },
+        { abbr: 'Rf', name: 'Responsabilidad' },
+        { abbr: 'Sc', name: 'Solución de conflictos' },
+        { abbr: 'Tf', name: 'Tolerancia a la frustración' },
+        { abbr: 'Ag', name: 'Agresividad' },
+        { abbr: 'Dl', name: 'Disconformidad' }
+      ];
 
-      const colorizar = (en) => {
-        if (!en) return '#999';
-        if (en <= 3) return '#0369a1'; // Bajo
-        if (en <= 6) return '#065f46'; // Medio
-        return '#92400e'; // Alto
-      };
+      const barHeight = 26;
+      const barWidth = 280;
+      const svg = [];
+      svg.push(`<svg viewBox="0 0 900 ${escalas.length * (barHeight + 4) + 40}" style="width: 100%; height: auto; max-width: 100%; border: 1px solid #ddd; border-radius: 3px; margin: 10px 0;">`);
 
-      const colores = valores.map(v => colorizar(v));
+      // Leyenda
+      svg.push(`<text x="10" y="18" style="font-size: 12px; font-weight: bold; fill: #333;">Perfil Gráfico — Eneatipos (1=Bajo, 5=Normal, 9=Alto)</text>`);
 
-      const ctx = canvas.getContext('2d');
-      canvas.chartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: 'Eneatipo',
-            data: valores,
-            backgroundColor: colores,
-            borderColor: '#333',
-            borderWidth: 1,
-            barPercentage: 0.7
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: true,
-          indexAxis: 'x',
-          plugins: {
-            legend: { display: true, labels: { font: { size: 11 } } },
-            tooltip: { enabled: true, callbacks: { label: (c) => `Eneatipo: ${c.parsed.y}` } }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              max: 9,
-              ticks: { font: { size: 10 }, stepSize: 1 },
-              title: { display: true, text: 'Eneatipo', font: { size: 11 } }
-            },
-            x: {
-              ticks: { font: { size: 9 } }
-            }
-          }
+      escalas.forEach((esc, idx) => {
+        const y = 35 + idx * (barHeight + 4);
+        const en = datos[esc.abbr]?.en || null;
+        const pd = datos[esc.abbr]?.pd !== undefined ? Math.round(datos[esc.abbr].pd) : '–';
+        const pct = en ? Math.round((en - 1) / 8 * 100) : null;
+
+        // Nombre y valores
+        svg.push(`<text x="10" y="${y + 17}" style="font-size: 11px; fill: #333; font-weight: 500;">${esc.abbr}</text>`);
+        svg.push(`<text x="50" y="${y + 17}" style="font-size: 10px; fill: #666;">PD: ${pd}</text>`);
+        svg.push(`<text x="110" y="${y + 17}" style="font-size: 11px; fill: #333; font-weight: bold;">En: ${en || '–'}</text>`);
+
+        // Barra con zonas de color
+        const barStartX = 170;
+        svg.push(`<rect x="${barStartX}" y="${y + 2}" width="${barWidth}" height="${barHeight - 4}" fill="white" stroke="#ddd" stroke-width="1" rx="3"/>`);
+
+        // Zona Bajo (1-3) - 25% azul claro
+        svg.push(`<rect x="${barStartX}" y="${y + 2}" width="${barWidth * 0.25}" height="${barHeight - 4}" fill="#dbeafe" rx="3 0 0 3"/>`);
+
+        // Zona Normal (4-6) - 50% verde claro
+        svg.push(`<rect x="${barStartX + barWidth * 0.25}" y="${y + 2}" width="${barWidth * 0.5}" height="${barHeight - 4}" fill="#d1fae5"/>`);
+
+        // Zona Alto (7-9) - 25% amarillo claro
+        svg.push(`<rect x="${barStartX + barWidth * 0.75}" y="${y + 2}" width="${barWidth * 0.25}" height="${barHeight - 4}" fill="#fef3c7" rx="0 3 3 0"/>`);
+
+        // Marcas verticales
+        for (let i = 0; i <= 4; i++) {
+          const xPos = barStartX + (barWidth * i / 4);
+          svg.push(`<line x1="${xPos}" y1="${y + 2}" x2="${xPos}" y2="${y + barHeight - 2}" stroke="rgba(255,255,255,0.7)" stroke-width="1"/>`);
+        }
+
+        // Punto azul indicador del eneatipo
+        if (pct !== null) {
+          const dotX = barStartX + (barWidth * pct / 100);
+          svg.push(`<circle cx="${dotX}" cy="${y + barHeight / 2}" r="5" fill="#0369a1" stroke="white" stroke-width="2" style="box-shadow: 0 1px 4px rgba(0,0,0,0.3);"/>`);
         }
       });
 
-      // Convertir a imagen después de renderizar
-      setTimeout(() => {
-        if (canvas.chartInstance && canvas.parentNode) {
-          const imgSrc = canvas.toDataURL('image/png');
-          const img = document.createElement('img');
-          img.src = imgSrc;
-          img.style.width = '100%';
-          img.style.height = 'auto';
-          img.style.display = 'block';
-          img.style.border = '1px solid #ddd';
-          img.style.borderRadius = '3px';
-          img.style.margin = '10px 0';
+      // Eje de números
+      svg.push(`<text x="175" y="${35 + escalas.length * (barHeight + 4) + 5}" style="font-size: 10px; fill: #999;">1</text>`);
+      svg.push(`<text x="305" y="${35 + escalas.length * (barHeight + 4) + 5}" style="font-size: 10px; fill: #999;">3</text>`);
+      svg.push(`<text x="430" y="${35 + escalas.length * (barHeight + 4) + 5}" style="font-size: 10px; fill: #999;">5</text>`);
+      svg.push(`<text x="555" y="${35 + escalas.length * (barHeight + 4) + 5}" style="font-size: 10px; fill: #999;">7</text>`);
+      svg.push(`<text x="675" y="${35 + escalas.length * (barHeight + 4) + 5}" style="font-size: 10px; fill: #999;">9</text>`);
 
-          const parentElement = canvas.parentNode;
-          parentElement.replaceChild(img, canvas);
-          console.log('✓ Gráfico CUIDA convertido a imagen');
-        }
-      }, 500);
+      svg.push(`</svg>`);
+
+      container.innerHTML = svg.join('');
+      console.log('✓ Gráfico CUIDA SVG generado');
 
     } catch (error) {
       console.error('Error al renderizar gráfico CUIDA:', error);
