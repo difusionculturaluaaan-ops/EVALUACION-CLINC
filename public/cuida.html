@@ -1011,7 +1011,7 @@ async function guardarCUIDA() {
 
   try {
     // Mostrar estado de carga
-    const btnGuardar = document.querySelector('button:contains("Guardar")') || event.target;
+    const btnGuardar = event.target;
     const textoOriginal = btnGuardar.textContent;
     btnGuardar.disabled = true;
     btnGuardar.textContent = '⏳ Generando PDF...';
