@@ -77,7 +77,8 @@ async function createTables() {
         data TEXT NOT NULL,
         total REAL,
         subescalas TEXT,
-        estado TEXT DEFAULT 'borrador'
+        estado TEXT DEFAULT 'borrador',
+        pdf_base64 TEXT
       )
     `);
 
