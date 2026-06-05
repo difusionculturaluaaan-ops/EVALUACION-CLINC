@@ -462,7 +462,12 @@ tr.pt-div .dl{height:2px;background:var(--border);border-radius:2px}
           <div class="full"><label class="fl">N.º expediente</label><input id="f-exp" type="text" placeholder="Opcional"></div>
         </div>
         <div class="instr"><p>A continuación encontrará una serie de preguntas relacionadas con su forma de pensar y actuar. <strong>No hay respuestas correctas ni incorrectas.</strong> Responda con sinceridad. Todas las respuestas son confidenciales. Seleccione la alternativa que mejor se ajuste a su realidad.</p></div>
-        <button class="btn btn-navy" onclick="startQ()">Iniciar cuestionario <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-navy" onclick="startQ()">Iniciar cuestionario <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+          <button class="btn btn-out" onclick="exportarJSON()">📥 Exportar JSON</button>
+          <button class="btn btn-out" onclick="document.getElementById('file-import').click()">📤 Importar JSON</button>
+          <input type="file" id="file-import" accept=".json" style="display:none" onchange="importarJSON(event)">
+        </div>
       </div>
     </div>
   </div>
@@ -1085,6 +1090,104 @@ async function guardarCUIDA() {
     document.body.appendChild(errorMsg);
     setTimeout(() => errorMsg.remove(), 5000);
   }
+}
+
+// ─────────── EXPORT/IMPORT JSON ───────────
+function exportarJSON() {
+  const data = {
+    testType: 'CUIDA',
+    version: '1.0',
+    respuestas: ANS,
+    metadatos: {
+      nombre: document.getElementById('f-nombre').value,
+      edad: document.getElementById('f-edad').value,
+      sexo: document.getElementById('f-sexo').value,
+      fecha: document.getElementById('f-fecha').value,
+      baremo: document.getElementById('f-baremo').value,
+      responsable: document.getElementById('f-resp').value,
+      expediente: document.getElementById('f-exp').value
+    },
+    respondidas: ANS.filter(a => a > 0).length,
+    timestamp: new Date().toISOString()
+  };
+
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `CUIDA_${new Date().getTime()}.json`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+
+  console.log('✅ JSON exportado');
+}
+
+function importarJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+
+      // Validar estructura
+      if (!data.respuestas || data.respuestas.length !== 189) {
+        throw new Error('El archivo no tiene 189 respuestas válidas');
+      }
+
+      if (!data.respuestas.every(r => [0, 1, 2, 3, 4].includes(r))) {
+        throw new Error('Las respuestas deben estar entre 0 y 4');
+      }
+
+      // Confirmar antes de cargar
+      if (!confirm(`Se cargarán ${data.respondidas || 0} respuestas. ¿Continuar?`)) {
+        return;
+      }
+
+      // Cargar respuestas
+      data.respuestas.forEach((resp, idx) => {
+        ANS[idx] = resp;
+      });
+
+      // Cargar metadatos
+      if (data.metadatos) {
+        document.getElementById('f-nombre').value = data.metadatos.nombre || '';
+        document.getElementById('f-edad').value = data.metadatos.edad || '';
+        document.getElementById('f-sexo').value = data.metadatos.sexo || '';
+        document.getElementById('f-fecha').value = data.metadatos.fecha || '';
+        document.getElementById('f-baremo').value = data.metadatos.baremo || '';
+        document.getElementById('f-resp').value = data.metadatos.responsable || '';
+        document.getElementById('f-exp').value = data.metadatos.expediente || '';
+      }
+
+      // Mostrar éxito
+      const successMsg = document.createElement('div');
+      successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 15px; border-radius: 4px; z-index: 9999; font-weight: bold;';
+      successMsg.textContent = `✅ Se cargaron ${data.respondidas || 0} respuestas`;
+      document.body.appendChild(successMsg);
+      setTimeout(() => successMsg.remove(), 5000);
+
+      console.log('✅ JSON importado:', data.respondidas, 'respuestas');
+
+    } catch (error) {
+      const errorMsg = document.createElement('div');
+      errorMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #f44336; color: white; padding: 15px; border-radius: 4px; z-index: 9999;';
+      errorMsg.textContent = `❌ Error: ${error.message}`;
+      document.body.appendChild(errorMsg);
+      setTimeout(() => errorMsg.remove(), 5000);
+
+      console.error('❌ Error al importar JSON:', error);
+    }
+
+    // Limpiar input
+    event.target.value = '';
+  };
+
+  reader.readAsText(file);
 }
 
 // Inicialización
