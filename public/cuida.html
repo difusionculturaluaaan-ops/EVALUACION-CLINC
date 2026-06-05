@@ -971,13 +971,17 @@ async function generarPDFCUIDA() {
       }
     }
 
+    // Calcular altura real del contenido
+    const contentHeight = pdfContent.scrollHeight || pdfContent.offsetHeight || 2400;
+    const windowHeightForContent = Math.max(3200, contentHeight + 400);
+
     const opt = {
       margin: [8, 10, 8, 10],
       filename: `CUIDA_${new Date().getTime()}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', logging: false, windowHeight: 2400 },
+      html2canvas: { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', logging: false, windowHeight: windowHeightForContent, windowWidth: 1200 },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
-      pagebreak: { mode: 'css', avoid: ['tr', '.no-print'], before: ['.card-hdr'] }
+      pagebreak: { mode: 'css', avoid: ['.card'], before: [] }
     };
 
     return new Promise((resolve, reject) => {
