@@ -1038,6 +1038,12 @@ async function guardarCUIDA() {
     // Calcular resultado
     const resultado = calcularCUIDALocal();
 
+    // IMPORTANTE: Generar reporte antes de crear PDF (asegurar que todo el HTML esté listo)
+    buildReport();
+
+    // Esperar a que el DOM se actualice completamente
+    await new Promise(resolve => setTimeout(resolve, 500));
+
     // Generar PDF
     console.log('📄 Generando PDF CUIDA...');
     const pdfBase64 = await generarPDFCUIDA();
