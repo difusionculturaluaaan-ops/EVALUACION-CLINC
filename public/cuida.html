@@ -734,7 +734,20 @@ function finishQ() {
 function buildReport() {
   // Usar escalas guardadas si están disponibles (cargadas desde expediente)
   // Si no, calcular desde ANS
-  const scores = window.cuidaEscalasGuardadas || calcScales();
+  let scores = window.cuidaEscalasGuardadas || calcScales();
+
+  // Fallback: si faltan campos críticos (Inv, Inc), calcularlos
+  if (!scores.Inv) {
+    const invItems = [17, 51, 112];
+    let invScore = 0;
+    for (const item of invItems) {
+      if (ANS[item-1] >= 3) invScore++;
+    }
+    scores.Inv = { pd: invScore, en: invScore === 0 ? 'Normal' : 'Revisar' };
+  }
+  if (!scores.Inc) {
+    scores.Inc = { pd: '–', en: 'N/A' };
+  }
   const nombre=document.getElementById('f-nombre').value||'–';
   const edad=document.getElementById('f-edad').value||'–';
   const sexo=document.getElementById('f-sexo').value||'–';
