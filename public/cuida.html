@@ -613,6 +613,7 @@ const QS=["Me gusta conocer gente nueva","Tengo problemas para dormir","Estoy sa
 // ─────────── STATE ───────────
 const ANS = new Array(189).fill(0);
 let panelOpen = false;
+let metadatosActuales = {}; // Guardar metadatos cuando se completan
 
 // ─────────── SCORING ENGINE ───────────
 function itemScore(i1idx, rawVal) {
@@ -725,6 +726,19 @@ function togglePanel() {
 function finishQ() {
   const u=ANS.filter(a=>a===0).length;
   if(u>0) document.getElementById('bar-w').style.display='block';
+
+  // Guardar metadatos ANTES de cambiar de pestaña
+  metadatosActuales = {
+    nombre: document.getElementById('f-nombre')?.value || '–',
+    edad: document.getElementById('f-edad')?.value || '–',
+    sexo: document.getElementById('f-sexo')?.value || '–',
+    fecha: document.getElementById('f-fecha')?.value || '',
+    baremo: document.getElementById('f-baremo')?.value || '–',
+    responsable: document.getElementById('f-resp')?.value || '–',
+    expediente: document.getElementById('f-exp')?.value || '–'
+  };
+  console.log('✅ Metadatos guardados:', metadatosActuales);
+
   buildReport();
   goTab('reporte');
   window.scrollTo(0,0);
@@ -1050,17 +1064,19 @@ async function descargarYGuardarPDF() {
     if (pacienteId) {
       console.log('📤 Guardando datos en expediente...');
 
-      // Recopilar metadatos del formulario
-      const metadatos = {
-        nombre: document.getElementById('f-nombre')?.value || '–',
-        edad: document.getElementById('f-edad')?.value || '–',
-        sexo: document.getElementById('f-sexo')?.value || '–',
-        fecha: document.getElementById('f-fecha')?.value || '',
-        baremo: document.getElementById('f-baremo')?.value || '–',
-        responsable: document.getElementById('f-resp')?.value || '–',
-        expediente: document.getElementById('f-exp')?.value || '–'
-      };
-      console.log('📌 Metadatos recolectados del formulario:', metadatos);
+      // Usar metadatos guardados cuando se completó el test
+      const metadatos = metadatosActuales && Object.keys(metadatosActuales).length > 0
+        ? metadatosActuales
+        : {
+            nombre: document.getElementById('f-nombre')?.value || '–',
+            edad: document.getElementById('f-edad')?.value || '–',
+            sexo: document.getElementById('f-sexo')?.value || '–',
+            fecha: document.getElementById('f-fecha')?.value || '',
+            baremo: document.getElementById('f-baremo')?.value || '–',
+            responsable: document.getElementById('f-resp')?.value || '–',
+            expediente: document.getElementById('f-exp')?.value || '–'
+          };
+      console.log('📌 Metadatos a usar:', metadatos);
 
       const payload = {
         paciente_id: parseInt(pacienteId),
