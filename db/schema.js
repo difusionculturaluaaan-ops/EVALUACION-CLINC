@@ -462,9 +462,9 @@ async function getPruebaById(id) {
 async function crearPrueba(datos) {
   try {
     const result = await pool.query(
-      `INSERT INTO pruebas (tenant_id, paciente_id, tipo, data, total, subescalas, estado)
-       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-      [datos.tenant_id, datos.paciente_id, datos.tipo, JSON.stringify(datos.data), datos.total, JSON.stringify(datos.subescalas), 'borrador']
+      `INSERT INTO pruebas (tenant_id, paciente_id, tipo, data, total, subescalas, estado, pdf_base64)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+      [datos.tenant_id, datos.paciente_id, datos.tipo, JSON.stringify(datos.data), datos.total, JSON.stringify(datos.subescalas), 'borrador', datos.pdf_base64 || null]
     );
     return result.rows[0] || null;
   } catch (err) {
@@ -473,11 +473,21 @@ async function crearPrueba(datos) {
   }
 }
 
-async function guardarPrueba(paciente_id, tipo, data, total, subescalas) {
+async function guardarPrueba(paciente_id, tipo, data, total, subescalas, pdf_base64 = null) {
   try {
     // Obtener tenant_id del paciente
     const paciente = await getPacienteById(paciente_id);
     if (!paciente) return null;
+
+    // Separar pdf_base64 de subescalas si está dentro
+    let cleanSubescalas = subescalas;
+    let finalPdf = pdf_base64;
+
+    if (subescalas && typeof subescalas === 'object' && subescalas.pdf_base64) {
+      const { pdf_base64: pdffrom, ...rest } = subescalas;
+      cleanSubescalas = rest;
+      finalPdf = finalPdf || pdffrom;
+    }
 
     return crearPrueba({
       tenant_id: paciente.tenant_id,
@@ -485,7 +495,8 @@ async function guardarPrueba(paciente_id, tipo, data, total, subescalas) {
       tipo,
       data,
       total,
-      subescalas
+      subescalas: cleanSubescalas,
+      pdf_base64: finalPdf
     });
   } catch (err) {
     console.error('Error al guardar prueba:', err);

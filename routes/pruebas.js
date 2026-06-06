@@ -32,14 +32,8 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'data debe ser un array' });
     }
 
-    // Guardar prueba con PDF si está disponible (base64 o filename)
-    const subescalasConPDF = pdf_base64
-      ? { ...subescalas, pdf_base64 }
-      : pdf_filename
-      ? { ...subescalas, pdf_filename }
-      : subescalas;
-
-    const prueba = await guardarPrueba(paciente_id, tipo, data, total, subescalasConPDF);
+    // Guardar prueba con PDF en columna separada
+    const prueba = await guardarPrueba(paciente_id, tipo, data, total, subescalas, pdf_base64);
     res.status(201).json(prueba);
   } catch (error) {
     console.error('Error al guardar prueba:', error);
