@@ -1281,6 +1281,9 @@ if (modoCargar) {
       // Extraer metadatos si están guardados dentro de subescalas
       let metadatosGuardados = subescalasData?._metadatos || null;
 
+      console.log('🔍 Contenido de subescalas:', subescalasData);
+      console.log('🔍 Metadatos extraídos:', metadatosGuardados);
+
       const datos = {
         data: typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data,
         subescalas: subescalasData,
@@ -1295,6 +1298,7 @@ if (modoCargar) {
         }
       };
       console.log('✅ Datos parseados:', { data_length: datos.data.length, escalas: Object.keys(datos.subescalas).length, metadatos: !!metadatosGuardados });
+      console.log('✅ Metadatos a usar:', datos.metadatos);
 
       // Cargar respuestas (data)
       if (datos.data && Array.isArray(datos.data)) {
