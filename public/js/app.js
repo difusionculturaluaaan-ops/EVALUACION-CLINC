@@ -4645,7 +4645,7 @@ const app = {
           </div>
 
           <div class="estudio-actions">
-            ${prueba.tipo === 'CUIDA' || prueba.tipo.includes('CUIDA') ? `
+            ${prueba.tipo.toUpperCase().includes('CUIDA') ? `
               <button class="btn-abrir-evaluacion" onclick="app.abrirEvaluacionCUIDA(${prueba.id})">
                 📊 Abrir JSON
               </button>
