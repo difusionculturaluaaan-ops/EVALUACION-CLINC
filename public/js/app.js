@@ -4495,6 +4495,45 @@ const app = {
   },
 
   /**
+   * Abrir evaluación CUIDA desde expediente - carga JSON guardado
+   */
+  async abrirEvaluacionCUIDA(pruebaId) {
+    try {
+      const response = await fetch(`/api/pruebas/${pruebaId}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
+      });
+
+      if (!response.ok) {
+        this.mostrarToast('Error al cargar evaluación CUIDA', 'error');
+        return;
+      }
+
+      const prueba = await response.json();
+
+      // Guardar datos en localStorage para que cuida.html los cargue
+      localStorage.setItem('cuidaDatosParaCargar', JSON.stringify({
+        data: typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data,
+        subescalas: typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas,
+        metadatos: {
+          nombre: this.pacienteActivo?.nombre || '–',
+          edad: this.pacienteActivo?.edad || '–',
+          sexo: this.pacienteActivo?.sexo || '–',
+          fecha: prueba.fecha,
+          baremo: '–',
+          responsable: '–',
+          expediente: '–'
+        }
+      }));
+
+      // Abrir cuida.html con flag para cargar desde localStorage
+      window.open('/cuida.html?modo=cargar', '_blank');
+    } catch (error) {
+      console.error('Error al abrir evaluación CUIDA:', error);
+      this.mostrarToast('Error al cargar evaluación CUIDA', 'error');
+    }
+  },
+
+  /**
    * Generar interpretación basada en el tipo de test y puntuación
    */
   generarInterpretacion(tipoTest, total) {
@@ -4606,9 +4645,15 @@ const app = {
           </div>
 
           <div class="estudio-actions">
-            <button class="btn-ver-reporte" data-prueba-id="${prueba.id}" onclick="app.abrirReportePrueba(this.getAttribute('data-prueba-id'))">
-              📋 Ver Reporte
-            </button>
+            ${prueba.tipo === 'CUIDA' ? `
+              <button class="btn-abrir-evaluacion" onclick="app.abrirEvaluacionCUIDA(${prueba.id})">
+                📊 Abrir Evaluación
+              </button>
+            ` : `
+              <button class="btn-ver-reporte" data-prueba-id="${prueba.id}" onclick="app.abrirReportePrueba(this.getAttribute('data-prueba-id'))">
+                📋 Ver Reporte
+              </button>
+            `}
             ${estado === 'borrador' ? `
               <button class="btn-estado btn-oficial" onclick="app.cambiarEstadoPrueba(${prueba.id}, 'oficial')">
                 ✓ Marcar Oficial

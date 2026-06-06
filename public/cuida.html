@@ -1320,11 +1320,72 @@ function importarJSON(event) {
 
 // Inicialización
 obtenerParametrosURL();
-cargarDatosPaciente().then(() => {
-  // Después de cargar datos del paciente
-  buildQ();
-  buildLivePanel();
-});
+
+// Detectar si se está cargando desde expediente (modo=cargar)
+const params = new URLSearchParams(window.location.search);
+const modoCargar = params.get('modo') === 'cargar';
+
+if (modoCargar) {
+  // Cargar datos desde localStorage (enviados desde app.js)
+  const datosGuardados = localStorage.getItem('cuidaDatosParaCargar');
+  if (datosGuardados) {
+    try {
+      const datos = JSON.parse(datosGuardados);
+
+      // Cargar respuestas (data)
+      if (datos.data && Array.isArray(datos.data)) {
+        datos.data.forEach((resp, idx) => {
+          ANS[idx] = resp;
+        });
+      }
+
+      // Cargar metadatos
+      if (datos.metadatos) {
+        document.getElementById('f-nombre').value = datos.metadatos.nombre || '–';
+        document.getElementById('f-edad').value = datos.metadatos.edad || '–';
+        document.getElementById('f-sexo').value = datos.metadatos.sexo || '–';
+        document.getElementById('f-fecha').value = datos.metadatos.fecha || '';
+        document.getElementById('f-baremo').value = datos.metadatos.baremo || '';
+        document.getElementById('f-resp').value = datos.metadatos.responsable || '';
+        document.getElementById('f-exp').value = datos.metadatos.expediente || '';
+      }
+
+      // Generar reporte
+      buildReport();
+
+      // Navegar al tab de reporte
+      goTab('reporte');
+
+      // Scroll
+      setTimeout(() => {
+        document.getElementById('tab-reporte')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+
+      // Mostrar éxito
+      const successMsg = document.createElement('div');
+      successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 15px 20px; border-radius: 8px; z-index: 9999; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
+      successMsg.innerHTML = `✅ Evaluación cargada<br>Respuestas: ${ANS.filter(a=>a>0).length}/189`;
+      document.body.appendChild(successMsg);
+      setTimeout(() => successMsg.remove(), 4000);
+
+      console.log('✅ Evaluación CUIDA cargada desde expediente');
+
+      // Limpiar localStorage
+      localStorage.removeItem('cuidaDatosParaCargar');
+
+    } catch (error) {
+      console.error('Error al cargar datos desde localStorage:', error);
+    }
+  }
+
+  // No buildQ/buildLivePanel porque ya está el reporte visible
+} else {
+  // Flujo normal: mostrar formulario vacío
+  cargarDatosPaciente().then(() => {
+    buildQ();
+    buildLivePanel();
+  });
+}
 </script>
 </body>
 </html>
