@@ -1064,19 +1064,17 @@ async function descargarYGuardarPDF() {
     if (pacienteId) {
       console.log('📤 Guardando datos en expediente...');
 
-      // Usar metadatos guardados cuando se completó el test
-      const metadatos = metadatosActuales && Object.keys(metadatosActuales).length > 0
-        ? metadatosActuales
-        : {
-            nombre: document.getElementById('f-nombre')?.value || '–',
-            edad: document.getElementById('f-edad')?.value || '–',
-            sexo: document.getElementById('f-sexo')?.value || '–',
-            fecha: document.getElementById('f-fecha')?.value || '',
-            baremo: document.getElementById('f-baremo')?.value || '–',
-            responsable: document.getElementById('f-resp')?.value || '–',
-            expediente: document.getElementById('f-exp')?.value || '–'
-          };
-      console.log('📌 Metadatos a usar:', metadatos);
+      // SIEMPRE leer directamente del formulario (como hace exportarJSON)
+      const metadatos = {
+        nombre: document.getElementById('f-nombre')?.value || '–',
+        edad: document.getElementById('f-edad')?.value || '–',
+        sexo: document.getElementById('f-sexo')?.value || '–',
+        fecha: document.getElementById('f-fecha')?.value || '',
+        baremo: document.getElementById('f-baremo')?.value || '–',
+        responsable: document.getElementById('f-resp')?.value || '–',
+        expediente: document.getElementById('f-exp')?.value || '–'
+      };
+      console.log('📌 Metadatos recolectados (directo del formulario):', metadatos);
 
       const payload = {
         paciente_id: parseInt(pacienteId),
