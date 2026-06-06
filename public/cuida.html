@@ -1357,9 +1357,6 @@ if (modoCargar) {
         document.getElementById('f-exp').value = datos.metadatos.expediente || '';
       }
 
-      // Pequeño delay para asegurar que DOM esté listo
-      await new Promise(r => setTimeout(r, 100));
-
       // Generar reporte
       buildReport();
 
