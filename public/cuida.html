@@ -1211,11 +1211,37 @@ const params = new URLSearchParams(window.location.search);
 const modoCargar = params.get('modo') === 'cargar';
 
 if (modoCargar) {
-  // Cargar datos desde sessionStorage (enviados desde app.js)
-  const datosGuardados = sessionStorage.getItem('cuidaDatosParaCargar');
-  if (datosGuardados) {
+  // IIFE async para usar await
+  (async () => {
+    // Cargar datos desde API usando prueba_id
+    const pruebaId = params.get('prueba_id');
+
+  if (pruebaId) {
     try {
-      const datos = JSON.parse(datosGuardados);
+      // Fetch directo a la API
+      const token = authToken || localStorage.getItem('auth_token');
+      const response = await fetch(`/api/pruebas/${pruebaId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al cargar datos desde expediente');
+      }
+
+      const prueba = await response.json();
+      const datos = {
+        data: typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data,
+        subescalas: typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas,
+        metadatos: {
+          nombre: '–',
+          edad: '–',
+          sexo: '–',
+          fecha: prueba.fecha || '',
+          baremo: '–',
+          responsable: '–',
+          expediente: '–'
+        }
+      };
 
       // Cargar respuestas (data)
       if (datos.data && Array.isArray(datos.data)) {
@@ -1260,15 +1286,13 @@ if (modoCargar) {
 
       console.log('✅ Evaluación CUIDA cargada desde expediente');
 
-      // Limpiar sessionStorage
-      sessionStorage.removeItem('cuidaDatosParaCargar');
-
     } catch (error) {
-      console.error('Error al cargar datos desde localStorage:', error);
+      console.error('Error al cargar datos desde expediente:', error);
     }
+  } else {
+    console.error('❌ No se encontró prueba_id en URL');
   }
-
-  // No buildQ/buildLivePanel porque ya está el reporte visible
+  })(); // Cierre de IIFE async
 } else {
   // Flujo normal: mostrar formulario vacío
   cargarDatosPaciente().then(() => {

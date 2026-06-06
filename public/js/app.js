@@ -4510,26 +4510,9 @@ const app = {
 
       const prueba = await response.json();
 
-      // Preparar datos para pasar a cuida.html
-      const datosParaCargar = {
-        data: typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data,
-        subescalas: typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas,
-        metadatos: {
-          nombre: this.pacienteActivo?.nombre || '–',
-          edad: this.pacienteActivo?.edad || '–',
-          sexo: this.pacienteActivo?.sexo || '–',
-          fecha: prueba.fecha,
-          baremo: '–',
-          responsable: '–',
-          expediente: '–'
-        }
-      };
-
-      // Guardar en sessionStorage (disponible en la misma sesión/ventana)
-      sessionStorage.setItem('cuidaDatosParaCargar', JSON.stringify(datosParaCargar));
-
-      // Abrir cuida.html con flag para cargar desde sessionStorage
-      window.open('/cuida.html?modo=cargar', '_blank');
+      // Abrir cuida.html con modo=cargar y prueba_id
+      // cuida.html hará fetch directo a la API para obtener los datos
+      window.open(`/cuida.html?modo=cargar&prueba_id=${pruebaId}`, '_blank');
     } catch (error) {
       console.error('Error al abrir evaluación CUIDA:', error);
       this.mostrarToast('Error al cargar evaluación CUIDA', 'error');
