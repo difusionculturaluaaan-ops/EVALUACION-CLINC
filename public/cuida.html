@@ -1262,6 +1262,9 @@ if (modoCargar) {
         datos.data.forEach((resp, idx) => {
           ANS[idx] = resp;
         });
+        console.log(`✅ ANS llenado: ${datos.data.length} respuestas (${ANS.filter(a=>a>0).length} contestadas)`);
+      } else {
+        console.error('❌ No hay datos.data o no es un array');
       }
 
       // Guardar escalas calculadas para que buildReport() las use
@@ -1282,12 +1285,22 @@ if (modoCargar) {
 
       // Generar reporte
       console.log('🔨 Generando reporte con buildReport()...');
-      buildReport();
-      console.log('✅ buildReport() completado');
+      try {
+        buildReport();
+        console.log('✅ buildReport() completado');
+      } catch (errBuild) {
+        console.error('❌ Error en buildReport():', errBuild.message);
+        console.error('Stack:', errBuild.stack);
+      }
 
       // Navegar al tab de reporte
       console.log('🔄 Navegando a tab de reporte...');
-      goTab('reporte');
+      try {
+        goTab('reporte');
+        console.log('✅ goTab(reporte) completado');
+      } catch (errTab) {
+        console.error('❌ Error en goTab:', errTab.message);
+      }
 
       // Scroll
       setTimeout(() => {
