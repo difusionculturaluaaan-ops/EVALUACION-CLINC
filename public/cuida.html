@@ -971,12 +971,12 @@ async function generarPDFCUIDA() {
 
     // Usar html2pdf (que usa html2canvas + jsPDF internamente)
     const opt = {
-      margin: [10, 10, 10, 10],
+      margin: [5, 10, 5, 10],
       filename: `CUIDA_${new Date().getTime()}.pdf`,
       image: { type: 'jpeg', quality: 0.95 },
-      html2canvas: { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', logging: false },
+      html2canvas: { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', logging: false, windowHeight: element.scrollHeight },
       jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4', compress: true },
-      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+      pagebreak: { mode: 'css' }
     };
 
     return new Promise((resolve, reject) => {
