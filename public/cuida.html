@@ -954,43 +954,48 @@ function calcularCUIDALocal() {
   return { escalas: escalasResult, total: respuestas.filter(r => r > 0).length };
 }
 
-// Generar PDF del reporte CUIDA con Puppeteer en el servidor
+// Generar PDF del reporte CUIDA (patrón MMPI-2)
 async function generarPDFCUIDA() {
   try {
     const pdfContent = document.getElementById('tab-reporte');
     if (!pdfContent) throw new Error('No se encontró contenido del reporte');
 
-    // Asegurar que el elemento sea visible
+    // Asegurar que el elemento sea visible para html2pdf
     pdfContent.classList.add('active');
+    pdfContent.style.display = 'block';
 
-    // Obtener el HTML completo del reporte
-    const html = pdfContent.outerHTML;
+    // Esperar a que se renderice
+    await new Promise(resolve => setTimeout(resolve, 300));
 
-    console.log('📤 Enviando HTML al servidor para generar PDF con Puppeteer...');
+    // Configurar html2pdf exactamente como MMPI-2
+    const opt = {
+      margin: [8, 10, 8, 10],
+      filename: `CUIDA_${new Date().getTime()}.pdf`,
+      image: { type: 'jpeg', quality: 0.95 },
+      html2canvas: { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff' },
+      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4', compress: true },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    };
 
-    // Enviar HTML al servidor
-    const token = authToken || localStorage.getItem('auth_token');
-    const response = await fetch('/api/pdf/generate-cuida', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        html: html,
-        paciente_id: pacienteId
-      })
+    return new Promise((resolve, reject) => {
+      html2pdf()
+        .set(opt)
+        .from(pdfContent.innerHTML)
+        .outputPdf('blob')
+        .then(blob => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const base64 = reader.result.split(',')[1];
+            resolve(base64);
+          };
+          reader.onerror = () => reject(new Error('Error al leer PDF'));
+          reader.readAsDataURL(blob);
+        })
+        .catch(err => {
+          console.error('html2pdf error:', err);
+          reject(new Error(`Error generando PDF: ${err.message}`));
+        });
     });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || `Error ${response.status}`);
-    }
-
-    const result = await response.json();
-    console.log(`✅ PDF generado en servidor: ${result.size} bytes`);
-
-    return result.pdf_base64;
 
   } catch (error) {
     console.error('Error en generarPDFCUIDA:', error);

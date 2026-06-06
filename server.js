@@ -13,7 +13,6 @@ const superAdminRoutes = require('./routes/super-admin');
 const adminRoutes = require('./routes/admin');
 const tenantsRoutes = require('./routes/tenants');
 const usuarioTestsRoutes = require('./routes/usuario-tests');
-const pdfCuidaRoutes = require('./routes/pdf-cuida');
 const middlewareAutenticacion = require('./middleware/autenticacion');
 
 const app = express();
@@ -21,8 +20,8 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
-app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
 // Servir archivos estáticos desde public
 // SIMPLE Y ROBUSTO: dejar que express.static() maneje todo
@@ -64,7 +63,6 @@ app.use('/api/pruebas', middlewareAutenticacion, pruebasRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/tenants', middlewareAutenticacion, tenantsRoutes);
 app.use('/api/usuario-tests', middlewareAutenticacion, usuarioTestsRoutes);
-app.use('/api/pdf', middlewareAutenticacion, pdfCuidaRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
