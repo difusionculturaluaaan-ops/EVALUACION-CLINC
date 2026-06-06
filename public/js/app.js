@@ -2399,9 +2399,8 @@ const app = {
       const container = document.getElementById('chartCUIDA');
       if (!container) return;
 
-      const rawData = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : subescalas || {};
-      // Acceder a la propiedad escalas si existe, sino usar el objeto completo
-      const datos = rawData.escalas || rawData;
+      // Parsear subescalas que contiene el objeto escalas calculadas
+      const datos = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : (subescalas || {});
 
       console.log('🔍 renderGraficoCUIDA - datos recibidos:', { rawData, datos });
 
@@ -2861,9 +2860,8 @@ const app = {
    * Generar reporte CUIDA con tabla de escalas y eneatipos
    */
   generarReporteCUIDA(prueba, subescalas) {
-    // Usar subescalas.escalas si existe, sino usar prueba.data
-    const rawData = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : subescalas || {};
-    const datos = rawData.escalas || (typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data || {});
+    // Parsear subescalas que contiene el objeto escalas calculadas
+    const datos = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : (subescalas || {});
 
     // Escalas primarias
     const escalas_prim = [
