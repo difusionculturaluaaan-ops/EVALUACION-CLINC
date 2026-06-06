@@ -1068,7 +1068,9 @@ async function generarPDFCUIDA() {
     });
     html += '</div>';
 
+    // Insertar DIV en documento para que html2pdf pueda renderizarlo
     pdfDiv.innerHTML = html;
+    document.body.appendChild(pdfDiv);
 
     const opt = {
       margin: [10, 10, 10, 10],
@@ -1096,6 +1098,12 @@ async function generarPDFCUIDA() {
         .catch(err => {
           console.error('html2pdf error:', err);
           reject(new Error(`Error generando PDF: ${err.message}`));
+        })
+        .finally(() => {
+          // Remover DIV del DOM después de generar PDF
+          if (document.body.contains(pdfDiv)) {
+            document.body.removeChild(pdfDiv);
+          }
         });
     });
 
