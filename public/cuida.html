@@ -1071,14 +1071,8 @@ async function descargarYGuardarPDF() {
         metadatos: metadatos
       };
 
-      console.log('📋 Payload a enviar:', {
-        paciente_id: payload.paciente_id,
-        tipo: payload.tipo,
-        data_length: payload.data.length,
-        total: payload.total,
-        escalas_keys: Object.keys(payload.subescalas).length,
-        metadatos: payload.metadatos
-      });
+      console.log('📋 Payload a enviar (completo):', payload);
+      console.log('📋 ¿Tiene metadatos?', !!payload.metadatos, payload.metadatos);
 
       const token = authToken || localStorage.getItem('auth_token');
       const response = await fetch('/api/pruebas', {
