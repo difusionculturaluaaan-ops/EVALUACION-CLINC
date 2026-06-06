@@ -1128,7 +1128,7 @@ async function descargarYGuardarPDF() {
     const pdfBase64 = await generarPDFCUIDA();
     console.log('✅ PDF generado');
 
-    // 1. DESCARGAR PDF
+    // 1. DESCARGAR PDF localmente
     const blobBinary = atob(pdfBase64);
     const bytes = new Uint8Array(blobBinary.length);
     for (let i = 0; i < blobBinary.length; i++) {
@@ -1145,17 +1145,16 @@ async function descargarYGuardarPDF() {
     URL.revokeObjectURL(url);
     console.log('✅ PDF descargado');
 
-    // 2. GUARDAR EN EXPEDIENTE (si hay pacienteId)
+    // 2. GUARDAR SOLO JSON EN EXPEDIENTE (no PDF)
     if (pacienteId) {
-      console.log('📤 Guardando PDF en expediente...');
+      console.log('📤 Guardando datos en expediente...');
 
       const payload = {
         paciente_id: parseInt(pacienteId),
         tipo: 'CUIDA',
         data: ANS,
         total: resultado.total,
-        subescalas: resultado.escalas,
-        pdf_base64: pdfBase64
+        subescalas: resultado.escalas
       };
 
       const token = authToken || localStorage.getItem('auth_token');
@@ -1173,16 +1172,16 @@ async function descargarYGuardarPDF() {
         throw new Error(error.message || `Error ${response.status}`);
       }
 
-      console.log('✅ PDF guardado en expediente');
+      console.log('✅ Datos guardados en expediente');
     }
 
     // Mostrar éxito
-    btnDescargar.textContent = '✅ PDF listo';
+    btnDescargar.textContent = '✅ Listo';
     btnDescargar.style.backgroundColor = '#4CAF50';
 
     const successMsg = document.createElement('div');
     successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 15px; border-radius: 8px; z-index: 9999; font-weight: bold;';
-    successMsg.innerHTML = `✅ <strong>PDF generado y descargado</strong><br>${pacienteId ? 'También guardado en expediente' : ''}`;
+    successMsg.innerHTML = `✅ <strong>PDF descargado</strong><br>${pacienteId ? 'Datos guardados en expediente' : ''}`;
     document.body.appendChild(successMsg);
     setTimeout(() => successMsg.remove(), 5000);
 
