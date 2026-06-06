@@ -1231,10 +1231,12 @@ if (modoCargar) {
       });
 
       if (!response.ok) {
-        throw new Error('Error al cargar datos desde expediente');
+        throw new Error(`Error HTTP ${response.status} al cargar datos`);
       }
 
       const prueba = await response.json();
+      console.log('📥 Datos de API:', prueba);
+
       const datos = {
         data: typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data,
         subescalas: typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas,
@@ -1248,6 +1250,7 @@ if (modoCargar) {
           expediente: '–'
         }
       };
+      console.log('✅ Datos parseados:', { data_length: datos.data.length, escalas: Object.keys(datos.subescalas).length });
 
       // Cargar respuestas (data)
       if (datos.data && Array.isArray(datos.data)) {
@@ -1273,9 +1276,12 @@ if (modoCargar) {
       }
 
       // Generar reporte
+      console.log('🔨 Generando reporte con buildReport()...');
       buildReport();
+      console.log('✅ buildReport() completado');
 
       // Navegar al tab de reporte
+      console.log('🔄 Navegando a tab de reporte...');
       goTab('reporte');
 
       // Scroll
