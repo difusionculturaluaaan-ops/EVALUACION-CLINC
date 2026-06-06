@@ -617,6 +617,7 @@ const ANS = new Array(189).fill(0);
 let panelOpen = false;
 let metadatosActuales = {}; // Guardar metadatos cuando se completan
 let modoExpediente = false; // Indica si se cargó desde expediente (permite editar)
+let pacienteIdActual = null; // Guardar paciente_id cuando se carga desde expediente
 
 // ─────────── SCORING ENGINE ───────────
 function itemScore(i1idx, rawVal) {
@@ -1177,7 +1178,7 @@ async function actualizarEnExpediente() {
     const resultado = calcularCUIDALocal();
 
     const payload = {
-      paciente_id: parseInt(pacienteId),
+      paciente_id: pacienteIdActual,
       tipo: 'CUIDA',
       data: ANS,
       total: resultado.total,
@@ -1377,6 +1378,7 @@ if (modoCargar) {
       let metadatosGuardados = subescalasData?._metadatos || null;
 
       const datos = {
+        paciente_id: prueba.paciente_id, // Guardar paciente_id para actualizar después
         data: typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data,
         subescalas: subescalasData,
         metadatos: metadatosGuardados || {
@@ -1428,7 +1430,8 @@ if (modoCargar) {
         // Indicar que estamos en modo expediente (permite editar)
         modoExpediente = true;
 
-        // Guardar metadatos en variable global para evitar perderlos
+        // Guardar paciente_id y metadatos en variables globales
+        pacienteIdActual = datos.paciente_id;
         metadatosActuales = datos.metadatos;
 
         // Mostrar botón "Actualizar en expediente"
