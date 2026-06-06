@@ -1397,7 +1397,43 @@ function loadData() {
 
     const saved = JSON.parse(localStorage.getItem('mmpi_responses') || 'null');
     if (saved) saved.forEach((v, i) => { if (v) responses[i] = v; });
+
+    // Cargar datos del paciente automáticamente
+    const pacienteId = new URLSearchParams(window.location.search).get('paciente_id');
+    if (pacienteId) {
+      cargarDatosPaciente(pacienteId);
+    }
   } catch(e) {}
+}
+
+async function cargarDatosPaciente(pacienteId) {
+  try {
+    console.log(`🔄 Cargando datos del paciente ${pacienteId}...`);
+    const token = localStorage.getItem('auth_token');
+    const response = await fetch(`/api/pacientes/${pacienteId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      console.log(`⚠️ No se cargaron datos del paciente (${response.status})`);
+      return;
+    }
+
+    const paciente = await response.json();
+    console.log('✓ Datos del paciente:', paciente);
+
+    // Precarga automática
+    document.getElementById('inp-nombre').value = paciente.nombre || '';
+    document.getElementById('inp-edad').value = `${paciente.edad || ''} años · ${paciente.sexo || ''}`.trim();
+    document.getElementById('inp-fecha').value = new Date().toISOString().split('T')[0];
+
+    console.log('✓ Datos del paciente precargados');
+  } catch (error) {
+    console.log('⚠️ Error cargando datos del paciente:', error.message);
+  }
 }
 
 function clearAll() {
