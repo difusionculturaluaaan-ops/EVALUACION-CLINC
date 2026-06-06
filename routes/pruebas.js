@@ -68,6 +68,46 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// PUT: Actualizar una prueba (solo del tenant autenticado)
+router.put('/:id', async (req, res) => {
+  try {
+    const tenant_id = req.tenant_id;
+    const { paciente_id, tipo, data, total, subescalas, metadatos } = req.body;
+
+    if (!paciente_id || !tipo || !data) {
+      return res.status(400).json({ error: 'Datos incompletos' });
+    }
+
+    // Obtener prueba existente
+    const prueba = await obtenerPruebaById(req.params.id);
+    if (!prueba) {
+      return res.status(404).json({ error: 'Prueba no encontrada' });
+    }
+
+    // Validar que pertenezca al tenant
+    if (prueba.tenant_id !== tenant_id) {
+      return res.status(403).json({ error: 'Acceso denegado' });
+    }
+
+    // Incluir metadatos en subescalas si se proporciona
+    let subescalasActualizada = subescalas;
+    if (metadatos) {
+      subescalasActualizada = { ...subescalas, _metadatos: metadatos };
+    }
+
+    // Actualizar en BD
+    const result = await pool.query(
+      'UPDATE pruebas SET data = $1, total = $2, subescalas = $3, actualizado_en = NOW() WHERE id = $4 AND tenant_id = $5 RETURNING *',
+      [JSON.stringify(data), total, JSON.stringify(subescalasActualizada), req.params.id, tenant_id]
+    );
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error al actualizar prueba:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // GET: Obtener historial comparativo de un tipo de prueba para un paciente
 // /pruebas/comparativo/:paciente_id/:tipo
 router.get('/comparativo/:paciente_id/:tipo', async (req, res) => {

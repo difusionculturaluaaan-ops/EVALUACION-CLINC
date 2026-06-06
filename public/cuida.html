@@ -472,6 +472,7 @@ tr.pt-div .dl{height:2px;background:var(--border);border-radius:2px}
           <div><label class="fl">Baremo</label><select id="f-baremo"><option value="">Seleccionar…</option><option>Población adoptante, varones + mujeres</option><option>Forense (custodia menores, competencia parental), varones y mujeres</option><option>Cuidadores de personas dependientes</option><option>Acogimiento familiar</option></select></div>
           <div><label class="fl">Psicólogo responsable</label><input id="f-resp" type="text" placeholder="Nombre del evaluador"></div>
           <div class="full"><label class="fl">N.º expediente</label><input id="f-exp" type="text" placeholder="Opcional"></div>
+          <div class="full"><label class="fl">Observaciones</label><textarea id="f-observaciones" placeholder="Notas adicionales, hallazgos relevantes, etc." style="min-height:100px;font-family:inherit;padding:8px;border:1px solid var(--border);border-radius:6px;resize:vertical"></textarea></div>
         </div>
         <div class="instr"><p>A continuación encontrará una serie de preguntas relacionadas con su forma de pensar y actuar. <strong>No hay respuestas correctas ni incorrectas.</strong> Responda con sinceridad. Todas las respuestas son confidenciales. Seleccione la alternativa que mejor se ajuste a su realidad.</p></div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
@@ -532,6 +533,7 @@ tr.pt-div .dl{height:2px;background:var(--border);border-radius:2px}
     <div class="no-print" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
       <button class="btn btn-navy" onclick="guardarCUIDA()" style="display:none"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Guardar Evaluación</button>
       <button class="btn btn-out" onclick="descargarYGuardarPDF()"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-6 0v4m-3-4h6"/></svg> 💾 Guardar en Expediente</button>
+      <button class="btn btn-out" id="btn-actualizar" onclick="actualizarEnExpediente()" style="display:none"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> 🔄 Actualizar en Expediente</button>
       <button class="btn btn-out" onclick="exportarJSON()"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m7-4l-4 4m0 0l4 4m-4-4h12"/></svg> 📥 Descargar JSON</button>
       <button class="btn btn-out" onclick="goTab('capture')">⟲ Volver al cuestionario</button>
     </div>
@@ -1135,6 +1137,84 @@ async function descargarYGuardarPDF() {
   }
 }
 
+// ─────────── ACTUALIZAR CAMBIOS EN EXPEDIENTE ───────────
+async function actualizarEnExpediente() {
+  try {
+    const btn = document.getElementById('btn-actualizar');
+    const textoOriginal = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '⏳ Actualizando...';
+
+    // Recopilar cambios (fecha y observaciones)
+    const fechaActual = document.getElementById('f-fecha')?.value || '';
+    const observacionesActual = document.getElementById('f-observaciones')?.value || '';
+
+    // Actualizar metadatos globales
+    metadatosActuales.fecha = fechaActual;
+    metadatosActuales.observaciones = observacionesActual;
+
+    // Obtener prueba_id de la URL
+    const params = new URLSearchParams(window.location.search);
+    const pruebaId = params.get('prueba_id');
+
+    if (!pruebaId) {
+      throw new Error('No se encontró ID de prueba');
+    }
+
+    // Calcular resultado nuevamente
+    const resultado = calcularCUIDALocal();
+
+    const payload = {
+      paciente_id: parseInt(pacienteId),
+      tipo: 'CUIDA',
+      data: ANS,
+      total: resultado.total,
+      subescalas: resultado.escalas,
+      metadatos: metadatosActuales
+    };
+
+    const token = authToken || localStorage.getItem('auth_token');
+
+    // Enviar actualización (usando PUT)
+    const response = await fetch(`/api/pruebas/${pruebaId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error ${response.status} al actualizar`);
+    }
+
+    const resultado_actualizado = await response.json();
+    console.log('✅ Prueba actualizada:', resultado_actualizado);
+
+    // Mostrar éxito
+    const successMsg = document.createElement('div');
+    successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 15px 20px; border-radius: 8px; z-index: 9999; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
+    successMsg.innerHTML = `✅ Cambios actualizados en expediente`;
+    document.body.appendChild(successMsg);
+    setTimeout(() => successMsg.remove(), 3000);
+
+    btn.disabled = false;
+    btn.textContent = textoOriginal;
+
+  } catch (error) {
+    console.error('Error al actualizar:', error);
+    btn.disabled = false;
+    btn.textContent = textoOriginal;
+
+    const errorMsg = document.createElement('div');
+    errorMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #f44336; color: white; padding: 15px; border-radius: 8px; z-index: 9999;';
+    errorMsg.textContent = `Error: ${error.message}`;
+    document.body.appendChild(errorMsg);
+    setTimeout(() => errorMsg.remove(), 5000);
+  }
+}
+
 // ─────────── EXPORT/IMPORT JSON ───────────
 function exportarJSON() {
   const data = {
@@ -1316,8 +1396,24 @@ if (modoCargar) {
         document.getElementById('f-resp').value = datos.metadatos.responsable || '';
         document.getElementById('f-exp').value = datos.metadatos.expediente || '';
 
+        // Cargar observaciones si existen
+        if (datos.metadatos.observaciones) {
+          document.getElementById('f-observaciones').value = datos.metadatos.observaciones;
+        }
+
+        // Hacer readonly los campos del paciente (no se pueden editar)
+        document.getElementById('f-nombre').readOnly = true;
+        document.getElementById('f-edad').readOnly = true;
+        document.getElementById('f-sexo').disabled = true;
+        document.getElementById('f-baremo').disabled = true;
+        document.getElementById('f-resp').readOnly = true;
+        document.getElementById('f-exp').readOnly = true;
+
         // Guardar metadatos en variable global para evitar perderlos
         metadatosActuales = datos.metadatos;
+
+        // Mostrar botón "Actualizar en expediente"
+        document.getElementById('btn-actualizar').style.display = 'inline-flex';
       }
 
       // Generar reporte
