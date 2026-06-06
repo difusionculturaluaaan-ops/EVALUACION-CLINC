@@ -1050,12 +1050,24 @@ async function descargarYGuardarPDF() {
     if (pacienteId) {
       console.log('📤 Guardando datos en expediente...');
 
+      // Recopilar metadatos del formulario
+      const metadatos = {
+        nombre: document.getElementById('f-nombre')?.value || '–',
+        edad: document.getElementById('f-edad')?.value || '–',
+        sexo: document.getElementById('f-sexo')?.value || '–',
+        fecha: document.getElementById('f-fecha')?.value || '',
+        baremo: document.getElementById('f-baremo')?.value || '–',
+        responsable: document.getElementById('f-resp')?.value || '–',
+        expediente: document.getElementById('f-exp')?.value || '–'
+      };
+
       const payload = {
         paciente_id: parseInt(pacienteId),
         tipo: 'CUIDA',
         data: ANS,
         total: resultado.total,
-        subescalas: resultado.escalas
+        subescalas: resultado.escalas,
+        metadatos: metadatos
       };
 
       console.log('📋 Payload a enviar:', {
@@ -1264,10 +1276,15 @@ if (modoCargar) {
       const prueba = await response.json();
       console.log('📥 Datos de API:', prueba);
 
+      let subescalasData = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas;
+
+      // Extraer metadatos si están guardados dentro de subescalas
+      let metadatosGuardados = subescalasData?._metadatos || null;
+
       const datos = {
         data: typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data,
-        subescalas: typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas,
-        metadatos: {
+        subescalas: subescalasData,
+        metadatos: metadatosGuardados || {
           nombre: '–',
           edad: '–',
           sexo: '–',
@@ -1277,7 +1294,7 @@ if (modoCargar) {
           expediente: '–'
         }
       };
-      console.log('✅ Datos parseados:', { data_length: datos.data.length, escalas: Object.keys(datos.subescalas).length });
+      console.log('✅ Datos parseados:', { data_length: datos.data.length, escalas: Object.keys(datos.subescalas).length, metadatos: !!metadatosGuardados });
 
       // Cargar respuestas (data)
       if (datos.data && Array.isArray(datos.data)) {

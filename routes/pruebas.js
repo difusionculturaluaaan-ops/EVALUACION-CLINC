@@ -14,7 +14,7 @@ const {
 // POST: Guardar una nueva prueba (solo del tenant autenticado)
 router.post('/', async (req, res) => {
   try {
-    const { paciente_id, tipo, data, total, subescalas, pdf_base64, pdf_filename } = req.body;
+    const { paciente_id, tipo, data, total, subescalas, pdf_base64, pdf_filename, metadatos } = req.body;
     const tenant_id = req.tenant_id;
 
     if (!paciente_id || !tipo || !data) {
@@ -32,8 +32,13 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'data debe ser un array' });
     }
 
-    // Guardar prueba con PDF en columna separada
-    const prueba = await guardarPrueba(paciente_id, tipo, data, total, subescalas, pdf_base64);
+    // Guardar prueba con metadatos incluidos en subescalas
+    let subescalasConMetadatos = subescalas;
+    if (metadatos) {
+      subescalasConMetadatos = { ...subescalas, _metadatos: metadatos };
+    }
+
+    const prueba = await guardarPrueba(paciente_id, tipo, data, total, subescalasConMetadatos, pdf_base64);
     res.status(201).json(prueba);
   } catch (error) {
     console.error('Error al guardar prueba:', error);
