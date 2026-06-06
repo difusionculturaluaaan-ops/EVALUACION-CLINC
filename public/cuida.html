@@ -962,12 +962,19 @@ async function generarPDFCUIDA() {
 
     // CLONAR elemento para renderizar sin afectar la UI
     const clone = pdfContent.cloneNode(true);
+    // Aplicar estilos de impresión (@media print) manualmente
     clone.style.display = 'block';
     clone.style.visibility = 'visible';
     clone.style.position = 'absolute';
     clone.style.top = '0';
     clone.style.left = '0';
     clone.style.width = '1200px';
+    clone.style.padding = '12px 16px 20px';
+    clone.style.maxWidth = '100%';
+    clone.style.height = 'auto';
+    clone.style.background = 'white';
+    // Ocultar elementos .no-print
+    clone.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
 
     // Crear contenedor temporal
     const tempContainer = document.createElement('div');
