@@ -1126,6 +1126,9 @@ async function descargarYGuardarPDF() {
     // Generar reporte completo
     buildReport();
 
+    // Mostrar tab-reporte para html2pdf (asegurar que sea visible)
+    document.getElementById('tab-reporte').classList.add('active');
+
     // Esperar a que el DOM se actualice
     await new Promise(resolve => setTimeout(resolve, 500));
 
