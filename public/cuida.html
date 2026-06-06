@@ -967,51 +967,113 @@ async function generarPDFCUIDA() {
     // Esperar a que se renderice completamente
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    // Crear DIV temporal para PDF sin estilos CSS complejos
-    const tempDiv = document.createElement('div');
-    tempDiv.style.backgroundColor = 'white';
-    tempDiv.style.color = '#000';
-    tempDiv.style.padding = '8px 10px';
-    tempDiv.style.fontFamily = 'Arial, sans-serif';
-    tempDiv.style.fontSize = '12px';
-    tempDiv.style.lineHeight = '1.6';
-    tempDiv.style.width = '100%';
+    // Crear DIV limpio con HTML construido manualmente (patrón MMPI-2)
+    const nombre = document.getElementById('f-nombre').value || 'Evaluado';
+    const edad = document.getElementById('f-edad').value || '–';
+    const sexo = document.getElementById('f-sexo').value || '–';
+    const fecha = document.getElementById('f-fecha').value || new Date().toISOString().split('T')[0];
+    const baremo = document.getElementById('f-baremo').value || '–';
+    const resp = document.getElementById('f-resp').value || '–';
+    const exp = document.getElementById('f-exp').value || '';
+    const answered = ANS.filter(a=>a>0).length;
 
-    // Copiar TODO el HTML interno
-    tempDiv.innerHTML = pdfContent.innerHTML;
+    const pdfDiv = document.createElement('div');
+    pdfDiv.style.backgroundColor = 'white';
+    pdfDiv.style.color = '#000';
+    pdfDiv.style.padding = '12px';
+    pdfDiv.style.fontFamily = 'Arial, sans-serif';
+    pdfDiv.style.fontSize = '11px';
 
-    // CRÍTICO: Remover overflow que puede ocultar contenido
-    tempDiv.querySelectorAll('[style*="overflow"]').forEach(el => {
-      el.style.overflow = 'visible';
-      el.style.overflowX = 'visible';
-      el.style.overflowY = 'visible';
+    // Construir HTML limpio sin clases CSS complejas
+    let html = `
+      <style>
+        * { color: #000 !important; }
+        body, div, p, h1, h2, h3, h4, h5, h6, table, td, th { color: #000 !important; }
+        table { width: 100%; border-collapse: collapse; }
+        td, th { padding: 4px; border: 1px solid #ddd; }
+        th { background: #f0f0f0; font-weight: bold; }
+      </style>
+
+      <div style="border-bottom:2px solid #333;padding-bottom:10px;margin-bottom:15px">
+        <h1 style="margin:0;font-size:20px;color:#000">Informe CUIDA${exp?' – Exp: '+exp:''}</h1>
+        <p style="margin:5px 0;color:#666;font-size:11px">${new Date().toLocaleDateString('es-MX')}</p>
+      </div>
+
+      <div style="margin-bottom:20px">
+        <h3 style="font-size:12px;font-weight:bold;margin-bottom:8px;border-bottom:1px solid #000;padding-bottom:3px;color:#000">DATOS DEL EVALUADO</h3>
+        <table style="font-size:11px">
+          <tr><td><strong>Nombre</strong></td><td>${nombre}</td><td><strong>Edad</strong></td><td>${edad} años</td></tr>
+          <tr><td><strong>Sexo</strong></td><td>${sexo}</td><td><strong>Fecha</strong></td><td>${fecha}</td></tr>
+          <tr><td colspan="2"><strong>Baremo</strong></td><td colspan="2">${baremo}</td></tr>
+          <tr><td><strong>Responsable</strong></td><td>${resp}</td><td><strong>Completado</strong></td><td>${answered}/189</td></tr>
+        </table>
+      </div>
+
+      <div style="margin-bottom:20px">
+        <h3 style="font-size:12px;font-weight:bold;margin-bottom:8px;border-bottom:1px solid #000;padding-bottom:3px;color:#000">PERFIL GRÁFICO</h3>
+        <table style="font-size:10px">
+          <thead><tr style="background:#f0f0f0"><th>Escala</th><th>PD</th><th>En</th></tr></thead>
+          <tbody>
+    `;
+
+    // Escalas
+    ESCALAS_PRIM.forEach(esc => {
+      const s = scores[esc.abbr];
+      const en = typeof s?.en === 'number' ? s.en : '–';
+      const pd = s?.pd !== null && s?.pd !== undefined ? Math.round(s.pd) : '–';
+      html += `<tr><td>${esc.abbr}</td><td>${pd}</td><td>${en}</td></tr>`;
+    });
+    ESCALAS_SEC.forEach(esc => {
+      const s = scores[esc.abbr];
+      const en = typeof s?.en === 'number' ? s.en : '–';
+      html += `<tr><td>${esc.abbr}</td><td>–</td><td>${en}</td></tr>`;
     });
 
-    // Limpiar clases y estilos problemáticos en TODOS los elementos
-    tempDiv.querySelectorAll('*').forEach(el => {
-      // Remover clases "screen"
-      if (el.classList.contains('screen')) {
-        el.classList.remove('screen', 'active');
-      }
-      // Remover display:none y visibility:hidden
-      if (el.style.display === 'none') {
-        el.style.display = 'block';
-      }
-      if (el.style.visibility === 'hidden') {
-        el.style.visibility = 'visible';
-      }
-      // Remover max-height que limite contenido
-      if (el.style.maxHeight && el.style.maxHeight !== 'none') {
-        el.style.maxHeight = 'none';
-      }
-    });
+    html += `</tbody></table></div>`;
 
-    // Configurar html2pdf exactamente como MMPI-2
+    // Validez
+    const dsEn = scores.Ds?.en || '–';
+    const invPd = scores.Inv?.pd;
+    html += `
+      <div style="margin-bottom:20px">
+        <h3 style="font-size:12px;font-weight:bold;margin-bottom:8px;border-bottom:1px solid #000;padding-bottom:3px;color:#000">VALIDEZ</h3>
+        <table style="font-size:10px">
+          <tr><td><strong>Deseabilidad social</strong></td><td>${typeof dsEn==='number'?dsEn:'–'}</td><td>${enLevel(dsEn)==='high'?'Revisar':'Normal'}</td></tr>
+          <tr><td><strong>Invalidez</strong></td><td>${invPd}</td><td>${invPd===0?'Normal':'Revisar'}</td></tr>
+        </table>
+      </div>
+    `;
+
+    // Tabla de respuestas
+    html += `<div style="margin-bottom:20px"><h3 style="font-size:12px;font-weight:bold;margin-bottom:8px;color:#000">TABLA DE RESPUESTAS (189 ÍTEMS)</h3><table style="font-size:9px"><tr>`;
+    for(let i=0;i<189;i++){const v=ANS[i];if(i%13===0&&i>0)html+='</tr><tr>';html+=`<td style="border:1px solid #ccc;padding:2px;text-align:center;background:${v===1?'#ffcccc':v===2?'#ffffcc':v===3?'#ccffcc':v===4?'#ccffff':'#fff'}">${i+1}<br>${v>0?v:'–'}</td>`;}
+    html += '</tr></table></div>';
+
+    // Informe
+    html += '<div><h3 style="font-size:12px;font-weight:bold;margin-bottom:8px;color:#000">INFORME INTERPRETATIVO</h3>';
+    ESCALAS_SEC.forEach(esc => {
+      const s = scores[esc.abbr];
+      const en = typeof s?.en === 'number' ? s.en : null;
+      const lvl = enLevel(en);
+      const txt = INTERP[esc.abbr]?.[lvl] || 'No calculable.';
+      html += `<p style="font-size:10px;margin:4px 0"><strong>${esc.abbr}:</strong> ${txt}</p>`;
+    });
+    ESCALAS_PRIM.forEach(esc => {
+      const s = scores[esc.abbr];
+      const en = typeof s?.en === 'number' ? s.en : null;
+      const lvl = enLevel(en);
+      const txt = INTERP[esc.abbr]?.[lvl] || 'No calculable.';
+      html += `<p style="font-size:10px;margin:4px 0"><strong>${esc.abbr}:</strong> ${txt}</p>`;
+    });
+    html += '</div>';
+
+    pdfDiv.innerHTML = html;
+
     const opt = {
-      margin: [8, 10, 8, 10],
+      margin: [10, 10, 10, 10],
       filename: `CUIDA_${new Date().getTime()}.pdf`,
       image: { type: 'jpeg', quality: 0.95 },
-      html2canvas: { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', logging: false },
+      html2canvas: { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff' },
       jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4', compress: true },
       pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     };
@@ -1019,7 +1081,7 @@ async function generarPDFCUIDA() {
     return new Promise((resolve, reject) => {
       html2pdf()
         .set(opt)
-        .from(tempDiv)
+        .from(pdfDiv.innerHTML)
         .outputPdf('blob')
         .then(blob => {
           const reader = new FileReader();
