@@ -979,7 +979,7 @@ async function generarPDFCUIDA() {
     });
 
     const imgData = canvas.toDataURL('image/jpeg', 0.95);
-    const pdf = new jsPDF({
+    const pdf = new window.jsPDF({
       orientation: 'portrait',
       unit: 'mm',
       format: 'a4',
