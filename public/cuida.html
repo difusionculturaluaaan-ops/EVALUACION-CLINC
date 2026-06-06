@@ -737,7 +737,6 @@ function finishQ() {
     responsable: document.getElementById('f-resp')?.value || '–',
     expediente: document.getElementById('f-exp')?.value || '–'
   };
-  console.log('✅ Metadatos guardados:', metadatosActuales);
 
   buildReport();
   goTab('reporte');
@@ -1074,7 +1073,6 @@ async function descargarYGuardarPDF() {
         responsable: document.getElementById('f-resp')?.value || '–',
         expediente: document.getElementById('f-exp')?.value || '–'
       };
-      console.log('📌 Metadatos recolectados (directo del formulario):', metadatos);
 
       const payload = {
         paciente_id: parseInt(pacienteId),
@@ -1084,9 +1082,6 @@ async function descargarYGuardarPDF() {
         subescalas: resultado.escalas,
         metadatos: metadatos
       };
-
-      console.log('📋 Payload a enviar (completo):', payload);
-      console.log('📋 ¿Tiene metadatos?', !!payload.metadatos, payload.metadatos);
 
       const token = authToken || localStorage.getItem('auth_token');
       const response = await fetch('/api/pruebas', {
@@ -1254,12 +1249,7 @@ obtenerParametrosURL();
 const params = new URLSearchParams(window.location.search);
 const modoCargar = params.get('modo') === 'cargar';
 
-console.log('📍 URL Completa:', window.location.href);
-console.log('🔍 Parámetro modo:', params.get('modo'));
-console.log('📌 modoCargar es:', modoCargar);
-
 if (modoCargar) {
-  console.log('✅ Entrando a modo CARGAR...');
   // IIFE async para usar await
   (async () => {
     // Cargar datos desde API usando prueba_id
@@ -1284,15 +1274,11 @@ if (modoCargar) {
       }
 
       const prueba = await response.json();
-      console.log('📥 Datos de API:', prueba);
 
       let subescalasData = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas;
 
       // Extraer metadatos si están guardados dentro de subescalas
       let metadatosGuardados = subescalasData?._metadatos || null;
-
-      console.log('🔍 Contenido de subescalas:', subescalasData);
-      console.log('🔍 Metadatos extraídos:', metadatosGuardados);
 
       const datos = {
         data: typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data,
@@ -1307,17 +1293,12 @@ if (modoCargar) {
           expediente: '–'
         }
       };
-      console.log('✅ Datos parseados:', { data_length: datos.data.length, escalas: Object.keys(datos.subescalas).length, metadatos: !!metadatosGuardados });
-      console.log('✅ Metadatos a usar:', datos.metadatos);
 
       // Cargar respuestas (data)
       if (datos.data && Array.isArray(datos.data)) {
         datos.data.forEach((resp, idx) => {
           ANS[idx] = resp;
         });
-        console.log(`✅ ANS llenado: ${datos.data.length} respuestas (${ANS.filter(a=>a>0).length} contestadas)`);
-      } else {
-        console.error('❌ No hay datos.data o no es un array');
       }
 
       // Guardar escalas calculadas para que buildReport() las use
@@ -1337,26 +1318,20 @@ if (modoCargar) {
 
         // Guardar metadatos en variable global para evitar perderlos
         metadatosActuales = datos.metadatos;
-        console.log('✅ Metadatos cargados desde expediente:', metadatosActuales);
       }
 
       // Generar reporte
-      console.log('🔨 Generando reporte con buildReport()...');
       try {
         buildReport();
-        console.log('✅ buildReport() completado');
       } catch (errBuild) {
-        console.error('❌ Error en buildReport():', errBuild.message);
-        console.error('Stack:', errBuild.stack);
+        console.error('Error en buildReport():', errBuild.message);
       }
 
       // Navegar al tab de reporte
-      console.log('🔄 Navegando a tab de reporte...');
       try {
         goTab('reporte');
-        console.log('✅ goTab(reporte) completado');
       } catch (errTab) {
-        console.error('❌ Error en goTab:', errTab.message);
+        console.error('Error en goTab:', errTab.message);
       }
 
       // Scroll
