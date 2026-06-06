@@ -35,9 +35,13 @@ router.post('/', async (req, res) => {
     // Guardar prueba con metadatos incluidos en subescalas
     let subescalasConMetadatos = subescalas;
     if (metadatos) {
+      console.log('📌 Agregando metadatos a subescalas:', metadatos);
       subescalasConMetadatos = { ...subescalas, _metadatos: metadatos };
+    } else {
+      console.log('⚠️ No hay metadatos en el payload');
     }
 
+    console.log('📋 Guardando prueba con subescalas:', { keys: Object.keys(subescalasConMetadatos), tiene_metadatos: !!subescalasConMetadatos._metadatos });
     const prueba = await guardarPrueba(paciente_id, tipo, data, total, subescalasConMetadatos, pdf_base64);
     res.status(201).json(prueba);
   } catch (error) {

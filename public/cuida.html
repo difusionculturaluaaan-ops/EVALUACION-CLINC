@@ -1075,7 +1075,8 @@ async function descargarYGuardarPDF() {
         tipo: payload.tipo,
         data_length: payload.data.length,
         total: payload.total,
-        escalas_keys: Object.keys(payload.subescalas).length
+        escalas_keys: Object.keys(payload.subescalas).length,
+        metadatos: payload.metadatos
       });
 
       const token = authToken || localStorage.getItem('auth_token');
