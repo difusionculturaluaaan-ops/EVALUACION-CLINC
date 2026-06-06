@@ -1210,7 +1210,12 @@ obtenerParametrosURL();
 const params = new URLSearchParams(window.location.search);
 const modoCargar = params.get('modo') === 'cargar';
 
+console.log('📍 URL Completa:', window.location.href);
+console.log('🔍 Parámetro modo:', params.get('modo'));
+console.log('📌 modoCargar es:', modoCargar);
+
 if (modoCargar) {
+  console.log('✅ Entrando a modo CARGAR...');
   // IIFE async para usar await
   (async () => {
     // Cargar datos desde API usando prueba_id
