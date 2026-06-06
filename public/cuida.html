@@ -1328,8 +1328,8 @@ const params = new URLSearchParams(window.location.search);
 const modoCargar = params.get('modo') === 'cargar';
 
 if (modoCargar) {
-  // Cargar datos desde localStorage (enviados desde app.js)
-  const datosGuardados = localStorage.getItem('cuidaDatosParaCargar');
+  // Cargar datos desde sessionStorage (enviados desde app.js)
+  const datosGuardados = sessionStorage.getItem('cuidaDatosParaCargar');
   if (datosGuardados) {
     try {
       const datos = JSON.parse(datosGuardados);
@@ -1380,8 +1380,8 @@ if (modoCargar) {
 
       console.log('✅ Evaluación CUIDA cargada desde expediente');
 
-      // Limpiar localStorage
-      localStorage.removeItem('cuidaDatosParaCargar');
+      // Limpiar sessionStorage
+      sessionStorage.removeItem('cuidaDatosParaCargar');
 
     } catch (error) {
       console.error('Error al cargar datos desde localStorage:', error);

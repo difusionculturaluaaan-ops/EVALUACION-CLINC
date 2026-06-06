@@ -4510,8 +4510,8 @@ const app = {
 
       const prueba = await response.json();
 
-      // Guardar datos en localStorage para que cuida.html los cargue
-      localStorage.setItem('cuidaDatosParaCargar', JSON.stringify({
+      // Preparar datos para pasar a cuida.html
+      const datosParaCargar = {
         data: typeof prueba.data === 'string' ? JSON.parse(prueba.data) : prueba.data,
         subescalas: typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas,
         metadatos: {
@@ -4523,9 +4523,12 @@ const app = {
           responsable: '–',
           expediente: '–'
         }
-      }));
+      };
 
-      // Abrir cuida.html con flag para cargar desde localStorage
+      // Guardar en sessionStorage (disponible en la misma sesión/ventana)
+      sessionStorage.setItem('cuidaDatosParaCargar', JSON.stringify(datosParaCargar));
+
+      // Abrir cuida.html con flag para cargar desde sessionStorage
       window.open('/cuida.html?modo=cargar', '_blank');
     } catch (error) {
       console.error('Error al abrir evaluación CUIDA:', error);
