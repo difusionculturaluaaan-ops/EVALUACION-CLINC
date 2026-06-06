@@ -510,6 +510,20 @@ tr.pt-div .dl{height:2px;background:var(--border);border-radius:2px}
       <img id="pdf-logo-img" src="" style="max-width:120px;max-height:80px;object-fit:contain" alt="Logo Institución">
     </div>
     <div class="card" id="rpt-hdr"></div>
+    <!-- Sección editable: solo visible al cargar desde expediente -->
+    <div class="card no-print" id="rpt-editar" style="display:none;background:#f5f5f5;border:2px solid #2196F3">
+      <div class="card-hdr" style="background:#2196F3;color:white"><h3>✏️ Editar evaluación</h3></div>
+      <div class="card-body" style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div>
+          <label style="display:block;font-weight:600;color:#333;margin-bottom:8px">Fecha de aplicación</label>
+          <input id="rpt-fecha" type="date" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;font-size:14px">
+        </div>
+        <div style="grid-column:1/-1">
+          <label style="display:block;font-weight:600;color:#333;margin-bottom:8px">Observaciones</label>
+          <textarea id="rpt-observaciones" style="width:100%;min-height:80px;padding:8px;border:1px solid #ddd;border-radius:4px;font-family:inherit;font-size:14px;resize:vertical"></textarea>
+        </div>
+      </div>
+    </div>
     <div class="card" id="rpt-chart">
       <div class="card-hdr"><h3>Perfil Gráfico — Eneatipos</h3><span>media=5, DT=2</span></div>
       <div class="card-body">
@@ -1145,9 +1159,9 @@ async function actualizarEnExpediente() {
     btn.disabled = true;
     btn.textContent = '⏳ Actualizando...';
 
-    // Recopilar cambios (fecha y observaciones)
-    const fechaActual = document.getElementById('f-fecha')?.value || '';
-    const observacionesActual = document.getElementById('f-observaciones')?.value || '';
+    // Recopilar cambios desde el REPORTE (rpt-fecha, rpt-observaciones)
+    const fechaActual = document.getElementById('rpt-fecha')?.value || '';
+    const observacionesActual = document.getElementById('rpt-observaciones')?.value || '';
 
     // Actualizar metadatos globales
     metadatosActuales.fecha = fechaActual;
@@ -1408,6 +1422,13 @@ if (modoCargar) {
         document.getElementById('f-baremo').disabled = true;
         document.getElementById('f-resp').readOnly = true;
         document.getElementById('f-exp').readOnly = true;
+
+        // Cargar fecha y observaciones en el REPORTE (para editar ahí)
+        document.getElementById('rpt-fecha').value = datos.metadatos.fecha || '';
+        document.getElementById('rpt-observaciones').value = datos.metadatos.observaciones || '';
+
+        // Mostrar sección editable en el reporte
+        document.getElementById('rpt-editar').style.display = 'block';
 
         // Guardar metadatos en variable global para evitar perderlos
         metadatosActuales = datos.metadatos;
