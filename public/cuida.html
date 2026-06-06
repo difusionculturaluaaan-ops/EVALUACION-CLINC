@@ -510,20 +510,6 @@ tr.pt-div .dl{height:2px;background:var(--border);border-radius:2px}
       <img id="pdf-logo-img" src="" style="max-width:120px;max-height:80px;object-fit:contain" alt="Logo Institución">
     </div>
     <div class="card" id="rpt-hdr"></div>
-    <!-- Sección editable: solo visible al cargar desde expediente -->
-    <div class="card no-print" id="rpt-editar" style="display:none;background:#f5f5f5;border:2px solid #2196F3">
-      <div class="card-hdr" style="background:#2196F3;color:white"><h3>✏️ Editar evaluación</h3></div>
-      <div class="card-body" style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-        <div>
-          <label style="display:block;font-weight:600;color:#333;margin-bottom:8px">Fecha de aplicación</label>
-          <input id="rpt-fecha" type="date" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;font-size:14px">
-        </div>
-        <div style="grid-column:1/-1">
-          <label style="display:block;font-weight:600;color:#333;margin-bottom:8px">Observaciones</label>
-          <textarea id="rpt-observaciones" style="width:100%;min-height:80px;padding:8px;border:1px solid #ddd;border-radius:4px;font-family:inherit;font-size:14px;resize:vertical"></textarea>
-        </div>
-      </div>
-    </div>
     <div class="card" id="rpt-chart">
       <div class="card-hdr"><h3>Perfil Gráfico — Eneatipos</h3><span>media=5, DT=2</span></div>
       <div class="card-body">
@@ -630,6 +616,7 @@ const QS=["Me gusta conocer gente nueva","Tengo problemas para dormir","Estoy sa
 const ANS = new Array(189).fill(0);
 let panelOpen = false;
 let metadatosActuales = {}; // Guardar metadatos cuando se completan
+let modoExpediente = false; // Indica si se cargó desde expediente (permite editar)
 
 // ─────────── SCORING ENGINE ───────────
 function itemScore(i1idx, rawVal) {
@@ -786,6 +773,15 @@ function buildReport() {
   const exp=document.getElementById('f-exp').value||'';
   const answered=ANS.filter(a=>a>0).length;
 
+  // Si estamos en modo expediente, mostrar Fecha y Observaciones editables
+  const fechaEditableHtml = modoExpediente
+    ? `<div class="mc"><div class="ml">Fecha</div><input type="date" id="rpt-fecha" value="${fecha}" style="padding:4px;border:1px solid #ddd;border-radius:4px;font-size:14px"></div>`
+    : `<div class="mc"><div class="ml">Fecha</div><div class="mv">${fecha}</div></div>`;
+
+  const observacionesHtml = modoExpediente
+    ? `<div style="grid-column:1/-1;margin-top:12px"><div class="ml" style="margin-bottom:8px">Observaciones</div><textarea id="rpt-observaciones" placeholder="Notas adicionales..." style="width:100%;min-height:60px;padding:8px;border:1px solid #ddd;border-radius:4px;font-family:inherit;font-size:14px;resize:vertical">${metadatosActuales.observaciones || ''}</textarea></div>`
+    : '';
+
   document.getElementById('rpt-hdr').innerHTML=`
     <div class="card-hdr"><h3>Informe CUIDA${exp?' – Exp: '+exp:''}</h3><span>${new Date().toLocaleDateString('es-MX')}</span></div>
     <div class="card-body">
@@ -793,11 +789,12 @@ function buildReport() {
         <div class="mc"><div class="ml">Nombre</div><div class="mv" style="font-size:.9rem">${nombre}</div></div>
         <div class="mc"><div class="ml">Edad</div><div class="mv">${edad} años</div></div>
         <div class="mc"><div class="ml">Sexo</div><div class="mv">${sexo}</div></div>
-        <div class="mc"><div class="ml">Fecha</div><div class="mv">${fecha}</div></div>
+        ${fechaEditableHtml}
         <div class="mc" style="grid-column:1/-1"><div class="ml">Baremo</div><div class="mv" style="font-size:.85rem">${baremo}</div></div>
         <div class="mc"><div class="ml">Responsable</div><div class="mv" style="font-size:.85rem">${resp}</div></div>
         <div class="mc"><div class="ml">Completado</div><div class="mv">${answered}/189 (${Math.round(answered/189*100)}%)</div></div>
         <div class="mc"><div class="ml">Invalidez</div><div class="mv">${scores.Inv.pd} ítem(s) inválido(s)</div></div>
+        ${observacionesHtml}
       </div>
     </div>`;
 
@@ -1427,12 +1424,8 @@ if (modoCargar) {
         document.getElementById('f-resp').readOnly = true;
         document.getElementById('f-exp').readOnly = true;
 
-        // Cargar fecha y observaciones en el REPORTE (para editar ahí)
-        document.getElementById('rpt-fecha').value = datos.metadatos.fecha || '';
-        document.getElementById('rpt-observaciones').value = datos.metadatos.observaciones || '';
-
-        // Mostrar sección editable en el reporte
-        document.getElementById('rpt-editar').style.display = 'block';
+        // Indicar que estamos en modo expediente (permite editar)
+        modoExpediente = true;
 
         // Guardar metadatos en variable global para evitar perderlos
         metadatosActuales = datos.metadatos;
