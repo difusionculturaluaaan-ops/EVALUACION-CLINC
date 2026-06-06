@@ -732,7 +732,9 @@ function finishQ() {
 
 // ─────────── REPORT ───────────
 function buildReport() {
-  const scores = calcScales();
+  // Usar escalas guardadas si están disponibles (cargadas desde expediente)
+  // Si no, calcular desde ANS
+  const scores = window.cuidaEscalasGuardadas || calcScales();
   const nombre=document.getElementById('f-nombre').value||'–';
   const edad=document.getElementById('f-edad').value||'–';
   const sexo=document.getElementById('f-sexo').value||'–';
@@ -1339,6 +1341,11 @@ if (modoCargar) {
         });
       }
 
+      // Guardar escalas calculadas para que buildReport() las use
+      if (datos.subescalas) {
+        window.cuidaEscalasGuardadas = datos.subescalas;
+      }
+
       // Cargar metadatos
       if (datos.metadatos) {
         document.getElementById('f-nombre').value = datos.metadatos.nombre || '–';
@@ -1349,6 +1356,9 @@ if (modoCargar) {
         document.getElementById('f-resp').value = datos.metadatos.responsable || '';
         document.getElementById('f-exp').value = datos.metadatos.expediente || '';
       }
+
+      // Pequeño delay para asegurar que DOM esté listo
+      await new Promise(r => setTimeout(r, 100));
 
       // Generar reporte
       buildReport();
