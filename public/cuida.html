@@ -1060,6 +1060,7 @@ async function descargarYGuardarPDF() {
         responsable: document.getElementById('f-resp')?.value || '–',
         expediente: document.getElementById('f-exp')?.value || '–'
       };
+      console.log('📌 Metadatos recolectados del formulario:', metadatos);
 
       const payload = {
         paciente_id: parseInt(pacienteId),
