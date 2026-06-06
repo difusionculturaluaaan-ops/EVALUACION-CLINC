@@ -4510,9 +4510,12 @@ const app = {
 
       const prueba = await response.json();
 
-      // Abrir cuida.html con modo=cargar y prueba_id
+      // Obtener token para pasar en URL
+      const token = localStorage.getItem('auth_token');
+
+      // Abrir cuida.html con modo=cargar, prueba_id y token
       // cuida.html hará fetch directo a la API para obtener los datos
-      window.open(`/cuida.html?modo=cargar&prueba_id=${pruebaId}`, '_blank');
+      window.open(`/cuida.html?modo=cargar&prueba_id=${pruebaId}&token=${token}`, '_blank');
     } catch (error) {
       console.error('Error al abrir evaluación CUIDA:', error);
       this.mostrarToast('Error al cargar evaluación CUIDA', 'error');

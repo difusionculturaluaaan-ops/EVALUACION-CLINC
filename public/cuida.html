@@ -1218,8 +1218,14 @@ if (modoCargar) {
 
   if (pruebaId) {
     try {
-      // Fetch directo a la API
-      const token = authToken || localStorage.getItem('auth_token');
+      // Fetch directo a la API usando token de URL
+      const tokenFromUrl = params.get('token');
+      const token = tokenFromUrl || authToken || localStorage.getItem('auth_token');
+
+      if (!token) {
+        throw new Error('No hay token disponible para cargar datos');
+      }
+
       const response = await fetch(`/api/pruebas/${pruebaId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
