@@ -967,29 +967,42 @@ async function generarPDFCUIDA() {
     // Esperar a que se renderice completamente
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    // Crear DIV temporal para PDF sin clases CSS problemáticas
+    // Crear DIV temporal para PDF sin estilos CSS complejos
     const tempDiv = document.createElement('div');
     tempDiv.style.backgroundColor = 'white';
     tempDiv.style.color = '#000';
-    tempDiv.style.padding = '0';
+    tempDiv.style.padding = '8px 10px';
     tempDiv.style.fontFamily = 'Arial, sans-serif';
+    tempDiv.style.fontSize = '12px';
     tempDiv.style.lineHeight = '1.6';
+    tempDiv.style.width = '100%';
 
     // Copiar TODO el HTML interno
     tempDiv.innerHTML = pdfContent.innerHTML;
 
-    // Remover clases que pueden causar problemas en html2pdf
-    tempDiv.querySelectorAll('[class*="screen"]').forEach(el => {
-      el.classList.remove('screen', 'active');
+    // CRÍTICO: Remover overflow que puede ocultar contenido
+    tempDiv.querySelectorAll('[style*="overflow"]').forEach(el => {
+      el.style.overflow = 'visible';
+      el.style.overflowX = 'visible';
+      el.style.overflowY = 'visible';
     });
 
-    // Asegurar que todos los elementos estén visibles
+    // Limpiar clases y estilos problemáticos en TODOS los elementos
     tempDiv.querySelectorAll('*').forEach(el => {
+      // Remover clases "screen"
+      if (el.classList.contains('screen')) {
+        el.classList.remove('screen', 'active');
+      }
+      // Remover display:none y visibility:hidden
       if (el.style.display === 'none') {
-        el.style.display = '';
+        el.style.display = 'block';
       }
       if (el.style.visibility === 'hidden') {
-        el.style.visibility = '';
+        el.style.visibility = 'visible';
+      }
+      // Remover max-height que limite contenido
+      if (el.style.maxHeight && el.style.maxHeight !== 'none') {
+        el.style.maxHeight = 'none';
       }
     });
 
