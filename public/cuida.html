@@ -1153,9 +1153,10 @@ async function descargarYGuardarPDF() {
 
 // ─────────── ACTUALIZAR CAMBIOS EN EXPEDIENTE ───────────
 async function actualizarEnExpediente() {
+  const btn = document.getElementById('btn-actualizar');
+  const textoOriginal = btn.textContent;
+
   try {
-    const btn = document.getElementById('btn-actualizar');
-    const textoOriginal = btn.textContent;
     btn.disabled = true;
     btn.textContent = '⏳ Actualizando...';
 
@@ -1189,6 +1190,8 @@ async function actualizarEnExpediente() {
 
     const token = authToken || localStorage.getItem('auth_token');
 
+    console.log('📤 Actualizando prueba:', pruebaId);
+
     // Enviar actualización (usando PUT)
     const response = await fetch(`/api/pruebas/${pruebaId}`, {
       method: 'PUT',
@@ -1200,7 +1203,8 @@ async function actualizarEnExpediente() {
     });
 
     if (!response.ok) {
-      throw new Error(`Error ${response.status} al actualizar`);
+      const errorText = await response.text();
+      throw new Error(`Error ${response.status} al actualizar: ${errorText}`);
     }
 
     const resultado_actualizado = await response.json();
@@ -1217,7 +1221,7 @@ async function actualizarEnExpediente() {
     btn.textContent = textoOriginal;
 
   } catch (error) {
-    console.error('Error al actualizar:', error);
+    console.error('❌ Error al actualizar:', error);
     btn.disabled = false;
     btn.textContent = textoOriginal;
 
