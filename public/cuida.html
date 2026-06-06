@@ -1111,49 +1111,18 @@ async function guardarCUIDA() {
   }
 }
 
-// ─────────── DESCARGAR Y GUARDAR PDF ───────────
+// ─────────── GUARDAR DATOS EN EXPEDIENTE ───────────
 async function descargarYGuardarPDF() {
   try {
     const btnDescargar = event.target;
     const textoOriginal = btnDescargar.textContent;
     btnDescargar.disabled = true;
-    btnDescargar.textContent = '⏳ Generando PDF...';
+    btnDescargar.textContent = '⏳ Guardando...';
 
     // Calcular resultado
     const resultado = calcularCUIDALocal();
 
-    // Generar reporte completo
-    buildReport();
-
-    // Mostrar tab-reporte para html2pdf (asegurar que sea visible)
-    document.getElementById('tab-reporte').classList.add('active');
-
-    // Esperar a que el DOM se actualice
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    // Generar PDF
-    console.log('📄 Generando PDF CUIDA...');
-    const pdfBase64 = await generarPDFCUIDA();
-    console.log('✅ PDF generado');
-
-    // 1. DESCARGAR PDF localmente
-    const blobBinary = atob(pdfBase64);
-    const bytes = new Uint8Array(blobBinary.length);
-    for (let i = 0; i < blobBinary.length; i++) {
-      bytes[i] = blobBinary.charCodeAt(i);
-    }
-    const blob = new Blob([bytes], { type: 'application/pdf' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `CUIDA_${new Date().getTime()}.pdf`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    console.log('✅ PDF descargado');
-
-    // 2. GUARDAR SOLO JSON EN EXPEDIENTE (no PDF)
+    // GUARDAR SOLO JSON EN EXPEDIENTE
     if (pacienteId) {
       console.log('📤 Guardando datos en expediente...');
 
@@ -1181,23 +1150,25 @@ async function descargarYGuardarPDF() {
       }
 
       console.log('✅ Datos guardados en expediente');
+    } else {
+      throw new Error('Se requiere paciente_id para guardar');
     }
 
     // Mostrar éxito
-    btnDescargar.textContent = '✅ Listo';
+    btnDescargar.textContent = '✅ Guardado';
     btnDescargar.style.backgroundColor = '#4CAF50';
 
     const successMsg = document.createElement('div');
-    successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 15px; border-radius: 8px; z-index: 9999; font-weight: bold;';
-    successMsg.innerHTML = `✅ <strong>PDF descargado</strong><br>${pacienteId ? 'Datos guardados en expediente' : ''}`;
+    successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 15px 20px; border-radius: 8px; z-index: 9999; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
+    successMsg.innerHTML = `✅ <strong>Datos guardados en expediente</strong>`;
     document.body.appendChild(successMsg);
-    setTimeout(() => successMsg.remove(), 5000);
+    setTimeout(() => successMsg.remove(), 4000);
 
     setTimeout(() => {
       btnDescargar.disabled = false;
       btnDescargar.textContent = textoOriginal;
       btnDescargar.style.backgroundColor = '';
-    }, 2000);
+    }, 1500);
 
   } catch (error) {
     console.error('❌ Error:', error);
