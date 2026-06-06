@@ -960,20 +960,40 @@ async function generarPDFCUIDA() {
     const pdfContent = document.getElementById('tab-reporte');
     if (!pdfContent) throw new Error('No se encontró contenido del reporte');
 
+    // CLONAR elemento para renderizar sin afectar la UI
+    const clone = pdfContent.cloneNode(true);
+    clone.style.display = 'block';
+    clone.style.visibility = 'visible';
+    clone.style.position = 'absolute';
+    clone.style.top = '0';
+    clone.style.left = '0';
+    clone.style.width = '1200px';
+
+    // Crear contenedor temporal
+    const tempContainer = document.createElement('div');
+    tempContainer.style.position = 'fixed';
+    tempContainer.style.top = '-10000px';
+    tempContainer.style.width = '1200px';
+    tempContainer.appendChild(clone);
+    document.body.appendChild(tempContainer);
+
     // Cargar logo del tenant
     const logoUrl = localStorage.getItem('tenant_logo_url');
     if (logoUrl) {
-      const logoHeader = document.getElementById('pdf-logo-header');
-      const logoImg = document.getElementById('pdf-logo-img');
+      const logoHeader = clone.querySelector('#pdf-logo-header');
+      const logoImg = clone.querySelector('#pdf-logo-img');
       if (logoHeader && logoImg) {
         logoImg.src = logoUrl;
         logoHeader.style.display = 'block';
       }
     }
 
+    // Esperar a que se renderice
+    await new Promise(resolve => setTimeout(resolve, 500));
+
     // Calcular altura real del contenido
-    const contentHeight = pdfContent.scrollHeight || pdfContent.offsetHeight || 2400;
-    const windowHeightForContent = Math.max(3200, contentHeight + 400);
+    const contentHeight = clone.scrollHeight || clone.offsetHeight || 3000;
+    const windowHeightForContent = Math.max(4000, contentHeight + 400);
 
     const opt = {
       margin: [8, 10, 8, 10],
@@ -987,7 +1007,7 @@ async function generarPDFCUIDA() {
     return new Promise((resolve, reject) => {
       html2pdf()
         .set(opt)
-        .from(pdfContent)
+        .from(clone)
         .outputPdf('blob')
         .then(blob => {
           const reader = new FileReader();
@@ -1003,6 +1023,10 @@ async function generarPDFCUIDA() {
           reject(new Error(`Error generando PDF: ${err.message}`));
         })
         .finally(() => {
+          // Limpiar elemento temporal
+          if (tempContainer && tempContainer.parentNode) {
+            document.body.removeChild(tempContainer);
+          }
           // Ocultar logo después de generar PDF (para no afectar la pantalla)
           const logoHeader = document.getElementById('pdf-logo-header');
           if (logoHeader) logoHeader.style.display = 'none';
