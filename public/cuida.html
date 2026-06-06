@@ -954,7 +954,7 @@ function calcularCUIDALocal() {
   return { escalas: escalasResult, total: respuestas.filter(r => r > 0).length };
 }
 
-// Generar PDF del reporte CUIDA
+// Generar PDF del reporte CUIDA con Puppeteer en el servidor
 async function generarPDFCUIDA() {
   try {
     const pdfContent = document.getElementById('tab-reporte');
@@ -963,54 +963,35 @@ async function generarPDFCUIDA() {
     // Asegurar que el elemento sea visible
     pdfContent.classList.add('active');
 
-    // Cargar logo del tenant
-    const logoUrl = localStorage.getItem('tenant_logo_url');
-    if (logoUrl) {
-      const logoHeader = document.getElementById('pdf-logo-header');
-      const logoImg = document.getElementById('pdf-logo-img');
-      if (logoHeader && logoImg) {
-        logoImg.src = logoUrl;
-        logoHeader.style.display = 'block';
-      }
+    // Obtener el HTML completo del reporte
+    const html = pdfContent.outerHTML;
+
+    console.log('📤 Enviando HTML al servidor para generar PDF con Puppeteer...');
+
+    // Enviar HTML al servidor
+    const token = authToken || localStorage.getItem('auth_token');
+    const response = await fetch('/api/pdf/generate-cuida', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        html: html,
+        paciente_id: pacienteId
+      })
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || `Error ${response.status}`);
     }
 
-    // Calcular altura real del contenido - CUANDO ESTÁ VISIBLE
-    const contentHeight = pdfContent.scrollHeight || pdfContent.offsetHeight || 3000;
-    const windowHeightForContent = Math.max(4500, contentHeight + 500);
+    const result = await response.json();
+    console.log(`✅ PDF generado en servidor: ${result.size} bytes`);
 
-    const opt = {
-      margin: [8, 10, 8, 10],
-      filename: `CUIDA_${new Date().getTime()}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', logging: false, windowHeight: windowHeightForContent, windowWidth: 1200 },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
-      pagebreak: { mode: 'css', avoid: ['.card'], before: [] }
-    };
+    return result.pdf_base64;
 
-    return new Promise((resolve, reject) => {
-      html2pdf()
-        .set(opt)
-        .from(pdfContent)
-        .outputPdf('blob')
-        .then(blob => {
-          const reader = new FileReader();
-          reader.onload = () => {
-            const base64 = reader.result.split(',')[1];
-            resolve(base64);
-          };
-          reader.onerror = () => reject(new Error('Error al leer PDF'));
-          reader.readAsDataURL(blob);
-        })
-        .catch(err => {
-          console.error('html2pdf error:', err);
-          reject(new Error(`Error generando PDF: ${err.message}`));
-        })
-        .finally(() => {
-          // Ocultar logo después de generar PDF (para no afectar la pantalla)
-          const logoHeader = document.getElementById('pdf-logo-header');
-          if (logoHeader) logoHeader.style.display = 'none';
-        });
-    });
   } catch (error) {
     console.error('Error en generarPDFCUIDA:', error);
     throw error;
