@@ -967,14 +967,31 @@ async function generarPDFCUIDA() {
     // Esperar a que se renderice completamente
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    // Crear DIV temporal para PDF (como en MMPI-2)
+    // Crear DIV temporal para PDF sin clases CSS problemáticas
     const tempDiv = document.createElement('div');
     tempDiv.style.backgroundColor = 'white';
     tempDiv.style.color = '#000';
     tempDiv.style.padding = '0';
     tempDiv.style.fontFamily = 'Arial, sans-serif';
+    tempDiv.style.lineHeight = '1.6';
+
     // Copiar TODO el HTML interno
     tempDiv.innerHTML = pdfContent.innerHTML;
+
+    // Remover clases que pueden causar problemas en html2pdf
+    tempDiv.querySelectorAll('[class*="screen"]').forEach(el => {
+      el.classList.remove('screen', 'active');
+    });
+
+    // Asegurar que todos los elementos estén visibles
+    tempDiv.querySelectorAll('*').forEach(el => {
+      if (el.style.display === 'none') {
+        el.style.display = '';
+      }
+      if (el.style.visibility === 'hidden') {
+        el.style.visibility = '';
+      }
+    });
 
     // Configurar html2pdf exactamente como MMPI-2
     const opt = {
@@ -989,7 +1006,7 @@ async function generarPDFCUIDA() {
     return new Promise((resolve, reject) => {
       html2pdf()
         .set(opt)
-        .from(tempDiv.innerHTML)
+        .from(tempDiv)
         .outputPdf('blob')
         .then(blob => {
           const reader = new FileReader();
