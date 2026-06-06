@@ -2364,6 +2364,15 @@ textarea {
   background: var(--color-primary-light);
 }
 
+.btn-abrir-evaluacion {
+  background: #10b981;
+  color: white;
+}
+
+.btn-abrir-evaluacion:hover {
+  background: #059669;
+}
+
 .btn-descargar {
   background: var(--color-surface-alt);
   color: var(--color-text);
