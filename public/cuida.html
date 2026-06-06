@@ -1036,6 +1036,14 @@ async function descargarYGuardarPDF() {
         subescalas: resultado.escalas
       };
 
+      console.log('📋 Payload a enviar:', {
+        paciente_id: payload.paciente_id,
+        tipo: payload.tipo,
+        data_length: payload.data.length,
+        total: payload.total,
+        escalas_keys: Object.keys(payload.subescalas).length
+      });
+
       const token = authToken || localStorage.getItem('auth_token');
       const response = await fetch('/api/pruebas', {
         method: 'POST',
@@ -1046,9 +1054,11 @@ async function descargarYGuardarPDF() {
         body: JSON.stringify(payload)
       });
 
+      const responseData = await response.json();
+      console.log('📥 Respuesta del servidor:', responseData);
+
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || `Error ${response.status}`);
+        throw new Error(responseData.message || `Error ${response.status}`);
       }
 
       console.log('✅ Datos guardados en expediente');
