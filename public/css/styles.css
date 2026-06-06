@@ -2373,6 +2373,10 @@ textarea {
   background: #059669;
 }
 
+.oculto {
+  display: none !important;
+}
+
 .btn-descargar {
   background: var(--color-surface-alt);
   color: var(--color-text);

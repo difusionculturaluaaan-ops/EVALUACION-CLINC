@@ -4648,15 +4648,14 @@ const app = {
           </div>
 
           <div class="estudio-actions">
+            <button class="btn-ver-reporte ${prueba.tipo.toUpperCase().includes('CUIDA') ? 'oculto' : ''}" data-prueba-id="${prueba.id}" onclick="app.abrirReportePrueba(this.getAttribute('data-prueba-id'))">
+              📋 Ver Reporte
+            </button>
             ${prueba.tipo.toUpperCase().includes('CUIDA') ? `
               <button class="btn-abrir-evaluacion" onclick="app.abrirEvaluacionCUIDA(${prueba.id})">
                 📊 Abrir JSON
               </button>
-            ` : `
-              <button class="btn-ver-reporte" data-prueba-id="${prueba.id}" onclick="app.abrirReportePrueba(this.getAttribute('data-prueba-id'))">
-                📋 Ver Reporte
-              </button>
-            `}
+            ` : ''}
             ${estado === 'borrador' ? `
               <button class="btn-estado btn-oficial" onclick="app.cambiarEstadoPrueba(${prueba.id}, 'oficial')">
                 ✓ Marcar Oficial
