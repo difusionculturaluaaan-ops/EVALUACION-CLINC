@@ -976,6 +976,7 @@ async function generarPDFCUIDA() {
     const resp = document.getElementById('f-resp').value || '–';
     const exp = document.getElementById('f-exp').value || '';
     const answered = ANS.filter(a=>a>0).length;
+    const scores = calcScales();
 
     const pdfDiv = document.createElement('div');
     pdfDiv.style.backgroundColor = 'white';
