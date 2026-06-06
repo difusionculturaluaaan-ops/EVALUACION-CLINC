@@ -1336,6 +1336,10 @@ if (modoCargar) {
         document.getElementById('f-baremo').value = datos.metadatos.baremo || '';
         document.getElementById('f-resp').value = datos.metadatos.responsable || '';
         document.getElementById('f-exp').value = datos.metadatos.expediente || '';
+
+        // Guardar metadatos en variable global para evitar perderlos
+        metadatosActuales = datos.metadatos;
+        console.log('✅ Metadatos cargados desde expediente:', metadatosActuales);
       }
 
       // Generar reporte
