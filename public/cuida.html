@@ -1188,9 +1188,6 @@ async function actualizarEnExpediente() {
 
     const token = authToken || localStorage.getItem('auth_token');
 
-    console.log('📤 Actualizando prueba:', pruebaId);
-    console.log('📋 Payload:', { paciente_id: payload.paciente_id, tipo: payload.tipo, data_length: payload.data.length, token: !!token });
-
     // Enviar actualización (usando PUT)
     const response = await fetch(`/api/pruebas/${pruebaId}`, {
       method: 'PUT',
