@@ -9,48 +9,27 @@ const app = {
     'SCL90R': tests_scl90r,
     'HAMILTON': tests_hamilton,
     'MMPI': {
-      nombre: 'MMPI-2 (RF + T-scores)',
+      nombre: 'MMPI-2-RF',
       tipo: 'MMPI',
       init() { app.iniciarMMPI('RF'); },
       obtenerRespuestas() {
-        // Retornar respuestas del RF si estamos en esa sección
-        if (app.mmpiState.seccionActual === 'RF') {
-          return tests_mmpi2rf.obtenerRespuestas();
-        } else {
-          return tests_mmpi2.obtenerRespuestas();
-        }
+        return tests_mmpi2rf.obtenerRespuestas();
       },
       validar() {
-        // Validar la sección actual
-        if (app.mmpiState.seccionActual === 'RF') {
-          const invalid = tests_mmpi2rf.validar();
-          if (invalid.length > 0) {
-            return [`Completa todos los 338 ítems (faltan ${invalid.length})`];
-          }
-        } else {
-          const invalid = tests_mmpi2.validar();
-          if (invalid.length > 0) return invalid;
+        const invalid = tests_mmpi2rf.validar();
+        if (invalid.length > 0) {
+          return [`Completa todos los 338 ítems (faltan ${invalid.length})`];
         }
         return [];
       },
       calcular() {
-        // Calcular ambas secciones
-        const resultRF = app.mmpiState.seccionActual === 'RF' ? tests_mmpi2rf.calcular() : { datos: app.mmpiState.datosRF || {} };
-        const resultScores = app.mmpiState.seccionActual === 'SCORES' ? tests_mmpi2.calcular() : { datos: app.mmpiState.datosScores || {} };
-
-        // Guardar en memoria
-        app.mmpiState.datosRF = resultRF.datos || app.mmpiState.datosRF;
-        app.mmpiState.datosScores = resultScores.datos || app.mmpiState.datosScores;
-
+        const resultRF = tests_mmpi2rf.calcular();
         return {
-          total: (resultRF.total || 0) + (resultScores.total || 0),
-          datos: { ...app.mmpiState.datosRF, ...app.mmpiState.datosScores },
-          rf: resultRF,
-          scores: resultScores
+          total: resultRF.total || 0,
+          datos: resultRF.datos || {}
         };
       }
     },
-    'MMPI2': tests_mmpi2,
     'MMPI2RF': tests_mmpi2rf,
     'TDS': tests_tds,
     'ISRA': {
@@ -762,8 +741,6 @@ const app = {
       this.construirPaginasMMPI();
       this.mmpiActualizarProgreso();
       tests_mmpi2rf.init();
-    } else {
-      tests_mmpi2.init();
     }
     this.mostrarSeccionMMPI(seccion);
   },
@@ -775,32 +752,6 @@ const app = {
     // Guardar respuestas de la sección actual
     if (this.mmpiState.seccionActual === 'RF') {
       this.mmpiState.datosRF = tests_mmpi2rf.obtenerRespuestas();
-    } else if (this.mmpiState.seccionActual === 'SCORES') {
-      this.mmpiState.datosScores = tests_mmpi2.obtenerRespuestas();
-    }
-
-    // Validar que la sección actual esté completa (solo para avanzar)
-    if (this.mmpiState.seccionActual === 'RF' && seccion === 'SCORES') {
-      // Validar desde localStorage (más confiable)
-      let respondidos = 0;
-      for (let i = 1; i <= this.mmpiState.totalItems; i++) {
-        const resp = localStorage.getItem(`mmpi_r${i}`);
-        if (resp && (resp === 'V' || resp === 'F')) {
-          respondidos++;
-        }
-      }
-
-      if (respondidos < this.mmpiState.totalItems) {
-        this.mostrarToast(`⚠️ Faltan ${this.mmpiState.totalItems - respondidos} ítems por responder`, 'warning');
-        return;
-      }
-
-      // Calcular T-scores automáticamente desde las respuestas del RF
-      const resultRF = tests_mmpi2rf.calcular();
-      this.mmpiState.datosRF = resultRF.datos;
-
-      // Mostrar toast de éxito
-      this.mostrarToast('✅ T-scores calculados automáticamente. Revisa y ajusta si es necesario.', 'success');
     }
 
     this.mmpiState.seccionActual = seccion;
@@ -811,37 +762,12 @@ const app = {
    * Mostrar sección de MMPI
    */
   mostrarSeccionMMPI(seccion) {
-    // Ocultar todas las secciones
+    // Mostrar sección RF (única sección disponible)
     const rfSection = document.getElementById('mmpi-rf-section');
-    const scoresSection = document.getElementById('mmpi-scores-section');
     const rfProgress = document.getElementById('mmpi-rf-progress-container');
 
-    if (rfSection) rfSection.style.display = 'none';
-    if (scoresSection) scoresSection.style.display = 'none';
-    if (rfProgress) rfProgress.style.display = 'none';
-
-    // Mostrar la sección actual
-    if (seccion === 'RF') {
-      if (rfSection) rfSection.style.display = 'block';
-      if (rfProgress) rfProgress.style.display = 'block';
-      // No llamar a init aquí, ya se llamó en iniciarMMPI
-    } else if (seccion === 'SCORES') {
-      if (scoresSection) scoresSection.style.display = 'block';
-      tests_mmpi2.init();
-    }
-
-    // Actualizar tabs
-    const tabRF = document.getElementById('tab-mmpi-rf');
-    const tabScores = document.getElementById('tab-mmpi-scores');
-
-    if (tabRF) {
-      tabRF.style.color = seccion === 'RF' ? '#2c5aa0' : '#999';
-      tabRF.style.borderBottomColor = seccion === 'RF' ? '#2c5aa0' : 'transparent';
-    }
-    if (tabScores) {
-      tabScores.style.color = seccion === 'SCORES' ? '#2c5aa0' : '#999';
-      tabScores.style.borderBottomColor = seccion === 'SCORES' ? '#2c5aa0' : 'transparent';
-    }
+    if (rfSection) rfSection.style.display = 'block';
+    if (rfProgress) rfProgress.style.display = 'block';
   },
 
   /**
