@@ -1373,42 +1373,48 @@ function saveInfo() {
   localStorage.setItem('mmpi_info', JSON.stringify(info));
 }
 
-function loadData() {
-  try {
-    // Si es un test NUEVO (sin paciente_id en URL), limpiar localStorage y responses
-    const pacienteId = new URLSearchParams(window.location.search).get('paciente_id');
-    if (!pacienteId) {
-      // Nuevo test - limpiar datos anteriores
-      localStorage.removeItem('mmpi_responses');
-      localStorage.removeItem('mmpi_info');
-      // Limpiar también el array responses en memoria
-      for (let i = 0; i <= 338; i++) responses[i] = null;
-      return;
-    }
+let pacienteId = null;
+let authToken = null;
 
-    // Si hay paciente_id, restaurar datos guardados (continuar test anterior)
-    const info = JSON.parse(localStorage.getItem('mmpi_info') || '{}');
-    if (info.nombre) document.getElementById('inp-nombre').value = info.nombre;
-    if (info.fecha)  document.getElementById('inp-fecha').value  = info.fecha;
-    if (info.cargo)  document.getElementById('inp-cargo').value  = info.cargo;
-    if (info.inst)   document.getElementById('inp-inst').value   = info.inst;
-    if (info.eval)   document.getElementById('inp-eval').value   = info.eval;
-    if (info.edad)   document.getElementById('inp-edad').value   = info.edad;
+function obtenerParametrosURL() {
+  const params = new URLSearchParams(window.location.search);
+  pacienteId = params.get('paciente_id');
+  authToken = params.get('token') || localStorage.getItem('auth_token');
 
-    const saved = JSON.parse(localStorage.getItem('mmpi_responses') || 'null');
-    if (saved) saved.forEach((v, i) => { if (v) responses[i] = v; });
+  if (authToken) {
+    localStorage.setItem('auth_token', authToken);
+  }
 
-    // Cargar datos del paciente automáticamente
-    if (pacienteId) {
-      cargarDatosPaciente(pacienteId);
-    }
-  } catch(e) {}
+  console.log(`📍 Paciente ID: ${pacienteId}, Token: ${authToken ? '✓' : '✗'}`);
+  return pacienteId;
 }
 
-async function cargarDatosPaciente(pacienteId) {
+function loadData() {
+  try {
+    // Si hay paciente_id en URL, cargar datos del paciente automáticamente
+    if (pacienteId) {
+      cargarDatosPaciente();
+    } else {
+      console.log('⚠️ Sin paciente_id, formulario vacío');
+      // Limpiar localStorage al iniciar nuevo test
+      localStorage.removeItem('mmpi_responses');
+      localStorage.removeItem('mmpi_info');
+      for (let i = 0; i <= 338; i++) responses[i] = null;
+    }
+  } catch(e) {
+    console.error('Error en loadData:', e);
+  }
+}
+
+async function cargarDatosPaciente() {
+  if (!pacienteId) {
+    console.log('⚠️ Sin paciente_id, mostrar formulario vacío');
+    return;
+  }
+
   try {
     console.log(`🔄 Cargando datos del paciente ${pacienteId}...`);
-    const token = localStorage.getItem('auth_token');
+    const token = authToken || localStorage.getItem('auth_token');
     const response = await fetch(`/api/pacientes/${pacienteId}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -1417,7 +1423,7 @@ async function cargarDatosPaciente(pacienteId) {
     });
 
     if (!response.ok) {
-      console.log(`⚠️ No se cargaron datos del paciente (${response.status})`);
+      console.error(`❌ Error ${response.status} al cargar paciente`);
       return;
     }
 
@@ -1429,9 +1435,13 @@ async function cargarDatosPaciente(pacienteId) {
     document.getElementById('inp-edad').value = `${paciente.edad || ''} años · ${paciente.sexo || ''}`.trim();
     document.getElementById('inp-fecha').value = new Date().toISOString().split('T')[0];
 
+    // Desabilitar campos de paciente (solo lectura)
+    document.getElementById('inp-nombre').disabled = true;
+    document.getElementById('inp-edad').disabled = true;
+
     console.log('✓ Datos del paciente precargados');
   } catch (error) {
-    console.log('⚠️ Error cargando datos del paciente:', error.message);
+    console.error('❌ Error al cargar paciente:', error);
   }
 }
 
@@ -1494,7 +1504,6 @@ function handleImport(evt) {
 }
 
 // ===== INTEGRACIÓN CON EXPEDIENTE =====
-let pacienteIdActual = null;
 
 function getPacienteIdFromURL() {
   const params = new URLSearchParams(window.location.search);
@@ -1502,7 +1511,7 @@ function getPacienteIdFromURL() {
 }
 
 async function guardarEnExpediente() {
-  let pacienteId = pacienteIdActual;
+  // Usar variable global pacienteId que se cargó desde URL
 
   if (!calcResults || calcResults.length === 0) {
     alert('⚠️ Primero calcula los resultados antes de guardar.');
@@ -1933,6 +1942,7 @@ function finishTest() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+obtenerParametrosURL();
 loadData();
 buildItemsGrid();
 buildTestPages();

@@ -314,9 +314,18 @@
         </div>
       </div>
       <div id="scl-container" class="test-items"></div>
-      <button type="button" class="btn btn-primary btn-lg" onclick="app.guardarPrueba('SCL90R')">
-        Finalizar SCL-90-R
-      </button>
+      <div style="display: flex; gap: 10px; margin-top: 15px;">
+        <button type="button" class="btn btn-primary btn-lg" onclick="app.guardarPrueba('SCL90R')">
+          Finalizar SCL-90-R
+        </button>
+        <button type="button" class="btn btn-secondary btn-lg" onclick="app.exportarJSONTest('SCL90R')">
+          💾 Exportar JSON
+        </button>
+        <button type="button" class="btn btn-secondary btn-lg" onclick="app.importarJSONTest('SCL90R')">
+          📂 Importar JSON
+        </button>
+      </div>
+      <input type="file" id="scl90r-file-import" accept=".json" onchange="app.manejarImportJSON(event, 'SCL90R')" style="display:none;">
     </div>
   </section>
 
