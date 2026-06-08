@@ -132,18 +132,18 @@ const expedientes = {
       <div class="expediente-card ${estadoClass}" data-id="${paciente.id}">
         <div class="expediente-header">
           <div>
-            <div class="expediente-nombre">📋 ${this.escape(paciente.nombre)}</div>
+            <div class="expediente-nombre">${this.escape(paciente.nombre)}</div>
             <div class="expediente-info">${edad} • ${sexo}</div>
           </div>
           <div class="expediente-actions">
             <button class="btn-icon" data-id="${paciente.id}" data-accion="editar" title="Editar">
-              ✏️
+              Editar
             </button>
             <button class="btn-icon" data-id="${paciente.id}" data-accion="toggle" title="${paciente.status === 'standby' ? 'Reactivar' : 'Pausar'}">
-              ${paciente.status === 'standby' ? '▶️' : '⏸️'}
+              ${paciente.status === 'standby' ? 'Reactivar' : 'Pausar'}
             </button>
             <button class="btn-icon btn-icon-danger" data-id="${paciente.id}" data-accion="eliminar" title="Eliminar paciente">
-              🗑️
+              Eliminar
             </button>
           </div>
         </div>
@@ -180,7 +180,7 @@ const expedientes = {
 
       app.pacienteActivo = paciente;
       app.showPage('nuevo');
-      app.mostrarToast('⚠️ Funcionalidad de edición aún en desarrollo', 'warning');
+      app.mostrarToast('Funcionalidad de edición aún en desarrollo', 'warning');
     } catch (error) {
       app.mostrarToast(`Error: ${error.message}`, 'error');
     }
@@ -192,7 +192,7 @@ const expedientes = {
   async toggleStatus(pacienteId) {
     try {
       await api.toggleStatusPaciente(pacienteId);
-      app.mostrarToast('✓ Status actualizado', 'success');
+      app.mostrarToast('Status actualizado', 'success');
       await app.loadExpedientes();
     } catch (error) {
       app.mostrarToast(`Error: ${error.message}`, 'error');
@@ -211,7 +211,7 @@ const expedientes = {
       }
 
       const confirmacion = confirm(
-        `⚠️ ¿Estás seguro de que deseas eliminar el paciente "${paciente.nombre}" y todos sus evaluaciones?\n\nEsta acción no se puede deshacer.`
+        `¿Estás seguro de que deseas eliminar el paciente "${paciente.nombre}" y todos sus evaluaciones?\n\nEsta acción no se puede deshacer.`
       );
 
       if (!confirmacion) {
@@ -220,7 +220,7 @@ const expedientes = {
 
       app.mostrarToast('Eliminando paciente...', 'info');
       await api.deletePaciente(pacienteId);
-      app.mostrarToast('✓ Paciente eliminado correctamente', 'success');
+      app.mostrarToast('Paciente eliminado correctamente', 'success');
       await app.loadExpedientes();
     } catch (error) {
       console.error('Error al eliminar paciente:', error);

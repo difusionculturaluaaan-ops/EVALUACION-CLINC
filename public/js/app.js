@@ -975,7 +975,7 @@ const app = {
     }
 
     // Log para debugging
-    console.log(`📊 MMPI Progreso: ${respondidos}/${this.mmpiState.totalItems} (${Math.round(porcentaje)}%) - V:${verdaderos}, F:${falsos}`);
+    console.log(`MMPI Progreso: ${respondidos}/${this.mmpiState.totalItems} (${Math.round(porcentaje)}%) - V:${verdaderos}, F:${falsos}`);
   },
 
   /**
@@ -1079,7 +1079,7 @@ const app = {
         </div>
         <div>
           <label style="font-size: 11px; color: #999; text-transform: uppercase; font-weight: 600;">Items Respondidos</label>
-          <p style="margin: 4px 0 0 0; color: #27ae60; font-weight: 600;">338 ✓</p>
+          <p style="margin: 4px 0 0 0; color: #27ae60; font-weight: 600;">338</p>
         </div>
       `;
     }
@@ -1242,7 +1242,7 @@ const app = {
 
     if (btnNext) {
       if (pag === totalPaginas - 1) {
-        btnNext.textContent = 'Finalizar ✓';
+        btnNext.textContent = 'Finalizar';
         btnNext.style.opacity = '0.35';
         btnNext.style.pointerEvents = 'none';
       } else {
@@ -1604,8 +1604,8 @@ const app = {
 
       // PARA CUIDA: Ocultar botón "Descargar Reporte" SIEMPRE
       if (prueba.tipo === 'CUIDA') {
-        console.log('📋 CUIDA - Estructura completa de prueba:', prueba);
-        console.log('📋 CUIDA - Keys en prueba:', Object.keys(prueba));
+        console.log('CUIDA - Estructura completa de prueba:', prueba);
+        console.log('CUIDA - Keys en prueba:', Object.keys(prueba));
 
         const btnDescargar = document.getElementById('btn-descargar-reporte');
         if (btnDescargar) {
@@ -2775,7 +2775,7 @@ const app = {
 
     return `
       <div style="margin: 10px 0; padding: 15px; background: #e8f4f8; border-left: 4px solid #2c5aa0; border-radius: 3px; color: #333;">
-        <p style="margin: 0 0 8px 0; font-size: 10px; font-weight: bold;">📋 MMPI-2 Forma Reestructurada (RF)</p>
+        <p style="margin: 0 0 8px 0; font-size: 10px; font-weight: bold;">MMPI-2 Forma Reestructurada (RF)</p>
         <p style="margin: 0; font-size: 9px;">T-Scores: ${tScores}</p>
         <p style="margin: 5px 0 0 0; font-size: 9px; font-style: italic;">Para ver el gráfico completo del micrositio, abre el test nuevamente.</p>
       </div>
@@ -2834,7 +2834,7 @@ const app = {
 
     let html = `
       <div style="margin: 10px 0; padding: 15px; background: #f0fdf4; border-left: 4px solid #10b981; border-radius: 3px; color: #333;">
-        <h4 style="margin: 0 0 10px 0; font-size: 11px; font-weight: bold; color: #111827;">📋 CUIDA - Evaluación de Cuidadores</h4>
+        <h4 style="margin: 0 0 10px 0; font-size: 11px; font-weight: bold; color: #111827;">CUIDA - Evaluación de Cuidadores</h4>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; font-size: 8px;">
           <div><strong>Evaluador:</strong> ${evaluador}</div>
@@ -4141,7 +4141,7 @@ const app = {
     container.innerHTML = pacientes.map(p => {
       const initials = p.nombre.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
       const colorBg = ['#6366f1', '#3b82f6', '#10b981', '#f59e0b', '#ef4444'][pacientes.indexOf(p) % 5];
-      const statusBadge = p.status === 'activo' ? '🟢 Activo' : '⏸️ En pausa';
+      const statusBadge = p.status === 'activo' ? 'Activo' : 'En pausa';
 
       return `
         <div class="paciente-item-wrapper">
@@ -4169,7 +4169,7 @@ const app = {
               </div>
               <div class="detalle-fila">
                 <span class="detalle-label">Estado:</span>
-                <span class="detalle-valor">${p.status === 'activo' ? '🟢 Activo' : '⏸️ En pausa'}</span>
+                <span class="detalle-valor">${p.status === 'activo' ? 'Activo' : 'En pausa'}</span>
               </div>
               <div class="detalle-fila">
                 <span class="detalle-label">Medicamentos:</span>
@@ -4181,7 +4181,7 @@ const app = {
               </div>
               <div class="detalle-divider"></div>
               <button class="btn btn-primary btn-sm" onclick="app.selectPacienteDesde('${p.id}')" style="width: 100%; margin-top: 8px;">
-                📋 Ver expediente completo
+                Ver expediente completo
               </button>
             </div>
           </div>
@@ -4593,16 +4593,16 @@ const app = {
 
           <div class="estudio-actions">
             <button class="btn-ver-reporte ${(prueba.tipo.toUpperCase().includes('CUIDA') || prueba.tipo.toUpperCase().includes('MMPI')) ? 'oculto' : ''}" data-prueba-id="${prueba.id}" onclick="app.abrirReportePrueba(this.getAttribute('data-prueba-id'))">
-              📋 Ver Reporte
+              Ver Reporte
             </button>
             ${prueba.tipo.toUpperCase().includes('CUIDA') ? `
               <button class="btn-abrir-evaluacion" onclick="app.abrirEvaluacionCUIDA(${prueba.id})">
-                📊 Abrir JSON
+                Abrir JSON
               </button>
             ` : ''}
             ${(prueba.tipo === 'MMPI2' || prueba.tipo === 'MMPI') ? `
               <button class="btn-abrir-evaluacion" onclick="app.abrirEvaluacionMMPI(${prueba.id})">
-                📊 Abrir JSON
+                Abrir JSON
               </button>
             ` : ''}
             ${estado === 'borrador' ? `
@@ -4610,7 +4610,7 @@ const app = {
                 Marcar Oficial
               </button>
               <button class="btn-eliminar" onclick="app.eliminarPrueba(${prueba.id})">
-                🗑️ Eliminar
+                Eliminar
               </button>
             ` : `
               <button class="btn-estado btn-borrador" onclick="app.cambiarEstadoPrueba(${prueba.id}, 'borrador')">
