@@ -1674,7 +1674,15 @@ async function guardarEnExpediente() {
 
   // Construir objeto de subescalas como lo espera la API
   const subescalas = {
-    subescalas: {}
+    subescalas: {},
+    _metadatos: {
+      nombre: document.getElementById('inp-nombre').value || '',
+      fecha: document.getElementById('inp-fecha').value || '',
+      cargo: document.getElementById('inp-cargo').value || '',
+      inst: document.getElementById('inp-inst').value || '',
+      eval: document.getElementById('inp-eval').value || '',
+      edad: document.getElementById('inp-edad').value || ''
+    }
   };
 
   calcResults.forEach(result => {
