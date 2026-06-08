@@ -521,6 +521,13 @@ const tests_mmpi2rf = {
   calcular() {
     try {
       const respuestas = this.obtenerRespuestas();
+
+      // Validar: si todas las respuestas son 0, el protocolo no tiene datos
+      const totalResponsable = respuestas.filter(r => r && r > 0).length;
+      if (totalResponsable === 0) {
+        throw new Error('⚠️ El protocolo no tiene respuestas. Por favor, contesta al menos algunos items antes de calcular.');
+      }
+
       const escalasResult = {};
 
       // Calcular escalas clínicas
