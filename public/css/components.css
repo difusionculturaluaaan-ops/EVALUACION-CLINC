@@ -27,16 +27,16 @@
 }
 
 /* Variante: Primary */
-.btn-primary {
-  background-color: var(--color-primary);
-  color: var(--color-text-inverse);
-  border: 1px solid var(--color-primary);
+.btn.btn-primary {
+  background-color: var(--color-primary) !important;
+  color: var(--color-text-inverse) !important;
+  border: 1px solid var(--color-primary) !important;
 }
 
-.btn-primary:hover {
-  background-color: var(--color-primary-hover);
-  border-color: var(--color-primary-hover);
-  box-shadow: var(--shadow-md);
+.btn.btn-primary:hover {
+  background-color: var(--color-primary-hover) !important;
+  border-color: var(--color-primary-hover) !important;
+  box-shadow: var(--shadow-md) !important;
 }
 
 .btn-primary:active {
@@ -56,16 +56,16 @@
 }
 
 /* Variante: Secondary */
-.btn-secondary {
-  background-color: var(--color-surface-secondary);
-  color: var(--color-text-primary);
-  border: 1px solid var(--color-border);
+.btn.btn-secondary {
+  background-color: var(--color-surface-secondary) !important;
+  color: var(--color-text-primary) !important;
+  border: 1px solid var(--color-border) !important;
 }
 
-.btn-secondary:hover {
-  background-color: var(--color-primary-light);
-  border-color: var(--color-primary);
-  color: var(--color-primary);
+.btn.btn-secondary:hover {
+  background-color: var(--color-primary-light) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-primary) !important;
 }
 
 .btn-secondary:active {
@@ -83,16 +83,16 @@
 }
 
 /* Variante: Danger */
-.btn-danger {
-  background-color: var(--color-danger);
-  color: var(--color-text-inverse);
-  border: 1px solid var(--color-danger);
+.btn.btn-danger {
+  background-color: var(--color-danger) !important;
+  color: var(--color-text-inverse) !important;
+  border: 1px solid var(--color-danger) !important;
 }
 
-.btn-danger:hover {
-  background-color: #A01616;
-  border-color: #A01616;
-  box-shadow: var(--shadow-md);
+.btn.btn-danger:hover {
+  background-color: #A01616 !important;
+  border-color: #A01616 !important;
+  box-shadow: var(--shadow-md) !important;
 }
 
 .btn-danger:active {
@@ -110,15 +110,15 @@
 }
 
 /* Variante: Ghost */
-.btn-ghost {
-  background-color: transparent;
-  color: var(--color-primary);
-  border: 1px solid transparent;
+.btn.btn-ghost {
+  background-color: transparent !important;
+  color: var(--color-primary) !important;
+  border: 1px solid transparent !important;
 }
 
-.btn-ghost:hover {
-  background-color: var(--color-primary-light);
-  border-color: var(--color-primary);
+.btn.btn-ghost:hover {
+  background-color: var(--color-primary-light) !important;
+  border-color: var(--color-primary) !important;
 }
 
 .btn-ghost:active {
