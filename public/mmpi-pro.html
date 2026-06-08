@@ -1485,14 +1485,18 @@ async function cargarEvaluacionMMPI() {
 
     const prueba = await response.json();
     console.log('✓ Evaluación cargada:', prueba);
+    console.log('Tipo de prueba.data:', typeof prueba.data, 'Es array:', Array.isArray(prueba.data));
 
     // Cargar respuestas desde prueba.data (es un array guardado con slice(1))
     if (Array.isArray(prueba.data)) {
+      console.log('Llenando array responses con', prueba.data.length, 'elementos');
       // El array se guardó con slice(1), así que restauramos desde posición 1
       prueba.data.forEach((valor, idx) => {
         responses[idx + 1] = valor;
       });
-      console.log('✓ Respuestas cargadas en array global');
+      console.log('✓ Respuestas cargadas. responses[1]:', responses[1], 'responses[100]:', responses[100]);
+    } else {
+      console.log('❌ prueba.data no es un array:', prueba.data);
     }
 
     // Cargar datos adicionales del objeto subescalas si contiene metadatos
