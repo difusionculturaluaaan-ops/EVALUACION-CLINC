@@ -8,71 +8,71 @@ const tests_hamilton = {
   tipo: 'HAMILTON',
   items: [
     {
-      q: '1. Humor deprimido',
+      q: 'Humor deprimido',
       opts: ['Ausente', 'Si preguntan', 'Espontáneo', 'No verbal', 'Verbal/No verbal']
     },
     {
-      q: '2. Sentimiento de culpa',
+      q: 'Sentimiento de culpa',
       opts: ['Ausente', 'Diferente de lo normal', 'Ideas de culpabilidad', 'Castigo merecido', 'Alucinaciones de culpa']
     },
     {
-      q: '3. Suicidio',
+      q: 'Suicidio',
       opts: ['Ausente', 'Sin valor', 'Deseo de morir', 'Amenazas', 'Intentos']
     },
     {
-      q: '4. Insomnio inicial (dificultad para dormir)',
+      q: 'Insomnio inicial (dificultad para dormir)',
       opts: ['Ausente', 'Dificultad ocasional', 'Dificultad frecuente']
     },
     {
-      q: '5. Insomnio intermedio (despertares nocturnos)',
+      q: 'Insomnio intermedio (despertares nocturnos)',
       opts: ['Ausente', 'No queja significativa', 'Se queja de inquietud durante la noche', 'Se despierta frecuentemente']
     },
     {
-      q: '6. Insomnio tardío (despertar matutino)',
+      q: 'Insomnio tardío (despertar matutino)',
       opts: ['Ausente', 'Despertar matutino ocasional', 'Despertar matutino frecuente']
     },
     {
-      q: '7. Trabajo y actividades',
+      q: 'Trabajo y actividades',
       opts: ['Ausente', 'Fatiga leve', 'Interés disminuido', 'Productividad reducida', 'Dejó de trabajar']
     },
     {
-      q: '8. Enlentecimiento (pensamiento y lenguaje)',
+      q: 'Enlentecimiento (pensamiento y lenguaje)',
       opts: ['Ausente', 'Retraso ligero', 'Evidente', 'Expresión lentificada', 'Incapacidad para comunicarse']
     },
     {
-      q: '9. Agitación',
+      q: 'Agitación',
       opts: ['Ausente', 'Fidgetismo', 'Juguetea con las manos', 'Inquieto en la silla', 'Sale y entra constantemente']
     },
     {
-      q: '10. Ansiedad psiquiátrica',
+      q: 'Ansiedad psiquiátrica',
       opts: ['Ausente', 'Tensión leve', 'Preocupación por pequeñeces', 'Expresión aprensiva', 'Temores expresados sin preguntar']
     },
     {
-      q: '11. Ansiedad somática',
+      q: 'Ansiedad somática',
       opts: ['Ausente', 'Ligera', 'Moderada', 'Severa', 'Incapacitante']
     },
     {
-      q: '12. Síntomas gastrointestinales',
+      q: 'Síntomas gastrointestinales',
       opts: ['Ausente', 'Pérdida de apetito o constipación', 'Requiere laxante o medicamento']
     },
     {
-      q: '13. Síntomas somáticos generales',
+      q: 'Síntomas somáticos generales',
       opts: ['Ausente', 'Pesadez en extremidades', 'Pérdida de energía visible']
     },
     {
-      q: '14. Síntomas genitales',
+      q: 'Síntomas genitales',
       opts: ['Ausente', 'Débil', 'Grave']
     },
     {
-      q: '15. Hipocondría',
+      q: 'Hipocondría',
       opts: ['Ausente', 'Preocupación corporal', 'Preocupación por salud', 'Lamentos frecuentes', 'Delirios sobre la salud']
     },
     {
-      q: '16. Pérdida de peso',
+      q: 'Pérdida de peso',
       opts: ['Ausente', 'Pérdida menor de 500g', 'Pérdida mayor de 1kg']
     },
     {
-      q: '17. Insight (conciencia de la enfermedad)',
+      q: 'Insight (conciencia de la enfermedad)',
       opts: ['Completo', 'Reconoce causas externas', 'No reconoce enfermedad']
     }
   ],
