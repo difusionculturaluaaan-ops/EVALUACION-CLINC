@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design System - Prueba</title>
+
+  <!-- DESIGN SYSTEM CSS -->
+  <link rel="stylesheet" href="/css/tokens.css">
+  <link rel="stylesheet" href="/css/typography.css">
+
+  <style>
+    body {
+      padding: var(--space-6);
+      background-color: var(--color-bg);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section {
+      margin-bottom: var(--space-12);
+      background: var(--color-surface);
+      padding: var(--space-6);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .section h2 {
+      margin-top: 0;
+      border-bottom: 2px solid var(--color-primary-light);
+      padding-bottom: var(--space-3);
+    }
+
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--space-4);
+      margin-top: var(--space-4);
+    }
+
+    .demo-box {
+      padding: var(--space-4);
+      background: var(--color-surface-secondary);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+    }
+
+    .color-swatch {
+      width: 100%;
+      height: 60px;
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-2);
+      border: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--color-text-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-display-lg">🎨 Prueba del Design System</h1>
+    <p class="text-body">Este es un test de los tokens CSS y tipografía. Si ves esto correctamente, el design system está funcionando.</p>
+
+    <!-- COLORES -->
+    <div class="section">
+      <h2>Colores Primarios</h2>
+      <div class="demo-grid">
+        <div class="demo-box">
+          <div class="color-swatch" style="background-color: var(--color-primary);">
+            var(--color-primary)
+          </div>
+          <p class="text-caption">Púrpura principal</p>
+        </div>
+        <div class="demo-box">
+          <div class="color-swatch" style="background-color: var(--color-primary-light);">
+            var(--color-primary-light)
+          </div>
+          <p class="text-caption">Púrpura claro</p>
+        </div>
+        <div class="demo-box">
+          <div class="color-swatch" style="background-color: var(--color-primary-subtle);">
+            var(--color-primary-subtle)
+          </div>
+          <p class="text-caption">Púrpura muy claro</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESTADOS SEMÁNTICOS -->
+    <div class="section">
+      <h2>Estados Semánticos</h2>
+      <div class="demo-grid">
+        <div class="demo-box">
+          <div class="color-swatch" style="background-color: var(--color-success);">
+            var(--color-success)
+          </div>
+          <p class="text-caption">Éxito</p>
+        </div>
+        <div class="demo-box">
+          <div class="color-swatch" style="background-color: var(--color-warning);">
+            var(--color-warning)
+          </div>
+          <p class="text-caption">Advertencia</p>
+        </div>
+        <div class="demo-box">
+          <div class="color-swatch" style="background-color: var(--color-danger);">
+            var(--color-danger)
+          </div>
+          <p class="text-caption">Peligro</p>
+        </div>
+        <div class="demo-box">
+          <div class="color-swatch" style="background-color: var(--color-info);">
+            var(--color-info)
+          </div>
+          <p class="text-caption">Información</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIPOGRAFÍA DISPLAY -->
+    <div class="section">
+      <h2>Tipografía Display (DM Serif)</h2>
+      <div style="background: var(--color-surface-secondary); padding: var(--space-4); border-radius: var(--radius-md);">
+        <div class="text-display-lg" style="margin-bottom: var(--space-3);">Display Large (2rem)</div>
+        <div class="text-display-md" style="margin-bottom: var(--space-3);">Display Medium (1.5rem)</div>
+        <div class="text-display-sm" style="margin-bottom: var(--space-3);">Display Small (1.25rem)</div>
+      </div>
+    </div>
+
+    <!-- TIPOGRAFÍA BODY -->
+    <div class="section">
+      <h2>Tipografía Body (DM Sans)</h2>
+      <div style="background: var(--color-surface-secondary); padding: var(--space-4); border-radius: var(--radius-md);">
+        <div class="text-heading" style="margin-bottom: var(--space-3);">Heading (1.125rem, semibold)</div>
+        <div class="text-subheading" style="margin-bottom: var(--space-3);">Subheading (1rem, medium)</div>
+        <div class="text-body" style="margin-bottom: var(--space-3);">Body (1rem, normal) - Este es el texto principal de la plataforma.</div>
+        <div class="text-body-sm" style="margin-bottom: var(--space-3);">Body Small (0.875rem)</div>
+        <div class="text-label" style="margin-bottom: var(--space-3);">Label (0.875rem, uppercase, medium)</div>
+        <div class="text-caption">Caption (0.75rem) - Texto muy pequeño para ayudas</div>
+      </div>
+    </div>
+
+    <!-- VARIANTES DE COLOR -->
+    <div class="section">
+      <h2>Variantes de Color en Texto</h2>
+      <p class="text-body text-primary">Texto en color primario</p>
+      <p class="text-body text-secondary">Texto en color secundario</p>
+      <p class="text-body text-muted">Texto en color muted</p>
+      <p class="text-body text-success">Texto en color éxito</p>
+      <p class="text-body text-warning">Texto en color advertencia</p>
+      <p class="text-body text-danger">Texto en color peligro</p>
+      <p class="text-body text-info">Texto en color información</p>
+    </div>
+
+    <!-- ESPACIADO -->
+    <div class="section">
+      <h2>Escala de Espaciado (4px base)</h2>
+      <div class="demo-grid">
+        <div class="demo-box">
+          <div style="background: var(--color-primary); width: 100%; height: var(--space-1); margin-bottom: var(--space-2);"></div>
+          <p class="text-caption">space-1 (4px)</p>
+        </div>
+        <div class="demo-box">
+          <div style="background: var(--color-primary); width: 100%; height: var(--space-2); margin-bottom: var(--space-2);"></div>
+          <p class="text-caption">space-2 (8px)</p>
+        </div>
+        <div class="demo-box">
+          <div style="background: var(--color-primary); width: 100%; height: var(--space-3); margin-bottom: var(--space-2);"></div>
+          <p class="text-caption">space-3 (12px)</p>
+        </div>
+        <div class="demo-box">
+          <div style="background: var(--color-primary); width: 100%; height: var(--space-4); margin-bottom: var(--space-2);"></div>
+          <p class="text-caption">space-4 (16px)</p>
+        </div>
+        <div class="demo-box">
+          <div style="background: var(--color-primary); width: 100%; height: var(--space-6); margin-bottom: var(--space-2);"></div>
+          <p class="text-caption">space-6 (24px)</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- BORDES Y SOMBRAS -->
+    <div class="section">
+      <h2>Bordes y Sombras</h2>
+      <div class="demo-grid">
+        <div style="padding: var(--space-4); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); box-shadow: var(--shadow-sm);">
+          <p class="text-caption">shadow-sm + radius-sm</p>
+        </div>
+        <div style="padding: var(--space-4); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); box-shadow: var(--shadow-md);">
+          <p class="text-caption">shadow-md + radius-md</p>
+        </div>
+        <div style="padding: var(--space-4); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);">
+          <p class="text-caption">shadow-lg + radius-lg</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESTADO FINAL -->
+    <div class="section" style="background: var(--color-success-bg); border: 2px solid var(--color-success);">
+      <p class="text-body text-success"><strong>✅ Design System Cargado Correctamente</strong></p>
+      <p class="text-body-sm">Si ves este mensaje con los colores correctos, los tokens y tipografía están funcionando sin romper nada.</p>
+    </div>
+  </div>
+</body>
+</html>
