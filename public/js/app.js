@@ -178,7 +178,7 @@ const app = {
     this.showPage('inicio');
 
     // Inicializar los módulos de tests (sin renderizar aún)
-    console.log('✓ Aplicación inicializada correctamente');
+    console.log('Aplicación inicializada correctamente');
   },
 
   /**
@@ -422,7 +422,7 @@ const app = {
     }
 
     if (!this.pacienteActivo) {
-      this.mostrarToast('❌ Primero debes crear o seleccionar un paciente', 'error');
+      this.mostrarToast('Primero debes crear o seleccionar un paciente', 'error');
       return;
     }
 
@@ -459,7 +459,7 @@ const app = {
           medicamentos: meds,
           observaciones: obs
         });
-        this.mostrarToast(`✓ Paciente ${nombre} actualizado correctamente`, 'success');
+        this.mostrarToast(`Paciente ${nombre} actualizado correctamente`, 'success');
       } else {
         // Si no hay ID, es creación
         paciente = await api.crearPaciente({
@@ -470,7 +470,7 @@ const app = {
           medicamentos: meds,
           observaciones: obs
         });
-        this.mostrarToast(`✓ Paciente ${nombre} registrado correctamente`, 'success');
+        this.mostrarToast(`Paciente ${nombre} registrado correctamente`, 'success');
       }
 
       this.pacienteActivo = paciente;
@@ -509,7 +509,7 @@ const app = {
   iniciarTestConPaciente(pageId) {
     if (!this.pacienteActivo) {
       // Mostrar mensaje y opción de crear paciente
-      this.mostrarToast('❌ Primero debes crear o seleccionar un paciente', 'error');
+      this.mostrarToast('Primero debes crear o seleccionar un paciente', 'error');
       return;
     }
 
@@ -618,7 +618,7 @@ const app = {
               }
             }
           });
-          console.log(`✓ Restauradas ${respuestasGuardadas.filter(r => r !== null).length} respuestas de Sección ${seccion}`);
+          console.log(`Restauradas ${respuestasGuardadas.filter(r => r !== null).length} respuestas de Sección ${seccion}`);
         }
       }, 100);
     }
@@ -646,7 +646,7 @@ const app = {
     if (actual && actual !== seccion) {
       if (!this.validarSeccionISRA(actual)) {
         const itemsTotal = actual === 'C' ? tests_isra.items.length : (actual === 'F' ? tests_isra_f.items.length : tests_isra_m.items.length);
-        this.mostrarToast(`⚠️ Completa todos los items de la Sección ${actual} (${itemsTotal} items)`, 'warning');
+        this.mostrarToast(`Completa todos los items de la Sección ${actual} (${itemsTotal} items)`, 'warning');
         return;
       }
 
@@ -656,7 +656,7 @@ const app = {
         `isra-${actual.toLowerCase()}`
       );
       this.israState[`datos${actual}`] = respuestasActual;
-      console.log(`✓ Guardadas respuestas ${actual}:`, respuestasActual.filter(r => r !== null).length, 'items');
+      console.log(`Guardadas respuestas ${actual}:`, respuestasActual.filter(r => r !== null).length, 'items');
     }
     this.mostrarSeccionISRA(seccion);
   },
@@ -674,7 +674,7 @@ const app = {
         actual === 'C' ? tests_isra.items : (actual === 'F' ? tests_isra_f.items : tests_isra_m.items),
         `isra-${actual.toLowerCase()}`
       ).filter(r => r !== null && r !== undefined).length;
-      this.mostrarToast(`⚠️ Faltan ${itemsTotal - respondidos} items por responder en Sección ${actual}`, 'warning');
+      this.mostrarToast(`Faltan ${itemsTotal - respondidos} items por responder en Sección ${actual}`, 'warning');
       return;
     }
 
@@ -775,7 +775,7 @@ const app = {
    */
   iniciarCUIDA() {
     if (!this.pacienteActivo) {
-      this.mostrarToast('❌ Primero debes crear o seleccionar un paciente', 'error');
+      this.mostrarToast('Primero debes crear o seleccionar un paciente', 'error');
       return;
     }
     tests_cuida.init();
@@ -964,7 +964,7 @@ const app = {
         btnFinish.style.opacity = '1';
         btnFinish.style.pointerEvents = 'auto';
         btnFinish.style.cursor = 'pointer';
-        btnFinish.textContent = '✓ Todas respondidas (338/338) - Validar T-scores →';
+        btnFinish.textContent = 'Todas respondidas (338/338) - Validar T-scores →';
         btnFinish.className = 'btn btn-primary btn-lg';
       } else {
         btnFinish.style.opacity = '0.35';
@@ -995,7 +995,7 @@ const app = {
             faltantes.push(j);
           }
         }
-        this.mostrarToast(`⚠️ Completa los ítems faltantes: ${faltantes.join(', ')}`, 'warning');
+        this.mostrarToast(`Completa los ítems faltantes: ${faltantes.join(', ')}`, 'warning');
         return false;
       }
     }
@@ -1048,7 +1048,7 @@ const app = {
     }
 
     if (respondidos < 338) {
-      this.mostrarToast(`⚠️ Faltan ${338 - respondidos} ítems por responder`, 'warning');
+      this.mostrarToast(`Faltan ${338 - respondidos} ítems por responder`, 'warning');
       return;
     }
 
@@ -1058,7 +1058,7 @@ const app = {
     this.mmpiState.datosRF = resultado.datos;
 
     // Mostrar mensaje de éxito
-    this.mostrarToast('✅ Resultados calculados exitosamente', 'success');
+    this.mostrarToast('Resultados calculados exitosamente', 'success');
 
     // Rellenar pestaña 1 (Ingreso de Datos) - resumen
     const datosResumen = document.getElementById('mmpi-datos-resumen');
@@ -1140,7 +1140,7 @@ const app = {
     if (interpContent) {
       interpContent.innerHTML = `
         <div style="padding: 16px; background: #f9f9f9; border-left: 4px solid #2c5aa0; border-radius: 4px; margin-bottom: 16px;">
-          <p style="margin: 0; color: #333; font-size: 13px;"><strong>⚠️ Nota Clínica:</strong> Este informe es una guía automática. La interpretación final siempre debe ser realizada por un psicólogo con formación en evaluación psicoló. El software no reemplaza el juicio clínico profesional.</p>
+          <p style="margin: 0; color: #333; font-size: 13px;"><strong>Nota Clínica:</strong> Este informe es una guía automática. La interpretación final siempre debe ser realizada por un psicólogo con formación en evaluación psicoló. El software no reemplaza el juicio clínico profesional.</p>
         </div>
         <div style="background: white; border-radius: 6px; border: 1px solid #ddd; padding: 16px;">
           <h4 style="margin: 0 0 12px 0; color: #2c5aa0;">Resumen de Interpretación</h4>
@@ -1333,7 +1333,7 @@ const app = {
       }
 
       const mensaje = nuevoEstado === 'oficial' ?
-        '✅ Prueba marcada como Oficial' :
+        'Prueba marcada como Oficial' :
         '📝 Prueba convertida a Borrador';
       this.mostrarToast(mensaje, 'success');
 
@@ -1371,7 +1371,7 @@ const app = {
         throw new Error(error.error || 'Error al eliminar');
       }
 
-      this.mostrarToast('✓ Prueba eliminada', 'success');
+      this.mostrarToast('Prueba eliminada', 'success');
 
       // Recargar expediente
       if (this.pacienteActivo) {
@@ -1401,7 +1401,7 @@ const app = {
     // Validar que todos los ítems tengan respuesta
     const sinResponder = test.validar();
     if (sinResponder.length > 0) {
-      this.mostrarToast(`⚠️ Complete los ítems: ${sinResponder.join(', ')}`, 'warning');
+      this.mostrarToast(`Complete los ítems: ${sinResponder.join(', ')}`, 'warning');
       return;
     }
 
@@ -1417,7 +1417,7 @@ const app = {
         resultado
       );
 
-      this.mostrarToast(`✓ ${test.nombre} guardado correctamente`, 'success');
+      this.mostrarToast(`${test.nombre} guardado correctamente`, 'success');
 
       // Mostrar reporte detallado con datos del paciente
       this.pruebaActual = pruebaGuardada;
@@ -1555,7 +1555,7 @@ const app = {
         }
 
         if (pdfBase64) {
-          console.log('✅ Mostrando PDF MMPI-2 desde base64');
+          console.log('Mostrando PDF MMPI-2 desde base64');
           console.log('   Tamaño base64:', pdfBase64.length);
 
           // Crear blob desde base64 (compatible con archivos grandes)
@@ -1569,7 +1569,7 @@ const app = {
             const blob = new Blob([bytes], { type: 'application/pdf' });
             const blobUrl = URL.createObjectURL(blob);
 
-            console.log('✅ Blob URL creado:', blobUrl);
+            console.log('Blob URL creado:', blobUrl);
 
             // Usar <object> en lugar de <iframe> para mejor compatibilidad
             contenido.innerHTML = `
@@ -1588,15 +1588,15 @@ const app = {
               btnDescargar.style.display = 'none';
             }
 
-            console.log('✅ Modal abierto con object tag');
+            console.log('Modal abierto con object tag');
             return;
           } catch (error) {
-            console.error('❌ Error al procesar PDF:', error);
+            console.error('Error al procesar PDF:', error);
             contenido.innerHTML = '<p style="color: red; padding: 20px;">Error al cargar PDF: ' + error.message + '</p>';
             modal.style.display = 'block';
           }
         } else {
-          console.log('❌ No se encontró pdf_base64');
+          console.log('No se encontró pdf_base64');
           console.log('   prueba.pdf_base64:', prueba.pdf_base64);
           console.log('   prueba.subescalas:', prueba.subescalas);
         }
@@ -1630,7 +1630,7 @@ const app = {
         }
 
         if (pdfBase64) {
-          console.log('✅ Mostrando PDF CUIDA desde base64');
+          console.log('Mostrando PDF CUIDA desde base64');
           console.log('   Tamaño base64:', pdfBase64.length);
 
           // Crear blob desde base64
@@ -1644,7 +1644,7 @@ const app = {
             const blob = new Blob([bytes], { type: 'application/pdf' });
             const blobUrl = URL.createObjectURL(blob);
 
-            console.log('✅ Blob URL creado:', blobUrl);
+            console.log('Blob URL creado:', blobUrl);
 
             // Mostrar PDF en viewer
             contenido.innerHTML = `
@@ -1657,10 +1657,10 @@ const app = {
             `;
             modal.classList.add('active');
 
-            console.log('✅ Modal abierto con PDF CUIDA');
+            console.log('Modal abierto con PDF CUIDA');
             return;
           } catch (error) {
-            console.error('❌ Error al procesar PDF CUIDA:', error);
+            console.error('Error al procesar PDF CUIDA:', error);
             contenido.innerHTML = '<p style="color: red; padding: 20px;">Error al cargar PDF: ' + error.message + '</p>';
             modal.classList.add('active');
           }
@@ -1768,9 +1768,9 @@ const app = {
       }
     }, 300);
 
-    console.log('✓ Reporte detallado renderizado');
+    console.log('Reporte detallado renderizado');
     } catch (error) {
-      console.error('❌ Error en mostrarReporteDetallado:', error);
+      console.error('Error en mostrarReporteDetallado:', error);
       this.mostrarToast(`Error al mostrar reporte: ${error.message}`, 'error');
     }
   },
@@ -1934,7 +1934,7 @@ const app = {
             const parentElement = canvasElement.parentNode;
             const containerHeight = parentElement.offsetHeight;
             parentElement.replaceChild(img, canvasElement);
-            console.log(`✓ Gráfico ISRA convertido a imagen (${containerHeight}px)`);
+            console.log(`Gráfico ISRA convertido a imagen (${containerHeight}px)`);
           }
         }, 500);  // 500ms para que Chart.js termine completamente
         return;
@@ -2047,7 +2047,7 @@ const app = {
             const parentElement = canvasElement.parentNode;
             const containerHeight = parentElement.offsetHeight;
             parentElement.replaceChild(img, canvasElement);
-            console.log(`✓ Gráfico SCID-II convertido a imagen (${containerHeight}px)`);
+            console.log(`Gráfico SCID-II convertido a imagen (${containerHeight}px)`);
           }
         }, 500);  // 500ms para que Chart.js termine completamente
         return;
@@ -2134,7 +2134,7 @@ const app = {
             const parentElement = canvasElement.parentNode;
             const containerHeight = parentElement.offsetHeight;
             parentElement.replaceChild(img, canvasElement);
-            console.log(`✓ Gráfico MMPI-2 convertido a imagen (${containerHeight}px)`);
+            console.log(`Gráfico MMPI-2 convertido a imagen (${containerHeight}px)`);
           }
         }, 500);  // 500ms para que Chart.js termine completamente
         return;
@@ -2224,11 +2224,11 @@ const app = {
           const containerHeight = parentElement.offsetHeight;
           parentElement.replaceChild(img, canvasElement);
           canvasElement.chartInstance.destroy();
-          console.log(`✓ Gráfico convertido a imagen (${containerHeight}px)`);
+          console.log(`Gráfico convertido a imagen (${containerHeight}px)`);
         }
       }, 500);  // 500ms para que Chart.js termine completamente
 
-      console.log('✓ Gráfica comparativa renderizada para', prueba.tipo);
+      console.log('Gráfica comparativa renderizada para', prueba.tipo);
     } catch (error) {
       console.error('Error al renderizar gráfica:', error);
     }
@@ -2305,7 +2305,7 @@ const app = {
             const parent = canvas.parentNode;
             const containerHeight = parent.offsetHeight; // Usar altura real del contenedor
             parent.replaceChild(img, canvas);
-            console.log(`✓ Gráfico de perfil convertido a imagen (${containerHeight}px)`);
+            console.log(`Gráfico de perfil convertido a imagen (${containerHeight}px)`);
           } catch (convertError) {
             console.warn('No se pudo convertir canvas a imagen:', convertError);
           }
@@ -2403,7 +2403,7 @@ const app = {
       svg.push(`</svg>`);
 
       container.innerHTML = svg.join('');
-      console.log('✓ Gráfico CUIDA SVG generado');
+      console.log('Gráfico CUIDA SVG generado');
 
     } catch (error) {
       console.error('Error al renderizar gráfico CUIDA:', error);
@@ -2497,7 +2497,7 @@ const app = {
           const containerHeight = parentElement.offsetHeight;
           parentElement.replaceChild(img, canvasElement);
           canvasElement.chartInstance.destroy();
-          console.log(`✓ Gráfico PCL-R convertido a imagen (${containerHeight}px)`);
+          console.log(`Gráfico PCL-R convertido a imagen (${containerHeight}px)`);
         }
       }, 500);  // 500ms para que Chart.js termine completamente
     } catch (error) {
@@ -2529,7 +2529,7 @@ const app = {
     if (!tieneData) {
       html = `
         <div style="margin: 10px 0; padding: 12px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 3px; color: #856404;">
-          <p style="margin: 0; font-size: 9px; font-weight: bold;">⚠️ Test sin completar</p>
+          <p style="margin: 0; font-size: 9px; font-weight: bold;">Test sin completar</p>
           <p style="margin: 4px 0 0 0; font-size: 8px;">Para visualizar resultados y gráficos comparativos, complete el cuestionario con todas las respuestas.</p>
         </div>
       `;
@@ -3484,7 +3484,7 @@ const app = {
     link.href = canvas.toDataURL('image/png');
     link.download = `grafica-${this.pruebaActual.tipo}-${Date.now()}.png`;
     link.click();
-    this.mostrarToast('✓ Gráfica descargada como PNG', 'success');
+    this.mostrarToast('Gráfica descargada como PNG', 'success');
   },
 
   /**
@@ -3500,7 +3500,7 @@ const app = {
     link.href = canvas.toDataURL('image/jpeg', 0.95);
     link.download = `grafica-${this.pruebaActual.tipo}-${Date.now()}.jpg`;
     link.click();
-    this.mostrarToast('✓ Gráfica descargada como JPG', 'success');
+    this.mostrarToast('Gráfica descargada como JPG', 'success');
   },
 
   /**
@@ -3533,7 +3533,7 @@ const app = {
       link.href = URL.createObjectURL(blob);
       link.download = `evaluacion-${prueba.tipo}-${Date.now()}.csv`;
       link.click();
-      this.mostrarToast('✓ Datos descargados como Excel', 'success');
+      this.mostrarToast('Datos descargados como Excel', 'success');
     } catch (error) {
       this.mostrarToast(`Error: ${error.message}`, 'error');
     }
@@ -3576,7 +3576,7 @@ const app = {
       link.href = URL.createObjectURL(blob);
       link.download = `evaluacion-${prueba.tipo}-validada-${Date.now()}.csv`;
       link.click();
-      this.mostrarToast('✓ Excel descargado con validación', 'success');
+      this.mostrarToast('Excel descargado con validación', 'success');
     } catch (error) {
       this.mostrarToast(`Error: ${error.message}`, 'error');
     }
@@ -3650,7 +3650,7 @@ const app = {
       link.href = URL.createObjectURL(blob);
       link.download = `evaluacion-${prueba.tipo}-${Date.now()}.doc`;
       link.click();
-      this.mostrarToast('✓ Reporte descargado como Word', 'success');
+      this.mostrarToast('Reporte descargado como Word', 'success');
     } catch (error) {
       this.mostrarToast(`Error: ${error.message}`, 'error');
     }
@@ -3716,7 +3716,7 @@ const app = {
           </table>
 
           <div class="validation">
-            <h3 style="margin-top: 0;">✓ VALIDACIÓN</h3>
+            <h3 style="margin-top: 0;">VALIDACIÓN</h3>
             <p><strong>Evaluador:</strong> ${datosValidacion.nombre}</p>
             <p><strong>Cédula/Licencia:</strong> ${datosValidacion.cedula}</p>
             <p><strong>Especialidad:</strong> ${datosValidacion.especialidad}</p>
@@ -3738,7 +3738,7 @@ const app = {
       link.href = URL.createObjectURL(blob);
       link.download = `evaluacion-${prueba.tipo}-validada-${Date.now()}.doc`;
       link.click();
-      this.mostrarToast('✓ Word validado descargado', 'success');
+      this.mostrarToast('Word validado descargado', 'success');
       this.cerrarValidacionProfesional();
     } catch (error) {
       this.mostrarToast(`Error: ${error.message}`, 'error');
@@ -3792,7 +3792,7 @@ const app = {
             document.body.removeChild(link);
             URL.revokeObjectURL(blobUrl);
 
-            this.mostrarToast('✅ PDF descargado correctamente', 'success');
+            this.mostrarToast('PDF descargado correctamente', 'success');
             return;
           } catch (error) {
             console.error('Error al descargar PDF MMPI-2:', error);
@@ -3836,7 +3836,7 @@ const app = {
             document.body.removeChild(link);
             URL.revokeObjectURL(blobUrl);
 
-            this.mostrarToast('✅ PDF descargado correctamente', 'success');
+            this.mostrarToast('PDF descargado correctamente', 'success');
             return;
           } catch (error) {
             console.error('Error al descargar PDF CUIDA:', error);
@@ -3883,7 +3883,7 @@ const app = {
           const validacionHTML = this.generarValidacionProfesional();
           if (validacionHTML) {
             validacionDiv.outerHTML = validacionHTML;
-            console.log('✓ Sección de validación actualizada');
+            console.log('Sección de validación actualizada');
           }
         }
       }
@@ -3896,7 +3896,7 @@ const app = {
 
         if (canvasOriginal && canvasClonado) {
           const imagenDataUrl = await this.capturarCanvasAltaResolucion(canvasOriginal);
-          console.log('✓ Canvas principal convertido a alta resolución');
+          console.log('Canvas principal convertido a alta resolución');
 
           // Detectar tipo de gráfico por el H4 anterior
           const h4Anterior = canvasClonado.parentNode?.previousElementSibling;
@@ -3915,7 +3915,7 @@ const app = {
           img.style.display = 'block';
 
           canvasClonado.parentNode.replaceChild(img, canvasClonado);
-          console.log(`✓ Canvas principal reemplazado por imagen (${alturaGrafico}px)`);
+          console.log(`Canvas principal reemplazado por imagen (${alturaGrafico}px)`);
         }
 
         // Convertir chart comparativo (PCL-R) - PATRÓN SCL-90R: altura 100%
@@ -3924,7 +3924,7 @@ const app = {
 
         if (canvasComparativoOriginal && canvasComparativoClonado) {
           const imagenComparativaUrl = await this.capturarCanvasAltaResolucion(canvasComparativoOriginal);
-          console.log('✓ Canvas comparativo PCL-R convertido a alta resolución');
+          console.log('Canvas comparativo PCL-R convertido a alta resolución');
 
           const imgComparativa = document.createElement('img');
           imgComparativa.src = imagenComparativaUrl;
@@ -3934,7 +3934,7 @@ const app = {
 
           const containerHeight = canvasComparativoClonado.parentNode?.offsetHeight;
           canvasComparativoClonado.parentNode.replaceChild(imgComparativa, canvasComparativoClonado);
-          console.log(`✓ Canvas comparativo reemplazado por imagen (${containerHeight}px)`);
+          console.log(`Canvas comparativo reemplazado por imagen (${containerHeight}px)`);
         }
 
         // Convertir gráfico de perfil (Paciente vs Población Normal) - PATRÓN SCL-90R: altura 100%
@@ -3943,7 +3943,7 @@ const app = {
 
         if (canvasPerfilOriginal && canvasPerfilClonado) {
           const imagenPerfilUrl = await this.capturarCanvasAltaResolucion(canvasPerfilOriginal);
-          console.log('✓ Canvas de perfil convertido a alta resolución');
+          console.log('Canvas de perfil convertido a alta resolución');
 
           const imgPerfil = document.createElement('img');
           imgPerfil.src = imagenPerfilUrl;
@@ -3953,7 +3953,7 @@ const app = {
 
           const containerHeight = canvasPerfilClonado.parentNode?.offsetHeight;
           canvasPerfilClonado.parentNode.replaceChild(imgPerfil, canvasPerfilClonado);
-          console.log(`✓ Canvas de perfil reemplazado por imagen (${containerHeight}px)`);
+          console.log(`Canvas de perfil reemplazado por imagen (${containerHeight}px)`);
         } else {
           console.warn('Canvas de perfil no encontrado - original:', !!canvasPerfilOriginal, 'clonado:', !!canvasPerfilClonado);
         }
@@ -3964,7 +3964,7 @@ const app = {
 
         if (canvasCUIDAsync && canvasCUIDClonado) {
           const imagenCUIDUrl = await this.capturarCanvasAltaResolucion(canvasCUIDAsync);
-          console.log('✓ Canvas CUIDA convertido a alta resolución');
+          console.log('Canvas CUIDA convertido a alta resolución');
 
           const imgCUIDA = document.createElement('img');
           imgCUIDA.src = imagenCUIDUrl;
@@ -3976,7 +3976,7 @@ const app = {
           imgCUIDA.style.margin = '10px 0';
 
           canvasCUIDClonado.parentNode.replaceChild(imgCUIDA, canvasCUIDClonado);
-          console.log('✓ Canvas CUIDA reemplazado por imagen (250px)');
+          console.log('Canvas CUIDA reemplazado por imagen (250px)');
         }
       } catch (canvasError) {
         console.warn('Advertencia: no se pudo procesar los canvas:', canvasError.message);
@@ -3996,10 +3996,10 @@ const app = {
       const html2pdf = window.html2pdf;
       await html2pdf().set(opt).from(elemento).save();
 
-      console.log('✓ PDF generado exitosamente');
-      this.mostrarToast('✓ PDF descargado correctamente', 'success');
+      console.log('PDF generado exitosamente');
+      this.mostrarToast('PDF descargado correctamente', 'success');
     } catch (error) {
-      console.error('❌ Error al generar PDF:', error);
+      console.error('Error al generar PDF:', error);
       this.mostrarToast(`Error: ${error.message}`, 'error');
     }
   },
@@ -4080,7 +4080,7 @@ const app = {
       fecha: new Date().toLocaleDateString('es-CO')
     };
 
-    this.mostrarToast('✓ Datos profesionales registrados. Generando PDF...', 'success');
+    this.mostrarToast('Datos profesionales registrados. Generando PDF...', 'success');
     this.cerrarValidacionProfesional();
 
     // Generar PDF con los datos de validación
@@ -4317,7 +4317,7 @@ const app = {
       const statusEl = document.getElementById('detail-status');
       if (statusEl) {
         const statusBadgeClass = paciente.status === 'activo' ? 'badge-success' : 'badge-warning';
-        const statusText = paciente.status === 'activo' ? '✓ Activo' : '⏸ En pausa';
+        const statusText = paciente.status === 'activo' ? 'Activo' : '⏸ En pausa';
         statusEl.innerHTML = `<span class="badge ${statusBadgeClass}">${statusText}</span>`;
       }
 
@@ -4396,7 +4396,7 @@ const app = {
       this.pacienteActivo = pacienteActualizado;
       localStorage.setItem('pacienteActivo', JSON.stringify(pacienteActualizado));
 
-      this.mostrarToast(`✓ Datos de ${nombre} actualizados correctamente`, 'success');
+      this.mostrarToast(`Datos de ${nombre} actualizados correctamente`, 'success');
       this.cerrarModalEdicion();
 
       // Actualizar la vista
@@ -4561,7 +4561,7 @@ const app = {
       const icono = iconos[prueba.tipo] || '📋';
       const nombre = nombres[prueba.tipo] || prueba.tipo;
       const estado = prueba.estado || 'borrador';
-      const estadoLabel = estado === 'oficial' ? '✅ Oficial' : '📝 Borrador';
+      const estadoLabel = estado === 'oficial' ? 'Oficial' : '📝 Borrador';
       const estadoColor = estado === 'oficial' ? '#276749' : '#d97706';
 
       // Generar interpretación basada en la puntuación
@@ -4607,7 +4607,7 @@ const app = {
             ` : ''}
             ${estado === 'borrador' ? `
               <button class="btn-estado btn-oficial" onclick="app.cambiarEstadoPrueba(${prueba.id}, 'oficial')">
-                ✓ Marcar Oficial
+                Marcar Oficial
               </button>
               <button class="btn-eliminar" onclick="app.eliminarPrueba(${prueba.id})">
                 🗑️ Eliminar
@@ -4710,19 +4710,19 @@ const app = {
 
     // Validaciones
     if (!nombre) {
-      this.mostrarToast('❌ El nombre es requerido', 'error');
+      this.mostrarToast('El nombre es requerido', 'error');
       document.getElementById('crear-nombre').focus();
       return;
     }
 
     if (!edad || edad < 0 || edad > 150) {
-      this.mostrarToast('❌ Ingresa una edad válida (0-150)', 'error');
+      this.mostrarToast('Ingresa una edad válida (0-150)', 'error');
       document.getElementById('crear-edad').focus();
       return;
     }
 
     if (!sexo) {
-      this.mostrarToast('❌ Selecciona un sexo', 'error');
+      this.mostrarToast('Selecciona un sexo', 'error');
       document.getElementById('crear-sexo').focus();
       return;
     }
@@ -4738,7 +4738,7 @@ const app = {
         observaciones: notas || null
       });
 
-      this.mostrarToast(`✅ Paciente "${nombre}" creado correctamente`, 'success');
+      this.mostrarToast(`Paciente "${nombre}" creado correctamente`, 'success');
 
       // Cerrar modal
       this.cerrarModalCrearPaciente();
@@ -4754,7 +4754,7 @@ const app = {
 
     } catch (error) {
       console.error('Error al crear paciente:', error);
-      this.mostrarToast(`❌ Error: ${error.message}`, 'error');
+      this.mostrarToast(`Error: ${error.message}`, 'error');
     }
   },
 

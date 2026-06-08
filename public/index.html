@@ -52,53 +52,41 @@
   <nav class="nav-menu">
     <div id="paciente-sidebar-container"></div>
     <button class="nav-item active" data-page="inicio" onclick="app.showPage('inicio')">
-      <span class="icon">🏠</span>
       <span class="label">Inicio</span>
     </button>
     <button class="nav-item" onclick="app.mostrarModalCrearPaciente()">
-      <span class="icon">➕</span>
-      <span class="label">Crear Paciente</span>
+      <span class="label">+ Crear Paciente</span>
     </button>
     <button class="nav-item" data-page="expedientes" onclick="app.showPage('expedientes')">
-      <span class="icon">📋</span>
       <span class="label">Expedientes</span>
     </button>
     <div class="nav-divider">Tests Disponibles</div>
     <button class="nav-item" data-page="scl90r" onclick="app.iniciarTestConPaciente('scl90r')">
-      <span class="icon">📊</span>
       <span class="label">SCL-90-R</span>
     </button>
     <button class="nav-item" data-page="hamilton" onclick="app.iniciarTestConPaciente('hamilton')">
-      <span class="icon">😔</span>
       <span class="label">Hamilton (HAM-D)</span>
     </button>
     <button class="nav-item" data-page="mmpi-pro" onclick="app.abrirMMPI2Pro()">
-      <span class="icon">✨</span>
-      <span class="label">MMPI-2 PRO (Micro Sitio)</span>
+      <span class="label">MMPI-2 PRO</span>
     </button>
     <button class="nav-item" data-page="cuida" onclick="app.iniciarCUIDA()">
-      <span class="icon">👥</span>
-      <span class="label">CUIDA (Cuidadores)</span>
+      <span class="label">CUIDA</span>
     </button>
     <button class="nav-item" data-page="isra" onclick="app.iniciarTestConPaciente('isra')">
-      <span class="icon">🧠</span>
-      <span class="label">ISRA (C+F+M)</span>
+      <span class="label">ISRA</span>
     </button>
     <button class="nav-item" data-page="tds" onclick="app.iniciarTestConPaciente('tds')">
-      <span class="icon">😴</span>
-      <span class="label">TDS (Sueño)</span>
+      <span class="label">TDS</span>
     </button>
     <button class="nav-item" data-page="pclr" onclick="app.iniciarTestConPaciente('pclr')">
-      <span class="icon">⚠️</span>
-      <span class="label">PCL-R (Psicopatía)</span>
+      <span class="label">PCL-R</span>
     </button>
     <button class="nav-item" data-page="egep5" onclick="app.iniciarTestConPaciente('egep5')">
-      <span class="icon">🚨</span>
-      <span class="label">EGEP-5 (TEPT)</span>
+      <span class="label">EGEP-5</span>
     </button>
     <button class="nav-item" data-page="scid2" onclick="app.iniciarTestConPaciente('scid2')">
-      <span class="icon">🧬</span>
-      <span class="label">SCID-II (Personalidad)</span>
+      <span class="label">SCID-II</span>
     </button>
   </nav>
 </aside>
@@ -121,7 +109,6 @@
         <div class="dashboard-card card card-default">
           <div class="card-header">
             <span class="card-title">Pacientes Recientes</span>
-            <span class="card-icon">👥</span>
           </div>
           <div id="pacientes-recientes" class="pacientes-list">
             <p class="empty-state">Cargando pacientes...</p>
@@ -132,7 +119,6 @@
         <div class="dashboard-card card card-default">
           <div class="card-header">
             <span class="card-title">Resumen General</span>
-            <span class="card-icon">📊</span>
           </div>
           <div id="dashboard-stats" class="dashboard-stats">
             <div class="stat-item">
@@ -158,7 +144,6 @@
             <div class="card-title" id="chart-title">Comparativa SCL-90-R</div>
             <p class="chart-subtitle" id="chart-subtitle">vs. Norma poblacional</p>
           </div>
-          <span class="card-icon">📈</span>
         </div>
         <div id="dashboard-chart-container" class="chart-container">
           <!-- Se llena dinámicamente -->
@@ -187,7 +172,7 @@
               </div>
             </div>
             <button class="btn btn-secondary" id="btn-editar-paciente" onclick="app.abrirEdicionPaciente()">
-              ✏️ Editar
+              Editar
             </button>
           </div>
           <div class="paciente-data-grid-horizontal">
@@ -226,7 +211,7 @@
       <!-- Botones de Acción -->
       <div class="expediente-actions">
         <button class="btn btn-primary" onclick="app.iniciarTestConPaciente('scl90r')">
-          ➕ Realizar Nuevo Test
+          + Realizar Nuevo Test
         </button>
       </div>
     </div>
@@ -238,7 +223,7 @@
       <h2 class="text-display-md">Expedientes Clínicos</h2>
       <div class="search-bar">
         <input type="text" id="search-input" placeholder="Buscar paciente por nombre..." aria-label="Buscar paciente">
-        <button class="btn btn-secondary btn-sm" title="Buscar" aria-label="Buscar">🔍</button>
+        <button class="btn btn-secondary btn-sm" title="Buscar" aria-label="Buscar">Buscar</button>
       </div>
     </div>
 
