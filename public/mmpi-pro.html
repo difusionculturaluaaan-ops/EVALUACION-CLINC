@@ -2011,26 +2011,21 @@ function finishTest() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Detectar si se está cargando desde expediente (modo=cargar)
-const paramsInit = new URLSearchParams(window.location.search);
-const modoCargarInit = paramsInit.get('modo') === 'cargar';
+// Inicializar parámetros
+obtenerParametrosURL();
 
-if (modoCargarInit) {
-  // IIFE async para cargar desde expediente
+// Si modo=cargar, esperar a que cargue antes de construir interfaz
+if (modoCargar && pruebaId) {
   (async () => {
-    obtenerParametrosURL();
     await loadData();
     buildItemsGrid();
     buildTestPages();
     syncTestProgress();
-
-    // Calcular y mostrar resultados
     calcAll();
     showTab('resultados');
   })();
 } else {
   // Flujo normal: inicializar para nuevo test
-  obtenerParametrosURL();
   loadData();
   buildItemsGrid();
   buildTestPages();
