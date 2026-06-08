@@ -4525,13 +4525,13 @@ const app = {
     }
 
     const iconos = {
-      'SCL90R': '📊',
-      'HAMILTON': '😔',
-      'MMPI2': '🧠',
-      'ISRA': '😰',
-      'TDS': '😴',
-      'PCLR': '⚠️',
-      'EGEP5': '🚨'
+      'SCL90R': '■',
+      'HAMILTON': '●',
+      'MMPI2': '▲',
+      'ISRA': '◆',
+      'TDS': '★',
+      'PCLR': '◇',
+      'EGEP5': '◌'
     };
 
     const nombres = {
@@ -4561,7 +4561,7 @@ const app = {
       const icono = iconos[prueba.tipo] || '📋';
       const nombre = nombres[prueba.tipo] || prueba.tipo;
       const estado = prueba.estado || 'borrador';
-      const estadoLabel = estado === 'oficial' ? 'Oficial' : '📝 Borrador';
+      const estadoLabel = estado === 'oficial' ? 'Oficial' : 'Borrador';
       const estadoColor = estado === 'oficial' ? '#276749' : '#d97706';
 
       // Generar interpretación basada en la puntuación
@@ -4614,7 +4614,7 @@ const app = {
               </button>
             ` : `
               <button class="btn-estado btn-borrador" onclick="app.cambiarEstadoPrueba(${prueba.id}, 'borrador')">
-                ↩️ Convertir a Borrador
+                Convertir a Borrador
               </button>
             `}
           </div>
