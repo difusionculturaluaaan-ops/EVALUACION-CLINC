@@ -1400,17 +1400,17 @@ function obtenerParametrosURL() {
   return pacienteId;
 }
 
-function loadData() {
+async function loadData() {
   try {
     // Si modo=cargar, cargar evaluación guardada
     if (modoCargar && pruebaId) {
-      cargarEvaluacionMMPI();
+      await cargarEvaluacionMMPI();
       return;
     }
 
     // Si hay paciente_id en URL, cargar datos del paciente automáticamente
     if (pacienteId) {
-      cargarDatosPaciente();
+      await cargarDatosPaciente();
     } else {
       console.log('⚠️ Sin paciente_id, formulario vacío');
       // Limpiar localStorage al iniciar nuevo test
@@ -1507,14 +1507,6 @@ async function cargarEvaluacionMMPI() {
     // Desabilitar campos para lectura
     document.getElementById('inp-nombre').disabled = true;
     document.getElementById('inp-edad').disabled = true;
-
-    // Mostrar tab de resultados
-    showTab('resultados');
-
-    // Calcular automáticamente
-    setTimeout(() => {
-      calcAll();
-    }, 500);
 
     console.log('✓ Evaluación cargada correctamente');
   } catch (error) {
@@ -2019,11 +2011,20 @@ function finishTest() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-obtenerParametrosURL();
-loadData();
-buildItemsGrid();
-buildTestPages();
-syncTestProgress();
+// Inicialización async
+(async () => {
+  obtenerParametrosURL();
+  await loadData();
+  buildItemsGrid();
+  buildTestPages();
+  syncTestProgress();
+
+  // Si es modo cargar, calcular y mostrar resultados
+  if (modoCargar && pruebaId) {
+    calcAll();
+    showTab('resultados');
+  }
+})();
 
 // ────────────────────────────────────────────────────────────────────────────
 // GENERAR PDF COMPLETO
