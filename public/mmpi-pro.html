@@ -1515,7 +1515,12 @@ async function cargarEvaluacionMMPI() {
     }
 
     // Cargar datos adicionales del objeto subescalas si contiene metadatos
-    const metadatos = prueba.subescalas?._metadatos || {};
+    let subescalasObj = prueba.subescalas;
+    if (typeof subescalasObj === 'string') {
+      subescalasObj = JSON.parse(subescalasObj);
+    }
+    const metadatos = subescalasObj?._metadatos || {};
+    console.log('📥 Metadatos cargados:', metadatos);
     document.getElementById('inp-nombre').value = metadatos.nombre || '';
     document.getElementById('inp-fecha').value = metadatos.fecha || '';
     document.getElementById('inp-cargo').value = metadatos.cargo || '';
@@ -1719,20 +1724,28 @@ async function guardarEnExpediente() {
     });
 
     // 3. Guardar prueba CON base64 del PDF
+    const bodyToSend = {
+      paciente_id: pacienteId,
+      tipo: 'MMPI2',
+      data: responses.slice(1),
+      total: calcResults.reduce((sum, r) => sum + r.pd, 0),
+      subescalas: subescalas,
+      pdf_base64: pdfBase64
+    };
+    console.log('📤 Enviando a servidor:', {
+      paciente_id: bodyToSend.paciente_id,
+      tipo: bodyToSend.tipo,
+      respuestas: bodyToSend.data.length,
+      metadatos: bodyToSend.subescalas._metadatos
+    });
+
     const response = await fetch('/api/pruebas', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
       },
-      body: JSON.stringify({
-        paciente_id: pacienteId,
-        tipo: 'MMPI2',
-        data: responses.slice(1),
-        total: calcResults.reduce((sum, r) => sum + r.pd, 0),
-        subescalas: subescalas,
-        pdf_base64: pdfBase64  // Guardar PDF como base64 directamente
-      })
+      body: JSON.stringify(bodyToSend)
     });
 
     if (!response.ok) {
