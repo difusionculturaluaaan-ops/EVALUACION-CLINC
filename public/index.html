@@ -118,7 +118,7 @@
       <!-- Grid de tarjetas -->
       <div class="dashboard-grid">
         <!-- Pacientes Recientes -->
-        <div class="dashboard-card">
+        <div class="dashboard-card card card-default">
           <div class="card-header">
             <span class="card-title">Pacientes Recientes</span>
             <span class="card-icon">👥</span>
@@ -129,7 +129,7 @@
         </div>
 
         <!-- Próxima Sesión / Estadísticas -->
-        <div class="dashboard-card">
+        <div class="dashboard-card card card-default">
           <div class="card-header">
             <span class="card-title">Resumen General</span>
             <span class="card-icon">📊</span>
@@ -152,7 +152,7 @@
       </div>
 
       <!-- Gráfica Comparativa (se muestra si hay datos) -->
-      <div id="dashboard-chart-section" class="dashboard-card" style="display: none;">
+      <div id="dashboard-chart-section" class="dashboard-card card card-default" style="display: none;">
         <div class="card-header">
           <div>
             <div class="card-title" id="chart-title">Comparativa SCL-90-R</div>
@@ -259,7 +259,7 @@
   <!-- Página: Nueva Ficha -->
   <section id="page-nuevo" class="page">
     <div class="card">
-      <h2 id="form-titulo">Crear Nueva Ficha de Paciente</h2>
+      <h2 id="form-titulo" class="text-heading">Crear Nueva Ficha de Paciente</h2>
       <form id="form-paciente" onsubmit="return false;">
         <div class="form-group">
           <label for="f-nombre" class="input-label">Nombre Completo *</label>
@@ -282,7 +282,7 @@
           </div>
           <div class="form-group">
             <label for="f-civil" class="input-label">Estado Civil</label>
-            <select id="f-civil">
+            <select id="f-civil" class="input-field">
               <option value="">Seleccionar...</option>
               <option value="Soltero/a">Soltero/a</option>
               <option value="Casado/a">Casado/a</option>
@@ -295,7 +295,7 @@
 
         <div class="form-group">
           <label for="f-meds" class="input-label">Medicamentos / Sustancias</label>
-          <input type="text" id="f-meds" placeholder="Ej: Sertraline 100mg, Alprazolam PRN...">
+          <input type="text" id="f-meds" class="input-field" placeholder="Ej: Sertraline 100mg, Alprazolam PRN...">
         </div>
 
         <div class="form-group">
@@ -498,18 +498,18 @@
     <div class="modal-body">
       <form id="form-editar-paciente" onsubmit="return false;">
         <div class="form-group">
-          <label for="edit-nombre">Nombre Completo *</label>
+          <label for="edit-nombre" class="input-label">Nombre Completo *</label>
           <input type="text" id="edit-nombre" class="input-field" placeholder="Nombre y apellidos" required>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label for="edit-edad">Edad</label>
+            <label for="edit-edad" class="input-label">Edad</label>
             <input type="number" id="edit-edad" class="input-field" placeholder="0" min="0" max="120">
           </div>
           <div class="form-group">
-            <label for="edit-sexo">Sexo</label>
-            <select id="edit-sexo">
+            <label for="edit-sexo" class="input-label">Sexo</label>
+            <select id="edit-sexo" class="input-field">
               <option value="">Seleccionar...</option>
               <option value="Masculino">Masculino</option>
               <option value="Femenino">Femenino</option>
@@ -517,8 +517,8 @@
             </select>
           </div>
           <div class="form-group">
-            <label for="edit-civil">Estado Civil</label>
-            <select id="edit-civil">
+            <label for="edit-civil" class="input-label">Estado Civil</label>
+            <select id="edit-civil" class="input-field">
               <option value="">Seleccionar...</option>
               <option value="Soltero/a">Soltero/a</option>
               <option value="Casado/a">Casado/a</option>
@@ -530,12 +530,12 @@
         </div>
 
         <div class="form-group">
-          <label for="edit-meds">Medicamentos / Sustancias</label>
+          <label for="edit-meds" class="input-label">Medicamentos / Sustancias</label>
           <input type="text" id="edit-meds" class="input-field" placeholder="Ej: Sertraline 100mg, Alprazolam PRN...">
         </div>
 
         <div class="form-group">
-          <label for="edit-obs">Motivo de Consulta / Observaciones</label>
+          <label for="edit-obs" class="input-label">Motivo de Consulta / Observaciones</label>
           <textarea id="edit-obs" class="input-field" rows="4" placeholder="Contexto clínico, antecedentes relevantes..."></textarea>
         </div>
       </form>
