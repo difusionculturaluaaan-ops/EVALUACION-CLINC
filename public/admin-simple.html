@@ -42,7 +42,7 @@
 
   <div class="container">
     <div class="header">
-      <h1>🏥 Admin - Crear Tenants</h1>
+      <h1>Admin - Crear Tenants</h1>
       <p id="user-info">Cargando...</p>
     </div>
 
@@ -160,7 +160,7 @@
 
         const result = await response.json();
         console.log('Tenant creado:', result);
-        mostrarMensaje(`✓ Tenant "${nombre}" creado exitosamente con admin "${adminNombre}"`, 'success');
+        mostrarMensaje(`Tenant "${nombre}" creado exitosamente con admin "${adminNombre}"`, 'success');
         document.getElementById('nombre').value = '';
         document.getElementById('slug').value = '';
         document.getElementById('email').value = '';
@@ -171,7 +171,7 @@
         setTimeout(() => cargarTenants(), 500);
       } catch (error) {
         console.error('Error creando tenant:', error);
-        mostrarMensaje('❌ ' + error.message, 'error');
+        mostrarMensaje('Error: ' + error.message, 'error');
       }
     }
 
@@ -195,7 +195,7 @@
           <div class="tenant-item">
             <div class="tenant-info">
               <div style="display: flex; gap: 15px; align-items: flex-start;">
-                ${t.logo_url ? `<img src="${t.logo_url}" class="logo-preview" style="width: 50px; height: 50px;">` : `<div class="logo-preview" style="width: 50px; height: 50px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 24px;">📷</div>`}
+                ${t.logo_url ? `<img src="${t.logo_url}" class="logo-preview" style="width: 50px; height: 50px;">` : `<div class="logo-preview" style="width: 50px; height: 50px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #999;">Sin logo</div>`}
                 <div style="flex: 1;">
                   <div class="tenant-name">${t.nombre}</div>
                   <div class="tenant-email">${t.email_contacto || 'Sin email'}</div>
@@ -204,7 +204,7 @@
               </div>
             </div>
             <div class="tenant-actions">
-              <button class="btn" onclick="abrirModalLogo(${t.id}, '${t.nombre}')" style="background: #28a745;">📸 Logo</button>
+              <button class="btn" onclick="abrirModalLogo(${t.id}, '${t.nombre}')" style="background: #28a745;">Logo</button>
               <button class="btn btn-danger" onclick="deleteTenant(${t.id}, '${t.nombre}')">Eliminar</button>
             </div>
           </div>
@@ -225,10 +225,10 @@
 
         if (!response.ok) throw new Error('Error al eliminar');
 
-        mostrarMensaje(`✓ Tenant eliminado`, 'success');
+        mostrarMensaje(`Tenant eliminado`, 'success');
         cargarTenants();
       } catch (error) {
-        mostrarMensaje('❌ ' + error.message, 'error');
+        mostrarMensaje('Error: ' + error.message, 'error');
       }
     }
 
@@ -280,13 +280,13 @@
       const file = fileInput.files[0];
 
       if (!file) {
-        mostrarMensaje('❌ Selecciona una imagen', 'error');
+        mostrarMensaje('Selecciona una imagen', 'error');
         return;
       }
 
       // Validar tamaño
       if (file.size > 2 * 1024 * 1024) {
-        mostrarMensaje('❌ Imagen muy grande (máximo 2MB)', 'error');
+        mostrarMensaje('Imagen muy grande (máximo 2MB)', 'error');
         return;
       }
 
@@ -309,14 +309,14 @@
             throw new Error(error.error || 'Error al subir logo');
           }
 
-          mostrarMensaje('✓ Logo subido exitosamente', 'success');
+          mostrarMensaje('Logo subido exitosamente', 'success');
           cerrarModalLogo();
           setTimeout(() => cargarTenants(), 500);
         };
         reader.readAsDataURL(file);
       } catch (error) {
         console.error('Error subiendo logo:', error);
-        mostrarMensaje('❌ ' + error.message, 'error');
+        mostrarMensaje('Error: ' + error.message, 'error');
       }
     }
   </script>
