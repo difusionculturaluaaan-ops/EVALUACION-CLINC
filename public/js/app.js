@@ -2383,7 +2383,7 @@ const app = {
         // Marcas verticales
         for (let i = 0; i <= 4; i++) {
           const xPos = barStartX + (barWidth * i / 4);
-          svg.push(`<line x1="${xPos}" y1="${y + 2}" x2="${xPos}" y2="${y + barHeight - 2}" stroke="rgba(255,255,255,0.7)" stroke-width="1"/>`);
+          svg.push(`<line x1="${xPos}" y1="${y + 2}" x2="${xPos}" y2="${y + barHeight - 2}" stroke="#64748b" stroke-width="1.5"/>`);
         }
 
         // Punto azul indicador del eneatipo
