@@ -137,13 +137,13 @@ const expedientes = {
           </div>
           <div class="expediente-actions">
             <button class="btn-icon" data-id="${paciente.id}" data-accion="editar" title="Editar">
-              Editar
+              ✎
             </button>
             <button class="btn-icon" data-id="${paciente.id}" data-accion="toggle" title="${paciente.status === 'standby' ? 'Reactivar' : 'Pausar'}">
-              ${paciente.status === 'standby' ? 'Reactivar' : 'Pausar'}
+              ${paciente.status === 'standby' ? '▶' : '⏸'}
             </button>
             <button class="btn-icon btn-icon-danger" data-id="${paciente.id}" data-accion="eliminar" title="Eliminar paciente">
-              Eliminar
+              ✕
             </button>
           </div>
         </div>
