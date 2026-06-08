@@ -810,7 +810,7 @@ const app = {
       header.style.cssText = 'background: #f9f9f9; padding: 12px 16px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center;';
       header.innerHTML = `
         <h3 style="margin: 0; font-size: 14px; color: #2c5aa0; font-weight: bold;">Ítems ${inicio} - ${fin}</h3>
-        <span style="font-size: 11px; color: #999;">Página ${pag + 1} de ${totalPaginas}</span>
+        <span style="font-size: 11px; color: var(--color-text-muted);">Página ${pag + 1} de ${totalPaginas}</span>
       `;
       card.appendChild(header);
 
@@ -844,15 +844,15 @@ const app = {
     const respuestaActual = localStorage.getItem(`mmpi_r${itemNum}`) || '';
 
     itemEl.innerHTML = `
-      <div style="font-family: monospace; font-size: 10px; color: #999; text-align: right; line-height: 1;">${itemNum}.</div>
-      <div style="font-size: 13px; line-height: 1.5; color: #333;">${textoItem}</div>
+      <div style="font-family: monospace; font-size: 10px; color: var(--color-text-muted); text-align: right; line-height: 1;">${itemNum}.</div>
+      <div style="font-size: 13px; line-height: 1.5; color: var(--color-text);">${textoItem}</div>
       <div style="display: flex; gap: 6px; justify-content: flex-end;">
         <button type="button" class="vf-btn ${respuestaActual === 'V' ? 'sel-v' : ''}"
           onclick="app.marcarRespuestaMMPI(${itemNum}, 'V')"
-          style="width: 38px; height: 34px; border-radius: 4px; border: 1px solid #ddd; background: #fff; color: #666; font-family: monospace; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.12s;">V</button>
+          style="width: 38px; height: 34px; border-radius: 4px; border: 1px solid #ddd; background: #fff; color: var(--color-text-secondary); font-family: monospace; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.12s;">V</button>
         <button type="button" class="vf-btn ${respuestaActual === 'F' ? 'sel-f' : ''}"
           onclick="app.marcarRespuestaMMPI(${itemNum}, 'F')"
-          style="width: 38px; height: 34px; border-radius: 4px; border: 1px solid #ddd; background: #fff; color: #666; font-family: monospace; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.12s;">F</button>
+          style="width: 38px; height: 34px; border-radius: 4px; border: 1px solid #ddd; background: #fff; color: var(--color-text-secondary); font-family: monospace; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.12s;">F</button>
       </div>
     `;
 
@@ -1066,19 +1066,19 @@ const app = {
       const now = new Date().toLocaleDateString('es-ES');
       datosResumen.innerHTML = `
         <div>
-          <label style="font-size: 11px; color: #999; text-transform: uppercase; font-weight: 600;">Paciente</label>
-          <p style="margin: 4px 0 0 0; color: #333;">${this.pacienteActivo?.nombre || 'Paciente'}</p>
+          <label style="font-size: 11px; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600;">Paciente</label>
+          <p style="margin: 4px 0 0 0; color: var(--color-text);">${this.pacienteActivo?.nombre || 'Paciente'}</p>
         </div>
         <div>
-          <label style="font-size: 11px; color: #999; text-transform: uppercase; font-weight: 600;">Fecha de Evaluación</label>
-          <p style="margin: 4px 0 0 0; color: #333;">${now}</p>
+          <label style="font-size: 11px; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600;">Fecha de Evaluación</label>
+          <p style="margin: 4px 0 0 0; color: var(--color-text);">${now}</p>
         </div>
         <div>
-          <label style="font-size: 11px; color: #999; text-transform: uppercase; font-weight: 600;">Total de Items</label>
-          <p style="margin: 4px 0 0 0; color: #333;">338</p>
+          <label style="font-size: 11px; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600;">Total de Items</label>
+          <p style="margin: 4px 0 0 0; color: var(--color-text);">338</p>
         </div>
         <div>
-          <label style="font-size: 11px; color: #999; text-transform: uppercase; font-weight: 600;">Items Respondidos</label>
+          <label style="font-size: 11px; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600;">Items Respondidos</label>
           <p style="margin: 4px 0 0 0; color: #27ae60; font-weight: 600;">338</p>
         </div>
       `;
@@ -1127,9 +1127,9 @@ const app = {
       perfilContent.innerHTML = `
         <div style="text-align: center; padding: 40px;">
           <p style="font-size: 14px; font-weight: 600; color: #2c5aa0;">Perfil Gráfico MMPI-2-RF</p>
-          <p style="color: #999; font-size: 12px; margin: 12px 0;">Gráfico de barras con comparación de escalas</p>
+          <p style="color: var(--color-text-muted); font-size: 12px; margin: 12px 0;">Gráfico de barras con comparación de escalas</p>
           <div style="background: #f0f0f0; height: 250px; border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-top: 20px;">
-            <p style="color: #999;">Visualización en desarrollo</p>
+            <p style="color: var(--color-text-muted);">Visualización en desarrollo</p>
           </div>
         </div>
       `;
@@ -1140,15 +1140,15 @@ const app = {
     if (interpContent) {
       interpContent.innerHTML = `
         <div style="padding: 16px; background: #f9f9f9; border-left: 4px solid #2c5aa0; border-radius: 4px; margin-bottom: 16px;">
-          <p style="margin: 0; color: #333; font-size: 13px;"><strong>Nota Clínica:</strong> Este informe es una guía automática. La interpretación final siempre debe ser realizada por un psicólogo con formación en evaluación psicoló. El software no reemplaza el juicio clínico profesional.</p>
+          <p style="margin: 0; color: var(--color-text); font-size: 13px;"><strong>Nota Clínica:</strong> Este informe es una guía automática. La interpretación final siempre debe ser realizada por un psicólogo con formación en evaluación psicoló. El software no reemplaza el juicio clínico profesional.</p>
         </div>
         <div style="background: white; border-radius: 6px; border: 1px solid #ddd; padding: 16px;">
           <h4 style="margin: 0 0 12px 0; color: #2c5aa0;">Resumen de Interpretación</h4>
-          <p style="color: #666; font-size: 13px; line-height: 1.6;">
+          <p style="color: var(--color-text-secondary); font-size: 13px; line-height: 1.6;">
             Se han calculado automáticamente los puntajes T de las 49 escalas del MMPI-2-RF basados en las 338 respuestas proporcionadas.
             Cada escala proporciona información sobre diferentes aspectos de la personalidad y sintomatología psicológica del evaluado.
           </p>
-          <p style="color: #666; font-size: 13px; margin-top: 12px; line-height: 1.6;">
+          <p style="color: var(--color-text-secondary); font-size: 13px; margin-top: 12px; line-height: 1.6;">
             Los resultados pueden ser revisados en la pestaña de "Resultados". Para una interpretación detallada de cada escala,
             consulte con el profesional evaluador.
           </p>
@@ -1684,7 +1684,7 @@ const app = {
     }
 
     let html = `
-      <div class="reporte-carta" style="font-family: Arial, sans-serif; color: #333; line-height: 1.2; max-width: 21.59cm; margin: 0 auto; padding: 1.27cm;">
+      <div class="reporte-carta" style="font-family: Arial, sans-serif; color: var(--color-text); line-height: 1.2; max-width: 21.59cm; margin: 0 auto; padding: 1.27cm;">
         <!-- ENCABEZADO PROFESIONAL -->
         <div style="border-bottom: 2px solid #2c5aa0; padding-bottom: 6px; margin-bottom: 8px;">
           <h1 style="color: #2c5aa0; margin: 0; font-size: 14px; font-weight: bold;">REPORTE DE EVALUACIÓN PSICOLÓGICA</h1>
@@ -1695,24 +1695,24 @@ const app = {
           <h3 style="margin: 0 0 6px 0; color: #2c5aa0; font-size: 12px; font-weight: bold; text-decoration: underline;">DATOS DEL PACIENTE</h3>
           <table style="width: 100%; font-size: 13px; border-collapse: collapse; line-height: 1.4;">
             <tr>
-              <td style="width: 18%; padding: 3px; color: #000; font-weight: bold;"><strong>Nombre:</strong></td>
-              <td style="padding: 3px; width: 32%; color: #000;">${paciente ? paciente.nombre : 'N/A'}</td>
-              <td style="width: 15%; padding: 3px; color: #000; font-weight: bold;"><strong>Edad:</strong></td>
-              <td style="padding: 3px; color: #000;">${paciente && paciente.edad ? paciente.edad : 'N/A'}</td>
+              <td style="width: 18%; padding: 3px; color: var(--color-text); font-weight: bold;"><strong>Nombre:</strong></td>
+              <td style="padding: 3px; width: 32%; color: var(--color-text);">${paciente ? paciente.nombre : 'N/A'}</td>
+              <td style="width: 15%; padding: 3px; color: var(--color-text); font-weight: bold;"><strong>Edad:</strong></td>
+              <td style="padding: 3px; color: var(--color-text);">${paciente && paciente.edad ? paciente.edad : 'N/A'}</td>
             </tr>
             <tr>
-              <td style="padding: 3px; color: #000; font-weight: bold;"><strong>Sexo:</strong></td>
-              <td style="padding: 3px; color: #000;">${paciente && paciente.sexo ? paciente.sexo : 'N/A'}</td>
-              <td style="padding: 3px; color: #000; font-weight: bold;"><strong>E. Civil:</strong></td>
-              <td style="padding: 3px; color: #000;">${paciente && paciente.estado_civil ? paciente.estado_civil : 'N/A'}</td>
+              <td style="padding: 3px; color: var(--color-text); font-weight: bold;"><strong>Sexo:</strong></td>
+              <td style="padding: 3px; color: var(--color-text);">${paciente && paciente.sexo ? paciente.sexo : 'N/A'}</td>
+              <td style="padding: 3px; color: var(--color-text); font-weight: bold;"><strong>E. Civil:</strong></td>
+              <td style="padding: 3px; color: var(--color-text);">${paciente && paciente.estado_civil ? paciente.estado_civil : 'N/A'}</td>
             </tr>
             <tr>
-              <td style="padding: 3px; color: #000; font-weight: bold;"><strong>Medicamentos:</strong></td>
-              <td colspan="3" style="padding: 3px; font-size: 13px; color: #000;">${paciente && paciente.medicamentos ? paciente.medicamentos : 'No especificado'}</td>
+              <td style="padding: 3px; color: var(--color-text); font-weight: bold;"><strong>Medicamentos:</strong></td>
+              <td colspan="3" style="padding: 3px; font-size: 13px; color: var(--color-text);">${paciente && paciente.medicamentos ? paciente.medicamentos : 'No especificado'}</td>
             </tr>
             <tr>
-              <td style="padding: 3px; color: #000; font-weight: bold;"><strong>Fecha:</strong></td>
-              <td colspan="3" style="padding: 3px; font-size: 13px; color: #000;">${new Date(prueba.fecha).toLocaleDateString('es-CO', { year: 'numeric', month: 'short', day: 'numeric' })}</td>
+              <td style="padding: 3px; color: var(--color-text); font-weight: bold;"><strong>Fecha:</strong></td>
+              <td colspan="3" style="padding: 3px; font-size: 13px; color: var(--color-text);">${new Date(prueba.fecha).toLocaleDateString('es-CO', { year: 'numeric', month: 'short', day: 'numeric' })}</td>
             </tr>
           </table>
         </div>
@@ -1744,7 +1744,7 @@ const app = {
         </div>
 
         <!-- FOOTER -->
-        <div style="padding-top: 4px; margin-top: 6px; font-size: 7px; color: #999; text-align: center;">
+        <div style="padding-top: 4px; margin-top: 6px; font-size: 7px; color: var(--color-text-muted); text-align: center;">
           <p style="margin: 0;">Evaluación Clínica Psicológica | Generado: ${new Date().toLocaleDateString('es-CO')}</p>
         </div>
       </div>
@@ -2594,8 +2594,8 @@ const app = {
           </table>
         </div>
 
-        <div style="margin: 4px 0 14px 0; padding: 6px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 3px; color: #333; page-break-inside: avoid;" class="reporte-analisis">
-          <h4 style="color: #333; font-size: 8px; margin: 0 0 4px 0; font-weight: bold;">Perfil de Subescalas (Paciente vs Población Normal)</h4>
+        <div style="margin: 4px 0 14px 0; padding: 6px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 3px; color: var(--color-text); page-break-inside: avoid;" class="reporte-analisis">
+          <h4 style="color: var(--color-text); font-size: 8px; margin: 0 0 4px 0; font-weight: bold;">Perfil de Subescalas (Paciente vs Población Normal)</h4>
           <div style="position: relative; width: 100%; height: 260px;">
             <canvas id="chartPerfilComparativo" style="width: 100%; height: 100%;"></canvas>
           </div>
@@ -2611,8 +2611,8 @@ const app = {
    */
   generarReporteGenerico(prueba, subescalas) {
     return `
-      <div style="margin: 4px 0; padding: 3px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: #333;" class="reporte-analisis">
-        <h4 style="color: #333; font-size: 11px; margin: 0 0 3px 0; font-weight: bold;">ANÁLISIS: ${prueba.tipo}</h4>
+      <div style="margin: 4px 0; padding: 3px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: var(--color-text);" class="reporte-analisis">
+        <h4 style="color: var(--color-text); font-size: 11px; margin: 0 0 3px 0; font-weight: bold;">ANÁLISIS: ${prueba.tipo}</h4>
         <div style="position: relative; width: 100%; height: 400px; margin-bottom: 0;">
           <canvas id="chartReporte" style="width: 100%; height: 100%; display: block;"></canvas>
         </div>
@@ -2641,7 +2641,7 @@ const app = {
     const totalPaciente = prueba.total || (Array.isArray(data) ? data.reduce((a, b) => a + (b || 0), 0) : 0);
 
     let html = `
-      <div style="margin: 4px 0 15px 0; padding: 4px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: #333; page-break-after: avoid; page-break-inside: avoid;" class="reporte-analisis">
+      <div style="margin: 4px 0 15px 0; padding: 4px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: var(--color-text); page-break-after: avoid; page-break-inside: avoid;" class="reporte-analisis">
         <div style="position: relative; width: 100%; height: 320px;">
           <canvas id="chartComparativoPCLR" style="width: 100%; height: 100%;"></canvas>
         </div>
@@ -2688,16 +2688,16 @@ const app = {
 
     let html = `
       <!-- GRÁFICO SCID-II -->
-      <div style="margin: 4px 0; padding: 4px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: #333; page-break-inside: avoid;" class="reporte-analisis">
-        <h4 style="color: #333; font-size: 9px; margin: 0 0 3px 0; font-weight: bold;">ANÁLISIS: SCID-II</h4>
+      <div style="margin: 4px 0; padding: 4px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: var(--color-text); page-break-inside: avoid;" class="reporte-analisis">
+        <h4 style="color: var(--color-text); font-size: 9px; margin: 0 0 3px 0; font-weight: bold;">ANÁLISIS: SCID-II</h4>
         <div style="position: relative; width: 100%; height: 320px;">
           <canvas id="chartReporte" style="width: 100%; height: 100%;"></canvas>
         </div>
       </div>
 
       <!-- TABLA DE ESCALAS -->
-      <div style="margin: 4px 0; padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: #333;">
-        <h4 style="color: #333; font-size: 9px; margin: 0 0 6px 0; font-weight: bold;">ESCALA DE TRASTORNOS DE LA PERSONALIDAD</h4>
+      <div style="margin: 4px 0; padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: var(--color-text);">
+        <h4 style="color: var(--color-text); font-size: 9px; margin: 0 0 6px 0; font-weight: bold;">ESCALA DE TRASTORNOS DE LA PERSONALIDAD</h4>
         <table style="width: 100%; border-collapse: collapse; font-size: 7px;">
           <tr style="background: #2c5aa0; color: white;">
             <th style="border: 1px solid #999; padding: 3px; text-align: center; font-weight: bold;">Escala</th>
@@ -2717,7 +2717,7 @@ const app = {
     });
 
     html += `</table>
-        <p style="margin: 4px 0 0 0; font-size: 6px; color: #666; font-style: italic;">Nota: Se consideran presentes cuando se alcanza o supera el número mínimo de respuestas afirmativas para cada escala.</p>
+        <p style="margin: 4px 0 0 0; font-size: 6px; color: var(--color-text-secondary); font-style: italic;">Nota: Se consideran presentes cuando se alcanza o supera el número mínimo de respuestas afirmativas para cada escala.</p>
       </div>
     `;
 
@@ -2774,7 +2774,7 @@ const app = {
     const tScores = Object.entries(data).map(([key, val]) => `${key}: ${val}`).join(', ');
 
     return `
-      <div style="margin: 10px 0; padding: 15px; background: #e8f4f8; border-left: 4px solid #2c5aa0; border-radius: 3px; color: #333;">
+      <div style="margin: 10px 0; padding: 15px; background: #e8f4f8; border-left: 4px solid #2c5aa0; border-radius: 3px; color: var(--color-text);">
         <p style="margin: 0 0 8px 0; font-size: 10px; font-weight: bold;">MMPI-2 Forma Reestructurada (RF)</p>
         <p style="margin: 0; font-size: 9px;">T-Scores: ${tScores}</p>
         <p style="margin: 5px 0 0 0; font-size: 9px; font-style: italic;">Para ver el gráfico completo del micrositio, abre el test nuevamente.</p>
@@ -2833,7 +2833,7 @@ const app = {
     };
 
     let html = `
-      <div style="margin: 10px 0; padding: 15px; background: #f0fdf4; border-left: 4px solid #10b981; border-radius: 3px; color: #333;">
+      <div style="margin: 10px 0; padding: 15px; background: #f0fdf4; border-left: 4px solid #10b981; border-radius: 3px; color: var(--color-text);">
         <h4 style="margin: 0 0 10px 0; font-size: 11px; font-weight: bold; color: #111827;">CUIDA - Evaluación de Cuidadores</h4>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; font-size: 8px;">
@@ -2981,16 +2981,16 @@ const app = {
 
     let html = `
       <!-- GRÁFICO ISRA -->
-      <div style="margin: 4px 0; padding: 4px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: #333; page-break-inside: avoid;" class="reporte-analisis">
-        <h4 style="color: #333; font-size: 9px; margin: 0 0 3px 0; font-weight: bold;">ANÁLISIS: ISRA (Perfil de Centiles)</h4>
+      <div style="margin: 4px 0; padding: 4px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: var(--color-text); page-break-inside: avoid;" class="reporte-analisis">
+        <h4 style="color: var(--color-text); font-size: 9px; margin: 0 0 3px 0; font-weight: bold;">ANÁLISIS: ISRA (Perfil de Centiles)</h4>
         <div style="position: relative; width: 100%; height: 320px;">
           <canvas id="chartReporte" style="width: 100%; height: 100%;"></canvas>
         </div>
       </div>
 
       <!-- TABLA COMPARATIVA ISRA -->
-      <div style="margin: 4px 0; padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: #333;">
-        <h4 style="color: #333; font-size: 9px; margin: 0 0 6px 0; font-weight: bold;">DATOS COMPARATIVOS</h4>
+      <div style="margin: 4px 0; padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 3px; color: var(--color-text);">
+        <h4 style="color: var(--color-text); font-size: 9px; margin: 0 0 6px 0; font-weight: bold;">DATOS COMPARATIVOS</h4>
         <table style="width: 100%; border-collapse: collapse; font-size: 7px;">
           <tr style="background: #2c5aa0; color: white;">
             <th style="border: 1px solid #999; padding: 3px; text-align: left; font-weight: bold;">Escala</th>
@@ -3028,7 +3028,7 @@ const app = {
             <td style="border: 1px solid #999; padding: 3px; text-align: left; ${interpT.color}">${interpT.texto}</td>
           </tr>
         </table>
-        <p style="margin: 4px 0 0 0; font-size: 6px; color: #666; font-style: italic;">Nota: Ref. = Media población normal. Centil indica posición respecto a población general.</p>
+        <p style="margin: 4px 0 0 0; font-size: 6px; color: var(--color-text-secondary); font-style: italic;">Nota: Ref. = Media población normal. Centil indica posición respecto a población general.</p>
       </div>
     `;
 
@@ -3100,7 +3100,7 @@ const app = {
       </tr>`;
     }
 
-    return filas || '<tr><td colspan="4" style="border: 1px solid #ddd; padding: 3px; text-align: center; color: #999; font-size: 8px;">Sin datos</td></tr>';
+    return filas || '<tr><td colspan="4" style="border: 1px solid #ddd; padding: 3px; text-align: center; color: var(--color-text-muted); font-size: 8px;">Sin datos</td></tr>';
   },
 
   /**
@@ -3127,24 +3127,24 @@ const app = {
 
           <table style="width: 100%; font-size: 13px; border-collapse: collapse; line-height: 1.4; table-layout: fixed;">
             <tr>
-              <td style="width: 30%; padding: 3px; color: #000; font-weight: bold; word-wrap: break-word;"><strong>Evaluador:</strong></td>
-              <td style="padding: 3px; color: #000; word-wrap: break-word;">${nombre || '—'}</td>
-              <td style="width: 20%; padding: 3px; color: #000; font-weight: bold; word-wrap: break-word;"><strong>Cédula:</strong></td>
-              <td style="padding: 3px; color: #000; word-wrap: break-word;">${cedula || '—'}</td>
+              <td style="width: 30%; padding: 3px; color: var(--color-text); font-weight: bold; word-wrap: break-word;"><strong>Evaluador:</strong></td>
+              <td style="padding: 3px; color: var(--color-text); word-wrap: break-word;">${nombre || '—'}</td>
+              <td style="width: 20%; padding: 3px; color: var(--color-text); font-weight: bold; word-wrap: break-word;"><strong>Cédula:</strong></td>
+              <td style="padding: 3px; color: var(--color-text); word-wrap: break-word;">${cedula || '—'}</td>
             </tr>
             <tr>
-              <td style="padding: 3px; color: #000; font-weight: bold; word-wrap: break-word;"><strong>Especialidad:</strong></td>
-              <td colspan="3" style="padding: 3px; color: #000; word-wrap: break-word;">${especialidad || '—'}</td>
+              <td style="padding: 3px; color: var(--color-text); font-weight: bold; word-wrap: break-word;"><strong>Especialidad:</strong></td>
+              <td colspan="3" style="padding: 3px; color: var(--color-text); word-wrap: break-word;">${especialidad || '—'}</td>
             </tr>
             <tr>
-              <td style="padding: 3px; vertical-align: top; color: #000; font-weight: bold; word-wrap: break-word;"><strong>Diagnóstico:</strong></td>
-              <td colspan="3" style="padding: 3px; font-size: 13px; color: #000; word-wrap: break-word; white-space: normal; max-height: none;">${diagnostico || '—'}</td>
+              <td style="padding: 3px; vertical-align: top; color: var(--color-text); font-weight: bold; word-wrap: break-word;"><strong>Diagnóstico:</strong></td>
+              <td colspan="3" style="padding: 3px; font-size: 13px; color: var(--color-text); word-wrap: break-word; white-space: normal; max-height: none;">${diagnostico || '—'}</td>
             </tr>
           </table>
 
           <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid #ddd; text-align: center;">
-            <p style="margin: 0; font-size: 9px; color: #666;">Validado</p>
-            <p style="margin: 2px 0 0 0; font-size: 8px; color: #999;">El evaluador se responsabiliza del contenido de este reporte</p>
+            <p style="margin: 0; font-size: 9px; color: var(--color-text-secondary);">Validado</p>
+            <p style="margin: 2px 0 0 0; font-size: 8px; color: var(--color-text-muted);">El evaluador se responsabiliza del contenido de este reporte</p>
           </div>
         </div>
       `;
@@ -3259,7 +3259,7 @@ const app = {
 
     const pageBreak = prueba.tipo === 'SCID2' ? '' : 'page-break-before: always;';
     let html = `
-      <div style="${pageBreak} font-family: Arial, sans-serif; color: #333; line-height: 1.2; max-width: 21.59cm; margin: 0 auto; padding: 1.27cm;">
+      <div style="${pageBreak} font-family: Arial, sans-serif; color: var(--color-text); line-height: 1.2; max-width: 21.59cm; margin: 0 auto; padding: 1.27cm;">
         <!-- ENCABEZADO SEGUNDA PÁGINA -->
         <div style="border-bottom: 2px solid #2c5aa0; padding-bottom: 6px; margin-bottom: 8px;">
           <h2 style="color: #2c5aa0; margin: 0; font-size: 12px; font-weight: bold;">DETALLE DE ÍTEMS - ${prueba.tipo}</h2>
@@ -3303,7 +3303,7 @@ const app = {
     html += `</table>
 
         <!-- FOOTER -->
-        <div style="border-top: 1px solid #ddd; padding-top: 6px; margin-top: 10px; font-size: 7px; color: #999; text-align: center;">
+        <div style="border-top: 1px solid #ddd; padding-top: 6px; margin-top: 10px; font-size: 7px; color: var(--color-text-muted); text-align: center;">
           <p style="margin: 0;">Evaluación Clínica Psicológica | Detalle de ítems</p>
         </div>
       </div>
@@ -3638,7 +3638,7 @@ const app = {
 
       html += `
           </table>
-          <p style="margin-top: 20px; color: #999; font-size: 12px;">
+          <p style="margin-top: 20px; color: var(--color-text-muted); font-size: 12px;">
             Reporte generado por Evaluación Clínica - ${new Date().toLocaleDateString('es-CO')} ${new Date().toLocaleTimeString('es-CO')}
           </p>
         </body>
@@ -3678,7 +3678,7 @@ const app = {
             td { border: 1px solid #ddd; padding: 8px; }
             .header { background: #f0f4f8; padding: 10px; margin: 10px 0; }
             .validation { background: #e8f5e9; padding: 12px; margin-top: 20px; border-left: 4px solid #4caf50; }
-            .footer { margin-top: 30px; padding-top: 10px; border-top: 1px solid #ddd; font-size: 11px; color: #666; }
+            .footer { margin-top: 30px; padding-top: 10px; border-top: 1px solid #ddd; font-size: 11px; color: var(--color-text-secondary); }
           </style>
         </head>
         <body>
