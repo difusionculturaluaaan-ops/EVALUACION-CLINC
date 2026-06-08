@@ -262,18 +262,18 @@
       <h2 id="form-titulo">Crear Nueva Ficha de Paciente</h2>
       <form id="form-paciente" onsubmit="return false;">
         <div class="form-group">
-          <label for="f-nombre">Nombre Completo *</label>
-          <input type="text" id="f-nombre" placeholder="Nombre y apellidos" required>
+          <label for="f-nombre" class="input-label">Nombre Completo *</label>
+          <input type="text" id="f-nombre" class="input-field" placeholder="Nombre y apellidos" required>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label for="f-edad">Edad</label>
-            <input type="number" id="f-edad" placeholder="0" min="0" max="120">
+            <label for="f-edad" class="input-label">Edad</label>
+            <input type="number" id="f-edad" class="input-field" placeholder="0" min="0" max="120">
           </div>
           <div class="form-group">
-            <label for="f-sexo">Sexo</label>
-            <select id="f-sexo">
+            <label for="f-sexo" class="input-label">Sexo</label>
+            <select id="f-sexo" class="input-field">
               <option value="">Seleccionar...</option>
               <option value="Masculino">Masculino</option>
               <option value="Femenino">Femenino</option>
@@ -281,7 +281,7 @@
             </select>
           </div>
           <div class="form-group">
-            <label for="f-civil">Estado Civil</label>
+            <label for="f-civil" class="input-label">Estado Civil</label>
             <select id="f-civil">
               <option value="">Seleccionar...</option>
               <option value="Soltero/a">Soltero/a</option>
@@ -294,13 +294,13 @@
         </div>
 
         <div class="form-group">
-          <label for="f-meds">Medicamentos / Sustancias</label>
+          <label for="f-meds" class="input-label">Medicamentos / Sustancias</label>
           <input type="text" id="f-meds" placeholder="Ej: Sertraline 100mg, Alprazolam PRN...">
         </div>
 
         <div class="form-group">
-          <label for="f-obs">Motivo de Consulta / Observaciones</label>
-          <textarea id="f-obs" rows="4" placeholder="Contexto clínico, antecedentes relevantes..."></textarea>
+          <label for="f-obs" class="input-label">Motivo de Consulta / Observaciones</label>
+          <textarea id="f-obs" class="input-field" rows="4" placeholder="Contexto clínico, antecedentes relevantes..."></textarea>
         </div>
 
         <button type="button" class="btn btn-primary btn-lg" id="btn-continuar" onclick="app.crearPaciente()">
@@ -499,13 +499,13 @@
       <form id="form-editar-paciente" onsubmit="return false;">
         <div class="form-group">
           <label for="edit-nombre">Nombre Completo *</label>
-          <input type="text" id="edit-nombre" placeholder="Nombre y apellidos" required>
+          <input type="text" id="edit-nombre" class="input-field" placeholder="Nombre y apellidos" required>
         </div>
 
         <div class="form-row">
           <div class="form-group">
             <label for="edit-edad">Edad</label>
-            <input type="number" id="edit-edad" placeholder="0" min="0" max="120">
+            <input type="number" id="edit-edad" class="input-field" placeholder="0" min="0" max="120">
           </div>
           <div class="form-group">
             <label for="edit-sexo">Sexo</label>
@@ -531,12 +531,12 @@
 
         <div class="form-group">
           <label for="edit-meds">Medicamentos / Sustancias</label>
-          <input type="text" id="edit-meds" placeholder="Ej: Sertraline 100mg, Alprazolam PRN...">
+          <input type="text" id="edit-meds" class="input-field" placeholder="Ej: Sertraline 100mg, Alprazolam PRN...">
         </div>
 
         <div class="form-group">
           <label for="edit-obs">Motivo de Consulta / Observaciones</label>
-          <textarea id="edit-obs" rows="4" placeholder="Contexto clínico, antecedentes relevantes..."></textarea>
+          <textarea id="edit-obs" class="input-field" rows="4" placeholder="Contexto clínico, antecedentes relevantes..."></textarea>
         </div>
       </form>
     </div>
