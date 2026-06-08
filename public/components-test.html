@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Componentes - Prueba</title>
+
+  <!-- DESIGN SYSTEM CSS -->
+  <link rel="stylesheet" href="/css/tokens.css">
+  <link rel="stylesheet" href="/css/typography.css">
+  <link rel="stylesheet" href="/css/components.css">
+
+  <style>
+    body {
+      padding: var(--space-6);
+      background-color: var(--color-bg);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section {
+      margin-bottom: var(--space-12);
+      background: var(--color-surface);
+      padding: var(--space-6);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .section h2 {
+      margin-top: 0;
+      margin-bottom: var(--space-4);
+      border-bottom: 2px solid var(--color-primary-light);
+      padding-bottom: var(--space-3);
+    }
+
+    .demo-row {
+      display: flex;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+      align-items: flex-start;
+      margin-bottom: var(--space-4);
+    }
+
+    .demo-item {
+      padding: var(--space-4);
+      background: var(--color-surface-secondary);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .demo-item-label {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-2);
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-display-lg">🎯 Prueba de Componentes</h1>
+
+    <!-- BUTTONS -->
+    <div class="section">
+      <h2>Botones</h2>
+
+      <h3 class="text-heading" style="margin-top: 0;">Variantes</h3>
+      <div class="demo-row">
+        <div class="demo-item">
+          <div class="demo-item-label">Primary</div>
+          <button class="btn btn-primary">Botón Primary</button>
+        </div>
+        <div class="demo-item">
+          <div class="demo-item-label">Secondary</div>
+          <button class="btn btn-secondary">Botón Secondary</button>
+        </div>
+        <div class="demo-item">
+          <div class="demo-item-label">Danger</div>
+          <button class="btn btn-danger">Botón Danger</button>
+        </div>
+        <div class="demo-item">
+          <div class="demo-item-label">Ghost</div>
+          <button class="btn btn-ghost">Botón Ghost</button>
+        </div>
+      </div>
+
+      <h3 class="text-heading">Tamaños</h3>
+      <div class="demo-row">
+        <div class="demo-item">
+          <div class="demo-item-label">Small</div>
+          <button class="btn btn-primary btn-sm">Small</button>
+        </div>
+        <div class="demo-item">
+          <div class="demo-item-label">Medium (default)</div>
+          <button class="btn btn-primary">Medium</button>
+        </div>
+        <div class="demo-item">
+          <div class="demo-item-label">Large</div>
+          <button class="btn btn-primary btn-lg">Large</button>
+        </div>
+      </div>
+
+      <h3 class="text-heading">Estados</h3>
+      <div class="demo-row">
+        <div class="demo-item">
+          <div class="demo-item-label">Disabled</div>
+          <button class="btn btn-primary" disabled>Disabled</button>
+        </div>
+        <div class="demo-item">
+          <div class="demo-item-label">Full Width</div>
+          <button class="btn btn-primary btn-full">Full Width</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BADGES -->
+    <div class="section">
+      <h2>Badges</h2>
+      <div class="demo-row">
+        <div class="demo-item">
+          <div class="demo-item-label">Default</div>
+          <span class="badge badge-default">Sin evaluar</span>
+        </div>
+        <div class="demo-item">
+          <div class="demo-item-label">Success</div>
+          <span class="badge badge-success">Completado</span>
+        </div>
+        <div class="demo-item">
+          <div class="demo-item-label">Warning</div>
+          <span class="badge badge-warning">Evaluación pendiente</span>
+        </div>
+        <div class="demo-item">
+          <div class="demo-item-label">Danger</div>
+          <span class="badge badge-danger">Requiere atención</span>
+        </div>
+        <div class="demo-item">
+          <div class="demo-item-label">Info</div>
+          <span class="badge badge-info">Información</span>
+        </div>
+      </div>
+
+      <h3 class="text-heading">Tamaño Grande</h3>
+      <div class="demo-row">
+        <div class="demo-item">
+          <span class="badge badge-success badge-lg">Badge Large Success</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARDS -->
+    <div class="section">
+      <h2>Cards</h2>
+
+      <h3 class="text-heading">Variante Default</h3>
+      <div class="card card-default" style="margin-bottom: var(--space-4);">
+        <div class="card-header">
+          <h3>Card Default</h3>
+        </div>
+        <div class="card-body">
+          <p class="text-body">Este es el contenido de una card default con sombra sm. Ideal para contenido secundario.</p>
+        </div>
+        <div class="card-footer">
+          <button class="btn btn-secondary btn-sm">Acción</button>
+        </div>
+      </div>
+
+      <h3 class="text-heading">Variante Flat</h3>
+      <div class="card card-flat" style="margin-bottom: var(--space-4);">
+        <div class="card-header">
+          <h3>Card Flat</h3>
+        </div>
+        <div class="card-body">
+          <p class="text-body">Card flat sin sombra, con fondo secundario. Ideal para listas.</p>
+        </div>
+      </div>
+
+      <h3 class="text-heading">Variante Elevated</h3>
+      <div class="card card-elevated">
+        <div class="card-header">
+          <h3>Card Elevated</h3>
+        </div>
+        <div class="card-body">
+          <p class="text-body">Card elevated con sombra lg. Ideal para contenido destacado.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- INPUTS -->
+    <div class="section">
+      <h2>Inputs</h2>
+      <div class="demo-row" style="flex-direction: column;">
+        <div class="demo-item" style="min-width: 300px;">
+          <div class="input-wrapper">
+            <label class="input-label">Nombre del Paciente</label>
+            <input type="text" class="input-field" placeholder="Ej: Juan Pérez">
+            <small class="input-helper">Ingresa el nombre completo</small>
+          </div>
+        </div>
+
+        <div class="demo-item" style="min-width: 300px;">
+          <div class="input-wrapper">
+            <label class="input-label required">Email Requerido</label>
+            <input type="email" class="input-field" placeholder="email@example.com">
+          </div>
+        </div>
+
+        <div class="demo-item" style="min-width: 300px;">
+          <div class="input-wrapper">
+            <label class="input-label">Observaciones</label>
+            <textarea class="input-field" placeholder="Ingresa observaciones..."></textarea>
+          </div>
+        </div>
+
+        <div class="demo-item" style="min-width: 300px;">
+          <div class="input-wrapper">
+            <label class="input-label">Selecciona un test</label>
+            <select class="input-field">
+              <option>MMPI-2 RF</option>
+              <option>CUIDA</option>
+              <option>SCL-90R</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="demo-item" style="min-width: 300px;">
+          <div class="input-wrapper">
+            <label class="input-label">Input Disabled</label>
+            <input type="text" class="input-field" placeholder="Deshabilitado" disabled>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROGRESS BAR -->
+    <div class="section">
+      <h2>Progress Bar</h2>
+      <div style="max-width: 500px;">
+        <div class="progress-wrapper" style="margin-bottom: var(--space-6);">
+          <div class="progress-label">
+            <span class="progress-label-text">MMPI-2 RF</span>
+            <span class="progress-label-count">142 / 338</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 42%"></div>
+          </div>
+        </div>
+
+        <div class="progress-wrapper" style="margin-bottom: var(--space-6);">
+          <div class="progress-label">
+            <span class="progress-label-text">CUIDA</span>
+            <span class="progress-label-count">189 / 189</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 100%"></div>
+          </div>
+        </div>
+
+        <div class="progress-wrapper">
+          <div class="progress-label">
+            <span class="progress-label-text">SCL-90R</span>
+            <span class="progress-label-count">0 / 90</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div class="section">
+      <h2>Empty State</h2>
+      <div class="empty-state">
+        <div class="empty-state-icon">📭</div>
+        <h3 class="empty-state-title">Sin pacientes registrados</h3>
+        <p class="empty-state-description">Crea tu primer expediente para comenzar a usar la plataforma</p>
+        <div class="empty-state-action">
+          <button class="btn btn-primary">Crear Paciente</button>
+          <button class="btn btn-secondary">Importar Datos</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GRID SYSTEM -->
+    <div class="section">
+      <h2>Grid System</h2>
+      <h3 class="text-heading">2 Columnas</h3>
+      <div class="grid-cols-2">
+        <div style="padding: var(--space-4); background: var(--color-surface-secondary); border: 1px solid var(--color-border); border-radius: var(--radius-md);">
+          <p class="text-body">Columna 1</p>
+        </div>
+        <div style="padding: var(--space-4); background: var(--color-surface-secondary); border: 1px solid var(--color-border); border-radius: var(--radius-md);">
+          <p class="text-body">Columna 2</p>
+        </div>
+      </div>
+
+      <h3 class="text-heading" style="margin-top: var(--space-6);">3 Columnas</h3>
+      <div class="grid-cols-3">
+        <div style="padding: var(--space-4); background: var(--color-surface-secondary); border: 1px solid var(--color-border); border-radius: var(--radius-md);">
+          <p class="text-body">Col 1</p>
+        </div>
+        <div style="padding: var(--space-4); background: var(--color-surface-secondary); border: 1px solid var(--color-border); border-radius: var(--radius-md);">
+          <p class="text-body">Col 2</p>
+        </div>
+        <div style="padding: var(--space-4); background: var(--color-surface-secondary); border: 1px solid var(--color-border); border-radius: var(--radius-md);">
+          <p class="text-body">Col 3</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FINAL STATE -->
+    <div class="section" style="background: var(--color-success-bg); border: 2px solid var(--color-success);">
+      <p class="text-body text-success"><strong>✅ Componentes Cargados Correctamente</strong></p>
+      <p class="text-body-sm">Si ves todos los componentes funcionando, está todo listo para la Fase 3.</p>
+    </div>
+  </div>
+</body>
+</html>
