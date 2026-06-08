@@ -1507,7 +1507,9 @@ async function cargarEvaluacionMMPI() {
       data.forEach((valor, idx) => {
         responses[idx + 1] = valor;
       });
-      console.log('✓ Respuestas cargadas. Total elementos:', data.length, 'responses[1]:', responses[1]);
+      console.log('✓ Respuestas cargadas. Total elementos:', data.length);
+      console.log('Primeras 5 respuestas:', responses[1], responses[2], responses[3], responses[4], responses[5]);
+      console.log('Tipos:', typeof responses[1], typeof responses[2]);
     } else {
       console.log('❌ data no es un array:', data);
     }
