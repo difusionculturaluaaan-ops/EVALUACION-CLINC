@@ -48,15 +48,15 @@ const expedientes = {
       });
     });
 
-    // Cargar pruebas para cada paciente
-    for (const paciente of pacientes) {
-      this.cargarPruebasPaciente(paciente.id);
-    }
+    // ❌ Pruebas removidas de tarjetas - solo visible en detalle del paciente
+    // for (const paciente of pacientes) {
+    //   this.cargarPruebasPaciente(paciente.id);
+    // }
   },
 
-  /**
-   * Cargar pruebas de un paciente en su tarjeta
-   */
+  // ❌ REMOVIDO: Tests ya no se muestran en tarjetas
+  // Mantener estas funciones comentadas por si se necesitan en el futuro
+  /*
   async cargarPruebasPaciente(pacienteId) {
     try {
       const pruebas = await api.getPruebasPaciente(pacienteId);
@@ -81,7 +81,6 @@ const expedientes = {
         .map(([tipo, items]) => `<span class="test-badge" data-test-type="${tipo}" data-paciente-id="${pacienteId}" style="cursor: pointer;">${tipo} (${items.length})</span>`)
         .join('');
 
-      // Event listeners para ver resultados
       testContainer.querySelectorAll('.test-badge').forEach(badge => {
         badge.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -93,11 +92,8 @@ const expedientes = {
     } catch (error) {
       console.error(`Error cargando pruebas del paciente ${pacienteId}:`, error);
     }
-  },
+  }
 
-  /**
-   * Ver resultados de una prueba guardada
-   */
   async verResultadosPrueba(pacienteId, tipoTest) {
     try {
       console.log('Cargando evaluación:', { pacienteId, tipoTest });
@@ -121,7 +117,8 @@ const expedientes = {
       console.error('Error en verResultadosPrueba:', error);
       app.mostrarToast(`Error al cargar evaluación: ${error.message}`, 'error');
     }
-  },
+  }
+  */
 
   /**
    * Crear tarjeta de expediente
@@ -149,9 +146,6 @@ const expedientes = {
               🗑️
             </button>
           </div>
-        </div>
-        <div class="expediente-tests">
-          <!-- Se llena con pruebas si están disponibles -->
         </div>
       </div>
     `;
