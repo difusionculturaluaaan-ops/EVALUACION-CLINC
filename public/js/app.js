@@ -4313,6 +4313,14 @@ const app = {
       document.getElementById('detail-meds').textContent = paciente.medicamentos || 'No registrados';
       document.getElementById('detail-obs').textContent = paciente.observaciones || 'Sin observaciones';
 
+      // Badge de estado
+      const statusEl = document.getElementById('detail-status');
+      if (statusEl) {
+        const statusBadgeClass = paciente.status === 'activo' ? 'badge-success' : 'badge-warning';
+        const statusText = paciente.status === 'activo' ? '✓ Activo' : '⏸ En pausa';
+        statusEl.innerHTML = `<span class="badge ${statusBadgeClass}">${statusText}</span>`;
+      }
+
       // Cargar pruebas del paciente
       const pruebas = await api.getPruebasDelPaciente(paciente.id);
       this.renderizarEstudios(pruebas);

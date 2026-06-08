@@ -111,8 +111,8 @@
     <div class="dashboard-container">
       <!-- Saludo -->
       <div class="dashboard-header">
-        <h2>Bienvenido</h2>
-        <p id="dashboard-subtitle" class="dashboard-subtitle">Cargando información...</p>
+        <h2 class="text-display-md">Bienvenido</h2>
+        <p id="dashboard-subtitle" class="dashboard-subtitle text-body">Cargando información...</p>
       </div>
 
       <!-- Grid de tarjetas -->
@@ -180,8 +180,11 @@
         <div class="paciente-header-info">
           <div class="paciente-header-top">
             <div>
-              <h1 id="detail-nombre" class="paciente-title"></h1>
-              <p class="paciente-subtitle">Expediente Clínico</p>
+              <h1 id="detail-nombre" class="paciente-title text-display-md"></h1>
+              <p class="paciente-subtitle text-subheading">Expediente Clínico</p>
+              <div id="detail-status" style="margin-top: 8px;">
+                <!-- Badge de estado se llena dinámicamente -->
+              </div>
             </div>
             <button class="btn btn-secondary" id="btn-editar-paciente" onclick="app.abrirEdicionPaciente()">
               ✏️ Editar
@@ -189,32 +192,32 @@
           </div>
           <div class="paciente-data-grid-horizontal">
             <div class="data-item">
-              <span class="data-label">Edad</span>
-              <span id="detail-edad" class="data-value">-</span>
+              <span class="data-label text-label">Edad</span>
+              <span id="detail-edad" class="data-value text-body">-</span>
             </div>
             <div class="data-item">
-              <span class="data-label">Sexo</span>
-              <span id="detail-sexo" class="data-value">-</span>
+              <span class="data-label text-label">Sexo</span>
+              <span id="detail-sexo" class="data-value text-body">-</span>
             </div>
             <div class="data-item">
-              <span class="data-label">Estado Civil</span>
-              <span id="detail-civil" class="data-value">-</span>
+              <span class="data-label text-label">Estado Civil</span>
+              <span id="detail-civil" class="data-value text-body">-</span>
             </div>
             <div class="data-item">
-              <span class="data-label">Medicamentos</span>
-              <span id="detail-meds" class="data-value">-</span>
+              <span class="data-label text-label">Medicamentos</span>
+              <span id="detail-meds" class="data-value text-body">-</span>
             </div>
           </div>
           <div class="observaciones-section">
-            <h3>Observaciones</h3>
-            <p id="detail-obs" class="observaciones-text">-</p>
+            <h3 class="text-heading">Observaciones</h3>
+            <p id="detail-obs" class="observaciones-text text-body">-</p>
           </div>
         </div>
       </div>
 
       <!-- Sección de Estudios Realizados -->
       <div class="estudios-section">
-        <h2>Estudios Realizados</h2>
+        <h2 class="text-heading">Estudios Realizados</h2>
         <div id="estudios-container" class="estudios-grid">
           <!-- Se llena dinámicamente -->
         </div>
@@ -232,7 +235,7 @@
   <!-- Página: Expedientes -->
   <section id="page-expedientes" class="page active">
     <div class="page-header">
-      <h2>Expedientes Clínicos</h2>
+      <h2 class="text-display-md">Expedientes Clínicos</h2>
       <div class="search-bar">
         <input type="text" id="search-input" placeholder="Buscar paciente por nombre..." aria-label="Buscar paciente">
         <button class="btn btn-secondary btn-sm" title="Buscar" aria-label="Buscar">🔍</button>
