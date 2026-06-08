@@ -172,7 +172,7 @@
     <div class="expediente-detail-container">
       <!-- Botón de regreso en la parte superior -->
       <div class="expediente-top-bar">
-        <button class="btn-back" onclick="app.showPage('expedientes')">← Volver a Expedientes</button>
+        <button class="btn btn-secondary btn-sm" onclick="app.showPage('expedientes')">← Volver a Expedientes</button>
       </div>
 
       <!-- Encabezado con datos del paciente horizontal -->
@@ -235,7 +235,7 @@
       <h2>Expedientes Clínicos</h2>
       <div class="search-bar">
         <input type="text" id="search-input" placeholder="Buscar paciente por nombre..." aria-label="Buscar paciente">
-        <button class="btn btn-icon" title="Buscar">🔍</button>
+        <button class="btn btn-secondary btn-sm" title="Buscar" aria-label="Buscar">🔍</button>
       </div>
     </div>
 
@@ -493,7 +493,7 @@
   <div class="modal-content modal-medium">
     <div class="modal-header">
       <h2>Editar Datos del Paciente</h2>
-      <button class="modal-close" onclick="app.cerrarModalEdicion()">&times;</button>
+      <button class="btn btn-ghost btn-sm modal-close" onclick="app.cerrarModalEdicion()">&times;</button>
     </div>
     <div class="modal-body">
       <form id="form-editar-paciente" onsubmit="return false;">
@@ -552,7 +552,7 @@
   <div class="modal-content modal-medium">
     <div class="modal-header">
       <h2>Validación Profesional del Reporte</h2>
-      <button class="modal-close" onclick="app.cerrarValidacionProfesional()">&times;</button>
+      <button class="btn btn-ghost btn-sm modal-close" onclick="app.cerrarValidacionProfesional()">&times;</button>
     </div>
     <div class="modal-body">
       <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-lg);">
@@ -608,7 +608,7 @@
   <div class="modal-content">
     <div class="modal-header">
       <h2>Reporte de Evaluación Clínica</h2>
-      <button class="modal-close" onclick="app.cerrarModal()">&times;</button>
+      <button class="btn btn-ghost btn-sm modal-close" onclick="app.cerrarModal()">&times;</button>
     </div>
     <div class="modal-body">
       <div id="reporte-contenido">
@@ -627,7 +627,7 @@
   <div class="modal-content modal-medium">
     <div class="modal-header">
       <h2>Crear Nuevo Paciente</h2>
-      <button class="modal-close" onclick="app.cerrarModalCrearPaciente()">&times;</button>
+      <button class="btn btn-ghost btn-sm modal-close" onclick="app.cerrarModalCrearPaciente()">&times;</button>
     </div>
     <div class="modal-body">
       <div class="form-group">
