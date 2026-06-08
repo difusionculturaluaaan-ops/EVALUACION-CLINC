@@ -2011,20 +2011,31 @@ function finishTest() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Inicialización async
-(async () => {
+// Detectar si se está cargando desde expediente (modo=cargar)
+const paramsInit = new URLSearchParams(window.location.search);
+const modoCargarInit = paramsInit.get('modo') === 'cargar';
+
+if (modoCargarInit) {
+  // IIFE async para cargar desde expediente
+  (async () => {
+    obtenerParametrosURL();
+    await loadData();
+    buildItemsGrid();
+    buildTestPages();
+    syncTestProgress();
+
+    // Calcular y mostrar resultados
+    calcAll();
+    showTab('resultados');
+  })();
+} else {
+  // Flujo normal: inicializar para nuevo test
   obtenerParametrosURL();
-  await loadData();
+  loadData();
   buildItemsGrid();
   buildTestPages();
   syncTestProgress();
-
-  // Si es modo cargar, calcular y mostrar resultados
-  if (modoCargar && pruebaId) {
-    calcAll();
-    showTab('resultados');
-  }
-})();
+}
 
 // ────────────────────────────────────────────────────────────────────────────
 // GENERAR PDF COMPLETO
