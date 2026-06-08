@@ -511,7 +511,7 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
 <div id="tab-test" class="tab-panel">
 
   <div class="notice">
-    <span class="notice-icon">📋</span>
+    <span class="notice-icon">◇</span>
     <div class="notice-text">
       <strong>Instrucciones:</strong> A continuación encontrará una serie de enunciados.
       Lea cada uno y decida si es <strong style="color:var(--green)">Verdadero (V)</strong> o
@@ -543,7 +543,7 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
         </div>
         <button class="btn btn-primary" id="btn-finish-test" onclick="finishTest()"
           style="opacity:.35;pointer-events:none">
-          ⚡ Calcular Resultados
+          → Calcular Resultados
         </button>
       </div>
     </div>
@@ -572,7 +572,7 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
 
   <div class="grid-2" style="margin-bottom:20px">
     <div class="card">
-      <div class="card-header"><span class="icon">👤</span><h2>Datos del Evaluado</h2></div>
+      <div class="card-header"><span class="icon">■</span><h2>Datos del Evaluado</h2></div>
       <div class="card-body">
         <div class="grid-2">
           <div class="form-group">
@@ -604,7 +604,7 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
     </div>
 
     <div class="card">
-      <div class="card-header"><span class="icon">📊</span><h2>Progreso de Respuestas</h2></div>
+      <div class="card-header"><span class="icon">▲</span><h2>Progreso de Respuestas</h2></div>
       <div class="card-body">
         <div class="progress-wrap">
           <div class="progress-info">
@@ -626,16 +626,16 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
           </div>
         </div>
         <div class="btn-group" style="margin-top:20px">
-          <button class="btn btn-primary" onclick="calcAll();showTab('resultados')">⚡ Calcular Resultados</button>
-          <button class="btn btn-secondary" onclick="importJSON()">📥 Importar</button>
-          <button class="btn btn-danger" onclick="clearAll()">🗑️ Limpiar</button>
+          <button class="btn btn-primary" onclick="calcAll();showTab('resultados')">→ Calcular Resultados</button>
+          <button class="btn btn-secondary" onclick="importJSON()">↓ Importar</button>
+          <button class="btn btn-danger" onclick="clearAll()">× Limpiar</button>
         </div>
       </div>
     </div>
   </div>
 
   <div class="card">
-    <div class="card-header"><span class="icon">📝</span><h2>Respuestas • 338 Ítems</h2>
+    <div class="card-header"><span class="icon">◆</span><h2>Respuestas • 338 Ítems</h2>
       <span style="margin-left:auto;font-size:11px;color:var(--muted)">Clic en V o F para cada ítem</span>
     </div>
     <div class="card-body">
@@ -659,15 +659,15 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
 
   <div id="results-content" style="display:none">
     <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
-      <button class="btn btn-primary" onclick="generarPDF()">📥 Descargar PDF Completo</button>
-      <button class="btn btn-primary" id="btn-guardar-expediente" onclick="guardarEnExpediente()" style="background:#27ae60">💾 Guardar en Expediente</button>
-      <button class="btn btn-secondary" onclick="exportJSON()">📥 Descargar JSON</button>
+      <button class="btn btn-primary" onclick="generarPDF()">↓ Descargar PDF Completo</button>
+      <button class="btn btn-primary" id="btn-guardar-expediente" onclick="guardarEnExpediente()" style="background:#27ae60">⊡ Guardar en Expediente</button>
+      <button class="btn btn-secondary" onclick="exportJSON()">↓ Descargar JSON</button>
     </div>
 
     <div class="validity-grid" id="validity-grid"></div>
 
     <div class="card">
-      <div class="card-header"><span class="icon">📊</span><h2>Puntajes por Escala</h2></div>
+      <div class="card-header"><span class="icon">▲</span><h2>Puntajes por Escala</h2></div>
       <div class="table-scroll">
         <table class="scale-table" id="scale-table">
           <thead>
@@ -690,7 +690,7 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
 <!-- TAB 3: PERFIL -->
 <div id="tab-perfil" class="tab-panel">
   <div class="card">
-    <div class="card-header"><span class="icon">📈</span><h2>Perfil Gráfico MMPI-2 RF</h2>
+    <div class="card-header"><span class="icon">▬</span><h2>Perfil Gráfico MMPI-2 RF</h2>
       <span style="margin-left:auto;font-size:11px;color:var(--muted)">Línea roja = T 65 · Línea naranja = T 70</span>
     </div>
     <div class="card-body">
@@ -1329,7 +1329,7 @@ function renderInterpretation() {
   cats.forEach(cat => {
     const scales = calcResults.filter(r => r.cat === cat);
     html += `<div class="card interp-section" style="margin-bottom:16px">
-      <div class="card-header"><span class="icon">📖</span><h2>${cat}</h2></div>
+      <div class="card-header"><span class="icon">▪</span><h2>${cat}</h2></div>
       <div class="card-body" style="padding:0">`;
     scales.forEach(r => {
       const fn = INTERPRETATIONS[r.abbr];
@@ -2042,7 +2042,7 @@ function syncTestProgress() {
   if (filled >= 280) {
     btn.style.opacity = '1';
     btn.style.pointerEvents = 'auto';
-    btn.textContent = `⚡ Calcular Resultados (${filled}/338)`;
+    btn.textContent = `→ Calcular Resultados (${filled}/338)`;
   }
   updateProgress();
 }
