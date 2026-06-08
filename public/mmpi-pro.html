@@ -1189,6 +1189,13 @@ function updateProgress() {
 let calcResults = [];
 
 function calcAll() {
+  // Validar que haya al menos una respuesta
+  const totalRespuestas = responses.filter(r => r === 'V' || r === 'F').length;
+  if (totalRespuestas === 0) {
+    alert('⚠️ El protocolo no tiene respuestas. Por favor, contesta al menos algunos items antes de calcular.');
+    return;
+  }
+
   calcResults = SCALE_DEFS.map(s => {
     const pd = calcPD(s);
     const t  = lookupT(s.abbr, pd);
