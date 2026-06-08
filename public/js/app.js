@@ -4448,6 +4448,30 @@ const app = {
     }
   },
 
+  async abrirEvaluacionMMPI(pruebaId) {
+    try {
+      const response = await fetch(`/api/pruebas/${pruebaId}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
+      });
+
+      if (!response.ok) {
+        this.mostrarToast('Error al cargar evaluación MMPI-2-RF', 'error');
+        return;
+      }
+
+      const prueba = await response.json();
+
+      // Obtener token para pasar en URL
+      const token = localStorage.getItem('auth_token');
+
+      // Abrir mmpi-pro.html con modo=cargar, prueba_id y token
+      window.open(`/mmpi-pro.html?modo=cargar&prueba_id=${pruebaId}&token=${token}`, '_blank');
+    } catch (error) {
+      console.error('Error al abrir evaluación MMPI:', error);
+      this.mostrarToast('Error al cargar evaluación MMPI-2-RF', 'error');
+    }
+  },
+
   /**
    * Generar interpretación basada en el tipo de test y puntuación
    */
@@ -4560,11 +4584,16 @@ const app = {
           </div>
 
           <div class="estudio-actions">
-            <button class="btn-ver-reporte ${prueba.tipo.toUpperCase().includes('CUIDA') ? 'oculto' : ''}" data-prueba-id="${prueba.id}" onclick="app.abrirReportePrueba(this.getAttribute('data-prueba-id'))">
+            <button class="btn-ver-reporte ${(prueba.tipo.toUpperCase().includes('CUIDA') || prueba.tipo.toUpperCase().includes('MMPI')) ? 'oculto' : ''}" data-prueba-id="${prueba.id}" onclick="app.abrirReportePrueba(this.getAttribute('data-prueba-id'))">
               📋 Ver Reporte
             </button>
             ${prueba.tipo.toUpperCase().includes('CUIDA') ? `
               <button class="btn-abrir-evaluacion" onclick="app.abrirEvaluacionCUIDA(${prueba.id})">
+                📊 Abrir JSON
+              </button>
+            ` : ''}
+            ${(prueba.tipo === 'MMPI2' || prueba.tipo === 'MMPI') ? `
+              <button class="btn-abrir-evaluacion" onclick="app.abrirEvaluacionMMPI(${prueba.id})">
                 📊 Abrir JSON
               </button>
             ` : ''}

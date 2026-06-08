@@ -1382,22 +1382,32 @@ function saveInfo() {
 
 let pacienteId = null;
 let authToken = null;
+let modoCargar = null;
+let pruebaId = null;
 
 function obtenerParametrosURL() {
   const params = new URLSearchParams(window.location.search);
   pacienteId = params.get('paciente_id');
   authToken = params.get('token') || localStorage.getItem('auth_token');
+  modoCargar = params.get('modo') === 'cargar';
+  pruebaId = params.get('prueba_id');
 
   if (authToken) {
     localStorage.setItem('auth_token', authToken);
   }
 
-  console.log(`📍 Paciente ID: ${pacienteId}, Token: ${authToken ? '✓' : '✗'}`);
+  console.log(`📍 Paciente ID: ${pacienteId}, Modo: ${modoCargar ? 'cargar' : 'nuevo'}, Prueba ID: ${pruebaId}, Token: ${authToken ? '✓' : '✗'}`);
   return pacienteId;
 }
 
 function loadData() {
   try {
+    // Si modo=cargar, cargar evaluación guardada
+    if (modoCargar && pruebaId) {
+      cargarEvaluacionMMPI();
+      return;
+    }
+
     // Si hay paciente_id en URL, cargar datos del paciente automáticamente
     if (pacienteId) {
       cargarDatosPaciente();
@@ -1449,6 +1459,66 @@ async function cargarDatosPaciente() {
     console.log('✓ Datos del paciente precargados');
   } catch (error) {
     console.error('❌ Error al cargar paciente:', error);
+  }
+}
+
+async function cargarEvaluacionMMPI() {
+  if (!pruebaId) {
+    console.log('⚠️ Sin prueba_id, no se puede cargar evaluación');
+    return;
+  }
+
+  try {
+    console.log(`🔄 Cargando evaluación MMPI-2-RF ${pruebaId}...`);
+    const token = authToken || localStorage.getItem('auth_token');
+    const response = await fetch(`/api/pruebas/${pruebaId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      console.error(`❌ Error ${response.status} al cargar evaluación`);
+      return;
+    }
+
+    const prueba = await response.json();
+    console.log('✓ Evaluación cargada:', prueba);
+
+    // Cargar datos en formulario
+    document.getElementById('inp-nombre').value = prueba.data?.nombre || '';
+    document.getElementById('inp-fecha').value = prueba.data?.fecha || '';
+    document.getElementById('inp-cargo').value = prueba.data?.cargo || '';
+    document.getElementById('inp-inst').value = prueba.data?.inst || '';
+    document.getElementById('inp-eval').value = prueba.data?.eval || '';
+    document.getElementById('inp-edad').value = prueba.data?.edad || '';
+
+    // Cargar respuestas en el array global
+    if (prueba.data && typeof prueba.data === 'object') {
+      Object.keys(prueba.data).forEach(key => {
+        if (key.startsWith('item_')) {
+          const itemNum = parseInt(key.replace('item_', ''));
+          responses[itemNum] = prueba.data[key];
+        }
+      });
+    }
+
+    // Desabilitar campos para lectura
+    document.getElementById('inp-nombre').disabled = true;
+    document.getElementById('inp-edad').disabled = true;
+
+    // Mostrar tab de resultados
+    showTab('resultados');
+
+    // Calcular automáticamente
+    setTimeout(() => {
+      calcAll();
+    }, 500);
+
+    console.log('✓ Evaluación cargada correctamente');
+  } catch (error) {
+    console.error('❌ Error al cargar evaluación:', error);
   }
 }
 
