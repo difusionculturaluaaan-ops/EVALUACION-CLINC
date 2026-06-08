@@ -1189,9 +1189,9 @@ function updateProgress() {
 let calcResults = [];
 
 function calcAll() {
-  // Validar que haya al menos una respuesta
+  // Validar que haya al menos una respuesta (solo si NO estamos cargando desde expediente)
   const totalRespuestas = responses.filter(r => r === 'V' || r === 'F').length;
-  if (totalRespuestas === 0) {
+  if (totalRespuestas === 0 && !modoCargar) {
     alert('⚠️ El protocolo no tiene respuestas. Por favor, contesta al menos algunos items antes de calcular.');
     return;
   }
