@@ -1611,7 +1611,7 @@ async function guardarEnExpediente() {
     return;
   }
 
-  // Si no hay paciente_id, crear uno nuevo
+  // Si no hay paciente_id, buscar o crear uno
   if (!pacienteId) {
     const nombre = document.getElementById('inp-nombre').value?.trim();
     if (!nombre) {
@@ -1622,58 +1622,91 @@ async function guardarEnExpediente() {
     const btn = document.getElementById('btn-guardar-expediente');
     const btnOriginalText = btn.textContent;
     btn.disabled = true;
-    btn.textContent = '⏳ Creando expediente...';
+    btn.textContent = '⏳ Buscando paciente...';
 
     try {
-      // Crear nuevo paciente/expediente
-      // Extraer edad (número) del campo combinado "32 años · Femenino"
-      const edadText = document.getElementById('inp-edad').value || '';
-      const edadMatch = edadText.match(/^\d+/);
-      const edad = edadMatch ? parseInt(edadMatch[0]) : null;
-
-      const pacienteResponse = await fetch('/api/pacientes', {
-        method: 'POST',
+      // 1. Buscar paciente existente por nombre
+      const searchResponse = await fetch(`/api/pacientes?q=${encodeURIComponent(nombre)}`, {
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
-        },
-        body: JSON.stringify({
-          nombre: nombre,
-          edad: edad,
-          sexo: null,
-          estado_civil: null,
-          medicamentos: document.getElementById('inp-cargo').value || null,
-          observaciones: document.getElementById('inp-inst').value || null
-        })
+        }
       });
 
-      console.log('🔍 Status de respuesta:', pacienteResponse.status, pacienteResponse.ok);
-
-      let pacienteData;
-      try {
-        pacienteData = await pacienteResponse.json();
-        console.log('📦 Respuesta de crear paciente:', pacienteData);
-      } catch (e) {
-        console.error('❌ Error al parsear JSON:', e);
-        throw new Error(`Respuesta JSON inválida: ${e.message}`);
+      if (searchResponse.ok) {
+        const pacientes = await searchResponse.json();
+        if (Array.isArray(pacientes) && pacientes.length > 0) {
+          // Encontró pacientes con ese nombre - usar el primero
+          pacienteId = pacientes[0].id;
+          console.log('✅ Paciente encontrado:', pacienteId, pacientes[0].nombre);
+          btn.textContent = '⏳ Generando PDF...';
+        } else {
+          // No encontrado, crear nuevo
+          btn.textContent = '⏳ Creando expediente...';
+          throw new Error('CREATE_PACIENTE');
+        }
+      } else {
+        // Error en búsqueda, crear nuevo
+        btn.textContent = '⏳ Creando expediente...';
+        throw new Error('CREATE_PACIENTE');
       }
-
-      if (!pacienteResponse.ok) {
-        throw new Error(pacienteData?.error || `HTTP ${pacienteResponse.status}`);
-      }
-
-      if (!pacienteData || !pacienteData.id) {
-        throw new Error('Respuesta inválida del servidor: sin ID de paciente');
-      }
-
-      pacienteId = pacienteData.id;
-      btn.textContent = '⏳ Generando PDF...';
     } catch (error) {
-      console.error('Error al crear expediente:', error);
-      alert(`❌ Error al crear expediente: ${error.message}`);
-      btn.disabled = false;
-      btn.textContent = btnOriginalText;
-      return;
+      // Si es error de búsqueda o no encontrado, crear nuevo paciente
+      if (error.message === 'CREATE_PACIENTE') {
+        try {
+          // Crear nuevo paciente/expediente
+          const edadText = document.getElementById('inp-edad').value || '';
+          const edadMatch = edadText.match(/^\d+/);
+          const edad = edadMatch ? parseInt(edadMatch[0]) : null;
+
+          const pacienteResponse = await fetch('/api/pacientes', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+            },
+            body: JSON.stringify({
+              nombre: nombre,
+              edad: edad,
+              sexo: null,
+              estado_civil: null,
+              medicamentos: document.getElementById('inp-cargo').value || null,
+              observaciones: document.getElementById('inp-inst').value || null
+            })
+          });
+
+          let pacienteData;
+          try {
+            pacienteData = await pacienteResponse.json();
+            console.log('📦 Respuesta de crear paciente:', pacienteData);
+          } catch (e) {
+            console.error('❌ Error al parsear JSON:', e);
+            throw new Error(`Respuesta JSON inválida: ${e.message}`);
+          }
+
+          if (!pacienteResponse.ok) {
+            throw new Error(pacienteData?.error || `HTTP ${pacienteResponse.status}`);
+          }
+
+          if (!pacienteData || !pacienteData.id) {
+            throw new Error('Respuesta inválida del servidor: sin ID de paciente');
+          }
+
+          pacienteId = pacienteData.id;
+          console.log('✅ Paciente creado:', pacienteId);
+        } catch (createError) {
+          console.error('Error al crear expediente:', createError);
+          alert(`❌ Error al crear expediente: ${createError.message}`);
+          btn.disabled = false;
+          btn.textContent = btnOriginalText;
+          return;
+        }
+      } else {
+        console.error('Error inesperado:', error);
+        alert(`❌ Error: ${error.message}`);
+        btn.disabled = false;
+        btn.textContent = btnOriginalText;
+        return;
+      }
     }
   }
 
