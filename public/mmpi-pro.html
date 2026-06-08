@@ -1485,21 +1485,29 @@ async function cargarEvaluacionMMPI() {
 
     const prueba = await response.json();
     console.log('✓ Evaluación cargada:', prueba);
+    console.log('prueba.data tipo:', typeof prueba.data, 'valor:', prueba.data);
 
     // Cargar respuestas desde prueba.data (puede ser array o string JSON)
     let data = prueba.data;
     if (typeof data === 'string') {
-      data = JSON.parse(data);
-      console.log('✓ prueba.data parseado de string');
+      try {
+        data = JSON.parse(data);
+        console.log('✓ prueba.data parseado de string, length:', data.length);
+      } catch (e) {
+        console.log('❌ Error parseando prueba.data:', e);
+        data = null;
+      }
     }
 
     if (Array.isArray(data)) {
       console.log('Llenando array responses con', data.length, 'elementos');
-      // El array se guardó con slice(1), así que restauramos desde posición 1
+      // El array se guardó con slice(1), así que cargar desde índice 0 del array
+      // pero en responses empieza desde índice 1
+      responses[0] = null; // responses[0] siempre es null
       data.forEach((valor, idx) => {
         responses[idx + 1] = valor;
       });
-      console.log('✓ Respuestas cargadas. Total elementos:', data.length);
+      console.log('✓ Respuestas cargadas. Total elementos:', data.length, 'responses[1]:', responses[1]);
     } else {
       console.log('❌ data no es un array:', data);
     }
