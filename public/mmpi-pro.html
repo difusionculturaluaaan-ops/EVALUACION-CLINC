@@ -1486,23 +1486,23 @@ async function cargarEvaluacionMMPI() {
     const prueba = await response.json();
     console.log('✓ Evaluación cargada:', prueba);
 
-    // Cargar datos en formulario
-    document.getElementById('inp-nombre').value = prueba.data?.nombre || '';
-    document.getElementById('inp-fecha').value = prueba.data?.fecha || '';
-    document.getElementById('inp-cargo').value = prueba.data?.cargo || '';
-    document.getElementById('inp-inst').value = prueba.data?.inst || '';
-    document.getElementById('inp-eval').value = prueba.data?.eval || '';
-    document.getElementById('inp-edad').value = prueba.data?.edad || '';
-
-    // Cargar respuestas en el array global
-    if (prueba.data && typeof prueba.data === 'object') {
-      Object.keys(prueba.data).forEach(key => {
-        if (key.startsWith('item_')) {
-          const itemNum = parseInt(key.replace('item_', ''));
-          responses[itemNum] = prueba.data[key];
-        }
+    // Cargar respuestas desde prueba.data (es un array guardado con slice(1))
+    if (Array.isArray(prueba.data)) {
+      // El array se guardó con slice(1), así que restauramos desde posición 1
+      prueba.data.forEach((valor, idx) => {
+        responses[idx + 1] = valor;
       });
+      console.log('✓ Respuestas cargadas en array global');
     }
+
+    // Cargar datos adicionales del objeto subescalas si contiene metadatos
+    const metadatos = prueba.subescalas?._metadatos || {};
+    document.getElementById('inp-nombre').value = metadatos.nombre || '';
+    document.getElementById('inp-fecha').value = metadatos.fecha || '';
+    document.getElementById('inp-cargo').value = metadatos.cargo || '';
+    document.getElementById('inp-inst').value = metadatos.inst || '';
+    document.getElementById('inp-eval').value = metadatos.eval || '';
+    document.getElementById('inp-edad').value = metadatos.edad || '';
 
     // Desabilitar campos para lectura
     document.getElementById('inp-nombre').disabled = true;
