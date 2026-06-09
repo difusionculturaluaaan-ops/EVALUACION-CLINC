@@ -1409,12 +1409,20 @@ const app = {
       const data = test.obtenerRespuestas();
       const resultado = test.calcular();
 
+      // Solo capturar evaluador para tests específicos (excluir CUIDA y MMPI)
+      const testsConEvaluador = ['hamilton', 'scl90r', 'isra', 'pcl-r', 'egep5', 'tds'];
+      let evaluador = null;
+      if (testsConEvaluador.includes(testType.toLowerCase())) {
+        evaluador = localStorage.getItem('nombre') || null;
+      }
+
       const pruebaGuardada = await api.guardarPrueba(
         this.pacienteActivo.id,
         testType,
         data,
         resultado.total,
-        resultado
+        resultado,
+        evaluador
       );
 
       this.mostrarToast(`${test.nombre} guardado correctamente`, 'success');

@@ -139,7 +139,7 @@ const api = {
   /**
    * Guardar una prueba
    */
-  async guardarPrueba(pacienteId, tipo, data, total, subescalas = {}) {
+  async guardarPrueba(pacienteId, tipo, data, total, subescalas = {}, evaluador = null) {
     return this.request('/pruebas', {
       method: 'POST',
       body: {
@@ -147,7 +147,8 @@ const api = {
         tipo,
         data,
         total,
-        subescalas
+        subescalas,
+        evaluador
       }
     });
   },

@@ -14,7 +14,7 @@ const {
 // POST: Guardar una nueva prueba (solo del tenant autenticado)
 router.post('/', async (req, res) => {
   try {
-    const { paciente_id, tipo, data, total, subescalas, pdf_base64, pdf_filename, metadatos } = req.body;
+    const { paciente_id, tipo, data, total, subescalas, pdf_base64, pdf_filename, metadatos, evaluador } = req.body;
     const tenant_id = req.tenant_id;
 
     if (!paciente_id || !tipo || !data) {
@@ -36,6 +36,9 @@ router.post('/', async (req, res) => {
     let subescalasConMetadatos = subescalas;
     if (metadatos) {
       subescalasConMetadatos = { ...subescalas, _metadatos: metadatos };
+    }
+    if (evaluador) {
+      subescalasConMetadatos = { ...subescalasConMetadatos, _evaluador: evaluador };
     }
 
     const prueba = await guardarPrueba(paciente_id, tipo, data, total, subescalasConMetadatos, pdf_base64);
