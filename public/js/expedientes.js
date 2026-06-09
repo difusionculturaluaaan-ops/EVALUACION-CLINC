@@ -23,6 +23,11 @@ const expedientes = {
 
     grid.innerHTML = pacientes.map(paciente => this.crearTarjeta(paciente)).join('');
 
+    // Cargar tests de cada paciente
+    pacientes.forEach(paciente => {
+      this.cargarTestsPaciente(paciente.id);
+    });
+
     // Agregar event listeners
     grid.querySelectorAll('.expediente-card').forEach(card => {
       card.addEventListener('click', () => {
@@ -128,12 +133,21 @@ const expedientes = {
     const sexo = paciente.sexo || '-';
     const estadoClass = paciente.status === 'standby' ? 'is-standby' : '';
 
+    // Obtener tests aplicados (si existen en el objeto paciente)
+    const testsAplicados = paciente.tests_aplicados || [];
+    const testsHTML = testsAplicados.length > 0
+      ? `<div class="expediente-tests" style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee; font-size: 0.75rem; color: #666;">
+           ${testsAplicados.map(t => `<span style="display: inline-block; background: #f0f0f0; padding: 2px 6px; border-radius: 3px; margin-right: 4px; margin-bottom: 2px;">${t}</span>`).join('')}
+         </div>`
+      : '';
+
     return `
       <div class="expediente-card ${estadoClass}" data-id="${paciente.id}">
         <div class="expediente-header">
-          <div>
+          <div style="flex: 1;">
             <div class="expediente-nombre">${this.escape(paciente.nombre)}</div>
             <div class="expediente-info">${edad} • ${sexo}</div>
+            ${testsHTML}
           </div>
           <div class="expediente-actions">
             <button class="btn-icon" data-id="${paciente.id}" data-accion="editar" title="Editar">
@@ -149,6 +163,37 @@ const expedientes = {
         </div>
       </div>
     `;
+  },
+
+  /**
+   * Cargar tests aplicados de un paciente
+   */
+  async cargarTestsPaciente(pacienteId) {
+    try {
+      const pruebas = await api.getPruebas(pacienteId);
+      if (!pruebas || pruebas.length === 0) return;
+
+      // Extraer nombres únicos de tests
+      const testsUnicos = [...new Set(pruebas.map(p => p.tipo || p.nombre))];
+
+      // Actualizar tarjeta
+      const card = document.querySelector(`[data-id="${pacienteId}"]`);
+      if (!card) return;
+
+      let testsDiv = card.querySelector('.expediente-tests');
+      if (!testsDiv) {
+        testsDiv = document.createElement('div');
+        testsDiv.className = 'expediente-tests';
+        testsDiv.style.cssText = 'margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee; font-size: 0.75rem; color: #666;';
+        card.querySelector('.expediente-header > div').appendChild(testsDiv);
+      }
+
+      testsDiv.innerHTML = testsUnicos
+        .map(t => `<span style="display: inline-block; background: #f0f0f0; padding: 2px 6px; border-radius: 3px; margin-right: 4px; margin-bottom: 2px;">${t}</span>`)
+        .join('');
+    } catch (error) {
+      // Silenciar error - tarjeta igual se muestra sin tests
+    }
   },
 
   /**
