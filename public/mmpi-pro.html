@@ -478,13 +478,16 @@ main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
 <body>
 
 <header>
-  <div class="logo-mark">M2</div>
+  <button onclick="regresarAPlataforma()" style="background:none;border:none;cursor:pointer;padding:0;flex-shrink:0">
+    <div class="logo-mark" style="background:linear-gradient(135deg, #1f4788 0%, #58a6ff 100%);font-family:'DM Sans',sans-serif;font-size:9px;font-weight:700;padding:6px;text-align:center;line-height:1.2">
+      EVALUACIÓN<br>PSICOLÓGICA
+    </div>
+  </button>
   <div class="header-title">
     <h1>MMPI-2 Forma Reestructurada</h1>
     <p>Sistema de Evaluación Psicológica · Versión digital</p>
   </div>
   <span class="header-badge">RF · 338 ítems</span>
-  <button class="btn btn-secondary" onclick="if(confirm('¿Deseas volver a la plataforma? Los datos se guardan automáticamente.')) { window.location.href='/'; }" style="margin-left:20px;white-space:nowrap">← Volver</button>
 </header>
 
 <div class="tabs-bar">
@@ -1400,42 +1403,8 @@ function obtenerParametrosURL() {
   return pacienteId;
 }
 
-function decodificarJWT(token) {
-  try {
-    const parts = token.split('.');
-    if (parts.length !== 3) return null;
-    const payload = JSON.parse(atob(parts[1]));
-    return payload;
-  } catch(e) {
-    console.error('Error decodificando JWT:', e);
-    return null;
-  }
-}
-
-async function cargarLogoTenant() {
-  try {
-    const token = authToken || localStorage.getItem('auth_token');
-    if (!token) return;
-
-    const payload = decodificarJWT(token);
-    if (!payload?.tenant_id) return;
-
-    const response = await fetch(`/api/tenants/${payload.tenant_id}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-
-    if (!response.ok) return;
-
-    const tenant = await response.json();
-    if (tenant.logo_url) {
-      const logoMark = document.querySelector('.logo-mark');
-      if (logoMark) {
-        logoMark.innerHTML = `<img src="${tenant.logo_url}" style="width:36px;height:36px;object-fit:contain;border-radius:6px">`;
-      }
-    }
-  } catch(e) {
-    console.error('Error cargando logo:', e);
-  }
+function regresarAPlataforma() {
+  window.location.href = '/';
 }
 
 async function loadData() {
@@ -2124,7 +2093,6 @@ function finishTest() {
 
 // Inicializar parámetros
 obtenerParametrosURL();
-cargarLogoTenant();
 
 // Si modo=cargar, esperar a que cargue antes de construir interfaz
 if (modoCargar && pruebaId) {
