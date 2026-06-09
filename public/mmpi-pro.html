@@ -1400,6 +1400,44 @@ function obtenerParametrosURL() {
   return pacienteId;
 }
 
+function decodificarJWT(token) {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    const payload = JSON.parse(atob(parts[1]));
+    return payload;
+  } catch(e) {
+    console.error('Error decodificando JWT:', e);
+    return null;
+  }
+}
+
+async function cargarLogoTenant() {
+  try {
+    const token = authToken || localStorage.getItem('auth_token');
+    if (!token) return;
+
+    const payload = decodificarJWT(token);
+    if (!payload?.tenant_id) return;
+
+    const response = await fetch(`/api/tenants/${payload.tenant_id}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!response.ok) return;
+
+    const tenant = await response.json();
+    if (tenant.logo_url) {
+      const logoMark = document.querySelector('.logo-mark');
+      if (logoMark) {
+        logoMark.innerHTML = `<img src="${tenant.logo_url}" style="width:36px;height:36px;object-fit:contain;border-radius:6px">`;
+      }
+    }
+  } catch(e) {
+    console.error('Error cargando logo:', e);
+  }
+}
+
 async function loadData() {
   try {
     // Si modo=cargar, cargar evaluación guardada
@@ -2086,6 +2124,7 @@ function finishTest() {
 
 // Inicializar parámetros
 obtenerParametrosURL();
+cargarLogoTenant();
 
 // Si modo=cargar, esperar a que cargue antes de construir interfaz
 if (modoCargar && pruebaId) {
