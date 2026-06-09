@@ -1801,11 +1801,16 @@ const app = {
 
       // **CASO ESPECIAL: ISRA - Gráfico de Perfil con Centiles**
       if (prueba.tipo === 'ISRA') {
-        // Obtener respuestas guardadas
-        const respuestas = app.israState._respuestas || {};
-        const totalC = respuestas.C ? respuestas.C.reduce((a, b) => a + (Number(b) || 0), 0) : 0;
-        const totalF = respuestas.F ? respuestas.F.reduce((a, b) => a + (Number(b) || 0), 0) : 0;
-        const totalM = respuestas.M ? respuestas.M.reduce((a, b) => a + (Number(b) || 0), 0) : 0;
+        // Obtener respuestas desde datos guardados o estado en memoria
+        const datosISRA = Array.isArray(data) ? data : [];
+
+        // Calcular totales por sección desde los datos guardados
+        // Sección C: ítems 1-57 (57 items)
+        // Sección F: ítems 58-169 (112 items)
+        // Sección M: ítems 170-304 (135 items)
+        const totalC = datosISRA.slice(0, 57).reduce((a, b) => a + (Number(b) || 0), 0) || 0;
+        const totalF = datosISRA.slice(57, 169).reduce((a, b) => a + (Number(b) || 0), 0) || 0;
+        const totalM = datosISRA.slice(169, 304).reduce((a, b) => a + (Number(b) || 0), 0) || 0;
         const totalT = totalC + totalF + totalM;
 
         // Determinar sexo del paciente
