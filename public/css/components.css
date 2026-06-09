@@ -467,6 +467,22 @@ select.input-field {
   gap: var(--space-4);
 }
 
+/* Nav item disabled state */
+.nav-item-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  color: var(--color-text-muted);
+}
+
+.nav-item-disabled:hover {
+  background-color: transparent;
+  color: var(--color-text-muted);
+}
+
+.nav-item-disabled .label {
+  opacity: 0.7;
+}
+
 @media (max-width: 768px) {
   .grid-cols-2,
   .grid-cols-3 {
