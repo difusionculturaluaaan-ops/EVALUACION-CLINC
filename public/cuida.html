@@ -35,9 +35,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);
 
 /* HEADER */
 .hdr{background:linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,.12)}
-.hdr-inner{max-width:960px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
-.hdr h1{font-family:'DM Sans',sans-serif;font-size:1.25rem;font-weight:700;color:#fff;letter-spacing:.02em}
-.hdr p{font-size:.72rem;color:rgba(255,255,255,.5);margin-top:2px}
+.hdr-inner{max-width:960px;margin:0 auto;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:28px}
+.hdr-logo-btn{background:none;border:none;cursor:pointer;padding:0;flex-shrink:0}
+.hdr-logo-mark{width:70px;height:70px;background:rgba(255,255,255,.15);border-radius:10px;display:grid;place-items:center;font-family:'DM Sans',sans-serif;font-size:7px;font-weight:700;color:#fff;box-shadow:0 0 20px rgba(255,255,255,.1)}
+.hdr-title{flex:1;text-align:center}
+.hdr h1{font-family:'DM Sans',sans-serif;font-size:1.5rem;font-weight:700;color:#fff;letter-spacing:.02em}
+.hdr p{font-size:.78rem;color:rgba(255,255,255,.6);margin-top:4px}
 .prog-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:150px}
 .prog-label{font-size:.7rem;color:rgba(255,255,255,.5)}
 .prog-bar-out{width:150px;height:5px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden}
@@ -432,7 +435,10 @@ tr.pt-div .dl{height:2px;background:var(--border);border-radius:2px}
 
 <header class="hdr">
   <div class="hdr-inner">
-    <div><h1>CUIDA — Sistema Digital</h1><p>Captura · Perfil en tiempo real · Reporte</p></div>
+    <button class="hdr-logo-btn" onclick="window.location.href='/'">
+      <div class="hdr-logo-mark">EVALUACIÓN<br>PSICOLÓGICA</div>
+    </button>
+    <div class="hdr-title"><h1>CUIDA — Sistema Digital</h1><p>Captura · Perfil en tiempo real · Reporte</p></div>
     <div class="prog-wrap" id="prog-wrap" style="display:none">
       <span class="prog-label">Completado</span>
       <div class="prog-bar-out"><div class="prog-bar-in" id="prog-bar"></div></div>
