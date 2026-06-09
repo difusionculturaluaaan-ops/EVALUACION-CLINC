@@ -170,7 +170,7 @@ const expedientes = {
    */
   async cargarTestsPaciente(pacienteId) {
     try {
-      const pruebas = await api.getPruebas(pacienteId);
+      const pruebas = await api.getPruebasDelPaciente(pacienteId);
       if (!pruebas || pruebas.length === 0) return;
 
       // Extraer nombres únicos de tests
