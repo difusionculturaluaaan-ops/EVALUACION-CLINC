@@ -124,14 +124,16 @@ h1, h2, h3 {
 
 .egep5-tabs {
   background: var(--bg-secondary);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 2px solid var(--border);
   display: flex;
   gap: 4px;
   padding: 0 28px;
   overflow-x: auto;
   position: sticky;
-  top: 76px;
-  z-index: 50;
+  top: 0;
+  z-index: 99;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .egep5-tab {
