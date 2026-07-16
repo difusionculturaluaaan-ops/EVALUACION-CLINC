@@ -12,7 +12,27 @@
   <link rel="stylesheet" href="/css/tokens.css">
   <link rel="stylesheet" href="/css/typography.css">
   <link rel="stylesheet" href="/css/components.css">
-  <link rel="stylesheet" href="/css/egep5.css">
+
+  <!-- EGEP-5 Override (último para máxima especificidad) -->
+  <link rel="stylesheet" href="/css/egep5.css?v=1">
+
+  <style>
+    /* Inline override crítico */
+    .egep5-hdr {
+      background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%) !important;
+      color: white !important;
+      position: sticky !important;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.12) !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      border: none !important;
+    }
+    .egep5-hdr h1 { color: white !important; font-family: 'DM Sans', sans-serif !important; }
+    .egep5-hdr p { color: white !important; font-family: 'DM Sans', sans-serif !important; }
+    .egep5-dashboard { background: white !important; position: sticky !important; top: 76px; z-index: 50; }
+  </style>
 </head>
 <body data-theme="light">
 
