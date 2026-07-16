@@ -124,7 +124,7 @@ h1, h2, h3 {
 
 .egep5-tabs {
   background: var(--bg-secondary);
-  border-bottom: 2px solid var(--border);
+  border-bottom: 1px solid #1a2029;
   display: flex;
   gap: 4px;
   padding: 0 28px;
