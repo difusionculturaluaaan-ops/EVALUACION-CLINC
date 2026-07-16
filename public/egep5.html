@@ -12,356 +12,210 @@
   <link rel="stylesheet" href="/css/tokens.css">
   <link rel="stylesheet" href="/css/typography.css">
   <link rel="stylesheet" href="/css/components.css">
-
-  <!-- EGEP-5 Override (último para máxima especificidad) -->
-  <link rel="stylesheet" href="/css/egep5.css?v=1">
-
-  <style>
-    html, body { height: 100%; }
-    /* Inline override crítico */
-    .egep5-hdr {
-      background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%) !important;
-      color: white !important;
-      position: sticky !important;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.12) !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      border: none !important;
-    }
-    .egep5-hdr h1 { color: white !important; font-family: 'DM Sans', sans-serif !important; }
-    .egep5-hdr p { color: white !important; font-family: 'DM Sans', sans-serif !important; }
-    .egep5-dashboard { background: white !important; position: sticky !important; top: 76px; z-index: 50; }
-    main.egep5-container { overflow-y: auto !important; }
-  </style>
+  <link rel="stylesheet" href="/css/egep5-nuevo.css">
 </head>
 <body data-theme="light">
 
 <!-- Header -->
-<header class="egep5-hdr">
-  <div class="egep5-hdr-inner">
-    <button onclick="window.history.back()" class="egep5-back-btn" title="Volver">
-      ← Volver
-    </button>
-    <div class="egep5-hdr-title">
+<header class="egep5-header">
+  <div class="egep5-header-inner">
+    <button onclick="window.history.back()" class="egep5-back-btn">← Volver</button>
+    <div class="egep5-title">
       <h1>EGEP-5</h1>
-      <p>Escala para la Evaluación del Trastorno por Estrés Postraumático</p>
+      <p>Evaluación Global de Estrés Postraumático · Sistema de captura y corrección</p>
     </div>
-    <div class="egep5-hdr-progress">
-      <div class="egep5-progress-bar-wrap">
-        <div class="egep5-progress-bar">
-          <div id="egep5-progress-fill" class="egep5-progress-fill"></div>
-        </div>
-      </div>
-      <div class="egep5-progress-info">
-        <span id="egep5-progress-items">0/58</span>
-      </div>
-    </div>
+    <div class="egep5-badge" id="egep5-badge">58 ítems · DSM-5</div>
   </div>
 </header>
 
-<!-- Data Dashboard -->
-<div class="egep5-dashboard">
-  <div class="egep5-dashboard-inner">
-    <div class="egep5-data-card">
-      <div class="edc-label">Paciente</div>
-      <div id="egep5-paciente-nombre" class="edc-value">Cargando...</div>
-    </div>
-    <div class="egep5-data-card">
-      <div class="edc-label">Sección</div>
-      <div id="egep5-seccion-actual" class="edc-value">1 de 3</div>
-    </div>
-    <div class="egep5-data-card">
-      <div class="edc-label">Respuestas</div>
-      <div id="egep5-respuestas-count" class="edc-value">0/58</div>
-    </div>
-  </div>
+<!-- Tabs Navigation -->
+<div class="egep5-tabs">
+  <button class="egep5-tab active" data-tab="datos" onclick="window.tests_egep5.irTab('datos')">
+    <span class="tab-num">1</span> Ingreso de Datos
+  </button>
+  <button class="egep5-tab" data-tab="test" onclick="window.tests_egep5.irTab('test')">
+    <span class="tab-num">2</span> Aplicar Test
+  </button>
+  <button class="egep5-tab" data-tab="resultados" onclick="window.tests_egep5.irTab('resultados')">
+    <span class="tab-num">3</span> Resultados
+  </button>
+  <button class="egep5-tab" data-tab="perfil" onclick="window.tests_egep5.irTab('perfil')">
+    <span class="tab-num">4</span> Perfil Visual
+  </button>
+  <button class="egep5-tab" data-tab="interpretacion" onclick="window.tests_egep5.irTab('interpretacion')">
+    <span class="tab-num">5</span> Interpretación
+  </button>
 </div>
 
-<!-- Main Container -->
 <main class="egep5-container">
 
-  <!-- Progress Bar -->
-  <div class="egep5-progress">
-    <div class="progress-bar">
-      <div id="egep5-progress-fill" class="progress-fill"></div>
-    </div>
-    <div class="progress-info">
-      <span id="egep5-progress-text">Sección 1 de 3</span>
-      <span id="egep5-progress-items">0/58 respuestas</span>
-    </div>
-  </div>
+  <!-- ========== TAB 1: INGRESO DE DATOS ========== -->
+  <div class="egep5-tab-content active" id="tab-datos">
 
-  <!-- Import Tools (for testing) -->
-  <div class="egep5-import-tools">
-    <details>
+    <!-- Instrucciones -->
+    <div class="egep5-instruction">
+      <div class="instr-icon">i</div>
+      <div>
+        <strong>Instrucciones:</strong> complete los datos del evaluado y capture las respuestas en la pestaña <strong>Aplicar Test</strong>. Los ítems se identifican por número; lea el enunciado en el ejemplar impreso del EGEP-5. Los datos se guardan automáticamente en este navegador.
+      </div>
+    </div>
+
+    <!-- Import Tools -->
+    <details class="egep5-import-section">
       <summary>📥 Cargar Datos de Ejemplo (Testing)</summary>
-      <div style="padding: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
-        <button onclick="window.tests_egep5.importarEjemplo('positivo')" class="btn btn-primary" style="background: #10b981;">
-          ✅ Cargar Caso POSITIVO (TEPT)
+      <div class="import-buttons">
+        <button onclick="window.tests_egep5.importarEjemplo('positivo')" class="btn btn-ejemplo-positivo">
+          ✅ Caso POSITIVO (con TEPT)
         </button>
-        <button onclick="window.tests_egep5.importarEjemplo('negativo')" class="btn btn-secondary" style="background: #3b82f6;">
-          ❌ Cargar Caso NEGATIVO (Sin TEPT)
+        <button onclick="window.tests_egep5.importarEjemplo('negativo')" class="btn btn-ejemplo-negativo">
+          ❌ Caso NEGATIVO (sin TEPT)
         </button>
-        <button onclick="document.getElementById('egep5-file-input').click()" class="btn btn-secondary">
-          📂 Importar JSON Personalizado
+        <button onclick="document.getElementById('egep5-file-input').click()" class="btn btn-ejemplo-json">
+          📂 JSON Personalizado
         </button>
       </div>
     </details>
+
+    <!-- Grid 2 columnas -->
+    <div class="egep5-grid2">
+
+      <!-- Columna 1: Datos del Evaluado -->
+      <div class="egep5-card">
+        <div class="card-header">
+          <h2>⚙ Datos del Evaluado</h2>
+        </div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nombre y Apellidos</label>
+              <input type="text" id="m_nombre" placeholder="Apellido, Nombre">
+            </div>
+            <div class="form-group">
+              <label>Fecha de Evaluación</label>
+              <input type="date" id="m_fecha">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Edad</label>
+              <input type="text" id="m_edad" placeholder="Ej. 34">
+            </div>
+            <div class="form-group">
+              <label>Sexo</label>
+              <select id="m_sexo">
+                <option value="">–</option>
+                <option>Varón</option>
+                <option>Mujer</option>
+                <option>Otro</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Centro</label>
+              <input type="text" id="m_centro" placeholder="Ej. Clínica X">
+            </div>
+            <div class="form-group">
+              <label>Responsable de la Evaluación</label>
+              <input type="text" id="m_evaluador" placeholder="Nombre del psicólogo">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label>Acontecimiento Sufrido <span class="label-hint">Ítem 12, descripción del evento precipitante</span></label>
+            <textarea id="m_evento" placeholder="Descripción breve del acontecimiento que la persona señala como causante del malestar actual" rows="4"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna 2: Progreso -->
+      <div>
+        <div class="egep5-card">
+          <div class="card-header">
+            <h2>▲ Progreso de Respuestas</h2>
+          </div>
+          <div class="card-body">
+            <div class="progress-section">
+              <div class="progress-label">
+                <span>Ítems respondidos</span>
+                <span class="progress-count"><strong id="pg_n">0</strong> <span class="text-mute">/ 46</span></span>
+              </div>
+              <div class="progress-bar-container">
+                <div class="progress-bar">
+                  <div id="pg_bar" class="progress-fill"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="stats-grid">
+              <div class="stat-box stat-blue">
+                <div class="stat-num" id="st_ev">0</div>
+                <div class="stat-label">Acontecimientos</div>
+              </div>
+              <div class="stat-box stat-green">
+                <div class="stat-num" id="st_si">0</div>
+                <div class="stat-label">Sí</div>
+              </div>
+              <div class="stat-box stat-red">
+                <div class="stat-num" id="st_no">0</div>
+                <div class="stat-label">No</div>
+              </div>
+            </div>
+
+            <div class="button-group">
+              <button onclick="window.tests_egep5.irTab('test')" class="btn btn-primary">→ Aplicar Test</button>
+              <button onclick="window.tests_egep5.irTab('resultados'); window.tests_egep5.calcularResultados();" class="btn btn-accent">⊡ Calcular Resultados</button>
+            </div>
+
+            <div class="button-group secondary">
+              <button onclick="window.tests_egep5.exportarJSON()" class="btn btn-secondary">↓ Exportar JSON</button>
+              <button onclick="document.getElementById('egep5-file-input').click()" class="btn btn-secondary">↑ Importar JSON</button>
+              <button onclick="window.tests_egep5.limpiar()" class="btn btn-danger">✕ Limpiar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- Hidden file input -->
-  <input type="file" id="egep5-file-input" accept=".json,application/json" style="display: none;">
-
-  <!-- Sección 1: Acontecimiento Traumático -->
-  <section id="egep5-section-1" class="egep5-section active">
-    <div class="section-header">
-      <h2>Sección 1: Acontecimiento Traumático</h2>
-      <p>Describa brevemente el acontecimiento traumático más molesto que ha experimentado</p>
-    </div>
-
-    <div class="section-content">
-      <!-- Items 1-11: Tipo de Trauma -->
-      <div class="form-group">
-        <label class="form-label">¿Qué tipo de acontecimiento traumático experimentó? (Seleccione todas las que apliquen)</label>
-        <div class="checkbox-grid">
-          <label class="checkbox-item">
-            <input type="checkbox" name="trauma_type" value="1"> Desastre natural (inundación, terremoto, etc.)
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" name="trauma_type" value="2"> Accidente de transporte (auto, avión, etc.)
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" name="trauma_type" value="3"> Accidente laboral o doméstico
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" name="trauma_type" value="4"> Combate o guerra
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" name="trauma_type" value="5"> Violación
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" name="trauma_type" value="6"> Otro tipo de abuso sexual
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" name="trauma_type" value="7"> Acoso o maltrato psicológico prolongado
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" name="trauma_type" value="8"> Violencia física
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" name="trauma_type" value="9"> Terrorismo o tortura
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" name="trauma_type" value="10"> Encarcelamiento o detención
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" name="trauma_type" value="11"> Muerte de un ser querido o accidente
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" name="trauma_type" value="12"> Otro acontecimiento traumático
-          </label>
-        </div>
-      </div>
-
-      <!-- Item 12: Descripción libre -->
-      <div class="form-group">
-        <label class="form-label required">Describa brevemente el acontecimiento traumático más molesto:</label>
-        <textarea id="trauma_description" class="input-field" placeholder="Describa el evento..." rows="4"></textarea>
-      </div>
-
-      <!-- Items 13-26: Características -->
-      <div class="form-group">
-        <label class="form-label required">Características del acontecimiento:</label>
-
-        <div class="characteristic-item">
-          <label>¿Cuál fue la gravedad del acontecimiento?</label>
-          <select id="trauma_severity" class="input-field">
-            <option value="">Seleccione...</option>
-            <option value="1">Leve</option>
-            <option value="2">Moderada</option>
-            <option value="3">Grave</option>
-            <option value="4">Extrema</option>
-          </select>
-        </div>
-
-        <div class="characteristic-item">
-          <label>¿Cuándo ocurrió el acontecimiento?</label>
-          <select id="trauma_timing" class="input-field">
-            <option value="">Seleccione...</option>
-            <option value="1">En la infancia</option>
-            <option value="2">Hace más de 1 mes</option>
-            <option value="3">Hace 1-3 meses</option>
-            <option value="4">Durante el último mes</option>
-          </select>
-        </div>
-
-        <div class="characteristic-item">
-          <label>¿Con qué frecuencia ocurrió?</label>
-          <select id="trauma_frequency" class="input-field">
-            <option value="">Seleccione...</option>
-            <option value="1">Una única vez</option>
-            <option value="2">Varias veces</option>
-            <option value="3">Repetida/reiterada</option>
-          </select>
-        </div>
-
-        <div class="characteristic-item">
-          <label class="form-label">Durante el evento, experimentó:</label>
-          <div class="checkbox-small">
-            <label><input type="checkbox" name="during_event" value="miedo"> Miedo intenso</label>
-            <label><input type="checkbox" name="during_event" value="indefension"> Sentimiento de indefensión</label>
-            <label><input type="checkbox" name="during_event" value="horror"> Horror</label>
-          </div>
-        </div>
-
-        <div class="characteristic-item">
-          <label class="form-label">El evento supuso:</label>
-          <div class="checkbox-small">
-            <label><input type="checkbox" name="event_type" value="lesion"> Lesión grave</label>
-            <label><input type="checkbox" name="event_type" value="muerte"> Muerte</label>
-            <label><input type="checkbox" name="event_type" value="amenaza"> Amenaza física</label>
-            <label><input type="checkbox" name="event_type" value="amenaza_vida"> Amenaza para la vida</label>
-            <label><input type="checkbox" name="event_type" value="escenas"> Escenas desagradables/repugnantes</label>
-            <label><input type="checkbox" name="event_type" value="dignidad"> Amenaza a la dignidad</label>
-          </div>
-        </div>
+  <!-- ========== TAB 2: APLICAR TEST ========== -->
+  <div class="egep5-tab-content" id="tab-test">
+    <div class="egep5-instruction">
+      <div class="instr-icon">i</div>
+      <div>
+        <strong>Captura:</strong> marque las respuestas del ejemplar. En los ítems 27 a 49, el <strong>grado de molestia</strong> (0 = Ninguna … 4 = Extrema) se habilita solo al marcar <strong>Sí</strong>.
       </div>
     </div>
 
-    <div class="section-footer">
-      <button onclick="window.tests_egep5.siguienteSeccion()" class="btn btn-primary">Siguiente →</button>
+    <!-- Secciones del test -->
+    <div id="test-sections-container"></div>
+
+    <div class="button-group" style="margin-top: 24px;">
+      <button onclick="window.tests_egep5.irTab('resultados'); window.tests_egep5.calcularResultados();" class="btn btn-primary">⊡ Calcular Resultados</button>
     </div>
-  </section>
+  </div>
 
-  <!-- Sección 2: Síntomas (Últimos 30 días) -->
-  <section id="egep5-section-2" class="egep5-section">
-    <div class="section-header">
-      <h2>Sección 2: Síntomas (Últimos 30 días)</h2>
-      <p>Indique cuánto le han molestado cada uno de los siguientes síntomas</p>
-    </div>
+  <!-- ========== TAB 3: RESULTADOS ========== -->
+  <div class="egep5-tab-content" id="tab-resultados">
+    <div id="resultados-container"></div>
+  </div>
 
-    <div class="section-content">
-      <!-- Subescala I: Reexperimentación (Items 27-31) -->
-      <div class="subscale-block">
-        <h3 class="subscale-title">Reexperimentación</h3>
-        <p class="subscale-description">Recuerdos, pesadillas y revivir el evento</p>
+  <!-- ========== TAB 4: PERFIL VISUAL ========== -->
+  <div class="egep5-tab-content" id="tab-perfil">
+    <div id="perfil-container"></div>
+  </div>
 
-        <div id="egep5-items-27-31" class="symptoms-grid"></div>
-      </div>
-
-      <!-- Subescala C: Evitación (Items 32-33) -->
-      <div class="subscale-block">
-        <h3 class="subscale-title">Evitación</h3>
-        <p class="subscale-description">Evitar pensamientos, actividades o lugares</p>
-
-        <div id="egep5-items-32-33" class="symptoms-grid"></div>
-      </div>
-
-      <!-- Subescala D: Alteraciones Cognitivas/Ánimo (Items 34-40) -->
-      <div class="subscale-block">
-        <h3 class="subscale-title">Alteraciones Cognitivas y del Ánimo</h3>
-        <p class="subscale-description">Dificultad para recordar, creencias negativas, culpa</p>
-
-        <div id="egep5-items-34-40" class="symptoms-grid"></div>
-      </div>
-
-      <!-- Subescala E: Activación/Reactividad (Items 41-46) -->
-      <div class="subscale-block">
-        <h3 class="subscale-title">Alteraciones en Activación y Reactividad</h3>
-        <p class="subscale-description">Irritabilidad, hipervigilancia, sobresaltos</p>
-
-        <div id="egep5-items-41-46" class="symptoms-grid"></div>
-      </div>
-
-      <!-- Items 50-51: Duración y Onset -->
-      <div class="subscale-block">
-        <h3 class="subscale-title">Duración</h3>
-
-        <div class="form-group">
-          <label class="form-label">¿Desde hace cuánto tiempo tiene estos síntomas?</label>
-          <select id="symptom_duration" class="input-field">
-            <option value="">Seleccione...</option>
-            <option value="1">Menos de 1 mes</option>
-            <option value="2">1 a 3 meses</option>
-            <option value="3">Más de 3 meses</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">¿Cuándo empezaron estos síntomas?</label>
-          <select id="symptom_onset" class="input-field">
-            <option value="">Seleccione...</option>
-            <option value="1">Nada más ocurrir el evento</option>
-            <option value="2">Dentro de los primeros 6 meses</option>
-            <option value="3">Después de 6 meses</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <div class="section-footer">
-      <button onclick="window.tests_egep5.seccionAnterior()" class="btn btn-secondary">← Anterior</button>
-      <button onclick="window.tests_egep5.siguienteSeccion()" class="btn btn-primary">Siguiente →</button>
-    </div>
-  </section>
-
-  <!-- Sección 3: Funcionamiento -->
-  <section id="egep5-section-3" class="egep5-section">
-    <div class="section-header">
-      <h2>Sección 3: Impacto en el Funcionamiento (Últimos 30 días)</h2>
-      <p>¿Ha tenido dificultades en las siguientes áreas debido a los síntomas?</p>
-    </div>
-
-    <div class="section-content">
-      <div class="functioning-grid" id="egep5-items-52-58"></div>
-    </div>
-
-    <div class="section-footer">
-      <button onclick="window.tests_egep5.seccionAnterior()" class="btn btn-secondary">← Anterior</button>
-      <button onclick="window.tests_egep5.calcularResultados()" class="btn btn-primary btn-lg">Calcular Resultados</button>
-    </div>
-  </section>
-
-  <!-- Resultados -->
-  <section id="egep5-section-resultados" class="egep5-section">
-    <div class="section-header">
-      <h2>Resultados EGEP-5</h2>
-      <p>Evaluación del Trastorno por Estrés Postraumático</p>
-    </div>
-
-    <div class="section-content">
-      <!-- Diagnóstico Principal -->
-      <div id="egep5-diagnostico" class="diagnostic-box"></div>
-
-      <!-- Tabla de Criterios DSM-5 -->
-      <div class="criteria-table">
-        <h3>Criterios DSM-5</h3>
-        <div id="egep5-criteria-table" class="table-wrapper"></div>
-      </div>
-
-      <!-- Tabla de Síntomas por Subescala -->
-      <div class="symptoms-table">
-        <h3>Síntomas por Dimensión</h3>
-        <div id="egep5-symptoms-summary" class="table-wrapper"></div>
-      </div>
-
-      <!-- Tabla de Funcionamiento -->
-      <div class="functioning-table">
-        <h3>Áreas de Funcionamiento Afectadas</h3>
-        <div id="egep5-functioning-summary" class="table-wrapper"></div>
-      </div>
-    </div>
-
-    <div class="section-footer">
-      <button onclick="window.tests_egep5.generarPDF()" class="btn btn-primary">📄 Generar PDF</button>
-      <button onclick="window.tests_egep5.guardarResultados()" class="btn btn-success">💾 Guardar en Expediente</button>
-      <button onclick="window.history.back()" class="btn btn-secondary">Volver</button>
-    </div>
-  </section>
+  <!-- ========== TAB 5: INTERPRETACIÓN ========== -->
+  <div class="egep5-tab-content" id="tab-interpretacion">
+    <div id="interpretacion-container"></div>
+  </div>
 
 </main>
+
+<!-- Hidden file input -->
+<input type="file" id="egep5-file-input" accept=".json,application/json" style="display: none;">
 
 <!-- Scripts modulares EGEP-5 -->
 <script src="/js/tests/egep5-corrector.js"></script>
@@ -370,7 +224,6 @@
 <script src="/js/tests/egep5.js"></script>
 
 <script>
-  // Inicializar cuando la página carga
   document.addEventListener('DOMContentLoaded', () => {
     window.tests_egep5.init();
   });
