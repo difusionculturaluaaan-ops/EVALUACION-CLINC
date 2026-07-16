@@ -64,6 +64,9 @@ window.tests_egep5 = {
 
   init() {
     this.pacienteId = sessionStorage.getItem('pacienteSeleccionado');
+    if (!this.pacienteId) {
+      sessionStorage.setItem('paciente_nombre', 'Demo Paciente');
+    }
     this.mostrarPaciente();
     this.renderizarSintomas();
     this.renderizarFuncionamiento();
@@ -72,8 +75,11 @@ window.tests_egep5 = {
   },
 
   mostrarPaciente() {
-    const nombre = localStorage.getItem('paciente_nombre') || sessionStorage.getItem('paciente_nombre') || 'Sin nombre';
-    document.getElementById('egep5-paciente-nombre').textContent = nombre;
+    const nombre = localStorage.getItem('paciente_nombre') || sessionStorage.getItem('paciente_nombre') || 'Paciente';
+    const elementoNombre = document.getElementById('egep5-paciente-nombre');
+    if (elementoNombre) {
+      elementoNombre.textContent = nombre.includes('Paciente:') ? nombre.split('Paciente:')[1].trim() : nombre;
+    }
   },
 
   actualizarDashboard() {
