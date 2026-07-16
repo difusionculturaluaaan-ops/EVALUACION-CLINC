@@ -75,6 +75,11 @@ window.tests_egep5 = {
     localStorage.setItem('paciente_nombre', nombre);
     sessionStorage.setItem('paciente_nombre', nombre);
 
+    // Cargar baremos por defecto
+    if (!this.baremos) {
+      this.baremos = window.EGEP5_BAREMOS.BAREMOS_ESPANA;
+    }
+
     console.log('EGEP5 Init - Nombre:', nombre, 'ID:', this.pacienteId);
 
     this.mostrarPaciente();
@@ -470,6 +475,27 @@ window.tests_egep5 = {
     });
   },
 
+  calculaPercentil(pd, escala) {
+    if (!this.baremos || this.baremos.length === 0) {
+      console.warn('Baremos no disponibles');
+      return null;
+    }
+
+    const fila = this.baremos.find(b => b.escala === escala);
+    if (!fila) return null;
+
+    if (pd <= 0) return 1;
+    if (pd >= fila.max) return 99;
+
+    const pts = Object.keys(fila).filter(k => k.match(/^\d+$/)).map(Number).sort((a, b) => a - b);
+    for (let i = 0; i < pts.length - 1; i++) {
+      if (pd >= pts[i] && pd < pts[i + 1]) {
+        return Math.round((pts[i] + pts[i + 1]) / 2);
+      }
+    }
+    return 99;
+  },
+
   exportarJSON() {
     if (!this.resultados) {
       alert('Primero calcula los resultados');
@@ -477,30 +503,55 @@ window.tests_egep5 = {
     }
 
     const paciente_nombre = localStorage.getItem('paciente_nombre') || 'Paciente';
-    const evaluador = localStorage.getItem('nombre') || 'Sin especificar';
+    const evaluador = document.getElementById('m_evaluador')?.value || localStorage.getItem('nombre') || 'Sin especificar';
+    const fecha_eval = document.getElementById('m_fecha')?.value || new Date().toISOString().split('T')[0];
+    const edad = document.getElementById('m_edad')?.value || 'No especificada';
+    const sexo = document.getElementById('m_sexo')?.value || 'No especificado';
+    const centro = document.getElementById('m_centro')?.value || 'No especificado';
+
+    // Calcular percentiles con baremos
+    const percentiles = {
+      I: this.calculaPercentil(this.resultados.pd?.I || 0, 'I'),
+      E: this.calculaPercentil(this.resultados.pd?.E || 0, 'E'),
+      C: this.calculaPercentil(this.resultados.pd?.C || 0, 'C'),
+      A: this.calculaPercentil(this.resultados.pd?.A || 0, 'A'),
+      Total: this.calculaPercentil(this.resultados.pd?.Total || 0, 'Total')
+    };
 
     const data = {
       testType: 'EGEP-5',
-      version: '1.0',
+      version: '2.0',
+      baremos: 'españa_2024',
       respuestas: this.construirArrayRespuestas(),
       metadatos: {
         paciente_nombre: paciente_nombre,
         paciente_id: sessionStorage.getItem('pacienteSeleccionado'),
+        edad: edad,
+        sexo: sexo,
         evaluador: evaluador,
-        fecha: new Date().toISOString(),
+        centro: centro,
+        fecha_evaluacion: fecha_eval,
         tipo_trauma: this.respuestas.trauma_type.join(','),
         descripcion_evento: this.respuestas.trauma_description,
-        fecha_expediente: this.respuestas.trauma_timing
+        severidad_evento: this.respuestas.trauma_severity,
+        tiempo_evento: this.respuestas.trauma_timing
       },
-      criterios_dsm5: this.resultados.criterios,
+      criterios_dsm5: this.resultados.crit,
       diagnostico: {
-        tept_presente: this.resultados.teptPresente,
-        intensidad: this.resultados.nivelIntensidad,
-        intensidad_total: this.resultados.intensidadTotal,
-        reexperimentacion: this.resultados.reexper,
-        evitacion: this.resultados.evitar,
-        cognitivas: this.resultados.cognit,
-        activacion: this.resultados.activa
+        tept_presente: this.resultados.tept,
+        puntuaciones_directas: this.resultados.pd,
+        percentiles: percentiles,
+        sintomas_reportados: {
+          intrusivos: this.resultados.nsint?.I || 0,
+          evitacion: this.resultados.nsint?.E || 0,
+          cognitivas: this.resultados.nsint?.C || 0,
+          activacion: this.resultados.nsint?.A || 0
+        }
+      },
+      funcionamiento: {
+        areas_afectadas: this.respuestas.items_52_58.filter(x => x > 0).length,
+        total_areas: 7,
+        areas_detalles: this.funcionamientoDefinitions.filter((_, i) => this.respuestas.items_52_58[i] > 0)
       },
       respondidas: this.construirArrayRespuestas().filter(x => x > 0).length,
       timestamp: new Date().toISOString()
@@ -517,7 +568,20 @@ window.tests_egep5 = {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 
-    alert('✅ JSON exportado correctamente');
+    alert('✅ JSON exportado con percentiles y baremos incluidos');
+  },
+
+  irTab(tabName) {
+    const tabs = document.querySelectorAll('.egep5-tab');
+    const contents = document.querySelectorAll('.egep5-tab-content');
+
+    contents.forEach(c => c.classList.remove('active'));
+    tabs.forEach(t => t.classList.remove('active'));
+
+    document.querySelector(`.egep5-tab[data-tab="${tabName}"]`)?.classList.add('active');
+    document.getElementById(`tab-${tabName}`)?.classList.add('active');
+
+    window.scrollTo(0, 0);
   },
 
   importarJSON(event) {
