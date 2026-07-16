@@ -93,6 +93,27 @@
     </div>
   </div>
 
+  <!-- Import Tools (for testing) -->
+  <div class="egep5-import-tools">
+    <details>
+      <summary>📥 Cargar Datos de Ejemplo (Testing)</summary>
+      <div style="padding: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+        <button onclick="window.tests_egep5.importarEjemplo('positivo')" class="btn btn-primary" style="background: #10b981;">
+          ✅ Cargar Caso POSITIVO (TEPT)
+        </button>
+        <button onclick="window.tests_egep5.importarEjemplo('negativo')" class="btn btn-secondary" style="background: #3b82f6;">
+          ❌ Cargar Caso NEGATIVO (Sin TEPT)
+        </button>
+        <button onclick="document.getElementById('egep5-file-input').click()" class="btn btn-secondary">
+          📂 Importar JSON Personalizado
+        </button>
+      </div>
+    </details>
+  </div>
+
+  <!-- Hidden file input -->
+  <input type="file" id="egep5-file-input" accept=".json,application/json" style="display: none;">
+
   <!-- Sección 1: Acontecimiento Traumático -->
   <section id="egep5-section-1" class="egep5-section active">
     <div class="section-header">

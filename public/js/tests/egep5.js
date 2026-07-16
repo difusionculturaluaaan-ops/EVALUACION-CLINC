@@ -82,6 +82,9 @@ window.tests_egep5 = {
     this.renderizarFuncionamiento();
     this.actualizarProgreso();
     this.actualizarDashboard();
+
+    // Inicializar importador de archivos
+    this.inicializarImportador();
   },
 
   mostrarPaciente() {
@@ -390,6 +393,81 @@ window.tests_egep5 = {
     this.respuestas.items_52_58.forEach((v, i) => { if (v > 0) funcHTML += `<li>${this.funcionamientoDefinitions[i]}</li>`; });
     funcHTML += '</ul>';
     document.getElementById('egep5-functioning-summary').innerHTML = funcHTML;
+  },
+
+  /**
+   * Importar ejemplo de ejemplo JSON (positivo o negativo)
+   */
+  async importarEjemplo(tipo) {
+    try {
+      const archivo = tipo === 'positivo' ? 'egep5-ejemplo-positivo.json' : 'egep5-ejemplo-negativo.json';
+      const response = await fetch(`/data/${archivo}`);
+
+      if (!response.ok) {
+        alert('❌ No se pudo cargar el archivo de ejemplo');
+        return;
+      }
+
+      const data = await response.json();
+      this.respuestas = data.respuestas || {};
+
+      // Actualizar UI
+      this.renderizarSintomas();
+      this.renderizarFuncionamiento();
+      this.actualizarProgreso();
+      this.actualizarDashboard();
+
+      // Notificación visual
+      const tipo_txt = tipo === 'positivo' ? '✅ POSITIVO (con TEPT)' : '❌ NEGATIVO (sin TEPT)';
+      alert(`📥 Ejemplo ${tipo_txt} cargado.\n\nAhora ve a Sección 3 y haz clic en "Calcular Resultados"`);
+
+      // Auto-scroll a Sección 3
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 500);
+    } catch (error) {
+      console.error('Error importando ejemplo:', error);
+      alert('❌ Error al importar: ' + error.message);
+    }
+  },
+
+  /**
+   * Manejar importación de archivo JSON personalizado
+   */
+  inicializarImportador() {
+    const fileInput = document.getElementById('egep5-file-input');
+    if (!fileInput) return;
+
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        try {
+          const data = JSON.parse(evt.target.result);
+
+          if (!data.respuestas) {
+            throw new Error('El archivo no contiene "respuestas"');
+          }
+
+          this.respuestas = data.respuestas;
+
+          // Actualizar UI
+          this.renderizarSintomas();
+          this.renderizarFuncionamiento();
+          this.actualizarProgreso();
+          this.actualizarDashboard();
+
+          alert(`✅ Archivo "${file.name}" importado correctamente.\n\nVe a Sección 3 y haz clic en "Calcular Resultados"`);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } catch (error) {
+          alert('❌ Error al parsear JSON: ' + error.message);
+          console.error('Parse error:', error);
+        }
+      };
+      reader.readAsText(file);
+    });
   },
 
   exportarJSON() {

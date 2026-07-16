@@ -158,6 +158,36 @@ body .egep5-hdr {
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* IMPORT TOOLS                                         */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.egep5-import-tools {
+  margin-bottom: 24px;
+  padding: 12px 0;
+}
+
+.egep5-import-tools details {
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  border-radius: 8px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.egep5-import-tools summary {
+  cursor: pointer;
+  padding: 12px 16px;
+  font-weight: 600;
+  color: #16a34a;
+  user-select: none;
+  transition: background 0.2s;
+}
+
+.egep5-import-tools summary:hover {
+  background: #e8f7ed;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 /* MAIN CONTAINER                                       */
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
