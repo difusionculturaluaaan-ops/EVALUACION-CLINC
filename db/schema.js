@@ -35,12 +35,24 @@ async function createTables() {
 
     // Agregar columna tests_habilitados si no existe
     try {
-      await pool.query(`
-        ALTER TABLE tenants
-        ADD COLUMN IF NOT EXISTS tests_habilitados JSONB DEFAULT '["SCL90R","HAMILTON","MMPI2PRO","CUIDA","ISRA","TDS","PCLR","SCID2","EGEP5"]'::jsonb
+      // Verificar si la columna existe
+      const columnCheck = await pool.query(`
+        SELECT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'tenants' AND column_name = 'tests_habilitados'
+        );
       `);
+
+      if (!columnCheck.rows[0].exists) {
+        // Crear la columna si no existe
+        await pool.query(`
+          ALTER TABLE tenants
+          ADD COLUMN tests_habilitados JSONB DEFAULT '["SCL90R","HAMILTON","MMPI2PRO","CUIDA","ISRA","TDS","PCLR","SCID2","EGEP5"]'::jsonb
+        `);
+        console.log('✓ Columna tests_habilitados creada en tenants');
+      }
     } catch (e) {
-      // Column might already exist, ignore
+      console.error('Error al agregar columna tests_habilitados:', e.message);
     }
 
     // Tabla de usuarios (profesionales/admin)
