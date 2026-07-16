@@ -5,9 +5,7 @@
  * Estructura: 58 items, 3 secciones, autoadministrable
  */
 
-window.tests = window.tests || {};
-
-window.tests.egep5 = {
+const tests_egep5 = {
   nombre: 'EGEP-5',
   tipo: 'EGEP-5',
   seccionActual: 1,
@@ -107,7 +105,7 @@ window.tests.egep5 = {
     const opciones = ['Ninguna', 'Leve', 'Moderada', 'Grave', 'Extrema'];
     let html = `<div class="symptom-item"><label class="symptom-text">${numero}. ${texto}</label><div class="likert-scale">`;
     opciones.forEach((opcion, valor) => {
-      html += `<label class="likert-option"><input type="radio" name="${numero}" value="${valor}" onchange="tests.egep5.cambiarRespuesta('${grupo}', ${indice}, ${valor})"><span class="likert-label">${opcion}</span></label>`;
+      html += `<label class="likert-option"><input type="radio" name="${numero}" value="${valor}" onchange="tests_egep5.cambiarRespuesta('${grupo}', ${indice}, ${valor})"><span class="likert-label">${opcion}</span></label>`;
     });
     html += `</div></div>`;
     return html;
@@ -116,7 +114,7 @@ window.tests.egep5 = {
   renderizarFuncionamiento() {
     let html = '';
     this.funcionamientoDefinitions.forEach((def, indice) => {
-      html += `<div class="functioning-item"><label class="checkbox-item"><input type="checkbox" name="item_${52 + indice}" onchange="tests.egep5.cambiarFuncionamiento(${indice}, this.checked)"><span>${52 + indice}. ${def}</span></label></div>`;
+      html += `<div class="functioning-item"><label class="checkbox-item"><input type="checkbox" name="item_${52 + indice}" onchange="tests_egep5.cambiarFuncionamiento(${indice}, this.checked)"><span>${52 + indice}. ${def}</span></label></div>`;
     });
     document.getElementById('egep5-items-52-58').innerHTML = html;
   },
