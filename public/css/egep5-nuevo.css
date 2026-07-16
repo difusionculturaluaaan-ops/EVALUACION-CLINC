@@ -626,18 +626,22 @@ textarea {
 
 .symptom-item {
   margin-bottom: 20px;
-  padding: 14px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--bg-secondary);
+  padding: 16px;
+  border: 1px solid #2d3748;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .symptom-text {
   display: block;
-  font-weight: 500;
-  margin-bottom: 12px;
-  color: var(--text-primary);
+  font-weight: 600;
+  margin-bottom: 14px;
+  color: #f7fafc;
   font-size: 14px;
+  line-height: 1.5;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .likert-scale {
@@ -659,13 +663,14 @@ textarea {
 
 .likert-label {
   font-size: 12px;
-  color: var(--text-secondary);
+  color: #cbd5e0;
   user-select: none;
+  font-weight: 500;
 }
 
 .likert-option input[type="radio"]:checked + .likert-label {
-  color: var(--accent-light);
-  font-weight: 600;
+  color: #60a5fa;
+  font-weight: 700;
 }
 
 .functioning-item {
