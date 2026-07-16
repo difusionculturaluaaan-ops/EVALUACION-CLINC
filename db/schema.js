@@ -33,6 +33,16 @@ async function createTables() {
       )
     `);
 
+    // Agregar columna tests_habilitados si no existe
+    try {
+      await pool.query(`
+        ALTER TABLE tenants
+        ADD COLUMN IF NOT EXISTS tests_habilitados JSONB DEFAULT '["SCL90R","HAMILTON","MMPI2PRO","CUIDA","ISRA","TDS","PCLR","SCID2","EGEP5"]'::jsonb
+      `);
+    } catch (e) {
+      // Column might already exist, ignore
+    }
+
     // Tabla de usuarios (profesionales/admin)
     await pool.query(`
       CREATE TABLE IF NOT EXISTS usuarios (

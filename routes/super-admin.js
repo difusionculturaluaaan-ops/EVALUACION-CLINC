@@ -354,4 +354,53 @@ router.post('/tenants/:id/logo', autenticarSuperAdmin, upload.single('logo'), as
   }
 });
 
+// GET /api/super-admin/tenants/:id/tests
+router.get('/tenants/:id/tests', autenticarSuperAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query(
+      'SELECT tests_habilitados FROM tenants WHERE id = $1',
+      [parseInt(id)]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Tenant no encontrado' });
+    }
+
+    const tests = result.rows[0].tests_habilitados || [];
+    res.json({ tests });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// POST /api/super-admin/tenants/:id/tests
+router.post('/tenants/:id/tests', autenticarSuperAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { tests } = req.body;
+
+    if (!Array.isArray(tests) || tests.length === 0) {
+      return res.status(400).json({ error: 'Debes proporcionar al menos un test' });
+    }
+
+    const result = await pool.query(
+      'UPDATE tenants SET tests_habilitados = $1 WHERE id = $2 RETURNING *',
+      [JSON.stringify(tests), parseInt(id)]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Tenant no encontrado' });
+    }
+
+    registrarAuditLog('configurar_tests_tenant', parseInt(id), { tests });
+
+    res.json({ success: true, tenant: result.rows[0] });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;
