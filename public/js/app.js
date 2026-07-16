@@ -799,11 +799,29 @@ const app = {
                           this.pacienteActivo.fullName ||
                           'Paciente';
 
-    // Guardar datos del paciente
+    // Guardar datos del paciente en sesión y storage
     localStorage.setItem('paciente_nombre', nombrePaciente);
     localStorage.setItem('paciente_id', this.pacienteActivo.id);
     sessionStorage.setItem('paciente_nombre', nombrePaciente);
     sessionStorage.setItem('pacienteSeleccionado', this.pacienteActivo.id);
+
+    // Guardar edad (si existe)
+    if (this.pacienteActivo.edad || this.pacienteActivo.age) {
+      const edad = this.pacienteActivo.edad || this.pacienteActivo.age;
+      localStorage.setItem('paciente_edad', edad);
+      sessionStorage.setItem('paciente_edad', edad);
+    }
+
+    // Guardar sexo (si existe)
+    if (this.pacienteActivo.sexo || this.pacienteActivo.gender) {
+      const sexo = this.pacienteActivo.sexo || this.pacienteActivo.gender;
+      localStorage.setItem('paciente_sexo', sexo);
+      sessionStorage.setItem('paciente_sexo', sexo);
+    }
+
+    // Guardar nombre de usuario logueado (evaluador)
+    const usuarioLogueado = localStorage.getItem('usuario_nombre') || localStorage.getItem('nombre') || 'Evaluador';
+    sessionStorage.setItem('usuario_nombre', usuarioLogueado);
 
     console.log('EGEP5 - Paciente:', nombrePaciente, 'ID:', this.pacienteActivo.id);
     window.location.href = `/egep5.html?paciente_id=${this.pacienteActivo.id}&token=${encodeURIComponent(token)}`;
