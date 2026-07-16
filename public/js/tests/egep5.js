@@ -75,10 +75,16 @@ window.tests_egep5 = {
   },
 
   mostrarPaciente() {
-    const nombre = localStorage.getItem('paciente_nombre') || sessionStorage.getItem('paciente_nombre') || 'Paciente';
+    let nombre = localStorage.getItem('paciente_nombre') || sessionStorage.getItem('paciente_nombre') || 'Paciente';
+
+    // Limpiar prefijo si existe
+    if (nombre.includes('Paciente:')) {
+      nombre = nombre.split('Paciente:')[1].trim();
+    }
+
     const elementoNombre = document.getElementById('egep5-paciente-nombre');
     if (elementoNombre) {
-      elementoNombre.textContent = nombre.includes('Paciente:') ? nombre.split('Paciente:')[1].trim() : nombre;
+      elementoNombre.textContent = nombre;
     }
   },
 

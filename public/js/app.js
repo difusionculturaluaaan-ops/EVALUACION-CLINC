@@ -792,6 +792,9 @@ const app = {
       return;
     }
     const token = localStorage.getItem('auth_token') || '';
+    localStorage.setItem('paciente_nombre', this.pacienteActivo.nombre || 'Paciente');
+    sessionStorage.setItem('paciente_nombre', this.pacienteActivo.nombre || 'Paciente');
+    sessionStorage.setItem('pacienteSeleccionado', this.pacienteActivo.id);
     window.location.href = `/egep5.html?paciente_id=${this.pacienteActivo.id}&token=${encodeURIComponent(token)}`;
   },
 
