@@ -32,6 +32,13 @@ body {
   font-size: 14px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+html {
+  height: auto;
+  overflow-y: scroll;
 }
 
 h1, h2, h3 {
@@ -178,6 +185,8 @@ h1, h2, h3 {
   max-width: 1400px;
   margin: 0 auto;
   padding: 26px 28px 80px;
+  min-height: auto;
+  width: 100%;
 }
 
 .egep5-tab-content {
