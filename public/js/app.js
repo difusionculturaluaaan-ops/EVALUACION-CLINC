@@ -784,6 +784,18 @@ const app = {
   },
 
   /**
+   * Iniciar EGEP-5 en micrositio
+   */
+  iniciarEGEP5() {
+    if (!this.pacienteActivo) {
+      this.mostrarToast('Primero debes crear o seleccionar un paciente', 'error');
+      return;
+    }
+    const token = localStorage.getItem('auth_token') || '';
+    window.location.href = `/egep5.html?paciente_id=${this.pacienteActivo.id}&token=${encodeURIComponent(token)}`;
+  },
+
+  /**
    * Construir páginas del MMPI-2-RF (paginación)
    */
   construirPaginasMMPI() {
