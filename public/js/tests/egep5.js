@@ -275,6 +275,83 @@ tests.egep5 = {
     document.getElementById('egep5-functioning-summary').innerHTML = funcHTML;
   },
 
-  generarPDF() { alert('PDF (Día 4)'); },
-  guardarResultados() { alert('Guardar (Día 4)'); }
+  generarPDF() {
+    if (!this.resultados) {
+      alert('Primero calcula los resultados');
+      return;
+    }
+
+    const nombre_paciente = localStorage.getItem('paciente_nombre') || 'Paciente';
+    const html = document.getElementById('egep5-section-resultados').innerHTML;
+
+    const opt = {
+      margin: 10,
+      filename: `EGEP-5_${nombre_paciente}_${new Date().toISOString().split('T')[0]}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+    };
+
+    html2pdf().set(opt).from(html).save();
+    alert('PDF descargado correctamente');
+  },
+
+  guardarResultados() {
+    if (!this.resultados) {
+      alert('Primero calcula los resultados');
+      return;
+    }
+
+    // Preparar array de 58 respuestas (0 = no contestada, 1-4 = puntuación)
+    const data = [];
+
+    // Items 27-31 (Reexperimentación)
+    data.push(...this.respuestas.items_27_31);
+
+    // Items 32-33 (Evitación)
+    data.push(...this.respuestas.items_32_33);
+
+    // Items 34-40 (Cognitivas/Ánimo)
+    data.push(...this.respuestas.items_34_40);
+
+    // Items 41-46 (Activación)
+    data.push(...this.respuestas.items_41_46);
+
+    // Items 50-51 (Duración/Onset)
+    data.push(this.respuestas.symptom_duration || 0, this.respuestas.symptom_onset || 0);
+
+    // Items 52-58 (Funcionamiento: 0 o 1)
+    data.push(...this.respuestas.items_52_58);
+
+    // Subescalas con criterios DSM-5 y metadatos
+    const subescalas = {
+      reexperimentacion: this.resultados.reexper,
+      evitacion: this.resultados.evitar,
+      cognitivas_animo: this.resultados.cognit,
+      activacion: this.resultados.activa,
+      funcionamiento: this.respuestas.items_52_58.filter(x => x > 0).length,
+      intensidad_total: this.resultados.intensidadTotal,
+      nivel: this.resultados.nivelIntensidad,
+      _criterios_dsm5: this.resultados.criterios,
+      _tept_presente: this.resultados.teptPresente,
+      _evaluador: localStorage.getItem('nombre') || 'Sin especificar'
+    };
+
+    // Guardar via API
+    const pacienteId = sessionStorage.getItem('pacienteSeleccionado');
+    api.guardarPrueba(
+      pacienteId,
+      'EGEP-5',
+      data,
+      this.resultados.intensidadTotal,
+      subescalas,
+      localStorage.getItem('nombre')
+    ).then(resultado => {
+      alert('✅ Resultados guardados en expediente correctamente');
+      window.history.back();
+    }).catch(error => {
+      alert('❌ Error al guardar: ' + error.message);
+      console.error('Error:', error);
+    });
+  }
 };
