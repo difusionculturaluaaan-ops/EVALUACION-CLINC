@@ -1,0 +1,105 @@
+{
+  "testType": "EGEP-5",
+  "version": "2.0",
+  "baremos": "españa_2024",
+  "respuestas": [
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0
+  ],
+  "metadatos": {
+    "paciente_nombre": "Rodríguez García, María",
+    "paciente_id": "CLI-002",
+    "edad": "28",
+    "sexo": "Mujer",
+    "evaluador": "Psic. Dr. Carlos González",
+    "centro": "Clínica Centro Psicológico",
+    "fecha_evaluacion": "2026-07-16",
+    "tipo_trauma": "Incidente menor sin consecuencias",
+    "descripcion_evento": "Discussión familiar hace 3 años sin daño físico",
+    "severidad_evento": "leve",
+    "tiempo_evento": "mas3m"
+  },
+  "criterios_dsm5": {
+    "A": {
+      "descripcion": "Exposición a un acontecimiento traumático",
+      "r": "NO",
+      "notas": "El evento reportado no cumple criterios de trauma según DSM-5"
+    },
+    "B": {
+      "descripcion": "Síntomas de intrusión",
+      "r": "NO",
+      "cantidad": 0,
+      "minimo": 1
+    },
+    "C": {
+      "descripcion": "Evitación persistente de estímulos",
+      "r": "NO",
+      "cantidad": 0,
+      "minimo": 1
+    },
+    "D": {
+      "descripcion": "Cambios negativos en cogniciones y estado de ánimo",
+      "r": "NO",
+      "cantidad": 0,
+      "minimo": 2
+    },
+    "E": {
+      "descripcion": "Cambios en la reactividad del arousal y reactividad",
+      "r": "NO",
+      "cantidad": 0,
+      "minimo": 2
+    },
+    "F": {
+      "descripcion": "Duración de síntomas > 1 mes",
+      "r": "N/A"
+    },
+    "G": {
+      "descripcion": "Angustia o deterioro funcional significativo",
+      "r": "N/A"
+    }
+  },
+  "diagnostico": {
+    "tept_presente": "NO",
+    "puntuaciones_directas": {
+      "intrusivos": 0,
+      "evitacion": 0,
+      "cognitivas": 0,
+      "activacion": 0,
+      "Total": 0
+    },
+    "percentiles": {
+      "I": 5,
+      "E": 3,
+      "C": 4,
+      "A": 2,
+      "Total": 1
+    },
+    "T_scores": {
+      "I": 28,
+      "E": 25,
+      "C": 27,
+      "A": 23,
+      "Total": 20
+    },
+    "sintomas_reportados": {
+      "intrusivos": 0,
+      "evitacion": 0,
+      "cognitivas": 0,
+      "activacion": 0
+    },
+    "interpretacion": "Ausencia completa de síntomas de TEPT. Puntuaciones dentro del rango normal. El paciente no cumple criterios diagnósticos para trastorno por estrés postraumático."
+  },
+  "funcionamiento": {
+    "areas_afectadas": 0,
+    "total_areas": 7,
+    "areas_detalles": []
+  },
+  "respondidas": 29,
+  "timestamp": "2026-07-16T14:45:00Z",
+  "notas_clinicas": "Paciente asintomático. No requiere intervención especializada en trauma. Se recomienda seguimiento general de salud mental.",
+  "recomendaciones": [
+    "Seguimiento general de salud mental anual",
+    "Psicoeducación preventiva"
+  ]
+}

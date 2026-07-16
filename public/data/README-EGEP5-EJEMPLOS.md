@@ -2,19 +2,38 @@
 
 ## 📋 Archivos Disponibles
 
-### ✅ `egep5-ejemplo-positivo.json`
+### ✅ `egep5-ejemplo-positivo.json` (v1.0)
 **Diagnóstico: TEPT PRESENTE**
 - Evento traumático: Accidente automovilístico
 - Síntomas presentes en todas las escalas
 - Impacto funcional significativo
 - Resultado esperado: Se cumplen criterios A-G DSM-5
+- **Formato legacy** - para compatibilidad
 
-### ❌ `egep5-ejemplo-negativo.json`
+### ✅ `egep5-ejemplo-positivo-v2.json` (v2.0) ⭐ **RECOMENDADO**
+**Diagnóstico: TEPT PRESENTE** - Con baremos y percentiles
+- Paciente: García López, Juan (35 años)
+- Evento: Accidente vehicular grave
+- Incluye: Percentiles (I=78, E=65, C=82, A=74, Total=79)
+- Incluye: T-scores normalizados
+- Incluye: Recomendaciones clínicas
+- **Formato científico** con datos completos
+
+### ❌ `egep5-ejemplo-negativo.json` (v1.0)
 **Diagnóstico: TEPT AUSENTE**
 - Evento menor sin síntomas significativos
 - Pocos síntomas reportados
 - Mínimo impacto funcional
 - Resultado esperado: No se cumplen criterios B-E
+- **Formato legacy** - para compatibilidad
+
+### ❌ `egep5-ejemplo-negativo-v2.json` (v2.0) ⭐ **RECOMENDADO**
+**Diagnóstico: TEPT AUSENTE** - Con baremos y percentiles
+- Paciente: Rodríguez García, María (28 años)
+- Evento: Discussión familiar sin trauma
+- Incluye: Percentiles normales (1-5 rango bajo)
+- Incluye: Notas clínicas negativas
+- **Formato científico** con interpretación
 
 ---
 
