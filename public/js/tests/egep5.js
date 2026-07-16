@@ -468,15 +468,37 @@ window.tests_egep5 = {
             throw new Error('El archivo no contiene "respuestas"');
           }
 
-          this.respuestas = data.respuestas;
+          // Mapear respuestas según formato (array o objeto)
+          if (Array.isArray(data.respuestas)) {
+            // Formato v2.0: array de 29 números
+            this.respuestas.items_27_31 = data.respuestas.slice(0, 5);
+            this.respuestas.items_32_33 = data.respuestas.slice(5, 7);
+            this.respuestas.items_34_40 = data.respuestas.slice(7, 14);
+            this.respuestas.items_41_46 = data.respuestas.slice(14, 20);
+            this.respuestas.symptom_duration = data.respuestas[20] || 0;
+            this.respuestas.symptom_onset = data.respuestas[21] || 0;
+            this.respuestas.items_52_58 = data.respuestas.slice(22, 29);
+          } else {
+            // Formato legacy: objeto con propiedades
+            this.respuestas = data.respuestas;
+          }
+
+          // Cargar metadatos si existen
+          if (data.metadatos) {
+            if (document.getElementById('m_nombre')) {
+              document.getElementById('m_nombre').value = data.metadatos.paciente_nombre || '';
+            }
+            if (document.getElementById('m_edad')) {
+              document.getElementById('m_edad').value = data.metadatos.edad || '';
+            }
+          }
 
           // Actualizar UI
           this.renderizarSintomas();
           this.renderizarFuncionamiento();
           this.actualizarProgreso();
-          this.actualizarDashboard();
 
-          alert(`✅ Archivo "${file.name}" importado correctamente.\n\nVe a Sección 3 y haz clic en "Calcular Resultados"`);
+          alert(`✅ Archivo "${file.name}" importado correctamente.\n\nVe a Tab 2 "Aplicar Test" y haz clic en "Calcular Resultados"`);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         } catch (error) {
           alert('❌ Error al parsear JSON: ' + error.message);
