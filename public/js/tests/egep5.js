@@ -5,9 +5,9 @@
  * Estructura: 58 items, 3 secciones, autoadministrable
  */
 
-const tests = tests || {};
+window.tests = window.tests || {};
 
-tests.egep5 = {
+window.tests.egep5 = {
   nombre: 'EGEP-5',
   tipo: 'EGEP-5',
   seccionActual: 1,
