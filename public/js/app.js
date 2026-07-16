@@ -254,47 +254,51 @@ const app = {
   async cargarTestsHabilitados(usuarioId) {
     try {
       const token = localStorage.getItem('auth_token');
-      const response = await fetch(`/api/usuario-tests/${usuarioId}`, {
+      const response = await fetch('/api/admin/tests-habilitados', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
       if (!response.ok) {
-        console.warn('No se pudieron cargar tests habilitados');
+        console.warn('No se pudieron cargar tests habilitados, mostrando todos');
         return;
       }
 
-      const tests = await response.json();
-      const testHabilitados = new Set(
-        tests.filter(t => t.habilitado).map(t => t.test_tipo)
-      );
+      const data = await response.json();
+      const testHabilitados = new Set(data.tests || []);
 
       // Guardar en localStorage para referencia
       localStorage.setItem('tests_habilitados', JSON.stringify(Array.from(testHabilitados)));
 
-      // Mapeo: test_tipo → data-page
+      // Mapeo: test_id (admin) → data-page (HTML)
       const testPageMap = {
-        'scl90r': 'scl90r',
-        'hamilton': 'hamilton',
-        'mmpi2': 'mmpi2',
-        'tds': 'tds',
-        'isra-c': 'isra-c',
-        'isra-f': 'isra-f',
-        'isra-m': 'isra-m',
-        'pclr': 'pclr',
-        'egep5': 'egep5',
-        'scid2': 'scid2'
+        'SCL90R': 'scl90r',
+        'HAMILTON': 'hamilton',
+        'MMPI2PRO': 'mmpi2',
+        'TDS': 'tds',
+        'ISRA': 'isra-c',  // Mapa a isra-c por defecto
+        'PCLR': 'pclr',
+        'EGEP5': 'egep5',
+        'SCID2': 'scid2',
+        'CUIDA': 'cuida'
       };
 
       // Filtrar elementos del sidebar
       document.querySelectorAll('.nav-item[data-page]').forEach(btn => {
         const page = btn.getAttribute('data-page');
-        const testTipo = Object.keys(testPageMap).find(k => testPageMap[k] === page);
+        const testId = Object.keys(testPageMap).find(k => testPageMap[k] === page);
 
-        if (testTipo && !testHabilitados.has(testTipo)) {
-          // Ocultar y deshabilitar test no habilitado
+        if (testId && !testHabilitados.has(testId)) {
+          // Ocultar test no habilitado
           btn.style.display = 'none';
+          btn.classList.add('disabled');
+        } else {
+          // Mostrar test habilitado
+          btn.style.display = '';
+          btn.classList.remove('disabled');
         }
       });
+
+      console.log('Tests habilitados cargados:', Array.from(testHabilitados));
     } catch (error) {
       console.error('Error al cargar tests habilitados:', error);
       // Si hay error, mostrar todos los tests (fallback)
