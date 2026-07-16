@@ -261,58 +261,130 @@ window.tests_egep5 = {
     return true;
   },
 
+  /**
+   * Mapear respuestas actuales al formato esperado por el corrector DSM-5
+   */
+  mapearRespuestasAlCorrector() {
+    const respuestas = {};
+
+    // Mapear eventos (ítems 1-11)
+    const eventos = {};
+    for (let i = 1; i <= 11; i++) {
+      eventos[i] = {
+        s: this.respuestas.trauma_type.includes(String(i)),
+        p: false,
+        c: false
+      };
+    }
+
+    // Mapear características (ítems 13-15, 16-26)
+    respuestas[13] = this.respuestas.trauma_severity ? this.mapGravedad(this.respuestas.trauma_severity) : null;
+    respuestas[14] = this.respuestas.trauma_timing ? this.mapTiming(this.respuestas.trauma_timing) : null;
+    respuestas[15] = this.respuestas.trauma_frequency ? this.mapFrecuencia(this.respuestas.trauma_frequency) : null;
+
+    // Mapear reacción (ítems 16-26) como SI/NO simples
+    window.EGEP5_CORRECTOR.SN1626.forEach(item => {
+      respuestas[item] = this.respuestas.during_event ? 'SI' : 'NO';
+    });
+
+    // Mapear síntomas (ítems 27-31, 32-33, 34-40, 41-46) como SI + grado
+    const sintomas = [
+      { items: this.respuestas.items_27_31, offset: 27 },
+      { items: this.respuestas.items_32_33, offset: 32 },
+      { items: this.respuestas.items_34_40, offset: 34 },
+      { items: this.respuestas.items_41_46, offset: 41 }
+    ];
+
+    sintomas.forEach(({ items, offset }) => {
+      items.forEach((grado, idx) => {
+        const itemNum = offset + idx;
+        respuestas[itemNum] = grado > 0 ? { si: 'SI', g: grado - 1 } : 'NO';
+      });
+    });
+
+    // Mapear duración y onset (ítems 50-51)
+    respuestas[50] = this.respuestas.symptom_duration ? this.mapDuracion(this.respuestas.symptom_duration) : null;
+    respuestas[51] = this.respuestas.symptom_onset ? this.mapOnset(this.respuestas.symptom_onset) : null;
+
+    // Mapear funcionamiento (ítems 52-58)
+    this.respuestas.items_52_58.forEach((v, i) => {
+      const itemNum = 52 + i;
+      respuestas[itemNum] = v > 0 ? 'SI' : 'NO';
+    });
+
+    return { respuestas, eventos };
+  },
+
+  mapGravedad(v) {
+    const m = { '1': 'leve', '2': 'mod', '3': 'grave', '4': 'extrema' };
+    return m[v] || null;
+  },
+
+  mapTiming(v) {
+    const m = { '1': 'infancia', '2': 'mas3m', '3': '1a3m', '4': 'ultimo_mes' };
+    return m[v] || null;
+  },
+
+  mapFrecuencia(v) {
+    const m = { '1': 'unica', '2': 'varias', '3': 'repetida' };
+    return m[v] || null;
+  },
+
+  mapDuracion(v) {
+    const m = { '1': 'menos1m', '2': '1a3m', '3': 'mas3m' };
+    return m[v] || null;
+  },
+
+  mapOnset(v) {
+    const m = { '1': 'inmediato', '2': 'primeros6m', '3': '6m_mas' };
+    return m[v] || null;
+  },
+
   calcularResultados() {
-    const reexper = this.respuestas.items_27_31.filter(x => x >= 1).length;
-    const evitar = this.respuestas.items_32_33.filter(x => x >= 1).length;
-    const cognit = this.respuestas.items_34_40.filter(x => x >= 1).length;
-    const activa = this.respuestas.items_41_46.filter(x => x >= 1).length;
+    // Usar corrector DSM-5 portado
+    const { respuestas, eventos } = this.mapearRespuestasAlCorrector();
+    const resultado = window.EGEP5_CORRECTOR.corregir({ respuestas, eventos });
 
-    const criterios = {
-      a: true,
-      b: reexper >= 1,
-      c: evitar >= 1,
-      d: cognit >= 2,
-      e: activa >= 2,
-      f: this.respuestas.symptom_duration > 1,
-      g: this.respuestas.items_52_58.filter(x => x > 0).length >= 1
-    };
-
-    const teptPresente = Object.values(criterios).every(v => v);
-    const intensidadTotal = reexper + evitar + cognit + activa;
-    let nivelIntensidad = 'Leve';
-    if (intensidadTotal >= 15) nivelIntensidad = 'Muy grave';
-    else if (intensidadTotal >= 10) nivelIntensidad = 'Grave';
-    else if (intensidadTotal >= 5) nivelIntensidad = 'Moderada';
-
-    this.mostrarResultados({ teptPresente, nivelIntensidad, criterios, reexper, evitar, cognit, activa, intensidadTotal });
-    this.resultados = { teptPresente, nivelIntensidad, criterios, reexper, evitar, cognit, activa, intensidadTotal };
+    this.mostrarResultados(resultado);
+    this.resultados = resultado;
 
     document.getElementById('egep5-section-3').classList.remove('active');
     document.getElementById('egep5-section-resultados').classList.add('active');
     window.scrollTo(0, 0);
   },
 
-  mostrarResultados(datos) {
-    const diagHTML = `<div class="diagnostic-result ${datos.teptPresente ? 'positive' : 'negative'}"><div class="diagnostic-label">${datos.teptPresente ? '✓ TEPT PRESENTE' : '✗ TEPT AUSENTE'}</div><div class="diagnostic-intensity">Intensidad: ${datos.nivelIntensidad}</div><div class="diagnostic-score">Síntomas totales: ${datos.intensidadTotal}/20</div></div>`;
+  mostrarResultados(resultado) {
+    const CRIT = window.EGEP5_CORRECTOR.CRIT_DESC;
+    const { tept, crit, pd, nsint } = resultado;
+
+    // Diagnóstico principal
+    const dxClass = tept === 'SI' ? 'positive' : tept === 'NO' ? 'negative' : 'neutral';
+    const dxText = tept === 'SI' ? 'Cumple criterios DSM-5 de TEPT' : tept === 'NO' ? 'No cumple criterios de TEPT' : 'Información incompleta';
+    const diagHTML = `<div class="diagnostic-result ${dxClass}"><div class="diagnostic-label">${dxText}</div><div class="diagnostic-intensity">Diagnóstico: ${tept}</div><div class="diagnostic-score">Puntuación total: ${pd.Total}/80</div></div>`;
     document.getElementById('egep5-diagnostico').innerHTML = diagHTML;
 
-    let criteriaHTML = '<table class="criteria-table-content"><tr><th>Criterio</th><th>Estado</th></tr>';
-    const criteriaLabels = { a: 'A: Exposición a evento traumático', b: `B: Síntomas intrusivos (≥1): ${datos.reexper}`, c: `C: Evitación (≥1): ${datos.evitar}`, d: `D: Alteraciones cognitivas (≥2): ${datos.cognit}`, e: `E: Activación/reactividad (≥2): ${datos.activa}`, f: 'F: Duración >1 mes', g: 'G: Impacto funcional' };
-    Object.entries(datos.criterios).forEach(([key, value]) => {
-      const estado = value ? '✓ Cumple' : '✗ No cumple';
-      criteriaHTML += `<tr><td>${criteriaLabels[key]}</td><td class="${value ? 'cumple' : 'no-cumple'}">${estado}</td></tr>`;
+    // Tabla de criterios DSM-5
+    let criteriaHTML = '<table class="criteria-table-content"><tr><th>Criterio</th><th>Descripción</th><th>Estado</th></tr>';
+    ['A', 'B', 'C', 'D', 'E', 'F', 'G'].forEach(k => {
+      const estado = crit[k].r;
+      const badge = estado === 'SI' ? '✓ Sí' : estado === 'NO' ? '✗ No' : '? Incompleto';
+      const badgeClass = estado === 'SI' ? 'cumple' : estado === 'NO' ? 'no-cumple' : 'neutral';
+      criteriaHTML += `<tr><td><strong>${k}</strong></td><td>${CRIT[k]}</td><td class="${badgeClass}">${badge}</td></tr>`;
     });
     criteriaHTML += '</table>';
     document.getElementById('egep5-criteria-table').innerHTML = criteriaHTML;
 
-    let sympHTML = '<table class="symptoms-table-content"><tr><th>Dimensión</th><th>Síntomas</th><th>Total</th></tr>';
-    sympHTML += `<tr><td>Reexperimentación</td><td>${datos.reexper}/5</td><td>${Math.round(datos.reexper/5*100)}%</td></tr>`;
-    sympHTML += `<tr><td>Evitación</td><td>${datos.evitar}/2</td><td>${Math.round(datos.evitar/2*100)}%</td></tr>`;
-    sympHTML += `<tr><td>Alteraciones Cognitivas</td><td>${datos.cognit}/7</td><td>${Math.round(datos.cognit/7*100)}%</td></tr>`;
-    sympHTML += `<tr><td>Activación/Reactividad</td><td>${datos.activa}/6</td><td>${Math.round(datos.activa/6*100)}%</td></tr>`;
+    // Tabla de síntomas por escala
+    let sympHTML = '<table class="symptoms-table-content"><tr><th>Escala</th><th>Síntomas</th><th>PD</th><th>Máx</th></tr>';
+    sympHTML += `<tr><td>I (Intrusivos)</td><td>${nsint.I}</td><td>${pd.I}</td><td>20</td></tr>`;
+    sympHTML += `<tr><td>E (Evitación)</td><td>${nsint.E}</td><td>${pd.E}</td><td>8</td></tr>`;
+    sympHTML += `<tr><td>C (Cognitivas)</td><td>${nsint.C}</td><td>${pd.C}</td><td>28</td></tr>`;
+    sympHTML += `<tr><td>A (Activación)</td><td>${nsint.A}</td><td>${pd.A}</td><td>24</td></tr>`;
+    sympHTML += `<tr><td><strong>Total</strong></td><td>-</td><td><strong>${pd.Total}</strong></td><td><strong>80</strong></td></tr>`;
     sympHTML += '</table>';
     document.getElementById('egep5-symptoms-summary').innerHTML = sympHTML;
 
+    // Funcionamiento
     const funcionAfectadas = this.respuestas.items_52_58.filter(x => x > 0).length;
     let funcHTML = `<p><strong>Áreas afectadas: ${funcionAfectadas}/7</strong></p><ul>`;
     this.respuestas.items_52_58.forEach((v, i) => { if (v > 0) funcHTML += `<li>${this.funcionamientoDefinitions[i]}</li>`; });
