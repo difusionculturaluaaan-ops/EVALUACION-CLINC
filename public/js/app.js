@@ -290,11 +290,13 @@ const app = {
         if (testId && !testHabilitados.has(testId)) {
           // Ocultar test no habilitado
           btn.style.display = 'none';
-          btn.classList.add('disabled');
+          btn.classList.add('nav-item-disabled', 'disabled');
+          btn.title = 'Test no habilitado para esta clínica';
         } else {
           // Mostrar test habilitado
           btn.style.display = '';
-          btn.classList.remove('disabled');
+          btn.classList.remove('nav-item-disabled', 'disabled');
+          btn.title = '';
         }
       });
 
