@@ -88,8 +88,49 @@ window.tests_egep5 = {
     this.actualizarProgreso();
     this.actualizarDashboard();
 
+    // Cargar datos del paciente automáticamente
+    this.cargarDatosAutomaticos();
+
     // Inicializar importador de archivos
     this.inicializarImportador();
+  },
+
+  cargarDatosAutomaticos() {
+    // Nombre del paciente
+    const nombrePaciente = localStorage.getItem('paciente_nombre') || sessionStorage.getItem('paciente_nombre');
+    if (nombrePaciente && document.getElementById('m_nombre')) {
+      document.getElementById('m_nombre').value = nombrePaciente;
+    }
+
+    // Fecha de hoy
+    const hoy = new Date().toISOString().split('T')[0];
+    if (document.getElementById('m_fecha')) {
+      document.getElementById('m_fecha').value = hoy;
+    }
+
+    // Edad (si está en sessionStorage)
+    const edad = sessionStorage.getItem('paciente_edad') || localStorage.getItem('paciente_edad');
+    if (edad && document.getElementById('m_edad')) {
+      document.getElementById('m_edad').value = edad;
+    }
+
+    // Sexo (si está en sessionStorage)
+    const sexo = sessionStorage.getItem('paciente_sexo') || localStorage.getItem('paciente_sexo');
+    if (sexo && document.getElementById('m_sexo')) {
+      document.getElementById('m_sexo').value = sexo;
+    }
+
+    // Centro (nombre de la clínica)
+    const centro = sessionStorage.getItem('clinica_nombre') || localStorage.getItem('clinica_nombre') || 'Clínica Centro Psicológico';
+    if (document.getElementById('m_centro')) {
+      document.getElementById('m_centro').value = centro;
+    }
+
+    // Evaluador (nombre del usuario logueado)
+    const evaluador = sessionStorage.getItem('usuario_nombre') || localStorage.getItem('nombre') || localStorage.getItem('usuario_nombre');
+    if (evaluador && document.getElementById('m_evaluador')) {
+      document.getElementById('m_evaluador').value = evaluador;
+    }
   },
 
   mostrarPaciente() {
