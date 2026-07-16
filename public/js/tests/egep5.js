@@ -134,37 +134,12 @@ window.tests_egep5 = {
   },
 
   mostrarPaciente() {
-    let nombre = localStorage.getItem('paciente_nombre') || sessionStorage.getItem('paciente_nombre') || 'Paciente';
-
-    // Limpiar prefijo si existe
-    if (nombre.includes('Paciente:')) {
-      nombre = nombre.split('Paciente:')[1].trim();
-    }
-
-    const elementoNombre = document.getElementById('egep5-paciente-nombre');
-    if (elementoNombre) {
-      elementoNombre.textContent = nombre;
-    }
+    // Legacy function - no longer needed with new tab-based UI
+    // Datos se cargan automáticamente en cargarDatosAutomaticos()
   },
 
   actualizarDashboard() {
-    document.getElementById('egep5-seccion-actual').textContent = `${this.seccionActual} de 3`;
-
-    let completadas = 0;
-    if (this.respuestas.trauma_type.length > 0) completadas++;
-    if (this.respuestas.trauma_description.trim()) completadas++;
-    if (this.respuestas.trauma_severity) completadas++;
-    if (this.respuestas.trauma_timing) completadas++;
-    if (this.respuestas.trauma_frequency) completadas++;
-    completadas += this.respuestas.items_27_31.filter(x => x > 0).length;
-    completadas += this.respuestas.items_32_33.filter(x => x > 0).length;
-    completadas += this.respuestas.items_34_40.filter(x => x > 0).length;
-    completadas += this.respuestas.items_41_46.filter(x => x > 0).length;
-    if (this.respuestas.symptom_duration) completadas++;
-    if (this.respuestas.symptom_onset) completadas++;
-    completadas += this.respuestas.items_52_58.filter(x => x > 0).length;
-
-    document.getElementById('egep5-respuestas-count').textContent = `${completadas}/58`;
+    // Legacy function - progreso ahora se actualiza en actualizarProgreso()
   },
 
   renderizarSintomas() {
