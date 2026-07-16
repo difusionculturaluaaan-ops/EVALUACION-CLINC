@@ -24,6 +24,7 @@ window.tests_egep5 = {
     items_32_33: [0,0],
     items_34_40: [0,0,0,0,0,0,0],
     items_41_46: [0,0,0,0,0,0],
+    items_47_49: [0,0,0],
     symptom_duration: null,
     symptom_onset: null,
     items_52_58: [0,0,0,0,0,0,0]
@@ -49,7 +50,10 @@ window.tests_egep5 = {
     43: 'Ha estado constantemente en guardia o alerta',
     44: 'Se sobresaltaba con facilidad',
     45: 'Ha tenido dificultad en concentrarse',
-    46: 'Ha tenido dificultad en conciliar o mantener el sueño'
+    46: 'Ha tenido dificultad en conciliar o mantener el sueño',
+    47: 'Ha actuado de forma impulsiva o sin pensar en las consecuencias',
+    48: 'Ha tenido comportamientos autodestructivos o autolesivos',
+    49: 'Ha mostrado una disminución significativa en su responsabilidad'
   },
 
   funcionamientoDefinitions: [
@@ -166,6 +170,14 @@ window.tests_egep5 = {
       html += this.renderizarItemLikert(41 + i, this.symptomDefinitions[41 + i], i, 'items_41_46');
     }
     document.getElementById('egep5-items-41-46').innerHTML = html;
+
+    // Items 47-49 (Cambios conductuales)
+    html = '';
+    for (let i = 0; i < 3; i++) {
+      html += this.renderizarItemLikert(47 + i, this.symptomDefinitions[47 + i], i, 'items_47_49');
+    }
+    const el = document.getElementById('egep5-items-47-49');
+    if (el) el.innerHTML = html;
   },
 
   renderizarItemLikert(numero, texto, indice, grupo) {
@@ -470,14 +482,15 @@ window.tests_egep5 = {
 
           // Mapear respuestas según formato (array o objeto)
           if (Array.isArray(data.respuestas)) {
-            // Formato v2.0: array de 29 números
+            // Formato v2.0: array de 29+ números
             this.respuestas.items_27_31 = data.respuestas.slice(0, 5);
             this.respuestas.items_32_33 = data.respuestas.slice(5, 7);
             this.respuestas.items_34_40 = data.respuestas.slice(7, 14);
             this.respuestas.items_41_46 = data.respuestas.slice(14, 20);
-            this.respuestas.symptom_duration = data.respuestas[20] || 0;
-            this.respuestas.symptom_onset = data.respuestas[21] || 0;
-            this.respuestas.items_52_58 = data.respuestas.slice(22, 29);
+            this.respuestas.items_47_49 = data.respuestas.slice(20, 23) || [0,0,0];
+            this.respuestas.symptom_duration = data.respuestas[23] || 0;
+            this.respuestas.symptom_onset = data.respuestas[24] || 0;
+            this.respuestas.items_52_58 = data.respuestas.slice(25, 32) || [0,0,0,0,0,0,0];
           } else {
             // Formato legacy: objeto con propiedades
             this.respuestas = data.respuestas;
