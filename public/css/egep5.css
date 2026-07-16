@@ -1,0 +1,492 @@
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* EGEP-5: Estilos para Micrositio                     */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.egep5-header {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
+  color: white;
+  padding: var(--space-6);
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.egep5-header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.egep5-back button {
+  color: white;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.egep5-back button:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.egep5-title h1 {
+  margin: 0;
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+}
+
+.egep5-title p {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-sm);
+  opacity: 0.9;
+}
+
+.egep5-paciente {
+  font-size: var(--text-sm);
+  background: rgba(0,0,0,0.1);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  white-space: nowrap;
+}
+
+.egep5-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--space-8);
+}
+
+/* Progress Bar */
+.egep5-progress {
+  margin-bottom: var(--space-8);
+  background: var(--color-surface);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--color-surface-secondary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: var(--space-3);
+  border: 1px solid var(--color-border);
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-primary-hover));
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-medium);
+}
+
+/* Secciones */
+.egep5-section {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.egep5-section.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.section-header {
+  margin-bottom: var(--space-8);
+}
+
+.section-header h2 {
+  margin: 0 0 var(--space-2) 0;
+  font-size: var(--text-2xl);
+  color: var(--color-text-primary);
+}
+
+.section-header p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--text-base);
+}
+
+.section-content {
+  margin-bottom: var(--space-8);
+}
+
+.section-footer {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+  flex-wrap: wrap;
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border);
+}
+
+/* Form Elements */
+.form-group {
+  margin-bottom: var(--space-6);
+}
+
+.form-label {
+  display: block;
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-3);
+  font-size: var(--text-base);
+}
+
+.form-label.required::after {
+  content: ' *';
+  color: var(--color-danger);
+}
+
+/* Checkboxes */
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-3);
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  font-size: var(--text-base);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  transition: background 0.2s ease;
+}
+
+.checkbox-item:hover {
+  background: var(--color-surface-secondary);
+}
+
+.checkbox-item input[type="checkbox"] {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+
+.checkbox-small {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.checkbox-small label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+}
+
+/* Características */
+.characteristic-item {
+  margin-bottom: var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-surface-secondary);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--color-primary);
+}
+
+.characteristic-item label {
+  display: block;
+  font-weight: var(--font-medium);
+  margin-bottom: var(--space-2);
+  font-size: var(--text-sm);
+}
+
+/* Subescalas */
+.subscale-block {
+  margin-bottom: var(--space-8);
+  padding: var(--space-6);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+}
+
+.subscale-title {
+  margin: 0 0 var(--space-2) 0;
+  font-size: var(--text-lg);
+  color: var(--color-primary);
+  font-weight: var(--font-semibold);
+}
+
+.subscale-description {
+  margin: 0 0 var(--space-4) 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Grid de síntomas */
+.symptoms-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+.symptom-item {
+  padding: var(--space-4);
+  background: var(--color-surface-secondary);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--color-info-border);
+}
+
+.symptom-item:hover {
+  border-left-color: var(--color-primary);
+}
+
+.symptom-text {
+  display: block;
+  font-weight: var(--font-medium);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-3);
+  font-size: var(--text-base);
+}
+
+/* Escala Likert */
+.likert-scale {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-2);
+}
+
+.likert-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  cursor: pointer;
+}
+
+.likert-option input[type="radio"] {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+}
+
+.likert-label {
+  font-size: var(--text-xs);
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-weight: var(--font-medium);
+}
+
+/* Funcionamiento */
+.functioning-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+}
+
+.functioning-item {
+  padding: var(--space-3);
+  background: var(--color-surface-secondary);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--color-warning-border);
+}
+
+.functioning-item .checkbox-item {
+  margin: 0;
+  padding: 0;
+}
+
+/* Resultados */
+.diagnostic-box {
+  padding: var(--space-6);
+  margin-bottom: var(--space-8);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.diagnostic-result {
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  border: 2px solid;
+  text-align: center;
+  animation: slideUp 0.5s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.diagnostic-result.positive {
+  background: var(--color-success-bg);
+  border-color: var(--color-success);
+  color: var(--color-success);
+}
+
+.diagnostic-result.negative {
+  background: var(--color-info-bg);
+  border-color: var(--color-info);
+  color: var(--color-info);
+}
+
+.diagnostic-label {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  margin-bottom: var(--space-2);
+}
+
+.diagnostic-intensity {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  margin-bottom: var(--space-2);
+}
+
+.diagnostic-score {
+  font-size: var(--text-base);
+  opacity: 0.9;
+}
+
+/* Tablas de resultados */
+.criteria-table,
+.symptoms-table,
+.functioning-table {
+  margin-bottom: var(--space-8);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+}
+
+.criteria-table h3,
+.symptoms-table h3,
+.functioning-table h3 {
+  margin: 0 0 var(--space-4) 0;
+  color: var(--color-primary);
+  font-size: var(--text-lg);
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.criteria-table-content,
+.symptoms-table-content {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.criteria-table-content th,
+.symptoms-table-content th {
+  background: var(--color-surface-secondary);
+  padding: var(--space-3);
+  text-align: left;
+  font-weight: var(--font-semibold);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.criteria-table-content td,
+.symptoms-table-content td {
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.criteria-table-content tr:hover,
+.symptoms-table-content tr:hover {
+  background: var(--color-surface-secondary);
+}
+
+.cumple {
+  color: var(--color-success);
+  font-weight: var(--font-semibold);
+}
+
+.no-cumple {
+  color: var(--color-text-muted);
+  font-weight: var(--font-semibold);
+}
+
+/* Botones */
+.btn-lg {
+  padding: var(--space-4) var(--space-8);
+  font-size: var(--text-base);
+}
+
+.btn-success {
+  background-color: var(--color-success) !important;
+  color: white !important;
+  border: 1px solid var(--color-success) !important;
+}
+
+.btn-success:hover {
+  background-color: var(--color-success-hover) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .egep5-header-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .egep5-container {
+    padding: var(--space-4);
+  }
+
+  .checkbox-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .likert-scale {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-1);
+  }
+
+  .likert-label {
+    font-size: var(--text-2xs);
+  }
+
+  .section-footer {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .egep5-title h1 {
+    font-size: var(--text-xl);
+  }
+
+  .section-header h2 {
+    font-size: var(--text-lg);
+  }
+
+  .likert-scale {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+
+  .checkbox-grid {
+    grid-template-columns: 1fr;
+  }
+}
