@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EGEP-5 - Evaluación del Trastorno por Estrés Postraumático</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <!-- Estilos base -->
@@ -17,22 +17,45 @@
 <body data-theme="light">
 
 <!-- Header -->
-<header class="egep5-header">
-  <div class="egep5-header-content">
-    <div class="egep5-back">
-      <button onclick="window.history.back()" class="btn btn-ghost" title="Volver">
-        ← Volver
-      </button>
-    </div>
-    <div class="egep5-title">
+<header class="egep5-hdr">
+  <div class="egep5-hdr-inner">
+    <button onclick="window.history.back()" class="egep5-back-btn" title="Volver">
+      ← Volver
+    </button>
+    <div class="egep5-hdr-title">
       <h1>EGEP-5</h1>
       <p>Escala para la Evaluación del Trastorno por Estrés Postraumático</p>
     </div>
-    <div class="egep5-paciente">
-      <span id="egep5-paciente-nombre">Paciente: Cargando...</span>
+    <div class="egep5-hdr-progress">
+      <div class="egep5-progress-bar-wrap">
+        <div class="egep5-progress-bar">
+          <div id="egep5-progress-fill" class="egep5-progress-fill"></div>
+        </div>
+      </div>
+      <div class="egep5-progress-info">
+        <span id="egep5-progress-items">0/58</span>
+      </div>
     </div>
   </div>
 </header>
+
+<!-- Data Dashboard -->
+<div class="egep5-dashboard">
+  <div class="egep5-dashboard-inner">
+    <div class="egep5-data-card">
+      <div class="edc-label">Paciente</div>
+      <div id="egep5-paciente-nombre" class="edc-value">Cargando...</div>
+    </div>
+    <div class="egep5-data-card">
+      <div class="edc-label">Sección</div>
+      <div id="egep5-seccion-actual" class="edc-value">1 de 3</div>
+    </div>
+    <div class="egep5-data-card">
+      <div class="edc-label">Respuestas</div>
+      <div id="egep5-respuestas-count" class="edc-value">0/58</div>
+    </div>
+  </div>
+</div>
 
 <!-- Main Container -->
 <main class="egep5-container">

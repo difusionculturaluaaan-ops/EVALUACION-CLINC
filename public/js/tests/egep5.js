@@ -68,11 +68,32 @@ window.tests_egep5 = {
     this.renderizarSintomas();
     this.renderizarFuncionamiento();
     this.actualizarProgreso();
+    this.actualizarDashboard();
   },
 
   mostrarPaciente() {
-    const nombre = localStorage.getItem('paciente_nombre') || 'Paciente desconocido';
-    document.getElementById('egep5-paciente-nombre').textContent = `Paciente: ${nombre}`;
+    const nombre = localStorage.getItem('paciente_nombre') || sessionStorage.getItem('paciente_nombre') || 'Sin nombre';
+    document.getElementById('egep5-paciente-nombre').textContent = nombre;
+  },
+
+  actualizarDashboard() {
+    document.getElementById('egep5-seccion-actual').textContent = `${this.seccionActual} de 3`;
+
+    let completadas = 0;
+    if (this.respuestas.trauma_type.length > 0) completadas++;
+    if (this.respuestas.trauma_description.trim()) completadas++;
+    if (this.respuestas.trauma_severity) completadas++;
+    if (this.respuestas.trauma_timing) completadas++;
+    if (this.respuestas.trauma_frequency) completadas++;
+    completadas += this.respuestas.items_27_31.filter(x => x > 0).length;
+    completadas += this.respuestas.items_32_33.filter(x => x > 0).length;
+    completadas += this.respuestas.items_34_40.filter(x => x > 0).length;
+    completadas += this.respuestas.items_41_46.filter(x => x > 0).length;
+    if (this.respuestas.symptom_duration) completadas++;
+    if (this.respuestas.symptom_onset) completadas++;
+    completadas += this.respuestas.items_52_58.filter(x => x > 0).length;
+
+    document.getElementById('egep5-respuestas-count').textContent = `${completadas}/58`;
   },
 
   renderizarSintomas() {
@@ -155,11 +176,13 @@ window.tests_egep5 = {
       document.getElementById('egep5-section-1').classList.remove('active');
       document.getElementById('egep5-section-2').classList.add('active');
       this.seccionActual = 2;
+      this.actualizarDashboard();
     } else if (this.seccionActual === 2) {
       if (!this.validarSeccion2()) return;
       document.getElementById('egep5-section-2').classList.remove('active');
       document.getElementById('egep5-section-3').classList.add('active');
       this.seccionActual = 3;
+      this.actualizarDashboard();
     }
     window.scrollTo(0, 0);
   },
@@ -169,10 +192,12 @@ window.tests_egep5 = {
       document.getElementById('egep5-section-2').classList.remove('active');
       document.getElementById('egep5-section-1').classList.add('active');
       this.seccionActual = 1;
+      this.actualizarDashboard();
     } else if (this.seccionActual === 3) {
       document.getElementById('egep5-section-3').classList.remove('active');
       document.getElementById('egep5-section-2').classList.add('active');
       this.seccionActual = 2;
+      this.actualizarDashboard();
     }
     window.scrollTo(0, 0);
   },
