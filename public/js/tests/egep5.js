@@ -398,14 +398,41 @@ tests.egep5 = {
 
   construirArrayRespuestas() {
     const data = [];
-    data.push(...this.respuestas.items_27_31);
-    data.push(...this.respuestas.items_32_33);
-    data.push(...this.respuestas.items_34_40);
-    data.push(...this.respuestas.items_41_46);
-    data.push(this.respuestas.symptom_duration || 0);
-    data.push(this.respuestas.symptom_onset || 0);
+
+    // Sección 1: Items 1-26 (Acontecimiento traumático - 26 items)
+    data.push(
+      this.respuestas.trauma_type.length ? 1 : 0, // Item 1-11 (tipo trauma)
+      this.respuestas.trauma_description ? 1 : 0, // Item 12 (descripción)
+      parseInt(this.respuestas.trauma_severity) || 0, // Item 13 (gravedad)
+      parseInt(this.respuestas.trauma_timing) || 0, // Item 14 (timing)
+      parseInt(this.respuestas.trauma_frequency) || 0, // Item 15 (frecuencia)
+      this.respuestas.during_event.includes('miedo') ? 1 : 0, // Item 16a (miedo)
+      this.respuestas.during_event.includes('indefension') ? 1 : 0, // Item 16b (indefensión)
+      this.respuestas.during_event.includes('horror') ? 1 : 0, // Item 16c (horror)
+      this.respuestas.event_type.includes('lesion') ? 1 : 0, // Item 17a (lesión)
+      this.respuestas.event_type.includes('muerte') ? 1 : 0, // Item 17b (muerte)
+      this.respuestas.event_type.includes('amenaza') ? 1 : 0, // Item 17c (amenaza)
+      this.respuestas.event_type.includes('amenaza_vida') ? 1 : 0, // Item 17d (amenaza vida)
+      this.respuestas.event_type.includes('escenas') ? 1 : 0, // Item 17e (escenas)
+      this.respuestas.event_type.includes('dignidad') ? 1 : 0, // Item 17f (dignidad)
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 // Items 18-26 (placeholders para mantener 26)
+    );
+
+    // Sección 2: Items 27-49 (Síntomas - 23 items)
+    data.push(...this.respuestas.items_27_31); // Items 27-31 (5)
+    data.push(...this.respuestas.items_32_33); // Items 32-33 (2)
+    data.push(...this.respuestas.items_34_40); // Items 34-40 (7)
+    data.push(...this.respuestas.items_41_46); // Items 41-46 (6)
+    data.push(0, 0, 0); // Items 47-49 (placeholders)
+
+    // Sección 2 extendida: Items 50-51 (Duración/Onset - 2 items)
+    data.push(this.respuestas.symptom_duration || 0); // Item 50
+    data.push(this.respuestas.symptom_onset || 0); // Item 51
+
+    // Sección 3: Items 52-58 (Funcionamiento - 7 items)
     data.push(...this.respuestas.items_52_58);
-    return data;
+
+    return data; // Total: 26 + 23 + 2 + 7 = 58 items
   },
 
   cargarRespuestasEnDOM(data) {
