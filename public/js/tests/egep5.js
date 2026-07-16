@@ -63,10 +63,20 @@ window.tests_egep5 = {
   ],
 
   init() {
-    this.pacienteId = sessionStorage.getItem('pacienteSeleccionado');
-    if (!this.pacienteId) {
-      sessionStorage.setItem('paciente_nombre', 'Demo Paciente');
+    this.pacienteId = sessionStorage.getItem('pacienteSeleccionado') || localStorage.getItem('paciente_id');
+
+    // Obtener nombre de múltiples fuentes
+    let nombre = localStorage.getItem('paciente_nombre') || sessionStorage.getItem('paciente_nombre');
+
+    if (!nombre) {
+      nombre = 'Paciente';
     }
+
+    localStorage.setItem('paciente_nombre', nombre);
+    sessionStorage.setItem('paciente_nombre', nombre);
+
+    console.log('EGEP5 Init - Nombre:', nombre, 'ID:', this.pacienteId);
+
     this.mostrarPaciente();
     this.renderizarSintomas();
     this.renderizarFuncionamiento();

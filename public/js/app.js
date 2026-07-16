@@ -792,9 +792,20 @@ const app = {
       return;
     }
     const token = localStorage.getItem('auth_token') || '';
-    localStorage.setItem('paciente_nombre', this.pacienteActivo.nombre || 'Paciente');
-    sessionStorage.setItem('paciente_nombre', this.pacienteActivo.nombre || 'Paciente');
+
+    // Obtener nombre del paciente (intentar múltiples propiedades)
+    const nombrePaciente = this.pacienteActivo.nombre ||
+                          this.pacienteActivo.name ||
+                          this.pacienteActivo.fullName ||
+                          'Paciente';
+
+    // Guardar datos del paciente
+    localStorage.setItem('paciente_nombre', nombrePaciente);
+    localStorage.setItem('paciente_id', this.pacienteActivo.id);
+    sessionStorage.setItem('paciente_nombre', nombrePaciente);
     sessionStorage.setItem('pacienteSeleccionado', this.pacienteActivo.id);
+
+    console.log('EGEP5 - Paciente:', nombrePaciente, 'ID:', this.pacienteActivo.id);
     window.location.href = `/egep5.html?paciente_id=${this.pacienteActivo.id}&token=${encodeURIComponent(token)}`;
   },
 
