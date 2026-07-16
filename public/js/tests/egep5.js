@@ -5,9 +5,7 @@
  * Estructura: 58 items, 3 secciones, autoadministrable
  */
 
-if (!window.tests) window.tests = {};
-
-window.tests.egep5 = {
+window.tests_egep5 = {
   nombre: 'EGEP-5',
   tipo: 'EGEP-5',
   seccionActual: 1,
