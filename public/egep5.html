@@ -165,6 +165,8 @@
     </div>
 
     <div class="section-footer">
+      <button onclick="document.getElementById('file-import-egep5').click()" class="btn btn-secondary">📤 Importar JSON</button>
+      <input type="file" id="file-import-egep5" accept=".json" style="display:none" onchange="tests.egep5.importarJSON(event)">
       <button onclick="tests.egep5.siguienteSeccion()" class="btn btn-primary">Siguiente →</button>
     </div>
   </section>
@@ -290,6 +292,7 @@
 
     <div class="section-footer">
       <button onclick="tests.egep5.generarPDF()" class="btn btn-primary">📄 Generar PDF</button>
+      <button onclick="tests.egep5.exportarJSON()" class="btn btn-primary">⬇️ Exportar JSON</button>
       <button onclick="tests.egep5.guardarResultados()" class="btn btn-success">💾 Guardar en Expediente</button>
       <button onclick="window.history.back()" class="btn btn-secondary">Volver</button>
     </div>

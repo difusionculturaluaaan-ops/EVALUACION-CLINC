@@ -275,6 +275,186 @@ tests.egep5 = {
     document.getElementById('egep5-functioning-summary').innerHTML = funcHTML;
   },
 
+  exportarJSON() {
+    if (!this.resultados) {
+      alert('Primero calcula los resultados');
+      return;
+    }
+
+    const paciente_nombre = localStorage.getItem('paciente_nombre') || 'Paciente';
+    const evaluador = localStorage.getItem('nombre') || 'Sin especificar';
+
+    const data = {
+      testType: 'EGEP-5',
+      version: '1.0',
+      respuestas: this.construirArrayRespuestas(),
+      metadatos: {
+        paciente_nombre: paciente_nombre,
+        paciente_id: sessionStorage.getItem('pacienteSeleccionado'),
+        evaluador: evaluador,
+        fecha: new Date().toISOString(),
+        tipo_trauma: this.respuestas.trauma_type.join(','),
+        descripcion_evento: this.respuestas.trauma_description,
+        fecha_expediente: this.respuestas.trauma_timing
+      },
+      criterios_dsm5: this.resultados.criterios,
+      diagnostico: {
+        tept_presente: this.resultados.teptPresente,
+        intensidad: this.resultados.nivelIntensidad,
+        intensidad_total: this.resultados.intensidadTotal,
+        reexperimentacion: this.resultados.reexper,
+        evitacion: this.resultados.evitar,
+        cognitivas: this.resultados.cognit,
+        activacion: this.resultados.activa
+      },
+      respondidas: this.construirArrayRespuestas().filter(x => x > 0).length,
+      timestamp: new Date().toISOString()
+    };
+
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `EGEP-5_${paciente_nombre}_${new Date().getTime()}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    alert('✅ JSON exportado correctamente');
+  },
+
+  importarJSON(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+
+        // Validar estructura
+        if (data.testType !== 'EGEP-5') {
+          throw new Error('El archivo no es un EGEP-5 válido');
+        }
+
+        if (!data.respuestas || data.respuestas.length !== 58) {
+          throw new Error(`El archivo debe tener 58 respuestas (tiene ${data.respuestas.length})`);
+        }
+
+        if (!data.respuestas.every(r => [0, 1, 2, 3, 4].includes(r))) {
+          throw new Error('Las respuestas deben estar entre 0 y 4');
+        }
+
+        // Confirmar antes de cargar
+        if (!confirm(`Se cargarán ${data.respondidas || 0} respuestas del paciente: ${data.metadatos.paciente_nombre}. ¿Continuar?`)) {
+          return;
+        }
+
+        // 1. Cargar respuestas en memoria
+        this.respuestas.items_27_31 = data.respuestas.slice(0, 5);
+        this.respuestas.items_32_33 = data.respuestas.slice(5, 7);
+        this.respuestas.items_34_40 = data.respuestas.slice(7, 14);
+        this.respuestas.items_41_46 = data.respuestas.slice(14, 20);
+        this.respuestas.symptom_duration = data.respuestas[20];
+        this.respuestas.symptom_onset = data.respuestas[21];
+        this.respuestas.items_52_58 = data.respuestas.slice(22, 29);
+
+        // 2. Reconstruir respuestas en el DOM
+        this.cargarRespuestasEnDOM(data);
+
+        // 3. Crear objeto resultados a partir de datos cargados
+        this.resultados = data.diagnostico;
+
+        // 4. Mostrar resultados
+        this.mostrarResultados({
+          teptPresente: data.diagnostico.tept_presente,
+          nivelIntensidad: data.diagnostico.intensidad,
+          criterios: data.criterios_dsm5,
+          reexper: data.diagnostico.reexperimentacion,
+          evitar: data.diagnostico.evitacion,
+          cognit: data.diagnostico.cognitivas,
+          activa: data.diagnostico.activacion,
+          intensidadTotal: data.diagnostico.intensidad_total
+        });
+
+        // 5. Navegar a resultados
+        document.getElementById('egep5-section-1').classList.remove('active');
+        document.getElementById('egep5-section-2').classList.remove('active');
+        document.getElementById('egep5-section-3').classList.remove('active');
+        document.getElementById('egep5-section-resultados').classList.add('active');
+
+        // 6. Mostrar éxito
+        this.mostrarMensajeExito(`✅ JSON importado correctamente<br>Respuestas cargadas: ${data.respondidas}/58<br>Diagnóstico: ${data.diagnostico.tept_presente ? 'TEPT PRESENTE' : 'TEPT AUSENTE'}`);
+
+      } catch (error) {
+        this.mostrarMensajeError(`❌ Error: ${error.message}`);
+        console.error('Error al importar JSON:', error);
+      }
+    };
+    reader.readAsText(file);
+  },
+
+  construirArrayRespuestas() {
+    const data = [];
+    data.push(...this.respuestas.items_27_31);
+    data.push(...this.respuestas.items_32_33);
+    data.push(...this.respuestas.items_34_40);
+    data.push(...this.respuestas.items_41_46);
+    data.push(this.respuestas.symptom_duration || 0);
+    data.push(this.respuestas.symptom_onset || 0);
+    data.push(...this.respuestas.items_52_58);
+    return data;
+  },
+
+  cargarRespuestasEnDOM(data) {
+    // Items 27-31
+    data.respuestas.slice(0, 5).forEach((resp, i) => {
+      const radio = document.querySelector(`input[name="${27 + i}"][value="${resp}"]`);
+      if (radio) radio.checked = true;
+    });
+    // Items 32-33
+    data.respuestas.slice(5, 7).forEach((resp, i) => {
+      const radio = document.querySelector(`input[name="${32 + i}"][value="${resp}"]`);
+      if (radio) radio.checked = true;
+    });
+    // Items 34-40
+    data.respuestas.slice(7, 14).forEach((resp, i) => {
+      const radio = document.querySelector(`input[name="${34 + i}"][value="${resp}"]`);
+      if (radio) radio.checked = true;
+    });
+    // Items 41-46
+    data.respuestas.slice(14, 20).forEach((resp, i) => {
+      const radio = document.querySelector(`input[name="${41 + i}"][value="${resp}"]`);
+      if (radio) radio.checked = true;
+    });
+    // Items 50-51
+    document.getElementById('symptom_duration').value = data.respuestas[20] || '';
+    document.getElementById('symptom_onset').value = data.respuestas[21] || '';
+    // Items 52-58
+    data.respuestas.slice(22, 29).forEach((resp, i) => {
+      const checkbox = document.querySelector(`input[name="item_${52 + i}"]`);
+      if (checkbox) checkbox.checked = resp > 0;
+    });
+  },
+
+  mostrarMensajeExito(html) {
+    const successMsg = document.createElement('div');
+    successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 15px 20px; border-radius: 8px; z-index: 9999; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
+    successMsg.innerHTML = html;
+    document.body.appendChild(successMsg);
+    setTimeout(() => successMsg.remove(), 5000);
+  },
+
+  mostrarMensajeError(msg) {
+    const errorMsg = document.createElement('div');
+    errorMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #f44336; color: white; padding: 15px; border-radius: 4px; z-index: 9999;';
+    errorMsg.textContent = msg;
+    document.body.appendChild(errorMsg);
+    setTimeout(() => errorMsg.remove(), 5000);
+  },
+
   generarPDF() {
     if (!this.resultados) {
       alert('Primero calcula los resultados');
