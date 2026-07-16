@@ -237,40 +237,37 @@ window.tests_egep5 = {
     completadas += this.respuestas.items_52_58.filter(x => x > 0).length;
 
     const porcentaje = Math.round((completadas / 58) * 100);
-    document.getElementById('egep5-progress-fill').style.width = porcentaje + '%';
-    document.getElementById('egep5-progress-items').textContent = `${completadas}/58 respuestas`;
+
+    // Actualizar barra de progreso (IDs nuevos)
+    const fillEl = document.getElementById('pg_bar');
+    const itemsEl = document.getElementById('pg_n');
+
+    if (fillEl) fillEl.style.width = porcentaje + '%';
+    if (itemsEl) itemsEl.textContent = completadas;
+
+    // Actualizar estadísticas
+    const siEl = document.getElementById('st_si');
+    const noEl = document.getElementById('st_no');
+    if (siEl) siEl.textContent = this.respuestas.items_27_31.filter(x => x > 0).length +
+                                  this.respuestas.items_32_33.filter(x => x > 0).length +
+                                  this.respuestas.items_34_40.filter(x => x > 0).length +
+                                  this.respuestas.items_41_46.filter(x => x > 0).length;
+    if (noEl) noEl.textContent = 46 - (siEl ? parseInt(siEl.textContent) : 0);
   },
 
+  // Funciones de navegación por secciones (LEGACY - usar irTab() en su lugar)
   siguienteSeccion() {
-    if (this.seccionActual === 1) {
-      if (!this.validarSeccion1()) return;
-      document.getElementById('egep5-section-1').classList.remove('active');
-      document.getElementById('egep5-section-2').classList.add('active');
-      this.seccionActual = 2;
-      this.actualizarDashboard();
-    } else if (this.seccionActual === 2) {
-      if (!this.validarSeccion2()) return;
-      document.getElementById('egep5-section-2').classList.remove('active');
-      document.getElementById('egep5-section-3').classList.add('active');
-      this.seccionActual = 3;
-      this.actualizarDashboard();
-    }
-    window.scrollTo(0, 0);
+    // Usar nuevo sistema de tabs
+    const tabs = ['datos', 'test', 'resultados'];
+    const siguienteTab = tabs[Math.min(this.seccionActual, tabs.length - 1)];
+    this.irTab(siguienteTab);
   },
 
   seccionAnterior() {
-    if (this.seccionActual === 2) {
-      document.getElementById('egep5-section-2').classList.remove('active');
-      document.getElementById('egep5-section-1').classList.add('active');
-      this.seccionActual = 1;
-      this.actualizarDashboard();
-    } else if (this.seccionActual === 3) {
-      document.getElementById('egep5-section-3').classList.remove('active');
-      document.getElementById('egep5-section-2').classList.add('active');
-      this.seccionActual = 2;
-      this.actualizarDashboard();
-    }
-    window.scrollTo(0, 0);
+    // Usar nuevo sistema de tabs
+    const tabs = ['datos', 'test', 'resultados'];
+    const anteriorTab = tabs[Math.max(this.seccionActual - 2, 0)];
+    this.irTab(anteriorTab);
   },
 
   validarSeccion1() {
@@ -397,9 +394,8 @@ window.tests_egep5 = {
     this.mostrarResultados(resultado);
     this.resultados = resultado;
 
-    document.getElementById('egep5-section-3').classList.remove('active');
-    document.getElementById('egep5-section-resultados').classList.add('active');
-    window.scrollTo(0, 0);
+    // Navegar a tab de resultados
+    this.irTab('resultados');
   },
 
   mostrarResultados(resultado) {
@@ -680,10 +676,7 @@ window.tests_egep5 = {
         });
 
         // 5. Navegar a resultados
-        document.getElementById('egep5-section-1').classList.remove('active');
-        document.getElementById('egep5-section-2').classList.remove('active');
-        document.getElementById('egep5-section-3').classList.remove('active');
-        document.getElementById('egep5-section-resultados').classList.add('active');
+        this.irTab('resultados');
 
         // 6. Mostrar éxito
         this.mostrarMensajeExito(`✅ JSON importado correctamente<br>Respuestas cargadas: ${data.respondidas}/58<br>Diagnóstico: ${data.diagnostico.tept_presente ? 'TEPT PRESENTE' : 'TEPT AUSENTE'}`);
@@ -762,7 +755,12 @@ window.tests_egep5 = {
     }
 
     const nombre_paciente = localStorage.getItem('paciente_nombre') || 'Paciente';
-    const html = document.getElementById('egep5-section-resultados').innerHTML;
+    const resultContainer = document.getElementById('tab-resultados');
+
+    if (!resultContainer) {
+      alert('No se encontró el contenedor de resultados');
+      return;
+    }
 
     const opt = {
       margin: 10,
@@ -772,7 +770,7 @@ window.tests_egep5 = {
       jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
     };
 
-    html2pdf().set(opt).from(html).save();
+    html2pdf().set(opt).from(resultContainer).save();
     alert('PDF descargado correctamente');
   },
 
