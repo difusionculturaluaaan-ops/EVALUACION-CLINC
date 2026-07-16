@@ -608,6 +608,167 @@ textarea {
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* TEST ITEMS & SCALES                                                 */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.symptom-item {
+  margin-bottom: 20px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+}
+
+.symptom-text {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.likert-scale {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.likert-option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.likert-option input[type="radio"] {
+  cursor: pointer;
+}
+
+.likert-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  user-select: none;
+}
+
+.likert-option input[type="radio"]:checked + .likert-label {
+  color: var(--accent-light);
+  font-weight: 600;
+}
+
+.functioning-item {
+  margin-bottom: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.functioning-item:last-child {
+  border-bottom: none;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.checkbox-item input[type="checkbox"] {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+}
+
+.checkbox-item input[type="checkbox"]:checked {
+  accent-color: var(--accent);
+}
+
+/* Results Tables */
+.criteria-table-content,
+.symptoms-table-content {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.criteria-table-content th,
+.symptoms-table-content th {
+  background: var(--bg-surface-2);
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--border);
+}
+
+.criteria-table-content td,
+.symptoms-table-content td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.criteria-table-content tr:hover,
+.symptoms-table-content tr:hover {
+  background: var(--bg-surface-2);
+}
+
+.criteria-table-content td.cumple {
+  color: var(--green);
+  font-weight: 600;
+}
+
+.criteria-table-content td.no-cumple {
+  color: var(--red);
+  font-weight: 600;
+}
+
+.criteria-table-content td.neutral {
+  color: var(--text-muted);
+}
+
+.diagnostic-result {
+  border-radius: 9px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 2px solid;
+}
+
+.diagnostic-result.positive {
+  background: rgba(34, 197, 94, 0.1);
+  border-color: var(--green);
+}
+
+.diagnostic-result.negative {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: var(--accent);
+}
+
+.diagnostic-result.neutral {
+  background: rgba(100, 116, 139, 0.1);
+  border-color: var(--text-muted);
+}
+
+.diagnostic-label {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--text-primary);
+}
+
+.diagnostic-intensity {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.diagnostic-score {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 /* RESPONSIVE                                                           */
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
@@ -628,6 +789,14 @@ textarea {
   .egep5-tabs {
     padding: 0 16px;
   }
+
+  .likert-scale {
+    gap: 6px;
+  }
+
+  .likert-label {
+    font-size: 11px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -646,5 +815,29 @@ textarea {
 
   .stats-grid {
     grid-template-columns: 1fr;
+  }
+
+  .likert-scale {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .likert-option {
+    justify-content: space-between;
+  }
+
+  .criteria-table-content,
+  .symptoms-table-content {
+    font-size: 12px;
+  }
+
+  .criteria-table-content th,
+  .symptoms-table-content th {
+    padding: 10px;
+  }
+
+  .criteria-table-content td,
+  .symptoms-table-content td {
+    padding: 10px;
   }
 }

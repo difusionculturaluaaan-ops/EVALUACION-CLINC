@@ -189,8 +189,45 @@
       </div>
     </div>
 
-    <!-- Secciones del test -->
-    <div id="test-sections-container"></div>
+    <!-- Síntomas: Ítems 27-31 (Reexperimentación) -->
+    <div class="egep5-card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h2>Síntomas de Reexperimentación (Ítems 27-31)</h2>
+      </div>
+      <div class="card-body" id="egep5-items-27-31"></div>
+    </div>
+
+    <!-- Síntomas: Ítems 32-33 (Evitación) -->
+    <div class="egep5-card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h2>Síntomas de Evitación (Ítems 32-33)</h2>
+      </div>
+      <div class="card-body" id="egep5-items-32-33"></div>
+    </div>
+
+    <!-- Síntomas: Ítems 34-40 (Cognitivos) -->
+    <div class="egep5-card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h2>Síntomas Cognitivos (Ítems 34-40)</h2>
+      </div>
+      <div class="card-body" id="egep5-items-34-40"></div>
+    </div>
+
+    <!-- Síntomas: Ítems 41-46 (Activación) -->
+    <div class="egep5-card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h2>Síntomas de Activación (Ítems 41-46)</h2>
+      </div>
+      <div class="card-body" id="egep5-items-41-46"></div>
+    </div>
+
+    <!-- Funcionamiento: Ítems 52-58 -->
+    <div class="egep5-card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h2>Impacto Funcional (Ítems 52-58)</h2>
+      </div>
+      <div class="card-body" id="egep5-items-52-58"></div>
+    </div>
 
     <div class="button-group" style="margin-top: 24px;">
       <button onclick="window.tests_egep5.irTab('resultados'); window.tests_egep5.calcularResultados();" class="btn btn-primary">⊡ Calcular Resultados</button>
@@ -199,17 +236,75 @@
 
   <!-- ========== TAB 3: RESULTADOS ========== -->
   <div class="egep5-tab-content" id="tab-resultados">
-    <div id="resultados-container"></div>
+    <!-- Diagnóstico Principal -->
+    <div class="egep5-card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h2>📋 Diagnóstico DSM-5</h2>
+      </div>
+      <div class="card-body" id="egep5-diagnostico"></div>
+    </div>
+
+    <!-- Criterios DSM-5 -->
+    <div class="egep5-card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h2>✓ Criterios de Evaluación (A-G)</h2>
+      </div>
+      <div class="card-body" id="egep5-criteria-table"></div>
+    </div>
+
+    <!-- Síntomas por Escala -->
+    <div class="egep5-card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h2>📊 Síntomas por Escala</h2>
+      </div>
+      <div class="card-body" id="egep5-symptoms-summary"></div>
+    </div>
+
+    <!-- Funcionamiento -->
+    <div class="egep5-card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <h2>🔗 Impacto Funcional</h2>
+      </div>
+      <div class="card-body" id="egep5-functioning-summary"></div>
+    </div>
+
+    <!-- Botones de Exportación -->
+    <div class="button-group" style="margin-top: 20px;">
+      <button onclick="window.tests_egep5.generarPDF()" class="btn btn-primary">📄 Generar PDF</button>
+      <button onclick="window.tests_egep5.exportarJSON()" class="btn btn-secondary">💾 Exportar JSON</button>
+    </div>
   </div>
 
   <!-- ========== TAB 4: PERFIL VISUAL ========== -->
   <div class="egep5-tab-content" id="tab-perfil">
-    <div id="perfil-container"></div>
+    <div class="egep5-instruction">
+      <div class="instr-icon">i</div>
+      <div>
+        <strong>Perfil:</strong> Visualización gráfica de las puntuaciones en escala T y percentiles. Compara el desempeño del paciente con la población española.
+      </div>
+    </div>
+    <div class="egep5-card">
+      <div class="card-header">
+        <h2>📈 Perfil de Puntuaciones (T-score)</h2>
+      </div>
+      <div class="card-body" id="egep5-perfil-grafico"></div>
+    </div>
   </div>
 
   <!-- ========== TAB 5: INTERPRETACIÓN ========== -->
   <div class="egep5-tab-content" id="tab-interpretacion">
-    <div id="interpretacion-container"></div>
+    <div class="egep5-instruction">
+      <div class="instr-icon">i</div>
+      <div>
+        <strong>Interpretación:</strong> Análisis clínico de los resultados, recomendaciones terapéuticas y seguimiento recomendado.
+      </div>
+    </div>
+    <div class="egep5-card">
+      <div class="card-header">
+        <h2>💬 Interpretación Clínica</h2>
+      </div>
+      <div class="card-body" id="egep5-interpretacion-clinica"></div>
+    </div>
   </div>
 
 </main>
