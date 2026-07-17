@@ -338,6 +338,7 @@ window.tests_egep5 = {
   },
 
   renderizarTablaLikert(elementId, inicio, fin, grupo, esDestacado) {
+    const etiquetasSeveridad = ['Ninguna', 'Leve', 'Moderada', 'Grave', 'Extrema'];
     let html = `
       <table class="egep5-symptoms-table">
         <thead>
@@ -345,11 +346,17 @@ window.tests_egep5 = {
             <th style="width: 50%; text-align: left; padding: 12px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--text-primary);">Síntoma</th>
             <th class="table-center" style="padding: 12px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--accent-light); font-weight: 700;">SÍ</th>
             <th class="table-center" style="padding: 12px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--accent-light); font-weight: 700;">NO</th>
-            <th class="table-center" style="padding: 12px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--text-secondary);">0</th>
-            <th class="table-center" style="padding: 12px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--text-secondary);">1</th>
-            <th class="table-center" style="padding: 12px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--text-secondary);">2</th>
-            <th class="table-center" style="padding: 12px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--text-secondary);">3</th>
-            <th class="table-center" style="padding: 12px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--text-secondary);">4</th>
+            <th colspan="5" style="text-align: center; padding: 12px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--text-secondary); font-weight: 600;">GRADO DE MOLESTIA</th>
+          </tr>
+          <tr>
+            <th style="width: 50%; text-align: left; padding: 8px; border: 1px solid var(--border); background: var(--bg-surface-2);"></th>
+            <th style="padding: 8px; border: 1px solid var(--border); background: var(--bg-surface-2);"></th>
+            <th style="padding: 8px; border: 1px solid var(--border); background: var(--bg-surface-2);"></th>
+            <th class="table-center" style="padding: 8px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--text-secondary); font-size: 12px;">Ninguna</th>
+            <th class="table-center" style="padding: 8px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--text-secondary); font-size: 12px;">Leve</th>
+            <th class="table-center" style="padding: 8px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--text-secondary); font-size: 12px;">Moderada</th>
+            <th class="table-center" style="padding: 8px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--text-secondary); font-size: 12px;">Grave</th>
+            <th class="table-center" style="padding: 8px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--text-secondary); font-size: 12px;">Extrema</th>
           </tr>
         </thead>
         <tbody>
@@ -360,7 +367,7 @@ window.tests_egep5 = {
       const bgColor = esDestacado ? 'background: rgba(107, 76, 122, 0.3);' : '';
       html += `
         <tr style="${bgColor}">
-          <td style="padding: 12px; border: 1px solid var(--border); color: var(--accent-light);"><strong>${i}. ${this.symptomDefinitions[i]}</strong></td>
+          <td style="padding: 12px; border: 1px solid var(--border); color: var(--accent-light); font-weight: 500;"><strong>${i}.</strong> ${this.symptomDefinitions[i]}</td>
           <td class="table-center" style="border: 1px solid var(--border);">
             <input type="checkbox" name="symptom_${i}_si" onchange="window.tests_egep5.cambiarSintomaSI(${i}, this.checked)">
           </td>
