@@ -397,11 +397,38 @@ window.tests_egep5 = {
   },
 
   renderizarFuncionamiento() {
-    let html = '';
+    let html = `
+      <table class="egep5-functioning-table" style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th style="width: 70%; text-align: left; padding: 12px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--text-primary); font-weight: 600;">Pregunta</th>
+            <th class="table-center" style="width: 15%; padding: 12px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--accent-light); font-weight: 700;">SÍ</th>
+            <th class="table-center" style="width: 15%; padding: 12px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--accent-light); font-weight: 700;">NO</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
     this.funcionamientoDefinitions.forEach((def, indice) => {
       const numero = 52 + indice;
-      html += `<div class="functioning-item"><label class="checkbox-item"><input type="checkbox" name="item_${numero}" onchange="window.tests_egep5.cambiarFuncionamiento(${indice}, this.checked)"><strong style="color: #60a5fa !important; font-weight: 700; font-size: 15px; margin-right: 4px;">${numero}.</strong><span style="text-transform: capitalize; color: #60a5fa;">${def}</span></label></div>`;
+      html += `
+        <tr>
+          <td style="padding: 12px; border: 1px solid var(--border); text-transform: capitalize;"><strong style="color: #60a5fa;">${numero}.</strong> <span style="color: #60a5fa;">${def}</span></td>
+          <td class="table-center" style="border: 1px solid var(--border);">
+            <input type="radio" name="item_${numero}" value="si" onchange="window.tests_egep5.cambiarFuncionamiento(${indice}, 'si')">
+          </td>
+          <td class="table-center" style="border: 1px solid var(--border);">
+            <input type="radio" name="item_${numero}" value="no" onchange="window.tests_egep5.cambiarFuncionamiento(${indice}, 'no')">
+          </td>
+        </tr>
+      `;
     });
+
+    html += `
+        </tbody>
+      </table>
+    `;
+
     document.getElementById('egep5-items-52-58').innerHTML = html;
   },
 
@@ -438,8 +465,8 @@ window.tests_egep5 = {
     }
   },
 
-  cambiarFuncionamiento(indice, checked) {
-    this.respuestas.items_52_58[indice] = checked ? 1 : 0;
+  cambiarFuncionamiento(indice, valor) {
+    this.respuestas.items_52_58[indice] = valor === 'si' ? 1 : (valor === 'no' ? 0 : null);
     this.actualizarProgreso();
   },
 
