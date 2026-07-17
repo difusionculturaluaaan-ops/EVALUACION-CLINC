@@ -222,17 +222,17 @@ window.tests_egep5 = {
     if (!container) return;
 
     // Obtener eventos marcados
-    const eventosMarc ados = Object.entries(this.respuestas.event_type || {})
+    const eventosMarcados = Object.entries(this.respuestas.event_type || {})
       .filter(([num, val]) => val) // Solo los que tienen valor seleccionado
       .map(([num]) => parseInt(num));
 
-    if (eventosMarc ados.length === 0) {
+    if (eventosMarcados.length === 0) {
       container.innerHTML = '<p style="color: var(--text-secondary); font-style: italic;">Marque al menos un evento para seleccionar cuál le impactó más.</p>';
       return;
     }
 
     let html = '';
-    for (const num of eventosMarc ados) {
+    for (const num of eventosMarcados) {
       const eventName = this.eventDefinitions[num];
       html += `
         <label class="radio-item" style="display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s;">
