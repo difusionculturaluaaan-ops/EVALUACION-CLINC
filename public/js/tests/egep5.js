@@ -400,7 +400,7 @@ window.tests_egep5 = {
     let html = '';
     this.funcionamientoDefinitions.forEach((def, indice) => {
       const numero = 52 + indice;
-      html += `<div class="functioning-item"><label class="checkbox-item"><input type="checkbox" name="item_${numero}" onchange="window.tests_egep5.cambiarFuncionamiento(${indice}, this.checked)"><span style="color: var(--accent-light);"><strong>${numero}.</strong> ${def}</span></label></div>`;
+      html += `<div class="functioning-item"><label class="checkbox-item"><input type="checkbox" name="item_${numero}" onchange="window.tests_egep5.cambiarFuncionamiento(${indice}, this.checked)"><span style="color: #60a5fa;"><strong style="font-weight: 700; font-size: 15px;">${numero}.</strong> ${def}</span></label></div>`;
     });
     document.getElementById('egep5-items-52-58').innerHTML = html;
   },
