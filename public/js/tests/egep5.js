@@ -30,6 +30,20 @@ window.tests_egep5 = {
     items_52_58: [0,0,0,0,0,0,0]
   },
 
+  eventDefinitions: {
+    1: 'Accidente grave de tráfico',
+    2: 'Desastre natural (terremoto, inundación, incendio)',
+    3: 'Violencia de pareja o doméstica',
+    4: 'Abuso o agresión sexual',
+    5: 'Enfermedad grave o lesión seria',
+    6: 'Muerte traumática de un ser querido',
+    7: 'Combate militar o zona de guerra',
+    8: 'Tortura o cautiverio',
+    9: 'Accidente grave con lesiones',
+    10: 'Amenaza de muerte o lesión grave',
+    11: 'Otro acontecimiento traumático'
+  },
+
   symptomDefinitions: {
     27: 'Recuerdos desagradables o repetitivos sobre el acontecimiento',
     28: 'Sueños desagradables o repetitivos sobre el acontecimiento',
@@ -87,6 +101,7 @@ window.tests_egep5 = {
     console.log('EGEP5 Init - Nombre:', nombre, 'ID:', this.pacienteId);
 
     this.mostrarPaciente();
+    this.renderizarEventos();
     this.renderizarSintomas();
     this.renderizarFuncionamiento();
     this.actualizarProgreso();
@@ -144,6 +159,28 @@ window.tests_egep5 = {
 
   actualizarDashboard() {
     // Legacy function - progreso ahora se actualiza en actualizarProgreso()
+  },
+
+  renderizarEventos() {
+    let html = '';
+    for (let i = 1; i <= 11; i++) {
+      html += `<div class="functioning-item"><label class="checkbox-item"><input type="checkbox" name="event_${i}" onchange="window.tests_egep5.cambiarEvento(${i}, this.checked)"><span>${i}. ${this.eventDefinitions[i]}</span></label></div>`;
+    }
+    const el = document.getElementById('egep5-items-1-11');
+    if (el) el.innerHTML = html;
+  },
+
+  cambiarEvento(numero, checked) {
+    if (!this.respuestas.trauma_type) {
+      this.respuestas.trauma_type = [];
+    }
+    if (checked) {
+      if (!this.respuestas.trauma_type.includes(String(numero))) {
+        this.respuestas.trauma_type.push(String(numero));
+      }
+    } else {
+      this.respuestas.trauma_type = this.respuestas.trauma_type.filter(x => x !== String(numero));
+    }
   },
 
   renderizarSintomas() {
