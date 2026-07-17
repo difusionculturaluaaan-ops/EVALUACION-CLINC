@@ -232,9 +232,18 @@ window.tests_egep5 = {
     console.log(`Ítem 14 - Cuándo ocurrió: ${valor}`);
   },
 
-  cambiarItem15(valor) {
-    this.respuestas.trauma_frequency = valor;
-    console.log(`Ítem 15 - Frecuencia: ${valor}`);
+  cambiarItem15(valor, checked) {
+    if (!this.respuestas.trauma_frequency) {
+      this.respuestas.trauma_frequency = [];
+    }
+    if (checked) {
+      if (!this.respuestas.trauma_frequency.includes(valor)) {
+        this.respuestas.trauma_frequency.push(valor);
+      }
+    } else {
+      this.respuestas.trauma_frequency = this.respuestas.trauma_frequency.filter(x => x !== valor);
+    }
+    console.log(`Ítem 15 - Frecuencia: ${this.respuestas.trauma_frequency.join(', ')}`);
   },
 
   renderizarCaracteristicas() {

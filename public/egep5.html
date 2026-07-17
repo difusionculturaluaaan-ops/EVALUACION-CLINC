@@ -267,14 +267,14 @@
         <div style="margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border-soft);">
           <label style="font-weight: 600; display: block; margin-bottom: 12px; color: var(--text-primary);">Ítem 15: Ese acontecimiento ocurrió...</label>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
-            <label class="radio-item" style="display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s; color: var(--accent-light); font-weight: 600; font-size: 14px;">
-              <input type="radio" name="item15" value="unica" onchange="window.tests_egep5.cambiarItem15(this.value)"> en una única ocasión
+            <label class="checkbox-item" style="display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s; color: var(--accent-light); font-weight: 600; font-size: 14px;">
+              <input type="checkbox" name="item15" value="unica" onchange="window.tests_egep5.cambiarItem15(this.value, this.checked)"> en una única ocasión
             </label>
-            <label class="radio-item" style="display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s; color: var(--accent-light); font-weight: 600; font-size: 14px;">
-              <input type="radio" name="item15" value="varias" onchange="window.tests_egep5.cambiarItem15(this.value)"> en varias ocasiones
+            <label class="checkbox-item" style="display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s; color: var(--accent-light); font-weight: 600; font-size: 14px;">
+              <input type="checkbox" name="item15" value="varias" onchange="window.tests_egep5.cambiarItem15(this.value, this.checked)"> en varias ocasiones
             </label>
-            <label class="radio-item" style="display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s; color: var(--accent-light); font-weight: 600; font-size: 14px;">
-              <input type="radio" name="item15" value="repetida" onchange="window.tests_egep5.cambiarItem15(this.value)"> de forma repetida o reiterada
+            <label class="checkbox-item" style="display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s; color: var(--accent-light); font-weight: 600; font-size: 14px;">
+              <input type="checkbox" name="item15" value="repetida" onchange="window.tests_egep5.cambiarItem15(this.value, this.checked)"> de forma repetida o reiterada
             </label>
           </div>
         </div>
