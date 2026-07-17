@@ -249,6 +249,13 @@ window.tests_egep5 = {
   renderizarCaracteristicas() {
     let html = `
       <table class="egep5-characteristics-table">
+        <thead>
+          <tr>
+            <th style="width: 70%; text-align: left; padding: 12px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--text-primary);">Característica</th>
+            <th class="table-center" style="padding: 12px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--accent-light); font-weight: 700; font-size: 14px;">SÍ</th>
+            <th class="table-center" style="padding: 12px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--accent-light); font-weight: 700; font-size: 14px;">NO</th>
+          </tr>
+        </thead>
         <tbody>
           <tr>
             <td colspan="3" style="background: var(--bg-surface-2); font-weight: 600; padding: 12px; border: 1px solid var(--border); color: var(--text-primary);">
@@ -298,11 +305,6 @@ window.tests_egep5 = {
     html += `
         </tbody>
       </table>
-      <div style="display: grid; grid-template-columns: 70% 1fr 1fr; font-size: 12px; font-weight: 600; margin-top: 8px; color: var(--text-secondary);">
-        <div></div>
-        <div class="table-center">SÍ</div>
-        <div class="table-center">NO</div>
-      </div>
     `;
 
     const el = document.getElementById('egep5-items-16-26');
