@@ -222,26 +222,91 @@ window.tests_egep5 = {
     console.log(`Evento más impactante: ${valor}`);
   },
 
+  cambiarItem13(valor) {
+    this.respuestas.trauma_severity = valor;
+    console.log(`Ítem 13 - Gravedad: ${valor}`);
+  },
+
+  cambiarItem14(valor) {
+    this.respuestas.trauma_timing = valor;
+    console.log(`Ítem 14 - Cuándo ocurrió: ${valor}`);
+  },
+
+  cambiarItem15(valor) {
+    this.respuestas.trauma_frequency = valor;
+    console.log(`Ítem 15 - Frecuencia: ${valor}`);
+  },
+
   renderizarCaracteristicas() {
-    let html = '<div style="margin-bottom: 16px;"><strong style="color: #e6eaf0; font-size: 13px;">Ítems 16-26: Reacción durante el evento</strong></div>';
-    for (let i = 16; i <= 26; i++) {
-      html += `<div class="functioning-item"><label class="checkbox-item"><input type="checkbox" name="caract_${i}" onchange="window.tests_egep5.cambiarCaracteristica(${i}, this.checked)"><span>${i}. ${this.caracteristicaDefinitions[i]}</span></label></div>`;
+    let html = `
+      <table class="egep5-characteristics-table">
+        <tbody>
+          <tr>
+            <td colspan="3" style="background: var(--bg-surface-2); font-weight: 600; padding: 12px; border: 1px solid var(--border);">
+              Durante ese acontecimiento, usted se sintió...
+            </td>
+          </tr>
+    `;
+
+    // Items 16-18
+    for (let i = 16; i <= 18; i++) {
+      html += `
+        <tr>
+          <td style="padding: 12px; border: 1px solid var(--border); width: 70%;">${i}. ${this.caracteristicaDefinitions[i]}</td>
+          <td class="table-center" style="border: 1px solid var(--border);">
+            <input type="checkbox" name="caract_${i}_si" onchange="window.tests_egep5.cambiarCaracteristica(${i}, true)">
+          </td>
+          <td class="table-center" style="border: 1px solid var(--border);">
+            <input type="checkbox" name="caract_${i}_no" onchange="window.tests_egep5.cambiarCaracteristica(${i}, false)">
+          </td>
+        </tr>
+      `;
     }
+
+    html += `
+          <tr>
+            <td colspan="3" style="background: var(--bg-surface-2); font-weight: 600; padding: 12px; border: 1px solid var(--border);">
+              Ese acontecimiento supuso...
+            </td>
+          </tr>
+    `;
+
+    // Items 19-26
+    for (let i = 19; i <= 26; i++) {
+      html += `
+        <tr>
+          <td style="padding: 12px; border: 1px solid var(--border); width: 70%;">${i}. ${this.caracteristicaDefinitions[i]}</td>
+          <td class="table-center" style="border: 1px solid var(--border);">
+            <input type="checkbox" name="caract_${i}_si" onchange="window.tests_egep5.cambiarCaracteristica(${i}, true)">
+          </td>
+          <td class="table-center" style="border: 1px solid var(--border);">
+            <input type="checkbox" name="caract_${i}_no" onchange="window.tests_egep5.cambiarCaracteristica(${i}, false)">
+          </td>
+        </tr>
+      `;
+    }
+
+    html += `
+        </tbody>
+      </table>
+      <div style="display: grid; grid-template-columns: 70% 1fr 1fr; font-size: 12px; font-weight: 600; margin-top: 8px; color: var(--text-secondary);">
+        <div></div>
+        <div class="table-center">SÍ</div>
+        <div class="table-center">NO</div>
+      </div>
+    `;
+
     const el = document.getElementById('egep5-items-16-26');
     if (el) el.innerHTML = html;
   },
 
-  cambiarCaracteristica(numero, checked) {
-    if (!this.respuestas.during_event) {
-      this.respuestas.during_event = [];
+  cambiarCaracteristica(numero, valor) {
+    if (!this.respuestas.characteristics) {
+      this.respuestas.characteristics = {};
     }
-    if (checked) {
-      if (!this.respuestas.during_event.includes(String(numero))) {
-        this.respuestas.during_event.push(String(numero));
-      }
-    } else {
-      this.respuestas.during_event = this.respuestas.during_event.filter(x => x !== String(numero));
-    }
+    // valor true = SÍ, valor false = NO, undefined/null = no marcado
+    this.respuestas.characteristics[numero] = valor;
+    console.log(`Característica ${numero}: ${valor === true ? 'SÍ' : valor === false ? 'NO' : 'no marcado'}`);
   },
 
   renderizarSintomas() {

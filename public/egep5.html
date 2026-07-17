@@ -225,43 +225,65 @@
         <h2>Ítems 13-26: Características del Acontecimiento</h2>
       </div>
       <div class="card-body">
-        <div class="form-row">
-          <div class="form-group">
-            <label>Ítem 13: Gravedad del evento</label>
-            <select id="test_item13">
-              <option value="">–</option>
-              <option>Leve</option>
-              <option>Moderada</option>
-              <option>Grave</option>
-              <option>Extrema</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Ítem 14: Cuándo ocurrió</label>
-            <select id="test_item14">
-              <option value="">–</option>
-              <option>En la infancia</option>
-              <option>Hace más de 3 meses</option>
-              <option>Entre 1 a 3 meses</option>
-              <option>En el último mes</option>
-            </select>
+        <!-- Ítem 13: Gravedad del evento -->
+        <div style="margin-bottom: 24px;">
+          <label style="font-weight: 600; display: block; margin-bottom: 12px;">Ítem 13: Valore la gravedad del acontecimiento en la siguiente escala:</label>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px;">
+            <label class="radio-item" style="display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s;">
+              <input type="radio" name="item13" value="leve" onchange="window.tests_egep5.cambiarItem13(this.value)"> Leve
+            </label>
+            <label class="radio-item" style="display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s;">
+              <input type="radio" name="item13" value="moderada" onchange="window.tests_egep5.cambiarItem13(this.value)"> Moderada
+            </label>
+            <label class="radio-item" style="display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s;">
+              <input type="radio" name="item13" value="grave" onchange="window.tests_egep5.cambiarItem13(this.value)"> Grave
+            </label>
+            <label class="radio-item" style="display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s;">
+              <input type="radio" name="item13" value="extrema" onchange="window.tests_egep5.cambiarItem13(this.value)"> Extrema
+            </label>
           </div>
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label>Ítem 15: Frecuencia del evento</label>
-            <select id="test_item15">
-              <option value="">–</option>
-              <option>Una sola vez</option>
-              <option>Varias veces</option>
-              <option>Repetidamente</option>
-            </select>
+        <!-- Ítem 14: Cuándo ocurrió -->
+        <div style="margin-bottom: 24px;">
+          <label style="font-weight: 600; display: block; margin-bottom: 12px;">Ítem 14: ¿Cuándo sufrió ese acontecimiento por primera vez?</label>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+            <label class="radio-item" style="display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s;">
+              <input type="radio" name="item14" value="infancia" onchange="window.tests_egep5.cambiarItem14(this.value)"> En la infancia o en la adolescencia
+            </label>
+            <label class="radio-item" style="display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s;">
+              <input type="radio" name="item14" value="mas3m" onchange="window.tests_egep5.cambiarItem14(this.value)"> Hace más de 1 mes pero menos de 3 meses
+            </label>
+            <label class="radio-item" style="display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s;">
+              <input type="radio" name="item14" value="3m" onchange="window.tests_egep5.cambiarItem14(this.value)"> Hace más de 3 meses
+            </label>
+            <label class="radio-item" style="display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s;">
+              <input type="radio" name="item14" value="ultimomes" onchange="window.tests_egep5.cambiarItem14(this.value)"> En el último mes
+            </label>
+          </div>
+        </div>
+
+        <!-- Ítem 15: Frecuencia -->
+        <div style="margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border-soft);">
+          <label style="font-weight: 600; display: block; margin-bottom: 12px;">Ítem 15: Ese acontecimiento ocurrió...</label>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
+            <label class="radio-item" style="display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s;">
+              <input type="radio" name="item15" value="unica" onchange="window.tests_egep5.cambiarItem15(this.value)"> en una única ocasión
+            </label>
+            <label class="radio-item" style="display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s;">
+              <input type="radio" name="item15" value="varias" onchange="window.tests_egep5.cambiarItem15(this.value)"> en varias ocasiones
+            </label>
+            <label class="radio-item" style="display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s;">
+              <input type="radio" name="item15" value="repetida" onchange="window.tests_egep5.cambiarItem15(this.value)"> de forma repetida o reiterada
+            </label>
           </div>
         </div>
 
         <!-- Ítems 16-26: Reacción durante el evento -->
-        <div class="card-body" id="egep5-items-16-26" style="border-top: 1px solid #1a2029; padding-top: 20px; margin-top: 20px;"></div>
+        <div style="margin-top: 20px;">
+          <p style="font-weight: 600; margin-bottom: 16px; color: var(--accent-light);">CONTESTE A LAS SIGUIENTES PREGUNTAS EN RELACIÓN CON EL ACONTECIMIENTO QUE HA DESCRITO ANTERIORMENTE</p>
+          <div id="egep5-items-16-26"></div>
+        </div>
 
         <div class="form-row">
           <div class="form-group">
