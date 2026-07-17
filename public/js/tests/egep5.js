@@ -443,6 +443,32 @@ window.tests_egep5 = {
     this.actualizarProgreso();
   },
 
+  cambiarItem50(checkbox) {
+    if (checkbox.checked) {
+      // Desmarcar los otros
+      document.querySelectorAll('input[name^="item_50_option"]').forEach(cb => {
+        if (cb !== checkbox) cb.checked = false;
+      });
+      this.respuestas.symptom_duration = checkbox.name.replace('item_50_option', '');
+    } else {
+      this.respuestas.symptom_duration = null;
+    }
+    this.actualizarProgreso();
+  },
+
+  cambiarItem51(checkbox) {
+    if (checkbox.checked) {
+      // Desmarcar los otros
+      document.querySelectorAll('input[name^="item_51_option"]').forEach(cb => {
+        if (cb !== checkbox) cb.checked = false;
+      });
+      this.respuestas.symptom_onset = checkbox.name.replace('item_51_option', '');
+    } else {
+      this.respuestas.symptom_onset = null;
+    }
+    this.actualizarProgreso();
+  },
+
   actualizarProgreso() {
     let completadas = 0;
     if (this.respuestas.trauma_type.length > 0) completadas++;
