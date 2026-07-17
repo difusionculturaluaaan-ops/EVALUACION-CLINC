@@ -268,7 +268,7 @@ window.tests_egep5 = {
     for (let i = 16; i <= 18; i++) {
       html += `
         <tr>
-          <td style="padding: 12px; border: 1px solid var(--border); width: 70%; color: var(--accent-light);"><strong>${i}. ${this.caracteristicaDefinitions[i]}</strong></td>
+          <td style="padding: 12px; border: 1px solid var(--border); width: 70%;"><strong style="color: var(--accent-light);">${i}.</strong> <span style="color: var(--accent-light);">${this.caracteristicaDefinitions[i]}</span></td>
           <td class="table-center" style="border: 1px solid var(--border);">
             <input type="checkbox" name="caract_${i}_si" onchange="window.tests_egep5.cambiarCaracteristica(${i}, true)">
           </td>
@@ -291,7 +291,7 @@ window.tests_egep5 = {
     for (let i = 19; i <= 26; i++) {
       html += `
         <tr>
-          <td style="padding: 12px; border: 1px solid var(--border); width: 70%; color: var(--accent-light);"><strong>${i}. ${this.caracteristicaDefinitions[i]}</strong></td>
+          <td style="padding: 12px; border: 1px solid var(--border); width: 70%;"><strong style="color: var(--accent-light);">${i}.</strong> <span style="color: var(--accent-light);">${this.caracteristicaDefinitions[i]}</span></td>
           <td class="table-center" style="border: 1px solid var(--border);">
             <input type="checkbox" name="caract_${i}_si" onchange="window.tests_egep5.cambiarCaracteristica(${i}, true)">
           </td>
@@ -367,7 +367,7 @@ window.tests_egep5 = {
       const bgColor = esDestacado ? 'background: rgba(107, 76, 122, 0.3);' : '';
       html += `
         <tr style="${bgColor}">
-          <td style="padding: 12px; border: 1px solid var(--border); color: var(--text-primary);"><strong style="color: var(--accent-light);">${i}.</strong> ${this.symptomDefinitions[i]}</td>
+          <td style="padding: 12px; border: 1px solid var(--border);"><strong style="color: var(--accent-light);">${i}.</strong> <span style="color: var(--accent-light);">${this.symptomDefinitions[i]}</span></td>
           <td class="table-center" style="border: 1px solid var(--border);">
             <input type="checkbox" name="symptom_${i}_si" onchange="window.tests_egep5.cambiarSintomaSI(${i}, this.checked)">
           </td>
@@ -399,7 +399,7 @@ window.tests_egep5 = {
   renderizarFuncionamiento() {
     let html = '';
     this.funcionamientoDefinitions.forEach((def, indice) => {
-      html += `<div class="functioning-item"><label class="checkbox-item"><input type="checkbox" name="item_${52 + indice}" onchange="window.tests_egep5.cambiarFuncionamiento(${indice}, this.checked)"><span>${52 + indice}. ${def}</span></label></div>`;
+      html += `<div class="functioning-item"><label class="checkbox-item"><input type="checkbox" name="item_${52 + indice}" onchange="window.tests_egep5.cambiarFuncionamiento(${indice}, this.checked)"><span style="color: var(--accent-light);"><strong>${52 + indice}.</strong> ${def}</span></label></div>`;
     });
     document.getElementById('egep5-items-52-58').innerHTML = html;
   },
