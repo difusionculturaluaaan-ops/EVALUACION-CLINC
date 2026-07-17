@@ -898,6 +898,11 @@ textarea {
   line-height: 1.4;
 }
 
+.egep5-characteristics-table td strong {
+  color: var(--accent-light);
+  font-weight: 600;
+}
+
 .egep5-characteristics-table tr:hover {
   background: var(--bg-surface-2);
 }
