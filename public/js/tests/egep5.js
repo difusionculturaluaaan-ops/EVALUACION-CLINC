@@ -321,47 +321,72 @@ window.tests_egep5 = {
   },
 
   renderizarSintomas() {
-    let html = '';
-    for (let i = 0; i < 5; i++) {
-      html += this.renderizarItemLikert(27 + i, this.symptomDefinitions[27 + i], i, 'items_27_31');
-    }
-    document.getElementById('egep5-items-27-31').innerHTML = html;
+    // Items 27-31
+    this.renderizarTablaLikert('egep5-items-27-31', 27, 31, 'items_27_31', false);
 
-    html = '';
-    for (let i = 0; i < 2; i++) {
-      html += this.renderizarItemLikert(32 + i, this.symptomDefinitions[32 + i], i, 'items_32_33');
-    }
-    document.getElementById('egep5-items-32-33').innerHTML = html;
+    // Items 32-33 (con fondo diferente)
+    this.renderizarTablaLikert('egep5-items-32-33', 32, 33, 'items_32_33', true);
 
-    html = '';
-    for (let i = 0; i < 7; i++) {
-      html += this.renderizarItemLikert(34 + i, this.symptomDefinitions[34 + i], i, 'items_34_40');
-    }
-    document.getElementById('egep5-items-34-40').innerHTML = html;
+    // Items 34-40
+    this.renderizarTablaLikert('egep5-items-34-40', 34, 40, 'items_34_40', false);
 
-    html = '';
-    for (let i = 0; i < 6; i++) {
-      html += this.renderizarItemLikert(41 + i, this.symptomDefinitions[41 + i], i, 'items_41_46');
-    }
-    document.getElementById('egep5-items-41-46').innerHTML = html;
+    // Items 41-46
+    this.renderizarTablaLikert('egep5-items-41-46', 41, 46, 'items_41_46', false);
 
-    // Items 47-49 (Cambios conductuales)
-    html = '';
-    for (let i = 0; i < 3; i++) {
-      html += this.renderizarItemLikert(47 + i, this.symptomDefinitions[47 + i], i, 'items_47_49');
-    }
-    const el = document.getElementById('egep5-items-47-49');
-    if (el) el.innerHTML = html;
+    // Items 47-49
+    this.renderizarTablaLikert('egep5-items-47-49', 47, 49, 'items_47_49', false);
   },
 
-  renderizarItemLikert(numero, texto, indice, grupo) {
-    const opciones = ['Ninguna', 'Leve', 'Moderada', 'Grave', 'Extrema'];
-    let html = `<div class="symptom-item"><label class="symptom-text">${numero}. ${texto}</label><div class="likert-scale">`;
-    opciones.forEach((opcion, valor) => {
-      html += `<label class="likert-option"><input type="radio" name="${numero}" value="${valor}" onchange="window.tests_egep5.cambiarRespuesta('${grupo}', ${indice}, ${valor})"><span class="likert-label">${opcion}</span></label>`;
-    });
-    html += `</div></div>`;
-    return html;
+  renderizarTablaLikert(elementId, inicio, fin, grupo, esDestacado) {
+    let html = `
+      <table class="egep5-symptoms-table">
+        <thead>
+          <tr>
+            <th style="width: 50%; text-align: left; padding: 12px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--text-primary);">Síntoma</th>
+            <th class="table-center" style="padding: 12px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--accent-light); font-weight: 700;">SÍ</th>
+            <th class="table-center" style="padding: 12px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--accent-light); font-weight: 700;">NO</th>
+            <th class="table-center" style="padding: 12px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--text-secondary);">0</th>
+            <th class="table-center" style="padding: 12px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--text-secondary);">1</th>
+            <th class="table-center" style="padding: 12px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--text-secondary);">2</th>
+            <th class="table-center" style="padding: 12px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--text-secondary);">3</th>
+            <th class="table-center" style="padding: 12px; border: 1px solid var(--border); background: var(--bg-surface-2); color: var(--text-secondary);">4</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    for (let i = inicio; i <= fin; i++) {
+      const indice = i - inicio;
+      const bgColor = esDestacado ? 'background: rgba(107, 76, 122, 0.3);' : '';
+      html += `
+        <tr style="${bgColor}">
+          <td style="padding: 12px; border: 1px solid var(--border); color: var(--accent-light);"><strong>${i}. ${this.symptomDefinitions[i]}</strong></td>
+          <td class="table-center" style="border: 1px solid var(--border);">
+            <input type="checkbox" name="symptom_${i}_si" onchange="window.tests_egep5.cambiarSintomaSI(${i}, this.checked)">
+          </td>
+          <td class="table-center" style="border: 1px solid var(--border);">
+            <input type="checkbox" name="symptom_${i}_no" onchange="window.tests_egep5.cambiarSintomaNO(${i}, this.checked)">
+          </td>
+      `;
+
+      for (let valor = 0; valor <= 4; valor++) {
+        html += `
+          <td class="table-center" style="border: 1px solid var(--border);">
+            <input type="radio" name="symptom_${i}" value="${valor}" onchange="window.tests_egep5.cambiarRespuesta('${grupo}', ${indice}, ${valor})">
+          </td>
+        `;
+      }
+
+      html += `</tr>`;
+    }
+
+    html += `
+        </tbody>
+      </table>
+    `;
+
+    const el = document.getElementById(elementId);
+    if (el) el.innerHTML = html;
   },
 
   renderizarFuncionamiento() {
@@ -375,6 +400,34 @@ window.tests_egep5 = {
   cambiarRespuesta(grupo, indice, valor) {
     this.respuestas[grupo][indice] = parseInt(valor);
     this.actualizarProgreso();
+  },
+
+  cambiarSintomaSI(numero, checked) {
+    if (!this.respuestas.sintomas_si_no) {
+      this.respuestas.sintomas_si_no = {};
+    }
+    if (checked) {
+      this.respuestas.sintomas_si_no[numero] = 'SÍ';
+      // Desmarcar NO si está marcado
+      const noCheckbox = document.querySelector(`input[name="symptom_${numero}_no"]`);
+      if (noCheckbox) noCheckbox.checked = false;
+    } else {
+      delete this.respuestas.sintomas_si_no[numero];
+    }
+  },
+
+  cambiarSintomaNO(numero, checked) {
+    if (!this.respuestas.sintomas_si_no) {
+      this.respuestas.sintomas_si_no = {};
+    }
+    if (checked) {
+      this.respuestas.sintomas_si_no[numero] = 'NO';
+      // Desmarcar SÍ si está marcado
+      const siCheckbox = document.querySelector(`input[name="symptom_${numero}_si"]`);
+      if (siCheckbox) siCheckbox.checked = false;
+    } else {
+      delete this.respuestas.sintomas_si_no[numero];
+    }
   },
 
   cambiarFuncionamiento(indice, checked) {
