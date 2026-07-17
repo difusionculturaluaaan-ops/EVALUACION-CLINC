@@ -179,23 +179,32 @@ window.tests_egep5 = {
   renderizarEventos() {
     let html = '';
     for (let i = 1; i <= 11; i++) {
-      html += `<div class="functioning-item"><label class="checkbox-item"><input type="checkbox" name="event_${i}" onchange="window.tests_egep5.cambiarEvento(${i}, this.checked)"><span>${i}. ${this.eventDefinitions[i]}</span></label></div>`;
+      const eventName = this.eventDefinitions[i];
+      html += `
+        <tr>
+          <td><strong>${i}. ${eventName}</strong></td>
+          <td class="table-center">
+            <input type="radio" name="event_${i}" value="me" onchange="window.tests_egep5.cambiarEvento(${i}, this.value)">
+          </td>
+          <td class="table-center">
+            <input type="radio" name="event_${i}" value="presencié" onchange="window.tests_egep5.cambiarEvento(${i}, this.value)">
+          </td>
+          <td class="table-center">
+            <input type="radio" name="event_${i}" value="cercano" onchange="window.tests_egep5.cambiarEvento(${i}, this.value)">
+          </td>
+        </tr>
+      `;
     }
     const el = document.getElementById('egep5-items-1-11');
     if (el) el.innerHTML = html;
   },
 
-  cambiarEvento(numero, checked) {
-    if (!this.respuestas.trauma_type) {
-      this.respuestas.trauma_type = [];
+  cambiarEvento(numero, valor) {
+    if (!this.respuestas.event_type) {
+      this.respuestas.event_type = {};
     }
-    if (checked) {
-      if (!this.respuestas.trauma_type.includes(String(numero))) {
-        this.respuestas.trauma_type.push(String(numero));
-      }
-    } else {
-      this.respuestas.trauma_type = this.respuestas.trauma_type.filter(x => x !== String(numero));
-    }
+    this.respuestas.event_type[numero] = valor;
+    console.log(`Evento ${numero} marcado como: ${valor}`);
   },
 
   renderizarCaracteristicas() {
