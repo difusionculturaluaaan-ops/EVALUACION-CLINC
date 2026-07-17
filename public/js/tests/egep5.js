@@ -116,6 +116,7 @@ window.tests_egep5 = {
 
     this.mostrarPaciente();
     this.renderizarEventos();
+    this.renderizarOpcionesImpacto();
     this.renderizarCaracteristicas();
     this.renderizarSintomas();
     this.renderizarFuncionamiento();
@@ -204,7 +205,59 @@ window.tests_egep5 = {
       this.respuestas.event_type = {};
     }
     this.respuestas.event_type[numero] = valor;
+
+    // Mostrar/ocultar descripción del ítem 11
+    const desc11El = document.getElementById('egep5-item11-description');
+    if (desc11El) {
+      desc11El.style.display = numero === 11 && valor ? 'block' : 'none';
+    }
+
+    // Regenerar opciones de impacto
+    this.renderizarOpcionesImpacto();
     console.log(`Evento ${numero} marcado como: ${valor}`);
+  },
+
+  renderizarOpcionesImpacto() {
+    const container = document.getElementById('egep5-impact-options');
+    if (!container) return;
+
+    // Obtener eventos marcados
+    const eventosMarc ados = Object.entries(this.respuestas.event_type || {})
+      .filter(([num, val]) => val) // Solo los que tienen valor seleccionado
+      .map(([num]) => parseInt(num));
+
+    if (eventosMarc ados.length === 0) {
+      container.innerHTML = '<p style="color: var(--text-secondary); font-style: italic;">Marque al menos un evento para seleccionar cuál le impactó más.</p>';
+      return;
+    }
+
+    let html = '';
+    for (const num of eventosMarc ados) {
+      const eventName = this.eventDefinitions[num];
+      html += `
+        <label class="radio-item" style="display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s;">
+          <input type="radio" name="most_impactful" value="${num}" onchange="window.tests_egep5.cambiarImpacto(this.value)" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent);">
+          <span style="flex: 1;">${num}. ${eventName}</span>
+        </label>
+      `;
+    }
+    container.innerHTML = html;
+
+    // Agregar estilos hover
+    const items = container.querySelectorAll('.radio-item');
+    items.forEach(item => {
+      item.addEventListener('mouseenter', () => {
+        item.style.background = 'var(--bg-surface-2)';
+      });
+      item.addEventListener('mouseleave', () => {
+        item.style.background = 'transparent';
+      });
+    });
+  },
+
+  cambiarImpacto(valor) {
+    this.respuestas.most_impactful_event = parseInt(valor);
+    console.log(`Evento más impactante: ${valor}`);
   },
 
   renderizarCaracteristicas() {
