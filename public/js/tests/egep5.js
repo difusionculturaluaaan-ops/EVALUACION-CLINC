@@ -723,6 +723,39 @@ window.tests_egep5 = {
     };
   },
 
+  detectarEspecificaciones() {
+    // Especificaciones de presentación del TEPT
+    const especificaciones = [];
+
+    // Despersonalización: Item 47 marcado con SÍ
+    if (this.respuestas.items_47_49 && this.respuestas.items_47_49[0] > 0) {
+      especificaciones.push('Con síntomas disociativos - Despersonalización');
+    }
+
+    // Desrealización: Item 48 o 49 marcados con SÍ
+    if (this.respuestas.items_47_49 && (this.respuestas.items_47_49[1] > 0 || this.respuestas.items_47_49[2] > 0)) {
+      especificaciones.push('Con síntomas disociativos - Desrealización');
+    }
+
+    // Expresión retardada: Item 51 = "6 meses o más"
+    if (this.respuestas.symptom_onset === '3') {
+      especificaciones.push('Con expresión retardada (inicio tras 6+ meses)');
+    }
+
+    return especificaciones;
+  },
+
+  obtenerPercentil(intensidad, maxIntensidad) {
+    // Convertir intensidad a percentil aproximado (escala 0-100)
+    // Basado en distribución normal simplificada
+    const ratio = intensidad / maxIntensidad;
+    if (ratio === 0) return 5;
+    if (ratio <= 0.25) return Math.round(ratio * 100);
+    if (ratio <= 0.5) return Math.round(ratio * 120);
+    if (ratio <= 0.75) return Math.round(ratio * 140);
+    return Math.min(99, Math.round(ratio * 180));
+  },
+
   diagnosticarTEPT() {
     // Diagnóstico TEPT: todos los criterios A-G deben cumplirse
     const criterios = {
@@ -739,7 +772,8 @@ window.tests_egep5 = {
     return {
       tept: todosCumplen ? 'SI' : 'NO',
       criterios: criterios,
-      intensidades: this.calcularIntensidades()
+      intensidades: this.calcularIntensidades(),
+      especificaciones: this.detectarEspecificaciones()
     };
   },
 
@@ -752,12 +786,11 @@ window.tests_egep5 = {
   },
 
   mostrarResultados(resultado) {
-    const { tept, criterios, intensidades } = resultado;
+    const { tept, criterios, intensidades, especificaciones } = resultado;
+    const totalIntensidad = intensidades.I + intensidades.E + intensidades.C + intensidades.A;
 
     // 1. DIAGNÓSTICO PRINCIPAL
-    const dxClass = tept === 'SI' ? 'positive' : 'negative';
     const dxText = tept === 'SI' ? '✓ CUMPLE CRITERIOS DSM-5 DE TEPT' : '✗ NO CUMPLE CRITERIOS DE TEPT';
-    const totalIntensidad = intensidades.I + intensidades.E + intensidades.C + intensidades.A;
     const diagHTML = `
       <div style="background: ${tept === 'SI' ? 'rgba(76, 175, 80, 0.15)' : 'rgba(244, 67, 54, 0.15)'}; padding: 20px; border-radius: 8px; border-left: 4px solid ${tept === 'SI' ? '#4CAF50' : '#F44336'};">
         <div style="font-size: 18px; font-weight: 700; color: ${tept === 'SI' ? '#4CAF50' : '#F44336'}; margin-bottom: 8px;">${dxText}</div>
@@ -809,6 +842,43 @@ window.tests_egep5 = {
     });
     funcHTML += '</ul>';
     document.getElementById('egep5-functioning-summary').innerHTML = funcHTML;
+
+    // 5. ESPECIFICACIONES
+    let specHTML = '<ul style="list-style: none; padding: 0;">';
+    if (especificaciones.length === 0) {
+      specHTML += '<li style="padding: 8px; color: var(--text-secondary);">Sin especificaciones adicionales</li>';
+    } else {
+      especificaciones.forEach(spec => {
+        specHTML += `<li style="padding: 8px; color: var(--text-primary); border-left: 3px solid #FF9800; padding-left: 12px;">⚠️ ${spec}</li>`;
+      });
+    }
+    specHTML += '</ul>';
+    document.getElementById('egep5-specifications').innerHTML = specHTML;
+
+    // 6. BAREMOS - Tabla de conversión PD a Percentil
+    let bareHTML = '<div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Tabla de conversión de Puntuación Directa (PD) a Percentiles (Baremos población española)</div>';
+    bareHTML += '<table style="width: 100%; border-collapse: collapse; font-size: 13px;">';
+    bareHTML += '<tr style="background: var(--bg-surface-2);"><th style="text-align: center; padding: 10px; border: 1px solid var(--border);">Escala</th><th style="text-align: center; padding: 10px; border: 1px solid var(--border);">PD</th><th style="text-align: center; padding: 10px; border: 1px solid var(--border);">Percentil</th><th style="text-align: center; padding: 10px; border: 1px solid var(--border);">Interpretación</th></tr>';
+
+    const escalas = [
+      { nombre: 'I (Intrusivos)', pd: intensidades.I, max: 20 },
+      { nombre: 'E (Evitación)', pd: intensidades.E, max: 8 },
+      { nombre: 'C (Cognitivas)', pd: intensidades.C, max: 28 },
+      { nombre: 'A (Activación)', pd: intensidades.A, max: 24 }
+    ];
+
+    escalas.forEach((escala, idx) => {
+      const percentil = this.obtenerPercentil(escala.pd, escala.max);
+      const interpretacion = percentil >= 75 ? 'Muy elevado' : percentil >= 50 ? 'Elevado' : percentil >= 25 ? 'Promedio' : 'Bajo';
+      bareHTML += `<tr><td style="padding: 10px; border: 1px solid var(--border);">${escala.nombre}</td><td style="text-align: center; padding: 10px; border: 1px solid var(--border);">${escala.pd}</td><td style="text-align: center; padding: 10px; border: 1px solid var(--border); font-weight: 600;">${percentil}</td><td style="text-align: center; padding: 10px; border: 1px solid var(--border);">${interpretacion}</td></tr>`;
+    });
+
+    const totalPercentil = this.obtenerPercentil(totalIntensidad, 80);
+    const totalInterp = totalPercentil >= 75 ? 'Muy elevado' : totalPercentil >= 50 ? 'Elevado' : totalPercentil >= 25 ? 'Promedio' : 'Bajo';
+    bareHTML += `<tr style="background: rgba(107, 76, 122, 0.1); font-weight: 700;"><td style="padding: 10px; border: 1px solid var(--border);">TOTAL</td><td style="text-align: center; padding: 10px; border: 1px solid var(--border);">${totalIntensidad}</td><td style="text-align: center; padding: 10px; border: 1px solid var(--border);">${totalPercentil}</td><td style="text-align: center; padding: 10px; border: 1px solid var(--border);">${totalInterp}</td></tr>`;
+
+    bareHTML += '</table>';
+    document.getElementById('egep5-baremos').innerHTML = bareHTML;
   },
 
   /**
