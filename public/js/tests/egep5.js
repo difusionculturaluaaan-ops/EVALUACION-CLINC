@@ -331,7 +331,7 @@ window.tests_egep5 = {
     this.renderizarTablaLikert('egep5-items-34-40', 34, 40, 'items_34_40', false);
 
     // Items 41-46
-    this.renderizarTablaLikert('egep5-items-41-46', 41, 46, 'items_41_46', false);
+    this.renderizarTablaLikert('egep5-items-41-46', 41, 46, 'items_41_46', true);
 
     // Items 47-49
     this.renderizarTablaLikert('egep5-items-47-49', 47, 49, 'items_47_49', false);
