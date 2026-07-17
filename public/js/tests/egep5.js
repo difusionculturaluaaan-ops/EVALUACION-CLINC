@@ -242,7 +242,7 @@ window.tests_egep5 = {
       <table class="egep5-characteristics-table">
         <tbody>
           <tr>
-            <td colspan="3" style="background: var(--bg-surface-2); font-weight: 600; padding: 12px; border: 1px solid var(--border);">
+            <td colspan="3" style="background: var(--bg-surface-2); font-weight: 600; padding: 12px; border: 1px solid var(--border); color: var(--text-primary);">
               Durante ese acontecimiento, usted se sintió...
             </td>
           </tr>
@@ -252,7 +252,7 @@ window.tests_egep5 = {
     for (let i = 16; i <= 18; i++) {
       html += `
         <tr>
-          <td style="padding: 12px; border: 1px solid var(--border); width: 70%;">${i}. ${this.caracteristicaDefinitions[i]}</td>
+          <td style="padding: 12px; border: 1px solid var(--border); width: 70%; color: var(--accent-light);"><strong>${i}. ${this.caracteristicaDefinitions[i]}</strong></td>
           <td class="table-center" style="border: 1px solid var(--border);">
             <input type="checkbox" name="caract_${i}_si" onchange="window.tests_egep5.cambiarCaracteristica(${i}, true)">
           </td>
@@ -265,7 +265,7 @@ window.tests_egep5 = {
 
     html += `
           <tr>
-            <td colspan="3" style="background: var(--bg-surface-2); font-weight: 600; padding: 12px; border: 1px solid var(--border);">
+            <td colspan="3" style="background: var(--bg-surface-2); font-weight: 600; padding: 12px; border: 1px solid var(--border); color: var(--text-primary);">
               Ese acontecimiento supuso...
             </td>
           </tr>
@@ -275,7 +275,7 @@ window.tests_egep5 = {
     for (let i = 19; i <= 26; i++) {
       html += `
         <tr>
-          <td style="padding: 12px; border: 1px solid var(--border); width: 70%;">${i}. ${this.caracteristicaDefinitions[i]}</td>
+          <td style="padding: 12px; border: 1px solid var(--border); width: 70%; color: var(--accent-light);"><strong>${i}. ${this.caracteristicaDefinitions[i]}</strong></td>
           <td class="table-center" style="border: 1px solid var(--border);">
             <input type="checkbox" name="caract_${i}_si" onchange="window.tests_egep5.cambiarCaracteristica(${i}, true)">
           </td>
