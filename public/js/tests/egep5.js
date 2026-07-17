@@ -399,7 +399,8 @@ window.tests_egep5 = {
   renderizarFuncionamiento() {
     let html = '';
     this.funcionamientoDefinitions.forEach((def, indice) => {
-      html += `<div class="functioning-item"><label class="checkbox-item"><input type="checkbox" name="item_${52 + indice}" onchange="window.tests_egep5.cambiarFuncionamiento(${indice}, this.checked)"><span style="color: var(--accent-light);"><strong>${52 + indice}.</strong> ${def}</span></label></div>`;
+      const numero = 52 + indice;
+      html += `<div class="functioning-item"><label class="checkbox-item"><input type="checkbox" name="item_${numero}" onchange="window.tests_egep5.cambiarFuncionamiento(${indice}, this.checked)"><span style="color: var(--accent-light);"><strong>${numero}.</strong> ${def}</span></label></div>`;
     });
     document.getElementById('egep5-items-52-58').innerHTML = html;
   },
