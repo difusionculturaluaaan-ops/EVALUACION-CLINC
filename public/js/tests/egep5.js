@@ -367,7 +367,7 @@ window.tests_egep5 = {
       const bgColor = esDestacado ? 'background: rgba(107, 76, 122, 0.3);' : '';
       html += `
         <tr style="${bgColor}">
-          <td style="padding: 12px; border: 1px solid var(--border); color: var(--accent-light); font-weight: 500;"><strong>${i}.</strong> ${this.symptomDefinitions[i]}</td>
+          <td style="padding: 12px; border: 1px solid var(--border); color: var(--text-primary);"><strong style="color: var(--accent-light);">${i}.</strong> ${this.symptomDefinitions[i]}</td>
           <td class="table-center" style="border: 1px solid var(--border);">
             <input type="checkbox" name="symptom_${i}_si" onchange="window.tests_egep5.cambiarSintomaSI(${i}, this.checked)">
           </td>
