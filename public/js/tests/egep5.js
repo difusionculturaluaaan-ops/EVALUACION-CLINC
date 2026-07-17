@@ -44,6 +44,20 @@ window.tests_egep5 = {
     11: 'Otro acontecimiento traumático'
   },
 
+  caracteristicaDefinitions: {
+    16: 'Sintió intenso miedo, desamparo u horror',
+    17: 'Actuaba o se sentía como si el acontecimiento estuviera sucediendo nuevamente',
+    18: 'Tenía reacciones físicas intensas (sudor, aceleración cardíaca)',
+    19: 'Tuvo dificultad para respirar o sensación de asfixia',
+    20: 'Perdió momentáneamente la conciencia o se desconectó',
+    21: 'Tuvo sensaciones de adormecimiento o despersonalización',
+    22: 'Tuvo dificultades para hablar o movimiento',
+    23: 'Experimentó parálisis temporal',
+    24: 'Tuvo amnesia (no recuerda partes del evento)',
+    25: 'Sintió confusión durante el evento',
+    26: 'Creyó que iba a morir o sufrir un daño grave'
+  },
+
   symptomDefinitions: {
     27: 'Recuerdos desagradables o repetitivos sobre el acontecimiento',
     28: 'Sueños desagradables o repetitivos sobre el acontecimiento',
@@ -102,6 +116,7 @@ window.tests_egep5 = {
 
     this.mostrarPaciente();
     this.renderizarEventos();
+    this.renderizarCaracteristicas();
     this.renderizarSintomas();
     this.renderizarFuncionamiento();
     this.actualizarProgreso();
@@ -180,6 +195,28 @@ window.tests_egep5 = {
       }
     } else {
       this.respuestas.trauma_type = this.respuestas.trauma_type.filter(x => x !== String(numero));
+    }
+  },
+
+  renderizarCaracteristicas() {
+    let html = '<div style="margin-bottom: 16px;"><strong style="color: #e6eaf0; font-size: 13px;">Ítems 16-26: Reacción durante el evento</strong></div>';
+    for (let i = 16; i <= 26; i++) {
+      html += `<div class="functioning-item"><label class="checkbox-item"><input type="checkbox" name="caract_${i}" onchange="window.tests_egep5.cambiarCaracteristica(${i}, this.checked)"><span>${i}. ${this.caracteristicaDefinitions[i]}</span></label></div>`;
+    }
+    const el = document.getElementById('egep5-items-16-26');
+    if (el) el.innerHTML = html;
+  },
+
+  cambiarCaracteristica(numero, checked) {
+    if (!this.respuestas.during_event) {
+      this.respuestas.during_event = [];
+    }
+    if (checked) {
+      if (!this.respuestas.during_event.includes(String(numero))) {
+        this.respuestas.during_event.push(String(numero));
+      }
+    } else {
+      this.respuestas.during_event = this.respuestas.during_event.filter(x => x !== String(numero));
     }
   },
 
