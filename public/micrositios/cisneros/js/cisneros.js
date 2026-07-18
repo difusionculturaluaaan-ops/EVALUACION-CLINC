@@ -136,9 +136,62 @@ window.tests_cisneros = {
     }
 
     this.renderizarItems();
-    this.cargarDatosPaciente();
-    this.inicializarImportador();
-    this.actualizarProgreso();
+
+    // Verificar si se abre desde expediente (modo=cargar)
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('modo') === 'cargar' && params.get('prueba_id')) {
+      this.cargarDesdePrueba(params.get('prueba_id'), params.get('token'));
+    } else {
+      this.cargarDatosPaciente();
+      this.inicializarImportador();
+      this.actualizarProgreso();
+    }
+  },
+
+  async cargarDesdePrueba(pruebaId, token) {
+    try {
+      const response = await fetch(`/api/pruebas/${pruebaId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (!response.ok) {
+        alert('❌ Error al cargar la prueba');
+        return;
+      }
+
+      const prueba = await response.json();
+      const subescalas = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas;
+
+      // Parsear JSON guardado
+      if (subescalas && subescalas._json) {
+        const jsonData = typeof subescalas._json === 'string' ? JSON.parse(subescalas._json) : subescalas._json;
+
+        // Cargar respuestas desde el JSON
+        if (jsonData.respuestas && Array.isArray(jsonData.respuestas)) {
+          this.respuestas.items = [0, ...jsonData.respuestas];
+        }
+
+        // Cargar metadatos
+        if (jsonData.metadatos) {
+          const meta = jsonData.metadatos;
+          if (document.getElementById('c_nombre')) document.getElementById('c_nombre').value = meta.paciente_nombre || '';
+          if (document.getElementById('c_edad')) document.getElementById('c_edad').value = meta.edad || '';
+          if (document.getElementById('c_sexo')) document.getElementById('c_sexo').value = meta.sexo || '';
+          if (document.getElementById('c_empresa')) document.getElementById('c_empresa').value = meta.empresa || '';
+          if (document.getElementById('c_evaluador')) document.getElementById('c_evaluador').value = meta.evaluador || '';
+          if (document.getElementById('c_fecha')) document.getElementById('c_fecha').value = meta.fecha_evaluacion || '';
+        }
+      }
+
+      this.calcularResultados();
+      this.mostrarResultados();
+      this.actualizarProgreso();
+
+      alert('✅ Prueba cargada correctamente');
+    } catch (error) {
+      console.error('Error al cargar prueba:', error);
+      alert('❌ Error al cargar la prueba: ' + error.message);
+    }
   },
 
   cargarDatosPaciente() {
@@ -316,7 +369,81 @@ window.tests_cisneros = {
   },
 
   guardarEnExpediente() {
-    alert('📋 Guardar en desarrollo');
+    if (!this.resultados) {
+      alert('⚠️ Primero calcula los resultados antes de guardar.');
+      return;
+    }
+
+    const pacienteId = sessionStorage.getItem('pacienteSeleccionado');
+    if (!pacienteId) {
+      alert('❌ No hay paciente seleccionado. Vuelve al expediente.');
+      return;
+    }
+
+    const nombre = document.getElementById('c_nombre')?.value || sessionStorage.getItem('paciente_nombre') || '';
+    const edad = document.getElementById('c_edad')?.value || sessionStorage.getItem('paciente_edad') || '';
+    const sexo = document.getElementById('c_sexo')?.value || sessionStorage.getItem('paciente_sexo') || '';
+    const empresa = document.getElementById('c_empresa')?.value || sessionStorage.getItem('clinica_nombre') || '';
+    const evaluador = document.getElementById('c_evaluador')?.value || localStorage.getItem('nombre') || '';
+    const fecha = document.getElementById('c_fecha')?.value || new Date().toISOString().split('T')[0];
+
+    const data = this.respuestas.items.slice(1, 44);
+
+    // Crear JSON completo para auditoría
+    const jsonCompleto = {
+      testType: 'CISNEROS',
+      version: '1.0',
+      baremos: 'Piñuel_Zabala_2001',
+      respuestas: data,
+      metadatos: {
+        paciente_nombre: nombre,
+        paciente_id: pacienteId,
+        edad: edad,
+        sexo: sexo,
+        evaluador: evaluador,
+        empresa: empresa,
+        fecha_evaluacion: fecha
+      },
+      diagnostico: {
+        demérito: this.resultados.demerito,
+        obstaculización: this.resultados.obstaculizacion,
+        intimidación: this.resultados.intimidacion,
+        aislamiento: this.resultados.aislamiento,
+        acoso_personal: this.resultados.acosoPersonal,
+        intensidad: this.resultados.intensidad
+      },
+      respondidas: data.filter(x => x > 0).length,
+      total_items: 43,
+      timestamp: new Date().toISOString()
+    };
+
+    const subescalas = {
+      demérito: this.resultados.demerito,
+      obstaculización: this.resultados.obstaculizacion,
+      intimidación: this.resultados.intimidacion,
+      aislamiento: this.resultados.aislamiento,
+      acoso_personal: this.resultados.acosoPersonal,
+      intensidad: this.resultados.intensidad,
+      _evaluador: evaluador,
+      _json: JSON.stringify(jsonCompleto)
+    };
+
+    const totalScore = this.resultados.demerito + this.resultados.obstaculizacion + this.resultados.intimidacion + this.resultados.aislamiento + this.resultados.acosoPersonal;
+
+    api.guardarPrueba(
+      pacienteId,
+      'CISNEROS',
+      data,
+      totalScore,
+      subescalas,
+      localStorage.getItem('nombre')
+    ).then(() => {
+      alert('✅ JSON guardado en expediente correctamente');
+      window.history.back();
+    }).catch(error => {
+      alert('❌ Error al guardar: ' + error.message);
+      console.error('Error:', error);
+    });
   },
 
   limpiar() {

@@ -110,14 +110,69 @@ window.tests_mbi = {
     // Renderizar tabla de ítems
     this.renderizarItems();
 
-    // Cargar datos del paciente en formulario
-    this.cargarDatosPaciente();
+    // Verificar si se abre desde expediente (modo=cargar)
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('modo') === 'cargar' && params.get('prueba_id')) {
+      this.cargarDesdePrueba(params.get('prueba_id'), params.get('token'));
+    } else {
+      // Cargar datos del paciente en formulario
+      this.cargarDatosPaciente();
 
-    // Inicializar importador JSON
-    this.inicializarImportador();
+      // Inicializar importador JSON
+      this.inicializarImportador();
 
-    // Actualizar progreso
-    this.actualizarProgreso();
+      // Actualizar progreso
+      this.actualizarProgreso();
+    }
+  },
+
+  async cargarDesdePrueba(pruebaId, token) {
+    try {
+      const response = await fetch(`/api/pruebas/${pruebaId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (!response.ok) {
+        alert('❌ Error al cargar la prueba');
+        return;
+      }
+
+      const prueba = await response.json();
+      const subescalas = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas;
+
+      // Parsear JSON guardado
+      if (subescalas && subescalas._json) {
+        const jsonData = typeof subescalas._json === 'string' ? JSON.parse(subescalas._json) : subescalas._json;
+
+        // Cargar respuestas desde el JSON
+        if (jsonData.respuestas && Array.isArray(jsonData.respuestas)) {
+          this.respuestas.items = [0, ...jsonData.respuestas];
+        }
+
+        // Cargar metadatos
+        if (jsonData.metadatos) {
+          const meta = jsonData.metadatos;
+          if (document.getElementById('m_nombre')) document.getElementById('m_nombre').value = meta.paciente_nombre || '';
+          if (document.getElementById('m_edad')) document.getElementById('m_edad').value = meta.edad || '';
+          if (document.getElementById('m_sexo')) document.getElementById('m_sexo').value = meta.sexo || '';
+          if (document.getElementById('m_centro')) document.getElementById('m_centro').value = meta.centro || '';
+          if (document.getElementById('m_evaluador')) document.getElementById('m_evaluador').value = meta.evaluador || '';
+          if (document.getElementById('m_fecha')) document.getElementById('m_fecha').value = meta.fecha_evaluacion || '';
+        }
+      }
+
+      // Recalcular resultados
+      this.calcularResultados();
+      this.mostrarResultados();
+
+      // Actualizar UI
+      this.actualizarProgreso();
+
+      alert('✅ Prueba cargada correctamente');
+    } catch (error) {
+      console.error('Error al cargar prueba:', error);
+      alert('❌ Error al cargar la prueba: ' + error.message);
+    }
   },
 
   cargarDatosPaciente() {

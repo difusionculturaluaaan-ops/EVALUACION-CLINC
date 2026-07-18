@@ -4674,6 +4674,48 @@ const app = {
     }
   },
 
+  async abrirEvaluacionMBI(pruebaId) {
+    try {
+      const response = await fetch(`/api/pruebas/${pruebaId}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
+      });
+
+      if (!response.ok) {
+        this.mostrarToast('Error al cargar evaluación MBI', 'error');
+        return;
+      }
+
+      const prueba = await response.json();
+      const token = localStorage.getItem('auth_token');
+
+      window.open(`/micrositios/mbi/index.html?modo=cargar&prueba_id=${pruebaId}&token=${token}`, '_blank');
+    } catch (error) {
+      console.error('Error al abrir evaluación MBI:', error);
+      this.mostrarToast('Error al cargar evaluación MBI', 'error');
+    }
+  },
+
+  async abrirEvaluacionCISNEROS(pruebaId) {
+    try {
+      const response = await fetch(`/api/pruebas/${pruebaId}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
+      });
+
+      if (!response.ok) {
+        this.mostrarToast('Error al cargar evaluación CISNEROS', 'error');
+        return;
+      }
+
+      const prueba = await response.json();
+      const token = localStorage.getItem('auth_token');
+
+      window.open(`/micrositios/cisneros/index.html?modo=cargar&prueba_id=${pruebaId}&token=${token}`, '_blank');
+    } catch (error) {
+      console.error('Error al abrir evaluación CISNEROS:', error);
+      this.mostrarToast('Error al cargar evaluación CISNEROS', 'error');
+    }
+  },
+
   /**
    * Generar interpretación basada en el tipo de test y puntuación
    */
@@ -4796,6 +4838,16 @@ const app = {
             ` : ''}
             ${(prueba.tipo === 'MMPI2' || prueba.tipo === 'MMPI') ? `
               <button class="btn-abrir-evaluacion" onclick="app.abrirEvaluacionMMPI(${prueba.id})">
+                Abrir JSON
+              </button>
+            ` : ''}
+            ${prueba.tipo === 'MBI' ? `
+              <button class="btn-abrir-evaluacion" onclick="app.abrirEvaluacionMBI(${prueba.id})">
+                Abrir JSON
+              </button>
+            ` : ''}
+            ${prueba.tipo === 'CISNEROS' ? `
+              <button class="btn-abrir-evaluacion" onclick="app.abrirEvaluacionCISNEROS(${prueba.id})">
                 Abrir JSON
               </button>
             ` : ''}
