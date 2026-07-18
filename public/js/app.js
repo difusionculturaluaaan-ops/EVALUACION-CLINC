@@ -4674,6 +4674,42 @@ const app = {
     }
   },
 
+  async verPDFPrueba(pruebaId) {
+    try {
+      const response = await fetch(`/api/pruebas/${pruebaId}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
+      });
+
+      if (!response.ok) {
+        this.mostrarToast('Error al cargar el PDF', 'error');
+        return;
+      }
+
+      const prueba = await response.json();
+
+      // Buscar PDF en base64
+      let pdfBase64 = null;
+
+      // Buscar en _pdf_base64 dentro de subescalas
+      if (prueba.subescalas) {
+        const subescalas = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas;
+        pdfBase64 = subescalas._pdf_base64;
+      }
+
+      if (!pdfBase64) {
+        this.mostrarToast('No hay PDF disponible para esta prueba', 'error');
+        return;
+      }
+
+      // Abrir PDF en nueva pestaña
+      const win = window.open();
+      win.document.write(`<iframe style="width:100%;height:100%;border:none;" src="${pdfBase64}"></iframe>`);
+    } catch (error) {
+      console.error('Error al ver PDF:', error);
+      this.mostrarToast('Error al cargar el PDF', 'error');
+    }
+  },
+
 
   /**
    * Generar interpretación basada en el tipo de test y puntuación
@@ -4798,6 +4834,16 @@ const app = {
             ${(prueba.tipo === 'MMPI2' || prueba.tipo === 'MMPI') ? `
               <button class="btn-abrir-evaluacion" onclick="app.abrirEvaluacionMMPI(${prueba.id})">
                 Abrir JSON
+              </button>
+            ` : ''}
+            ${prueba.tipo === 'MBI' ? `
+              <button class="btn-abrir-evaluacion" onclick="app.verPDFPrueba(${prueba.id})">
+                Ver Resultados
+              </button>
+            ` : ''}
+            ${prueba.tipo === 'CISNEROS' ? `
+              <button class="btn-abrir-evaluacion" onclick="app.verPDFPrueba(${prueba.id})">
+                Ver Resultados
               </button>
             ` : ''}
             ${estado === 'borrador' ? `
