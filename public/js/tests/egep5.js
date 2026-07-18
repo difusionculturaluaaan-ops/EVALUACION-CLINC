@@ -940,15 +940,21 @@ window.tests_egep5 = {
 
           // Mapear respuestas según formato (array o objeto)
           if (Array.isArray(data.respuestas)) {
-            // Formato v2.0: array de 29+ números
-            this.respuestas.items_27_31 = data.respuestas.slice(0, 5);
-            this.respuestas.items_32_33 = data.respuestas.slice(5, 7);
-            this.respuestas.items_34_40 = data.respuestas.slice(7, 14);
-            this.respuestas.items_41_46 = data.respuestas.slice(14, 20);
-            this.respuestas.items_47_49 = data.respuestas.slice(20, 23) || [0,0,0];
-            this.respuestas.symptom_duration = data.respuestas[23] || 0;
-            this.respuestas.symptom_onset = data.respuestas[24] || 0;
-            this.respuestas.items_52_58 = data.respuestas.slice(25, 32) || [0,0,0,0,0,0,0];
+            // Formato v2.0: array de 32 números
+            // Convertir todos los valores a números (pueden venir como strings)
+            const respuestasNumeros = data.respuestas.map(v => {
+              const num = parseInt(v);
+              return isNaN(num) ? 0 : num;
+            });
+
+            this.respuestas.items_27_31 = respuestasNumeros.slice(0, 5);
+            this.respuestas.items_32_33 = respuestasNumeros.slice(5, 7);
+            this.respuestas.items_34_40 = respuestasNumeros.slice(7, 14);
+            this.respuestas.items_41_46 = respuestasNumeros.slice(14, 20);
+            this.respuestas.items_47_49 = respuestasNumeros.slice(20, 23) || [0,0,0];
+            this.respuestas.symptom_duration = respuestasNumeros[23] || 0;
+            this.respuestas.symptom_onset = respuestasNumeros[24] || 0;
+            this.respuestas.items_52_58 = respuestasNumeros.slice(25, 32) || [0,0,0,0,0,0,0];
           } else {
             // Formato legacy: objeto con propiedades
             this.respuestas = data.respuestas;
