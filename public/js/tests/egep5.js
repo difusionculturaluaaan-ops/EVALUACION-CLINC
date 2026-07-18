@@ -1116,29 +1116,28 @@ window.tests_egep5 = {
         this.respuestas.symptom_onset = data.respuestas[21];
         this.respuestas.items_52_58 = data.respuestas.slice(22, 29);
 
-        // 2. Reconstruir respuestas en el DOM
+        // 2. Cargar metadatos del paciente
+        if (data.metadatos) {
+          if (data.metadatos.paciente_nombre) localStorage.setItem('paciente_nombre', data.metadatos.paciente_nombre);
+          if (data.metadatos.paciente_id) sessionStorage.setItem('pacienteSeleccionado', data.metadatos.paciente_id);
+          if (data.metadatos.evaluador) localStorage.setItem('nombre', data.metadatos.evaluador);
+        }
+
+        // 3. Reconstruir respuestas en el DOM
         this.cargarRespuestasEnDOM(data);
 
-        // 3. Crear objeto resultados a partir de datos cargados
-        this.resultados = data.diagnostico;
+        // 4. Recalcular diagnóstico desde respuestas cargadas
+        const resultado = this.diagnosticarTEPT();
+        this.resultados = resultado;
 
-        // 4. Mostrar resultados
-        this.mostrarResultados({
-          teptPresente: data.diagnostico.tept_presente,
-          nivelIntensidad: data.diagnostico.intensidad,
-          criterios: data.criterios_dsm5,
-          reexper: data.diagnostico.reexperimentacion,
-          evitar: data.diagnostico.evitacion,
-          cognit: data.diagnostico.cognitivas,
-          activa: data.diagnostico.activacion,
-          intensidadTotal: data.diagnostico.intensidad_total
-        });
+        // 5. Mostrar resultados
+        this.mostrarResultados(resultado);
 
-        // 5. Navegar a resultados
+        // 6. Navegar a resultados
         this.irTab('resultados');
 
-        // 6. Mostrar éxito
-        this.mostrarMensajeExito(`✅ JSON importado correctamente<br>Respuestas cargadas: ${data.respondidas}/58<br>Diagnóstico: ${data.diagnostico.tept_presente ? 'TEPT PRESENTE' : 'TEPT AUSENTE'}`);
+        // 7. Mostrar éxito
+        this.mostrarMensajeExito(`✅ JSON importado correctamente<br>Respuestas cargadas: ${data.respondidas || 58}/58<br>Diagnóstico: ${resultado.tept === 'SI' ? '✓ TEPT PRESENTE' : '✗ TEPT AUSENTE'}`);
 
       } catch (error) {
         this.mostrarMensajeError(`❌ Error: ${error.message}`);
@@ -1161,33 +1160,56 @@ window.tests_egep5 = {
   },
 
   cargarRespuestasEnDOM(data) {
-    // Items 27-31
+    // Items 27-31 (Síntomas Intrusivos)
     data.respuestas.slice(0, 5).forEach((resp, i) => {
-      const radio = document.querySelector(`input[name="${27 + i}"][value="${resp}"]`);
+      const numero = 27 + i;
+      const radio = document.querySelector(`input[name="symptom_${numero}"][value="${resp}"]`);
       if (radio) radio.checked = true;
     });
-    // Items 32-33
+
+    // Items 32-33 (Evitación)
     data.respuestas.slice(5, 7).forEach((resp, i) => {
-      const radio = document.querySelector(`input[name="${32 + i}"][value="${resp}"]`);
+      const numero = 32 + i;
+      const radio = document.querySelector(`input[name="symptom_${numero}"][value="${resp}"]`);
       if (radio) radio.checked = true;
     });
-    // Items 34-40
+
+    // Items 34-40 (Alteraciones Cognitivas)
     data.respuestas.slice(7, 14).forEach((resp, i) => {
-      const radio = document.querySelector(`input[name="${34 + i}"][value="${resp}"]`);
+      const numero = 34 + i;
+      const radio = document.querySelector(`input[name="symptom_${numero}"][value="${resp}"]`);
       if (radio) radio.checked = true;
     });
-    // Items 41-46
+
+    // Items 41-46 (Activación)
     data.respuestas.slice(14, 20).forEach((resp, i) => {
-      const radio = document.querySelector(`input[name="${41 + i}"][value="${resp}"]`);
+      const numero = 41 + i;
+      const radio = document.querySelector(`input[name="symptom_${numero}"][value="${resp}"]`);
       if (radio) radio.checked = true;
     });
-    // Items 50-51
-    document.getElementById('symptom_duration').value = data.respuestas[20] || '';
-    document.getElementById('symptom_onset').value = data.respuestas[21] || '';
-    // Items 52-58
-    data.respuestas.slice(22, 29).forEach((resp, i) => {
-      const checkbox = document.querySelector(`input[name="item_${52 + i}"]`);
-      if (checkbox) checkbox.checked = resp > 0;
+
+    // Items 47-49 (Síntomas Disociativos)
+    data.respuestas.slice(20, 23).forEach((resp, i) => {
+      const numero = 47 + i;
+      const radio = document.querySelector(`input[name="symptom_${numero}"][value="${resp}"]`);
+      if (radio) radio.checked = true;
+    });
+
+    // Item 50 (Duración)
+    if (data.metadatos?.symptom_duration) {
+      this.respuestas.symptom_duration = data.metadatos.symptom_duration;
+    }
+
+    // Item 51 (Onset)
+    if (data.metadatos?.symptom_onset) {
+      this.respuestas.symptom_onset = data.metadatos.symptom_onset;
+    }
+
+    // Items 52-58 (Funcionamiento)
+    data.respuestas.slice(23, 30).forEach((resp, i) => {
+      const numero = 52 + i;
+      const radio = document.querySelector(`input[name="item_${numero}"][value="si"]`);
+      if (radio && resp === 1) radio.checked = true;
     });
   },
 
