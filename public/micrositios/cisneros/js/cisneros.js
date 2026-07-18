@@ -448,39 +448,57 @@ window.tests_cisneros = {
       return;
     }
 
-    // Usar el mismo JSON que exportar
-    const jsonCompleto = this.generarJSON();
     const data = this.respuestas.items.slice(1, 44);
+    const { demerito, obstaculizacion, intimidacion, aislamiento, acosoPersonal } = this.resultados;
 
-    const subescalas = {
-      demérito: this.resultados.demerito,
-      obstaculización: this.resultados.obstaculizacion,
-      intimidación: this.resultados.intimidacion,
-      aislamiento: this.resultados.aislamiento,
-      acoso_personal: this.resultados.acosoPersonal,
-      intensidad: this.resultados.intensidad,
-      _evaluador: jsonCompleto.metadatos.evaluador,
-      _json: JSON.stringify(jsonCompleto)
+    // Generar PDF desde el contenedor de resultados
+    const element = document.getElementById('cisneros-resultados');
+    if (!element) {
+      alert('❌ No hay resultados para guardar');
+      return;
+    }
+
+    const opt = {
+      margin: 10,
+      filename: 'CISNEROS-' + new Date().toISOString().split('T')[0] + '.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, logging: false },
+      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
     };
 
-    const totalScore = this.resultados.demerito + this.resultados.obstaculizacion + this.resultados.intimidacion + this.resultados.aislamiento + this.resultados.acosoPersonal;
+    html2pdf().set(opt).from(element).toPdf().get('pdf').then((pdf) => {
+      // Convertir PDF a base64
+      const pdfData = pdf.output('datauristring');
 
-    api.guardarPrueba(
-      pacienteId,
-      'CISNEROS',
-      data,
-      totalScore,
-      subescalas,
-      localStorage.getItem('nombre')
-    ).then(() => {
-      // Mostrar éxito (patrón CUIDA - no ir atrás automáticamente)
+      const subescalas = {
+        demérito: demerito,
+        obstaculización: obstaculizacion,
+        intimidación: intimidacion,
+        aislamiento: aislamiento,
+        acoso_personal: acosoPersonal,
+        intensidad: this.resultados.intensidad,
+        _pdf_base64: pdfData
+      };
+
+      const totalScore = demerito + obstaculizacion + intimidacion + aislamiento + acosoPersonal;
+
+      return api.guardarPrueba(
+        pacienteId,
+        'CISNEROS',
+        data,
+        totalScore,
+        subescalas,
+        localStorage.getItem('nombre')
+      );
+    }).then(() => {
       const successMsg = document.createElement('div');
       successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 15px 20px; border-radius: 8px; z-index: 9999; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
-      successMsg.innerHTML = `✅ JSON guardado en expediente correctamente`;
+      successMsg.innerHTML = `✅ PDF guardado en expediente`;
       document.body.appendChild(successMsg);
       setTimeout(() => successMsg.remove(), 3000);
 
-      console.log('✅ Prueba CISNEROS guardada en expediente');
+      console.log('✅ PDF CISNEROS guardado en expediente');
+      setTimeout(() => window.location.href = '/expedientes', 1500);
     }).catch(error => {
       const errorMsg = document.createElement('div');
       errorMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #f44336; color: white; padding: 15px; border-radius: 8px; z-index: 9999;';

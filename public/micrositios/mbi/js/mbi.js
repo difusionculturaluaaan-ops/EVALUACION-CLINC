@@ -779,38 +779,58 @@ window.tests_mbi = {
     const btn = document.getElementById('btn-mbi-guardar');
     const btnOriginalText = btn.textContent;
     btn.disabled = true;
-    btn.textContent = '⏳ Guardando...';
+    btn.textContent = '⏳ Generando PDF...';
 
-    // Usar el mismo JSON que exportar
-    const jsonCompleto = this.generarJSON();
     const pacienteId = sessionStorage.getItem('pacienteSeleccionado');
-    const data = this.respuestas.items.slice(1);
     const { ae, d, rp } = this.resultados;
+    const data = this.respuestas.items.slice(1);
 
-    const subescalas = {
-      agotamiento_emocional: ae,
-      despersonalizacion: d,
-      realizacion_personal: rp,
-      diagnostico: this.resultados.diagnostico,
-      _evaluador: jsonCompleto.metadatos.evaluador,
-      _json: JSON.stringify(jsonCompleto)
+    // Generar PDF desde el contenedor de resultados
+    const element = document.getElementById('mbi-resultados-pdf');
+    if (!element) {
+      alert('❌ No hay resultados para guardar');
+      btn.disabled = false;
+      btn.textContent = btnOriginalText;
+      return;
+    }
+
+    const opt = {
+      margin: 10,
+      filename: 'MBI-' + new Date().toISOString().split('T')[0] + '.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, logging: false },
+      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
     };
 
-    api.guardarPrueba(
-      pacienteId,
-      'MBI',
-      data,
-      ae + d + rp,
-      subescalas,
-      localStorage.getItem('nombre')
-    ).then(() => {
+    html2pdf().set(opt).from(element).toPdf().get('pdf').then((pdf) => {
+      // Convertir PDF a base64
+      const pdfData = pdf.output('datauristring');
+
+      const subescalas = {
+        agotamiento_emocional: ae,
+        despersonalizacion: d,
+        realizacion_personal: rp,
+        diagnostico: this.resultados.diagnostico,
+        _pdf_base64: pdfData
+      };
+
+      return api.guardarPrueba(
+        pacienteId,
+        'MBI',
+        data,
+        ae + d + rp,
+        subescalas,
+        localStorage.getItem('nombre')
+      );
+    }).then(() => {
       const successMsg = document.createElement('div');
       successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 15px 20px; border-radius: 8px; z-index: 9999; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
-      successMsg.innerHTML = `✅ JSON guardado en expediente`;
+      successMsg.innerHTML = `✅ PDF guardado en expediente`;
       document.body.appendChild(successMsg);
       setTimeout(() => successMsg.remove(), 3000);
 
-      console.log('✅ Prueba MBI guardada en expediente');
+      console.log('✅ PDF MBI guardado en expediente');
+      setTimeout(() => window.location.href = '/expedientes', 1500);
     }).catch(error => {
       const errorMsg = document.createElement('div');
       errorMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #f44336; color: white; padding: 15px; border-radius: 8px; z-index: 9999;';
