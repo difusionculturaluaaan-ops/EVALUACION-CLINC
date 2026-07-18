@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MBI - Inventario de Burnout de Maslach</title>
+  <title>CISNEROS - Escala de Valoración del Mobbing</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-  <!-- Estilos base -->
+  <!-- Estilos base compartidos -->
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="stylesheet" href="/css/tokens.css">
   <link rel="stylesheet" href="/css/typography.css">
@@ -15,50 +15,50 @@
 
   <style>
     :root {
-      --accent-light: #60a5fa;
+      --accent-light: #f97316;
       --text-primary: #e6eaf0;
       --text-secondary: #8b949e;
       --border: #30363d;
       --bg-surface-2: #161b22;
     }
 
-    .mbi-instruction {
-      background: rgba(59, 130, 246, 0.1);
-      border-left: 4px solid #60a5fa;
+    .cisneros-instruction {
+      background: rgba(249, 115, 22, 0.1);
+      border-left: 4px solid #f97316;
       padding: 16px;
       border-radius: 8px;
       margin-bottom: 20px;
     }
 
-    .mbi-instruction p {
+    .cisneros-instruction p {
       color: var(--text-primary);
       margin: 0;
       font-size: 14px;
       line-height: 1.5;
     }
 
-    .mbi-items-table {
+    .cisneros-items-table {
       width: 100%;
       border-collapse: collapse;
       margin-bottom: 20px;
       background: var(--bg-surface-2);
     }
 
-    .mbi-items-table th {
+    .cisneros-items-table th {
       background: var(--bg-surface-2);
       color: var(--text-primary);
       font-weight: 600;
     }
 
-    .mbi-items-table td {
+    .cisneros-items-table td {
       border: 1px solid var(--border);
       padding: 12px;
       vertical-align: middle;
     }
 
-    .mbi-items-table input[type="radio"] {
+    .cisneros-items-table input[type="radio"] {
       cursor: pointer;
-      accent-color: #60a5fa;
+      accent-color: #f97316;
     }
 
     .button-group {
@@ -79,12 +79,12 @@
     }
 
     .btn-primary {
-      background: #3b82f6;
+      background: #f97316;
       color: white;
     }
 
     .btn-primary:hover {
-      background: #2563eb;
+      background: #ea580c;
     }
 
     .btn-secondary {
@@ -138,12 +138,12 @@
       font-size: 10px;
     }
 
-    .mbi-tab-content {
+    .cisneros-tab-content {
       display: none;
       padding: 20px;
     }
 
-    .mbi-tab-content.active {
+    .cisneros-tab-content.active {
       display: block;
       animation: fadeIn 0.25s ease;
     }
@@ -153,7 +153,7 @@
       to { opacity: 1; transform: none; }
     }
 
-    .mbi-tabs {
+    .cisneros-tabs {
       display: flex;
       gap: 2px;
       padding: 12px 0 0;
@@ -162,7 +162,7 @@
       flex-wrap: wrap;
     }
 
-    .mbi-tab {
+    .cisneros-tab {
       background: none;
       border: none;
       cursor: pointer;
@@ -175,23 +175,23 @@
       transition: color 0.2s;
     }
 
-    .mbi-tab:hover {
+    .cisneros-tab:hover {
       color: var(--text-primary);
     }
 
-    .mbi-tab.active {
-      color: #60a5fa;
-      background: rgba(96, 165, 250, 0.06);
+    .cisneros-tab.active {
+      color: #f97316;
+      background: rgba(249, 115, 22, 0.06);
     }
 
-    .mbi-tab.active::after {
+    .cisneros-tab.active::after {
       content: '';
       position: absolute;
       bottom: -1px;
       left: 0;
       right: 0;
       height: 2px;
-      background: #60a5fa;
+      background: #f97316;
       border-radius: 2px 2px 0 0;
     }
   </style>
@@ -200,23 +200,23 @@
 
 <!-- Header -->
 <header style="display: flex; align-items: center; gap: 32px; padding: 28px 32px; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, #161b22 0%, #0d1117 100%); position: sticky; top: 0; z-index: 100;">
-  <button onclick="window.history.back()" style="background: none; border: none; cursor: pointer; color: #60a5fa; font-size: 18px;">← Volver</button>
+  <button onclick="window.history.back()" style="background: none; border: none; cursor: pointer; color: #f97316; font-size: 18px;">← Volver</button>
   <div style="flex: 1; text-align: center;">
-    <h1 style="font-size: 28px; font-weight: 400; letter-spacing: -0.3px; color: var(--text-primary); margin: 0;">MBI</h1>
-    <p style="font-size: 12px; color: #8b949e; margin-top: 4px;">Inventario de Burnout de Maslach · Evaluación de Síndrome de Burnout</p>
+    <h1 style="font-size: 28px; font-weight: 400; letter-spacing: -0.3px; color: var(--text-primary); margin: 0;">CISNEROS</h1>
+    <p style="font-size: 12px; color: #8b949e; margin-top: 4px;">Escala de Valoración del Mobbing · Evaluación de Acoso Laboral</p>
   </div>
-  <div style="font-size: 10px; font-family: monospace; background: rgba(96, 165, 250, 0.12); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.3); padding: 4px 10px; border-radius: 20px;">22 ítems · 3 escalas</div>
+  <div style="font-size: 10px; font-family: monospace; background: rgba(249, 115, 22, 0.12); color: #f97316; border: 1px solid rgba(249, 115, 22, 0.3); padding: 4px 10px; border-radius: 20px;">44 ítems · 5 dimensiones</div>
 </header>
 
 <!-- Tabs Navigation -->
-<div class="mbi-tabs">
-  <button class="mbi-tab active" data-tab="datos" onclick="window.tests_mbi.irTab('datos')">
+<div class="cisneros-tabs">
+  <button class="cisneros-tab active" data-tab="datos" onclick="window.tests_cisneros.irTab('datos')">
     <span class="tab-num">1</span> Datos del Evaluado
   </button>
-  <button class="mbi-tab" data-tab="test" onclick="window.tests_mbi.irTab('test')">
+  <button class="cisneros-tab" data-tab="test" onclick="window.tests_cisneros.irTab('test')">
     <span class="tab-num">2</span> Aplicar Test
   </button>
-  <button class="mbi-tab" data-tab="resultados" onclick="window.tests_mbi.irTab('resultados')">
+  <button class="cisneros-tab" data-tab="resultados" onclick="window.tests_cisneros.irTab('resultados')">
     <span class="tab-num">3</span> Resultados
   </button>
 </div>
@@ -224,13 +224,11 @@
 <main style="max-width: 1200px; margin: 0 auto; padding: 28px 32px;">
 
   <!-- ========== TAB 1: DATOS ========== -->
-  <div class="mbi-tab-content active" id="tab-datos">
-
-    <div class="mbi-instruction">
+  <div class="cisneros-tab-content active" id="tab-datos">
+    <div class="cisneros-instruction">
       <p><strong>Instrucciones:</strong> Complete los datos del evaluado. Esta información es estrictamente confidencial y se utiliza únicamente para fines clínicos.</p>
     </div>
 
-    <!-- Datos del Evaluado -->
     <div style="background: var(--bg-surface-2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 20px;">
       <div class="card-header">
         <h2>⚙ Datos del Evaluado</h2>
@@ -239,22 +237,22 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
           <div>
             <label style="font-weight: 600; display: block; margin-bottom: 8px; color: var(--text-primary); font-size: 13px;">Nombre y Apellidos</label>
-            <input type="text" id="m_nombre" placeholder="Apellido, Nombre" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #0d1117; color: var(--text-primary); font-size: 14px;">
+            <input type="text" id="c_nombre" placeholder="Apellido, Nombre" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #0d1117; color: var(--text-primary); font-size: 14px;">
           </div>
           <div>
             <label style="font-weight: 600; display: block; margin-bottom: 8px; color: var(--text-primary); font-size: 13px;">Fecha de Evaluación</label>
-            <input type="date" id="m_fecha" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #0d1117; color: var(--text-primary); font-size: 14px;">
+            <input type="date" id="c_fecha" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #0d1117; color: var(--text-primary); font-size: 14px;">
           </div>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
           <div>
             <label style="font-weight: 600; display: block; margin-bottom: 8px; color: var(--text-primary); font-size: 13px;">Edad</label>
-            <input type="text" id="m_edad" placeholder="Ej. 34" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #0d1117; color: var(--text-primary); font-size: 14px;">
+            <input type="text" id="c_edad" placeholder="Ej. 34" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #0d1117; color: var(--text-primary); font-size: 14px;">
           </div>
           <div>
             <label style="font-weight: 600; display: block; margin-bottom: 8px; color: var(--text-primary); font-size: 13px;">Sexo</label>
-            <select id="m_sexo" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #0d1117; color: var(--text-primary); font-size: 14px;">
+            <select id="c_sexo" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #0d1117; color: var(--text-primary); font-size: 14px;">
               <option value="">–</option>
               <option>Varón</option>
               <option>Mujer</option>
@@ -266,38 +264,37 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
           <div>
             <label style="font-weight: 600; display: block; margin-bottom: 8px; color: var(--text-primary); font-size: 13px;">Centro/Institución</label>
-            <input type="text" id="m_centro" placeholder="Nombre del centro" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #0d1117; color: var(--text-primary); font-size: 14px;">
+            <input type="text" id="c_centro" placeholder="Nombre del centro" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #0d1117; color: var(--text-primary); font-size: 14px;">
           </div>
           <div>
             <label style="font-weight: 600; display: block; margin-bottom: 8px; color: var(--text-primary); font-size: 13px;">Evaluador (Psicólogo)</label>
-            <input type="text" id="m_evaluador" placeholder="Nombre del evaluador" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #0d1117; color: var(--text-primary); font-size: 14px;">
+            <input type="text" id="c_evaluador" placeholder="Nombre del evaluador" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #0d1117; color: var(--text-primary); font-size: 14px;">
           </div>
         </div>
 
         <div class="button-group">
-          <button onclick="window.tests_mbi.irTab('test')" class="btn btn-primary">→ Aplicar Test</button>
-          <button onclick="window.tests_mbi.irTab('resultados'); window.tests_mbi.calcularResultados();" class="btn btn-primary" style="background: #06b6d4;">⊡ Calcular Resultados</button>
+          <button onclick="window.tests_cisneros.irTab('test')" class="btn btn-primary">→ Aplicar Test</button>
+          <button onclick="window.tests_cisneros.irTab('resultados'); window.tests_cisneros.calcularResultados();" class="btn btn-primary" style="background: #06b6d4;">⊡ Calcular Resultados</button>
         </div>
       </div>
     </div>
 
-    <!-- Métrica de Progreso -->
     <div style="background: var(--bg-surface-2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">
       <div class="card-header">
         <h2>▲ Progreso de Respuestas</h2>
       </div>
       <div style="padding: 20px;">
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
-          <div style="background: rgba(34, 197, 94, 0.1); padding: 16px; border-radius: 8px; text-align: center;">
-            <div style="font-size: 28px; font-weight: bold; color: #22c55e; margin-bottom: 4px;" data-metric="respondidas">0 / 22</div>
+          <div style="background: rgba(249, 115, 22, 0.1); padding: 16px; border-radius: 8px; text-align: center;">
+            <div style="font-size: 28px; font-weight: bold; color: #f97316; margin-bottom: 4px;" data-metric="respondidas">0 / 44</div>
             <div style="font-size: 12px; color: #8b949e;">Respondidas</div>
           </div>
           <div style="background: rgba(96, 165, 250, 0.1); padding: 16px; border-radius: 8px; text-align: center;">
             <div style="font-size: 28px; font-weight: bold; color: #60a5fa; margin-bottom: 4px;" data-metric="porcentaje">0%</div>
             <div style="font-size: 12px; color: #8b949e;">Progreso</div>
           </div>
-          <div style="background: rgba(239, 68, 68, 0.1); padding: 16px; border-radius: 8px; text-align: center;">
-            <div style="font-size: 28px; font-weight: bold; color: #ef4444; margin-bottom: 4px;">22</div>
+          <div style="background: rgba(249, 115, 22, 0.1); padding: 16px; border-radius: 8px; text-align: center;">
+            <div style="font-size: 28px; font-weight: bold; color: #f97316; margin-bottom: 4px;">44</div>
             <div style="font-size: 12px; color: #8b949e;">Total Ítems</div>
           </div>
         </div>
@@ -307,45 +304,39 @@
   </div>
 
   <!-- ========== TAB 2: APLICAR TEST ========== -->
-  <div class="mbi-tab-content" id="tab-test">
-
+  <div class="cisneros-tab-content" id="tab-test">
     <div style="background: var(--bg-surface-2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">
       <div class="card-header">
-        <h2>📋 22 Ítems - MBI</h2>
+        <h2>📋 44 Ítems - CISNEROS</h2>
       </div>
       <div style="padding: 20px;">
-
-        <div id="mbi-items-container">
+        <div id="cisneros-items-container">
           <!-- Se renderiza con JavaScript -->
         </div>
-
       </div>
     </div>
-
   </div>
 
   <!-- ========== TAB 3: RESULTADOS ========== -->
-  <div class="mbi-tab-content" id="tab-resultados">
-
-    <div id="mbi-resultados">
+  <div class="cisneros-tab-content" id="tab-resultados">
+    <div id="cisneros-resultados">
       <!-- Se renderiza después de calcular -->
     </div>
-
   </div>
 
 </main>
 
 <!-- Input file hidden para importar JSON -->
-<input type="file" id="mbi-file-input" accept=".json,application/json" style="display: none;" onchange="window.tests_mbi.inicializarImportador()">
+<input type="file" id="cisneros-file-input" accept=".json,application/json" style="display: none;" onchange="window.tests_cisneros.inicializarImportador()">
 
 <!-- Scripts -->
 <script src="/js/api.js"></script>
-<script src="/js/tests/mbi.js"></script>
+<script src="/micrositios/cisneros/js/cisneros.js"></script>
 
 <script>
   // Inicializar al cargar
   document.addEventListener('DOMContentLoaded', () => {
-    window.tests_mbi.init();
+    window.tests_cisneros.init();
   });
 </script>
 

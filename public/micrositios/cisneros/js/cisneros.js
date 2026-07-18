@@ -1,0 +1,323 @@
+/**
+ * CISNEROS: ESCALA DE VALORACIÓN DEL MOBBING
+ * 44 ítems (43 + 1 chequeo), 5 dimensiones, 3 autores
+ * Escala: 0-6 (Nunca a Todos los días)
+ * Validado: Iñaki Piñuel y Zabala (2001)
+ *
+ * ESTRUCTURA AISLADA - NO COMPARTE CON OTROS TESTS
+ */
+
+window.tests_cisneros = {
+  nombre: 'CISNEROS',
+  tipo: 'CISNEROS',
+  totalItems: 44,  // 43 ítems + 1 pregunta filtro
+  seccionActual: 1,
+  pacienteId: null,
+  resultados: null,
+
+  // Estructura de respuestas
+  respuestas: {
+    // 44 ítems (índices 1-44)
+    items: Array(45).fill(0),
+
+    // Autor del acoso (por cada ítem)
+    autores: Array(45).fill([]),  // [1=Jefe, 2=Compañeros, 3=Subordinados]
+
+    // Dimensiones
+    demerito: 0,          // Ítems: 5,15,16,17,18,19,24,26,39
+    obstaculizacion: 0,   // Ítems: 6,7,8,9,10,33,34
+    intimidacion: 0,      // Ítems: 20,27,28,29,30,36,37
+    aislamiento: 0,       // Ítems: 2,14,21
+    acosoPersonal: 0      // Ítems: 25,31,32,35,41,42,43
+  },
+
+  // Definiciones de ítems (44 items)
+  itemDefinitions: {
+    1: "Mi superior restringe mis posibilidades de comunicarme, hablar o reunirme con él",
+    2: "Me ignoran, me excluyen o me hacen el vacío, fingen no verme o me hacen «invisible»",
+    3: "Me interrumpen continuamente impidiendo expresarme",
+    4: "Me fuerzan a realizar trabajos que van contra mis principios o mi ética",
+    5: "Evalúan mi trabajo de manera inequitativa o de forma sesgada",
+    6: "Me dejan sin ningún trabajo que hacer, ni siquiera a iniciativa propia",
+    7: "Me asignan tareas o trabajos absurdos o sin sentido",
+    8: "Me asignan tareas o trabajos por debajo de mi capacidad profesional o mis competencias",
+    9: "Me asignan tareas rutinarias o sin valor o interés alguno",
+    10: "Me abruman con una carga de trabajo insoportable de manera malintencionada",
+    11: "Me asignan tareas que ponen en peligro mi integridad física o mi salud a propósito",
+    12: "Me impiden que adopte las medidas de seguridad necesarias para realizar mi trabajo con la debida seguridad",
+    13: "Se me ocasionan gastos con intención de perjudicarme económicamente",
+    14: "Prohíben a mis compañeros o colegas hablar conmigo",
+    15: "Minusvaloran y echan por tierra mi trabajo, no importa lo que haga",
+    16: "Me acusan injustificadamente de incumplimientos, errores, fallos",
+    17: "Recibo críticas y reproches por cualquier cosa que haga o decisión que tome en mi trabajo",
+    18: "Se amplifican y dramatizan de manera injustificada errores pequeños o intrascendentes",
+    19: "Me humillan, desprecian o minusvaloran en público ante otros colegas o ante terceros",
+    20: "Me amenazan con usar instrumentos disciplinarios (rescisión, expedientes, despido, traslados)",
+    21: "Intentan aislarme de mis compañeros dándome trabajos o tareas que me alejan físicamente",
+    22: "Distorsionan malintencionadamente lo que digo o hago en mi trabajo",
+    23: "Se intenta buscarme las cosquillas para «hacerme explotar»",
+    24: "Me menosprecian personal o profesionalmente",
+    25: "Hacen burla de mí o bromas intentando ridiculizar mi forma de hablar, de andar, etc.",
+    26: "Recibo feroces e injustas críticas acerca de aspectos de mi vida personal",
+    27: "Recibo amenazas verbales o mediante gestos intimidatorios",
+    28: "Recibo amenazas por escrito o por teléfono en mi domicilio",
+    29: "Me chillan o gritan, o elevan la voz de manera a intimidarme",
+    30: "Me zarandean, empujan o avasallan físicamente para intimidarme",
+    31: "Se hacen bromas inapropiadas y crueles acerca de mí",
+    32: "Inventan y difunden rumores y calumnias acerca de mí de manera malintencionada",
+    33: "Me privan de información imprescindible y necesaria para hacer mi trabajo",
+    34: "Limitan malintencionadamente mi acceso a cursos, promociones, ascensos",
+    35: "Me atribuyen malintencionadamente conductas ilícitas o antiéticas para perjudicar mi imagen",
+    36: "Recibo una presión indebida para sacar adelante el trabajo",
+    37: "Me asignan plazos de ejecución o cargas de trabajo irrazonables",
+    38: "Modifican mis responsabilidades o las tareas a ejecutar sin decirme nada",
+    39: "Desvaloran continuamente mi esfuerzo profesional",
+    40: "Intentan persistentemente desmoralizarme",
+    41: "Utilizan varias formas de hacerme incurrir en errores profesionales de manera malintencionada",
+    42: "Controlan aspectos de mi trabajo de forma malintencionada para intentar «pillarme en algún renuncio»",
+    43: "Me lanzan insinuaciones o proposiciones sexuales directas o indirectas",
+    44: "¿Ha sido Ud víctima de por lo menos alguna de las anteriores formas de maltrato psicológico de manera continuada (más de 1 vez por semana)?"
+  },
+
+  // Escala de frecuencia
+  escalaFrequencia: [
+    { valor: 0, label: "Nunca" },
+    { valor: 1, label: "Pocas veces al año o menos" },
+    { valor: 2, label: "Una vez al mes o menos" },
+    { valor: 3, label: "Algunas veces al mes" },
+    { valor: 4, label: "Una vez a la semana" },
+    { valor: 5, label: "Varias veces a la semana" },
+    { valor: 6, label: "Todos los días" }
+  ],
+
+  // Autores del acoso
+  autoresAcoso: [
+    { valor: 1, label: "Jefes o supervisores" },
+    { valor: 2, label: "Compañeros de trabajo" },
+    { valor: 3, label: "Subordinados" }
+  ],
+
+  // Dimensiones del mobbing
+  dimensiones: {
+    demerito: {
+      nombre: "Demérito",
+      items: [5, 15, 16, 17, 18, 19, 24, 26, 39],
+      descripcion: "Desprestigio profesional y laboral"
+    },
+    obstaculizacion: {
+      nombre: "Obstaculización",
+      items: [6, 7, 8, 9, 10, 33, 34],
+      descripcion: "Impedimento para realizar el trabajo"
+    },
+    intimidacion: {
+      nombre: "Intimidación",
+      items: [20, 27, 28, 29, 30, 36, 37],
+      descripcion: "Amenazas y presión coercitiva"
+    },
+    aislamiento: {
+      nombre: "Aislamiento",
+      items: [2, 14, 21],
+      descripcion: "Exclusión social y comunicativa"
+    },
+    acosoPersonal: {
+      nombre: "Acoso Personal",
+      items: [25, 31, 32, 35, 41, 42, 43],
+      descripcion: "Ataques personales e intimidación"
+    }
+  },
+
+  init() {
+    this.pacienteId = sessionStorage.getItem('pacienteSeleccionado') || localStorage.getItem('paciente_id');
+
+    let nombre = localStorage.getItem('paciente_nombre') || sessionStorage.getItem('paciente_nombre');
+    if (!nombre) {
+      nombre = 'Paciente sin especificar';
+      localStorage.setItem('paciente_nombre', nombre);
+    }
+
+    this.renderizarItems();
+    this.inicializarImportador();
+    this.actualizarProgreso();
+  },
+
+  renderizarItems() {
+    const container = document.getElementById('cisneros-items-container');
+    if (!container) return;
+
+    let html = `
+      <div class="cisneros-instruction">
+        <p><strong>Instrucciones:</strong>
+        Indique cuál es su experiencia durante los últimos 6 meses con respecto a cada uno de los comportamientos listados.
+        Para cada comportamiento, marque: (1) la frecuencia con que ocurre y (2) quién/es lo realizan (Jefe, Compañeros, Subordinados).
+        </p>
+      </div>
+
+      <div style="background: rgba(249, 115, 22, 0.05); border: 1px solid #f97316; border-radius: 8px; padding: 12px; margin-bottom: 20px;">
+        <p style="margin: 0; font-size: 13px; color: #8b949e;">
+          <strong style="color: #f97316;">Nota:</strong> Este test mide acoso laboral deliberado. La pregunta 44 es un chequeo final sobre si ha experimentado maltrato psicológico continuado.
+        </p>
+      </div>
+
+      <table class="cisneros-items-table" style="width: 100%; margin-bottom: 20px;">
+        <thead>
+          <tr>
+            <th style="width: 50%; text-align: left; padding: 12px; border: 1px solid var(--border);">Comportamiento</th>
+            <th colspan="7" style="text-align: center; padding: 12px; border: 1px solid var(--border);">Frecuencia (0-6)</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    for (let i = 1; i <= 43; i++) {
+      const dimension = this.obtenerDimensionItem(i);
+      const bgColor = dimension === 'Demérito' ? 'background: rgba(239, 68, 68, 0.05);' :
+                      dimension === 'Obstaculización' ? 'background: rgba(249, 115, 22, 0.05);' :
+                      dimension === 'Intimidación' ? 'background: rgba(245, 158, 11, 0.05);' :
+                      dimension === 'Aislamiento' ? 'background: rgba(59, 130, 246, 0.05);' :
+                      'background: rgba(139, 92, 246, 0.05);';
+
+      html += `
+        <tr style="${bgColor}">
+          <td style="padding: 12px; border: 1px solid var(--border);">
+            <strong style="color: #f97316;">${i}.</strong>
+            <span style="color: #f97316; font-size: 13px;">
+              ${this.itemDefinitions[i]}
+            </span>
+            <div style="font-size: 11px; color: #8b949e; margin-top: 4px;">${dimension}</div>
+          </td>
+      `;
+
+      for (let valor = 0; valor <= 6; valor++) {
+        const checked = this.respuestas.items[i] === valor ? 'checked' : '';
+        html += `
+          <td style="text-align: center; padding: 8px; border: 1px solid var(--border); font-size: 12px;">
+            <input type="radio"
+                   name="cisneros_item_${i}"
+                   value="${valor}"
+                   ${checked}
+                   onchange="window.tests_cisneros.cambiarRespuesta(${i}, ${valor})">
+            ${valor}
+          </td>
+        `;
+      }
+
+      html += `</tr>`;
+    }
+
+    // Pregunta filtro 44
+    html += `
+      <tr style="background: rgba(22, 163, 74, 0.05); font-weight: 600;">
+        <td style="padding: 12px; border: 1px solid var(--border);">
+          <strong style="color: #22c55e;">44.</strong>
+          <span style="color: #22c55e; font-size: 13px;">
+            ${this.itemDefinitions[44]}
+          </span>
+          <div style="font-size: 11px; color: #8b949e; margin-top: 4px;">Chequeo Final</div>
+        </td>
+        <td colspan="7" style="text-align: center; padding: 12px; border: 1px solid var(--border);">
+          <label style="margin-right: 20px;">
+            <input type="radio" name="cisneros_44" value="si" onchange="window.tests_cisneros.cambiarRespuesta(44, 'si')">
+            SÍ
+          </label>
+          <label>
+            <input type="radio" name="cisneros_44" value="no" onchange="window.tests_cisneros.cambiarRespuesta(44, 'no')">
+            NO
+          </label>
+        </td>
+      </tr>
+    `;
+
+    html += `
+        </tbody>
+      </table>
+
+      <div class="button-group" style="margin-top: 20px;">
+        <button onclick="window.tests_cisneros.irTab('resultados'); window.tests_cisneros.calcularResultados();" class="btn btn-primary">⊡ Calcular Resultados</button>
+        <button onclick="window.tests_cisneros.exportarJSON()" class="btn btn-secondary">↓ Exportar JSON</button>
+        <button onclick="document.getElementById('cisneros-file-input').click()" class="btn btn-secondary">↑ Importar JSON</button>
+        <button onclick="window.tests_cisneros.limpiar()" class="btn btn-danger">✕ Limpiar</button>
+      </div>
+    `;
+
+    container.innerHTML = html;
+  },
+
+  obtenerDimensionItem(numero) {
+    for (const [key, dim] of Object.entries(this.dimensiones)) {
+      if (dim.items.includes(numero)) return dim.nombre;
+    }
+    return "General";
+  },
+
+  cambiarRespuesta(numero, valor) {
+    if (numero === 44) {
+      this.respuestas.items[44] = valor;
+    } else {
+      this.respuestas.items[numero] = valor;
+    }
+    this.actualizarProgreso();
+  },
+
+  actualizarProgreso() {
+    const respondidas = this.respuestas.items.slice(1, 44).filter(v => v > 0).length;
+    const total = 43;
+    const porcentaje = Math.round((respondidas / total) * 100);
+
+    const progressEl = document.querySelector('[data-metric="respondidas"]');
+    if (progressEl) {
+      progressEl.textContent = `${respondidas} / ${total}`;
+    }
+
+    const porcentajeEl = document.querySelector('[data-metric="porcentaje"]');
+    if (porcentajeEl) {
+      porcentajeEl.textContent = `${porcentaje}%`;
+    }
+  },
+
+  calcularResultados() {
+    // TODO: Implementar cálculo de puntuaciones por dimensión
+    // TODO: Implementar diagnóstico de mobbing
+    // TODO: Implementar interpretación clínica
+    alert('📊 Cálculo en desarrollo — próximamente');
+  },
+
+  generarPDF() {
+    alert('📄 PDF en desarrollo');
+  },
+
+  exportarJSON() {
+    alert('💾 Export en desarrollo');
+  },
+
+  inicializarImportador() {
+    const fileInput = document.getElementById('cisneros-file-input');
+    if (!fileInput) return;
+    fileInput.addEventListener('change', (e) => {
+      alert('⬆️ Import en desarrollo');
+    });
+  },
+
+  guardarEnExpediente() {
+    alert('📋 Guardar en desarrollo');
+  },
+
+  limpiar() {
+    if (confirm('¿Estás seguro que deseas limpiar todas las respuestas?')) {
+      this.respuestas.items = Array(45).fill(0);
+      this.resultados = null;
+      this.renderizarItems();
+      this.actualizarProgreso();
+    }
+  },
+
+  irTab(tab) {
+    const tabs = document.querySelectorAll('.cisneros-tab-content');
+    tabs.forEach(t => t.classList.remove('active'));
+
+    const tabContent = document.getElementById(`tab-${tab}`);
+    if (tabContent) {
+      tabContent.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+};
