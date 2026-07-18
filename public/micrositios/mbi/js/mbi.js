@@ -667,7 +667,7 @@ window.tests_mbi = {
       pacienteId,
       'MBI',
       data,
-      (ae + d + rp) / 3, // Score promedio
+      ae + d + rp, // Score total (0-110)
       subescalas,
       localStorage.getItem('nombre')
     ).then(resultado => {
