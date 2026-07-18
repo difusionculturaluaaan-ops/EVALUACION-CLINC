@@ -356,7 +356,13 @@
   <div class="mbi-tab-content" id="tab-resultados">
 
     <div style="overflow-y: auto; max-height: 600px; padding: 0 20px;">
-      <div id="mbi-resultados">
+      <!-- Contenedor para PDF (sin botones) -->
+      <div id="mbi-resultados-pdf">
+        <!-- Se renderiza después de calcular -->
+      </div>
+
+      <!-- Botones de acción (excluidos del PDF) -->
+      <div id="mbi-resultados-botones" class="button-group" style="margin-top: 20px; display: none;">
         <!-- Se renderiza después de calcular -->
       </div>
     </div>

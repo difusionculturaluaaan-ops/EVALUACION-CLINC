@@ -256,8 +256,9 @@ window.tests_mbi = {
   },
 
   mostrarResultados() {
-    const container = document.getElementById('mbi-resultados');
-    if (!container) return;
+    const containerPDF = document.getElementById('mbi-resultados-pdf');
+    const containerBotones = document.getElementById('mbi-resultados-botones');
+    if (!containerPDF || !containerBotones) return;
 
     const { ae, d, rp, nivelAE, nivelD, nivelRP, diagnostico } = this.resultados;
     const baremosAE = this.escalas.agotamientoEmocional.baremos[nivelAE];
@@ -347,15 +348,18 @@ window.tests_mbi = {
           ${this.generarRecomendaciones()}
         </ul>
       </div>
-
-      <div class="button-group" style="margin-top: 20px;">
-        <button onclick="window.tests_mbi.generarPDF()" class="btn btn-primary">📄 Generar PDF</button>
-        <button class="btn btn-primary" id="btn-mbi-guardar" onclick="window.tests_mbi.guardarEnExpediente()" style="background:#27ae60">⊡ Guardar en Expediente</button>
-        <button onclick="window.tests_mbi.exportarJSON()" class="btn btn-secondary">💾 Exportar JSON</button>
-      </div>
     `;
 
-    container.innerHTML = html;
+    const htmlBotones = `
+      <button onclick="window.tests_mbi.generarPDF()" class="btn btn-primary">📄 Generar PDF</button>
+      <button class="btn btn-primary" id="btn-mbi-guardar" onclick="window.tests_mbi.guardarEnExpediente()" style="background:#27ae60">⊡ Guardar en Expediente</button>
+      <button onclick="window.tests_mbi.exportarJSON()" class="btn btn-secondary">💾 Exportar JSON</button>
+    `;
+
+    // Renderizar: contenido en PDF container, botones separados
+    containerPDF.innerHTML = html;
+    containerBotones.innerHTML = htmlBotones;
+    containerBotones.style.display = 'flex';
 
     // Renderizar gráfico comparativo después de cargar el HTML
     setTimeout(() => this.renderizarGraficoComparativo(), 0);
@@ -505,7 +509,7 @@ window.tests_mbi = {
     }
 
     const nombre_paciente = localStorage.getItem('paciente_nombre') || 'Paciente';
-    const resultContainer = document.getElementById('mbi-resultados');
+    const resultContainer = document.getElementById('mbi-resultados-pdf');
 
     if (!resultContainer) {
       alert('No se encontró el contenedor de resultados');
