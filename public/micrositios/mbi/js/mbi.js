@@ -648,26 +648,28 @@ window.tests_mbi = {
     alert('✅ PDF descargado correctamente');
   },
 
-  exportarJSON() {
-    if (!this.resultados) {
-      alert('Primero calcula los resultados');
-      return;
-    }
+  generarJSON() {
+    if (!this.resultados) return null;
 
-    const paciente_nombre = localStorage.getItem('paciente_nombre') || 'Paciente';
+    const paciente_nombre = document.getElementById('m_nombre')?.value || localStorage.getItem('paciente_nombre') || 'Paciente';
     const evaluador = document.getElementById('m_evaluador')?.value || localStorage.getItem('nombre') || 'Sin especificar';
-    const fecha_eval = new Date().toISOString().split('T')[0];
+    const edad = document.getElementById('m_edad')?.value || '';
+    const sexo = document.getElementById('m_sexo')?.value || '';
+    const centro = document.getElementById('m_centro')?.value || localStorage.getItem('clinica_nombre') || 'No especificado';
+    const fecha_eval = document.getElementById('m_fecha')?.value || new Date().toISOString().split('T')[0];
 
-    const data = {
+    return {
       testType: 'MBI',
       version: '1.0',
-      respuestas: this.respuestas.items.slice(1), // Excluir índice 0
+      respuestas: this.respuestas.items.slice(1),
       metadatos: {
         paciente_nombre,
         paciente_id: sessionStorage.getItem('pacienteSeleccionado'),
         evaluador,
         fecha_evaluacion: fecha_eval,
-        centro: localStorage.getItem('clinica_nombre') || 'No especificado'
+        edad,
+        sexo,
+        centro
       },
       puntuaciones: {
         agotamiento_emocional: this.resultados.ae,
@@ -685,13 +687,21 @@ window.tests_mbi = {
       respondidas: this.respuestas.items.filter(x => x > 0).length,
       timestamp: new Date().toISOString()
     };
+  },
+
+  exportarJSON() {
+    const data = this.generarJSON();
+    if (!data) {
+      alert('Primero calcula los resultados');
+      return;
+    }
 
     const json = JSON.stringify(data, null, 2);
     const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `MBI_${paciente_nombre}_${Date.now()}.json`;
+    link.download = `MBI_${data.metadatos.paciente_nombre}_${Date.now()}.json`;
     link.click();
     URL.revokeObjectURL(url);
   },
@@ -770,50 +780,18 @@ window.tests_mbi = {
     btn.disabled = true;
     btn.textContent = '⏳ Guardando...';
 
+    // Usar el mismo JSON que exportar
+    const jsonCompleto = this.generarJSON();
     const pacienteId = sessionStorage.getItem('pacienteSeleccionado');
-    const { ae, d, rp, diagnostico } = this.resultados;
-
-    const nombre = document.getElementById('m_nombre')?.value || sessionStorage.getItem('paciente_nombre') || '';
-    const edad = document.getElementById('m_edad')?.value || sessionStorage.getItem('paciente_edad') || '';
-    const sexo = document.getElementById('m_sexo')?.value || sessionStorage.getItem('paciente_sexo') || '';
-    const centro = document.getElementById('m_centro')?.value || sessionStorage.getItem('clinica_nombre') || '';
-    const evaluador = document.getElementById('m_evaluador')?.value || localStorage.getItem('nombre') || '';
-    const fecha = document.getElementById('m_fecha')?.value || new Date().toISOString().split('T')[0];
-
     const data = this.respuestas.items.slice(1);
-
-    // Crear JSON completo para auditoría
-    const jsonCompleto = {
-      testType: 'MBI',
-      version: '1.0',
-      baremos: 'Maslach_Jackson_2024',
-      respuestas: data,
-      metadatos: {
-        paciente_nombre: nombre,
-        paciente_id: pacienteId,
-        edad: edad,
-        sexo: sexo,
-        evaluador: evaluador,
-        centro: centro,
-        fecha_evaluacion: fecha
-      },
-      diagnostico: {
-        agotamiento_emocional: ae,
-        despersonalizacion: d,
-        realizacion_personal: rp,
-        nivel_diagnostico: diagnostico
-      },
-      respondidas: data.filter(x => x > 0).length,
-      total_items: 22,
-      timestamp: new Date().toISOString()
-    };
+    const { ae, d, rp } = this.resultados;
 
     const subescalas = {
       agotamiento_emocional: ae,
       despersonalizacion: d,
       realizacion_personal: rp,
-      diagnostico: diagnostico,
-      _evaluador: evaluador,
+      diagnostico: this.resultados.diagnostico,
+      _evaluador: jsonCompleto.metadatos.evaluador,
       _json: JSON.stringify(jsonCompleto)
     };
 

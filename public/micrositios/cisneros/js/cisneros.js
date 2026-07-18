@@ -379,8 +379,59 @@ window.tests_cisneros = {
     alert('📄 PDF en desarrollo');
   },
 
+  generarJSON() {
+    if (!this.resultados) return null;
+
+    const paciente_nombre = document.getElementById('c_nombre')?.value || localStorage.getItem('paciente_nombre') || 'Paciente';
+    const evaluador = document.getElementById('c_evaluador')?.value || localStorage.getItem('nombre') || 'Sin especificar';
+    const edad = document.getElementById('c_edad')?.value || '';
+    const sexo = document.getElementById('c_sexo')?.value || '';
+    const empresa = document.getElementById('c_empresa')?.value || localStorage.getItem('clinica_nombre') || 'No especificado';
+    const fecha_eval = document.getElementById('c_fecha')?.value || new Date().toISOString().split('T')[0];
+
+    return {
+      testType: 'CISNEROS',
+      version: '1.0',
+      respuestas: this.respuestas.items.slice(1, 44),
+      metadatos: {
+        paciente_nombre,
+        paciente_id: sessionStorage.getItem('pacienteSeleccionado'),
+        evaluador,
+        fecha_evaluacion: fecha_eval,
+        edad,
+        sexo,
+        empresa
+      },
+      puntuaciones: {
+        demérito: this.resultados.demerito,
+        obstaculización: this.resultados.obstaculizacion,
+        intimidación: this.resultados.intimidacion,
+        aislamiento: this.resultados.aislamiento,
+        acoso_personal: this.resultados.acosoPersonal
+      },
+      diagnostico: {
+        intensidad: this.resultados.intensidad
+      },
+      respondidas: this.respuestas.items.slice(1, 44).filter(x => x > 0).length,
+      timestamp: new Date().toISOString()
+    };
+  },
+
   exportarJSON() {
-    alert('💾 Export en desarrollo');
+    const data = this.generarJSON();
+    if (!data) {
+      alert('Primero calcula los resultados');
+      return;
+    }
+
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `CISNEROS_${data.metadatos.paciente_nombre}_${Date.now()}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
   },
 
   inicializarImportador() {
@@ -403,42 +454,9 @@ window.tests_cisneros = {
       return;
     }
 
-    const nombre = document.getElementById('c_nombre')?.value || sessionStorage.getItem('paciente_nombre') || '';
-    const edad = document.getElementById('c_edad')?.value || sessionStorage.getItem('paciente_edad') || '';
-    const sexo = document.getElementById('c_sexo')?.value || sessionStorage.getItem('paciente_sexo') || '';
-    const empresa = document.getElementById('c_empresa')?.value || sessionStorage.getItem('clinica_nombre') || '';
-    const evaluador = document.getElementById('c_evaluador')?.value || localStorage.getItem('nombre') || '';
-    const fecha = document.getElementById('c_fecha')?.value || new Date().toISOString().split('T')[0];
-
+    // Usar el mismo JSON que exportar
+    const jsonCompleto = this.generarJSON();
     const data = this.respuestas.items.slice(1, 44);
-
-    // Crear JSON completo para auditoría
-    const jsonCompleto = {
-      testType: 'CISNEROS',
-      version: '1.0',
-      baremos: 'Piñuel_Zabala_2001',
-      respuestas: data,
-      metadatos: {
-        paciente_nombre: nombre,
-        paciente_id: pacienteId,
-        edad: edad,
-        sexo: sexo,
-        evaluador: evaluador,
-        empresa: empresa,
-        fecha_evaluacion: fecha
-      },
-      diagnostico: {
-        demérito: this.resultados.demerito,
-        obstaculización: this.resultados.obstaculizacion,
-        intimidación: this.resultados.intimidacion,
-        aislamiento: this.resultados.aislamiento,
-        acoso_personal: this.resultados.acosoPersonal,
-        intensidad: this.resultados.intensidad
-      },
-      respondidas: data.filter(x => x > 0).length,
-      total_items: 43,
-      timestamp: new Date().toISOString()
-    };
 
     const subescalas = {
       demérito: this.resultados.demerito,
@@ -447,7 +465,7 @@ window.tests_cisneros = {
       aislamiento: this.resultados.aislamiento,
       acoso_personal: this.resultados.acosoPersonal,
       intensidad: this.resultados.intensidad,
-      _evaluador: evaluador,
+      _evaluador: jsonCompleto.metadatos.evaluador,
       _json: JSON.stringify(jsonCompleto)
     };
 
