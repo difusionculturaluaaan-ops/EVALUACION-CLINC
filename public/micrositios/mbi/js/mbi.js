@@ -161,7 +161,10 @@ window.tests_mbi = {
         }
       }
 
-      // Recalcular resultados
+      // Volver a renderizar la tabla con los valores cargados
+      this.renderizarItems();
+
+      // Recalcular resultados y mostrar
       this.calcularResultados();
       this.mostrarResultados();
 

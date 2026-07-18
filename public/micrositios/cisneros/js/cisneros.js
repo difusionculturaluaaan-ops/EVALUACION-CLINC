@@ -183,6 +183,9 @@ window.tests_cisneros = {
         }
       }
 
+      // Volver a renderizar la tabla con los valores cargados
+      this.renderizarItems();
+
       this.calcularResultados();
       this.mostrarResultados();
       this.actualizarProgreso();
