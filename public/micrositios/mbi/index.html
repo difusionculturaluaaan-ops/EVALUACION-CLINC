@@ -221,6 +221,22 @@
         font-size: 12px;
         height: auto !important;
       }
+      /* Evitar cortes dentro de secciones importantes */
+      div[style*="background: "] {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      /* Evitar que títulos queden huérfanos */
+      h2, h3 {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+      }
+      /* Control de viudas y huérfanas en párrafos */
+      p, li {
+        orphans: 3 !important;
+        widows: 3 !important;
+      }
+      /* Color exacto en impresión */
       * {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
