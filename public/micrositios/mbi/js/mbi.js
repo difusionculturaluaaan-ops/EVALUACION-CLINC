@@ -110,11 +110,31 @@ window.tests_mbi = {
     // Renderizar tabla de ítems
     this.renderizarItems();
 
+    // Cargar datos del paciente en formulario
+    this.cargarDatosPaciente();
+
     // Inicializar importador JSON
     this.inicializarImportador();
 
     // Actualizar progreso
     this.actualizarProgreso();
+  },
+
+  cargarDatosPaciente() {
+    const nombre = sessionStorage.getItem('paciente_nombre') || localStorage.getItem('paciente_nombre') || '';
+    const edad = sessionStorage.getItem('paciente_edad') || localStorage.getItem('paciente_edad') || '';
+    const sexo = sessionStorage.getItem('paciente_sexo') || localStorage.getItem('paciente_sexo') || '';
+    const centro = sessionStorage.getItem('clinica_nombre') || localStorage.getItem('clinica_nombre') || '';
+    const evaluador = sessionStorage.getItem('usuario_nombre') || localStorage.getItem('nombre') || localStorage.getItem('usuario_nombre') || '';
+
+    if (document.getElementById('m_nombre')) document.getElementById('m_nombre').value = nombre;
+    if (document.getElementById('m_edad')) document.getElementById('m_edad').value = edad;
+    if (document.getElementById('m_sexo')) document.getElementById('m_sexo').value = sexo;
+    if (document.getElementById('m_centro')) document.getElementById('m_centro').value = centro;
+    if (document.getElementById('m_evaluador')) document.getElementById('m_evaluador').value = evaluador;
+
+    const hoy = new Date().toISOString().split('T')[0];
+    if (document.getElementById('m_fecha')) document.getElementById('m_fecha').value = hoy;
   },
 
   renderizarItems() {

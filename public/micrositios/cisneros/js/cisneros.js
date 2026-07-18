@@ -136,8 +136,26 @@ window.tests_cisneros = {
     }
 
     this.renderizarItems();
+    this.cargarDatosPaciente();
     this.inicializarImportador();
     this.actualizarProgreso();
+  },
+
+  cargarDatosPaciente() {
+    const nombre = sessionStorage.getItem('paciente_nombre') || localStorage.getItem('paciente_nombre') || '';
+    const edad = sessionStorage.getItem('paciente_edad') || localStorage.getItem('paciente_edad') || '';
+    const sexo = sessionStorage.getItem('paciente_sexo') || localStorage.getItem('paciente_sexo') || '';
+    const empresa = sessionStorage.getItem('clinica_nombre') || localStorage.getItem('clinica_nombre') || '';
+    const evaluador = sessionStorage.getItem('usuario_nombre') || localStorage.getItem('nombre') || localStorage.getItem('usuario_nombre') || '';
+
+    if (document.getElementById('c_nombre')) document.getElementById('c_nombre').value = nombre;
+    if (document.getElementById('c_edad')) document.getElementById('c_edad').value = edad;
+    if (document.getElementById('c_sexo')) document.getElementById('c_sexo').value = sexo;
+    if (document.getElementById('c_empresa')) document.getElementById('c_empresa').value = empresa;
+    if (document.getElementById('c_evaluador')) document.getElementById('c_evaluador').value = evaluador;
+
+    const hoy = new Date().toISOString().split('T')[0];
+    if (document.getElementById('c_fecha')) document.getElementById('c_fecha').value = hoy;
   },
 
   renderizarItems() {
