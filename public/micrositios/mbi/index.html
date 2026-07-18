@@ -309,11 +309,11 @@
   <!-- ========== TAB 2: APLICAR TEST ========== -->
   <div class="mbi-tab-content" id="tab-test">
 
-    <div style="background: var(--bg-surface-2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">
+    <div style="background: var(--bg-surface-2); border: 1px solid var(--border); border-radius: 12px;">
       <div class="card-header">
         <h2>📋 22 Ítems - MBI</h2>
       </div>
-      <div style="padding: 20px;">
+      <div style="padding: 20px; overflow-y: auto; max-height: 800px;">
 
         <div id="mbi-items-container">
           <!-- Se renderiza con JavaScript -->
@@ -327,7 +327,7 @@
   <!-- ========== TAB 3: RESULTADOS ========== -->
   <div class="mbi-tab-content" id="tab-resultados">
 
-    <div id="mbi-resultados">
+    <div id="mbi-resultados" style="overflow-y: auto; max-height: 800px;">
       <!-- Se renderiza después de calcular -->
     </div>
 
