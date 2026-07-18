@@ -695,13 +695,48 @@ window.tests_mbi = {
     const pacienteId = sessionStorage.getItem('pacienteSeleccionado');
     const { ae, d, rp, diagnostico } = this.resultados;
 
+    const nombre = document.getElementById('m_nombre')?.value || sessionStorage.getItem('paciente_nombre') || '';
+    const edad = document.getElementById('m_edad')?.value || sessionStorage.getItem('paciente_edad') || '';
+    const sexo = document.getElementById('m_sexo')?.value || sessionStorage.getItem('paciente_sexo') || '';
+    const centro = document.getElementById('m_centro')?.value || sessionStorage.getItem('clinica_nombre') || '';
+    const evaluador = document.getElementById('m_evaluador')?.value || localStorage.getItem('nombre') || '';
+    const fecha = document.getElementById('m_fecha')?.value || new Date().toISOString().split('T')[0];
+
     const data = this.respuestas.items.slice(1);
+
+    // Crear JSON completo para auditoría
+    const jsonCompleto = {
+      testType: 'MBI',
+      version: '1.0',
+      baremos: 'Maslach_Jackson_2024',
+      respuestas: data,
+      metadatos: {
+        paciente_nombre: nombre,
+        paciente_id: pacienteId,
+        edad: edad,
+        sexo: sexo,
+        evaluador: evaluador,
+        centro: centro,
+        fecha_evaluacion: fecha
+      },
+      diagnostico: {
+        agotamiento_emocional: ae,
+        despersonalizacion: d,
+        realizacion_personal: rp,
+        nivel_diagnostico: diagnostico
+      },
+      respondidas: data.filter(x => x > 0).length,
+      total_items: 22,
+      timestamp: new Date().toISOString()
+    };
+
     const subescalas = {
       agotamiento_emocional: ae,
       despersonalizacion: d,
       realizacion_personal: rp,
       diagnostico: diagnostico,
-      _evaluador: localStorage.getItem('nombre') || 'Sin especificar'
+      _evaluador: evaluador,
+      _json: JSON.stringify(jsonCompleto)
     };
 
     api.guardarPrueba(
