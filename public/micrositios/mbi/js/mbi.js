@@ -287,7 +287,7 @@ window.tests_mbi = {
               <div style="font-size: 14px; font-weight: 600; color: ${baremosAE.color};">${baremosAE.nivel}</div>
             </div>
           </div>
-          <div style="font-size: 12px; color: #8b949e; background: #161b2299; padding: 8px; border-radius: 4px;">
+          <div style="font-size: 12px; color: #1f2937; background: #e5e7eb; padding: 8px; border-radius: 4px;">
             Rango: ${baremosAE.min}-${baremosAE.max} puntos
           </div>
         </div>
@@ -302,7 +302,7 @@ window.tests_mbi = {
               <div style="font-size: 14px; font-weight: 600; color: ${baremosD.color};">${baremosD.nivel}</div>
             </div>
           </div>
-          <div style="font-size: 12px; color: #8b949e; background: #161b2299; padding: 8px; border-radius: 4px;">
+          <div style="font-size: 12px; color: #1f2937; background: #e5e7eb; padding: 8px; border-radius: 4px;">
             Rango: ${baremosD.min}-${baremosD.max} puntos
           </div>
         </div>
@@ -317,23 +317,33 @@ window.tests_mbi = {
               <div style="font-size: 14px; font-weight: 600; color: ${baremosRP.color};">${baremosRP.nivel}</div>
             </div>
           </div>
-          <div style="font-size: 12px; color: #8b949e; background: #161b2299; padding: 8px; border-radius: 4px;">
+          <div style="font-size: 12px; color: #1f2937; background: #e5e7eb; padding: 8px; border-radius: 4px;">
             ⚠️ Escala invertida: puntuaciones altas = bajo burnout
           </div>
         </div>
 
       </div>
 
-      <div style="background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 20px;">
-        <h3 style="margin: 0 0 12px 0;">Interpretación Clínica</h3>
-        <p style="color: #e6edf3; line-height: 1.6; margin: 0;">
+      <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+        <h3 style="margin: 0 0 16px 0; color: #1f2937; font-size: 16px;">📊 Comparación vs Persona Normal</h3>
+        <div id="mbi-grafico-comparativo" style="width: 100%; min-height: 300px; display: flex; justify-content: center; align-items: center; background: white; border-radius: 6px;">
+          <!-- SVG del gráfico se renderiza aquí -->
+        </div>
+        <p style="margin-top: 12px; font-size: 12px; color: #6b7280; text-align: center;">
+          Azul: Tu puntuación | Verde: Promedio Normal | Rojo: Riesgo Alto
+        </p>
+      </div>
+
+      <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+        <h3 style="margin: 0 0 12px 0; color: #1f2937;">Interpretación Clínica</h3>
+        <p style="color: #374151; line-height: 1.6; margin: 0; font-size: 14px;">
           ${this.generarInterpretacion()}
         </p>
       </div>
 
-      <div style="background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 16px;">
-        <h3 style="margin: 0 0 12px 0;">Recomendaciones</h3>
-        <ul style="color: #e6edf3; margin: 0; padding-left: 20px;">
+      <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+        <h3 style="margin: 0 0 12px 0; color: #1f2937;">Recomendaciones</h3>
+        <ul style="color: #374151; margin: 0; padding-left: 20px; font-size: 14px;">
           ${this.generarRecomendaciones()}
         </ul>
       </div>
@@ -346,6 +356,81 @@ window.tests_mbi = {
     `;
 
     container.innerHTML = html;
+
+    // Renderizar gráfico comparativo después de cargar el HTML
+    setTimeout(() => this.renderizarGraficoComparativo(), 0);
+  },
+
+  renderizarGraficoComparativo() {
+    const graficoContainer = document.getElementById('mbi-grafico-comparativo');
+    if (!graficoContainer || !this.resultados) return;
+
+    const { ae, d, rp } = this.resultados;
+
+    // Normas oficiales MBI (Maslach & Jackson)
+    const normaAE = 26;      // Media en población general
+    const normaD = 9;        // Media en población general
+    const normaRP = 34;      // Media en población general (alta = bueno)
+
+    const width = 600;
+    const height = 300;
+    const barWidth = 60;
+    const barGap = 80;
+    const maxValue = 50;
+
+    // Escala Y (altura de barras)
+    const scaleY = (height - 60) / maxValue;
+
+    let svg = `
+      <svg width="100%" height="${height}" viewBox="0 0 ${width} ${height}" style="max-width: 100%; margin: 0 auto;">
+        <!-- Línea de base -->
+        <line x1="50" y1="${height - 40}" x2="${width - 20}" y2="${height - 40}" stroke="#d1d5db" stroke-width="2"/>
+
+        <!-- Etiquetas Y -->
+        <text x="40" y="${height - 35}" font-size="12" fill="#6b7280">0</text>
+        <text x="35" y="${(height - 40) - (25 * scaleY) + 4}" font-size="12" fill="#6b7280">25</text>
+        <text x="35" y="${(height - 40) - (50 * scaleY) + 4}" font-size="12" fill="#6b7280">50</text>
+
+        <!-- AGOTAMIENTO EMOCIONAL (max 45) -->
+        <!-- Norma -->
+        <rect x="80" y="${(height - 40) - (normaAE * scaleY * 0.9)}" width="${barWidth}" height="${normaAE * scaleY * 0.9}" fill="#22c55e" opacity="0.6"/>
+        <!-- Paciente -->
+        <rect x="${80 + barWidth + 10}" y="${(height - 40) - (ae * scaleY * 0.9)}" width="${barWidth}" height="${ae * scaleY * 0.9}" fill="#3b82f6" opacity="0.8"/>
+
+        <text x="${80 + barWidth / 2}" y="${height - 15}" text-anchor="middle" font-size="12" fill="#1f2937" font-weight="500">A.E.</text>
+        <text x="${80 + barWidth / 2}" y="${(height - 40) - (normaAE * scaleY * 0.9) - 8}" text-anchor="middle" font-size="11" fill="#6b7280">${normaAE}</text>
+        <text x="${80 + barWidth + 10 + barWidth / 2}" y="${(height - 40) - (ae * scaleY * 0.9) - 8}" text-anchor="middle" font-size="11" fill="#3b82f6">${ae}</text>
+
+        <!-- DESPERSONALIZACIÓN (max 25) -->
+        <!-- Norma -->
+        <rect x="${250}" y="${(height - 40) - (normaD * scaleY)}" width="${barWidth}" height="${normaD * scaleY}" fill="#22c55e" opacity="0.6"/>
+        <!-- Paciente -->
+        <rect x="${250 + barWidth + 10}" y="${(height - 40) - (d * scaleY)}" width="${barWidth}" height="${d * scaleY}" fill="#3b82f6" opacity="0.8"/>
+
+        <text x="${250 + barWidth / 2}" y="${height - 15}" text-anchor="middle" font-size="12" fill="#1f2937" font-weight="500">D.</text>
+        <text x="${250 + barWidth / 2}" y="${(height - 40) - (normaD * scaleY) - 8}" text-anchor="middle" font-size="11" fill="#6b7280">${normaD}</text>
+        <text x="${250 + barWidth + 10 + barWidth / 2}" y="${(height - 40) - (d * scaleY) - 8}" text-anchor="middle" font-size="11" fill="#3b82f6">${d}</text>
+
+        <!-- REALIZACIÓN PERSONAL (max 40, invertida) -->
+        <!-- Norma -->
+        <rect x="${420}" y="${(height - 40) - (normaRP * scaleY * 0.8)}" width="${barWidth}" height="${normaRP * scaleY * 0.8}" fill="#22c55e" opacity="0.6"/>
+        <!-- Paciente -->
+        <rect x="${420 + barWidth + 10}" y="${(height - 40) - (rp * scaleY * 0.8)}" width="${barWidth}" height="${rp * scaleY * 0.8}" fill="#3b82f6" opacity="0.8"/>
+
+        <text x="${420 + barWidth / 2}" y="${height - 15}" text-anchor="middle" font-size="12" fill="#1f2937" font-weight="500">R.P.</text>
+        <text x="${420 + barWidth / 2}" y="${(height - 40) - (normaRP * scaleY * 0.8) - 8}" text-anchor="middle" font-size="11" fill="#6b7280">${normaRP}</text>
+        <text x="${420 + barWidth + 10 + barWidth / 2}" y="${(height - 40) - (rp * scaleY * 0.8) - 8}" text-anchor="middle" font-size="11" fill="#3b82f6">${rp}</text>
+
+        <!-- Leyenda -->
+        <rect x="80" y="10" width="10" height="10" fill="#22c55e" opacity="0.6"/>
+        <text x="100" y="19" font-size="11" fill="#6b7280">Promedio Normal</text>
+
+        <rect x="280" y="10" width="10" height="10" fill="#3b82f6" opacity="0.8"/>
+        <text x="300" y="19" font-size="11" fill="#6b7280">Tu Puntuación</text>
+      </svg>
+    `;
+
+    graficoContainer.innerHTML = svg;
   },
 
   generarInterpretacion() {
