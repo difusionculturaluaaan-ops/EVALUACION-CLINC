@@ -742,11 +742,11 @@ window.tests_mbi = {
       pacienteId,
       'MBI',
       data,
-      ae + d + rp, // Score total (0-110)
+      ae + d + rp,
       subescalas,
       localStorage.getItem('nombre')
-    ).then(resultado => {
-      alert('✅ Resultados guardados en expediente correctamente');
+    ).then(() => {
+      alert('✅ JSON guardado en expediente correctamente');
       window.history.back();
     }).catch(error => {
       alert('❌ Error al guardar: ' + error.message);
