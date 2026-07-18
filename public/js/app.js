@@ -1851,7 +1851,7 @@ const app = {
         <div style="page-break-inside: avoid; margin-bottom: 10px;">
           <!-- Gráfico PCL-R -->
           <div style="margin-bottom: 20px; font-size: 9px;">
-            ${prueba.tipo === 'SCL90R' ? this.generarReporteSCL(prueba, subescalas) : prueba.tipo === 'PCLR' ? this.generarReportePCLR(prueba, subescalas) : prueba.tipo === 'SCID2' ? this.generarReporteSCID2(prueba, subescalas) : (prueba.tipo === 'MMPI2' || prueba.tipo === 'MMPI') ? this.generarReporteMMPI2(prueba, subescalas) : prueba.tipo === 'CUIDA' ? this.generarReporteCUIDA(prueba, subescalas) : prueba.tipo === 'ISRA' ? this.generarReporteISRA(prueba, subescalas) : this.generarReporteGenerico(prueba, subescalas)}
+            ${prueba.tipo === 'SCL90R' ? this.generarReporteSCL(prueba, subescalas) : prueba.tipo === 'PCLR' ? this.generarReportePCLR(prueba, subescalas) : prueba.tipo === 'SCID2' ? this.generarReporteSCID2(prueba, subescalas) : (prueba.tipo === 'MMPI2' || prueba.tipo === 'MMPI') ? this.generarReporteMMPI2(prueba, subescalas) : prueba.tipo === 'CUIDA' ? this.generarReporteCUIDA(prueba, subescalas) : prueba.tipo === 'ISRA' ? this.generarReporteISRA(prueba, subescalas) : prueba.tipo === 'MBI' ? this.generarReporteMBI(prueba, subescalas) : this.generarReporteGenerico(prueba, subescalas)}
           </div>
 
           <!-- INTERPRETACIÓN (dentro del contenedor principal) -->
@@ -1887,6 +1887,9 @@ const app = {
       }
       if (prueba.tipo === 'CUIDA') {
         this.renderGraficoCUIDA(prueba, subescalas);
+      }
+      if (prueba.tipo === 'MBI') {
+        this.renderChartMBI(prueba, subescalas);
       }
     }, 300);
 
@@ -2730,6 +2733,70 @@ const app = {
       `;
     }
 
+    return html;
+  },
+
+  generarReporteMBI(prueba, subescalas) {
+    const subescalasData = subescalas || {};
+    const ae = subescalasData.agotamiento_emocional || 0;
+    const d = subescalasData.despersonalizacion || 0;
+    const rp = subescalasData.realizacion_personal || 0;
+    const diagnostico = subescalasData.diagnostico || 'No especificado';
+
+    const normaAE = 26, normaD = 9, normaRP = 34;
+
+    const tieneData = ae > 0 || d > 0 || rp > 0;
+
+    let html = '';
+    if (!tieneData) {
+      html = `
+        <div style="margin: 10px 0; padding: 12px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 3px; color: #856404;">
+          <p style="margin: 0; font-size: 9px; font-weight: bold;">Test sin completar</p>
+        </div>
+      `;
+    } else {
+      html = `
+      <div style="margin: 4px 0;">
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr style="background: #f97316; color: white;">
+            <th style="border: 1px solid #999; padding: 3px; text-align: left; font-size: 8px; font-weight: bold;">Dimensión</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-size: 8px; font-weight: bold;">Paciente</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-size: 8px; font-weight: bold;">Norma</th>
+            <th style="border: 1px solid #999; padding: 3px; text-align: center; font-size: 8px; font-weight: bold;">Nivel</th>
+          </tr>
+          <tr style="background: #fff;">
+            <td style="border: 1px solid #ddd; padding: 3px; font-weight: bold; font-size: 8px;">Agotamiento Emocional</td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${ae}</td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${normaAE}</td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${ae > normaAE + 5 ? 'Alto' : 'Moderado'}</td>
+          </tr>
+          <tr style="background: #fafafa;">
+            <td style="border: 1px solid #ddd; padding: 3px; font-weight: bold; font-size: 8px;">Despersonalización</td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${d}</td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${normaD}</td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${d > normaD + 3 ? 'Alto' : 'Moderado'}</td>
+          </tr>
+          <tr style="background: #fff;">
+            <td style="border: 1px solid #ddd; padding: 3px; font-weight: bold; font-size: 8px;">Realización Personal</td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${rp}</td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${normaRP}</td>
+            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${rp < normaRP - 5 ? 'Bajo' : 'Moderado'}</td>
+          </tr>
+        </table>
+      </div>
+
+      <div style="margin: 4px 0; padding: 6px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 3px; color: #333; page-break-inside: avoid;" class="reporte-analisis">
+        <h4 style="color: #333; font-size: 8px; margin: 0 0 4px 0; font-weight: bold;">Comparación: Paciente vs Población Normal</h4>
+        <div style="position: relative; width: 100%; height: 200px;">
+          <canvas id="chartMBIComparativo" style="width: 100%; height: 100%;"></canvas>
+        </div>
+      </div>
+
+      <div style="margin: 4px 0; padding: 6px; background: #f0f4f8; border-left: 3px solid #f97316; border-radius: 3px; font-size: 8px; color: #333;">
+        <strong>Diagnóstico:</strong> ${diagnostico}
+      </div>
+      `;
+    }
     return html;
   },
 
