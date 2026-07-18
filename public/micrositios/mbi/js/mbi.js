@@ -461,33 +461,37 @@ window.tests_mbi = {
 
     if (diagnostico === 'SIN BURNOUT') {
       recomendaciones = [
-        "Mantener las prácticas actuales de autocuidado",
-        "Realizar evaluaciones periódicas (anual)",
-        "Continuar con actividades que favorezcan la realización personal"
+        "Registrar en expediente como evaluación normal",
+        "Realizar evaluaciones de seguimiento anual",
+        "Monitorear indicadores de bienestar laboral",
+        "Documentar factores protectores identificados"
       ];
     } else if (diagnostico === 'BURNOUT LEVE') {
       recomendaciones = [
-        "Implementar técnicas de manejo del estrés",
-        "Establecer límites saludables entre trabajo y vida personal",
-        "Considerar actividades recreativas o de ocio",
-        "Realizar reevaluación en 2-3 meses"
+        "Diseñar intervención preventiva individualizada",
+        "Reevaluación con MBI en 2-3 meses",
+        "Recomendar evaluación de ambiente laboral",
+        "Considerar consejería ocupacional",
+        "Documentar plan de seguimiento en expediente"
       ];
     } else if (diagnostico === 'BURNOUT MODERADO') {
       recomendaciones = [
-        "Consulta con profesional de la salud mental",
-        "Evaluar carga laboral y redistribución de tareas",
-        "Implementar programa de intervención psicológica",
-        "Considerar cambios organizacionales",
-        "Seguimiento mensual recomendado"
+        "Diseñar programa de intervención psicológica",
+        "Solicitar evaluación de carga laboral organizacional",
+        "Reevaluación mensual con MBI",
+        "Considerar derivación a medicina ocupacional",
+        "Evaluación de factores organizacionales que contribuyen",
+        "Documentar en expediente clínico con plan de intervención"
       ];
     } else {
       recomendaciones = [
-        "Intervención psicológica inmediata",
-        "Evaluación médica completa",
-        "Considerar licencia o reducción de jornada",
-        "Revisión profunda de las condiciones laborales",
-        "Posible derivación a especialista en psicopatología",
-        "Seguimiento semanal o quincenal según severidad"
+        "Intervención psicológica inmediata (urgente)",
+        "Solicitar evaluación médica y ocupacional",
+        "Considerar recomendación de cambio de rol laboral",
+        "Establecer seguimiento semanal o quincenal",
+        "Evaluar riesgo biopsicosocial completo",
+        "Derivar a especialista si hay comorbilidad",
+        "Documentar en expediente con protocolo de crisis"
       ];
     }
 
