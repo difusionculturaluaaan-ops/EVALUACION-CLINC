@@ -393,8 +393,7 @@ window.tests_mbi = {
 
     const htmlBotones = `
       <button onclick="window.tests_mbi.generarPDF()" class="btn btn-primary">📄 Generar PDF</button>
-      <button class="btn btn-primary" id="btn-mbi-guardar" onclick="window.tests_mbi.guardarEnExpediente()" style="background:#27ae60">⊡ Guardar en Expediente</button>
-      <button onclick="window.tests_mbi.exportarJSON()" class="btn btn-secondary">💾 Exportar JSON</button>
+      <button class="btn btn-primary" id="btn-mbi-guardar" onclick="window.tests_mbi.guardarEnExpediente()" style="background:#27ae60">💾 Guardar en Expediente</button>
     `;
 
     // Renderizar: contenido en PDF container, botones separados
