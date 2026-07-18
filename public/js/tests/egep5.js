@@ -1313,5 +1313,24 @@ window.tests_egep5 = {
       alert('❌ Error al guardar: ' + error.message);
       console.error('Error:', error);
     });
+  },
+
+  guardarEnExpediente() {
+    if (!this.resultados) {
+      alert('⚠️ Primero calcula los resultados antes de guardar.');
+      return;
+    }
+
+    const btn = document.getElementById('btn-egep5-guardar');
+    const btnOriginalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '⏳ Guardando...';
+
+    this.guardarResultados();
+
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = btnOriginalText;
+    }, 1500);
   }
 };
