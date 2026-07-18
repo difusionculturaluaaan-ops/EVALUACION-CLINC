@@ -213,10 +213,18 @@
         color: #000;
         font-size: 12px;
       }
-      .mbi-resultados-card {
-        page-break-inside: avoid;
-        break-inside: auto;
-        margin-bottom: 16px;
+      /* Evitar page-breaks dentro de elementos importantes */
+      div[style*="background"] {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      div[style*="grid"], div[style*="grid-template"] {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      #mbi-grafico-comparativo {
+        page-break-before: avoid !important;
+        page-break-after: avoid !important;
       }
       * {
         -webkit-print-color-adjust: exact !important;
