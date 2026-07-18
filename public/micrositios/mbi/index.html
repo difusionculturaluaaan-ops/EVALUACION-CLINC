@@ -407,13 +407,22 @@
   const params = new URLSearchParams(window.location.search);
   const modoCargar = params.get('modo') === 'cargar';
 
+  console.log('📍 Script MBI cargado. modoCargar:', modoCargar);
+  console.log('📍 window.tests_mbi existe?', typeof window.tests_mbi);
+
   document.addEventListener('DOMContentLoaded', async () => {
-    console.log('🔍 MBI DOMContentLoaded', { modoCargar, pruebaId: params.get('prueba_id') });
+    console.log('🔍 DOMContentLoaded', { modoCargar, pruebaId: params.get('prueba_id') });
+
+    if (!window.tests_mbi) {
+      console.error('❌ window.tests_mbi no existe!');
+      return;
+    }
 
     window.tests_mbi.init();
 
     // Si es modo cargar, cargar datos desde API (async)
-    if (modoCargar) {
+    if (modoCargar && params.get('prueba_id')) {
+      console.log('📥 Intentando cargar datos...');
       try {
         await window.tests_mbi.cargarDesdePrueba(params.get('prueba_id'), params.get('token'));
         console.log('✅ Datos cargados exitosamente');
