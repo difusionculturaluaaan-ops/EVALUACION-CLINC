@@ -4836,12 +4836,12 @@ const app = {
                 Abrir JSON
               </button>
             ` : ''}
-            ${prueba.tipo === 'MBI' ? `
+            ${prueba.tipo.toUpperCase() === 'MBI' ? `
               <button class="btn-abrir-evaluacion" onclick="app.verPDFPrueba(${prueba.id})">
                 Ver Resultados
               </button>
             ` : ''}
-            ${prueba.tipo === 'CISNEROS' ? `
+            ${prueba.tipo.toUpperCase() === 'CISNEROS' ? `
               <button class="btn-abrir-evaluacion" onclick="app.verPDFPrueba(${prueba.id})">
                 Ver Resultados
               </button>
