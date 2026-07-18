@@ -792,9 +792,9 @@ window.tests_egep5 = {
     // 1. DIAGNÓSTICO PRINCIPAL
     const dxText = tept === 'SI' ? '✓ CUMPLE CRITERIOS DSM-5 DE TEPT' : '✗ NO CUMPLE CRITERIOS DE TEPT';
     const diagHTML = `
-      <div style="background: ${tept === 'SI' ? 'rgba(76, 175, 80, 0.15)' : 'rgba(244, 67, 54, 0.15)'}; padding: 20px; border-radius: 8px; border-left: 4px solid ${tept === 'SI' ? '#4CAF50' : '#F44336'};">
-        <div style="font-size: 18px; font-weight: 700; color: ${tept === 'SI' ? '#4CAF50' : '#F44336'}; margin-bottom: 8px;">${dxText}</div>
-        <div style="color: var(--text-primary); font-size: 14px;">Puntuación total de síntomas: <strong>${totalIntensidad}/80</strong></div>
+      <div style="background: ${tept === 'SI' ? 'rgba(76, 175, 80, 0.2)' : 'rgba(244, 67, 54, 0.2)'}; padding: 20px; border-radius: 8px; border-left: 4px solid ${tept === 'SI' ? '#4CAF50' : '#F44336'}; backdrop-filter: blur(10px);">
+        <div style="font-size: 18px; font-weight: 700; color: ${tept === 'SI' ? '#81C784' : '#EF5350'}; margin-bottom: 12px; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">${dxText}</div>
+        <div style="color: #e6eaf0; font-size: 14px; font-weight: 500;">Puntuación total de síntomas: <strong style="color: #FFD54F; font-size: 16px;">${totalIntensidad}/80</strong></div>
       </div>
     `;
     document.getElementById('egep5-diagnostico').innerHTML = diagHTML;
@@ -811,12 +811,13 @@ window.tests_egep5 = {
     };
 
     let critHTML = '<table style="width: 100%; border-collapse: collapse;">';
-    critHTML += '<tr style="background: var(--bg-surface-2);"><th style="text-align: left; padding: 12px; border: 1px solid var(--border);">Criterio</th><th style="text-align: left; padding: 12px; border: 1px solid var(--border);">Descripción</th><th style="text-align: center; padding: 12px; border: 1px solid var(--border);">Resultado</th></tr>';
+    critHTML += '<tr style="background: rgba(107, 76, 122, 0.2);"><th style="text-align: left; padding: 12px; border: 1px solid var(--border); color: #e6eaf0; font-weight: 600;">Criterio</th><th style="text-align: left; padding: 12px; border: 1px solid var(--border); color: #e6eaf0; font-weight: 600;">Descripción</th><th style="text-align: center; padding: 12px; border: 1px solid var(--border); color: #e6eaf0; font-weight: 600;">Resultado</th></tr>';
 
-    ['A', 'B', 'C', 'D', 'E', 'F', 'G'].forEach(k => {
+    ['A', 'B', 'C', 'D', 'E', 'F', 'G'].forEach((k, idx) => {
       const estado = criterios[k];
-      const badge = estado === 'SI' ? '<span style="color: #4CAF50; font-weight: 700;">✓ Sí</span>' : '<span style="color: #F44336; font-weight: 700;">✗ No</span>';
-      critHTML += `<tr><td style="padding: 12px; border: 1px solid var(--border); font-weight: 600;">${k}</td><td style="padding: 12px; border: 1px solid var(--border);">${criteriosDesc[k]}</td><td style="text-align: center; padding: 12px; border: 1px solid var(--border);">${badge}</td></tr>`;
+      const badge = estado === 'SI' ? '<span style="color: #81C784; font-weight: 700; font-size: 15px;">✓ Sí</span>' : '<span style="color: #EF5350; font-weight: 700; font-size: 15px;">✗ No</span>';
+      const bgColor = idx % 2 === 0 ? 'rgba(0,0,0,0.2)' : 'transparent';
+      critHTML += `<tr style="background: ${bgColor};"><td style="padding: 12px; border: 1px solid var(--border); font-weight: 600; color: #60a5fa; font-size: 14px;">${k}</td><td style="padding: 12px; border: 1px solid var(--border); color: #e6eaf0; font-size: 14px;">${criteriosDesc[k]}</td><td style="text-align: center; padding: 12px; border: 1px solid var(--border); font-size: 14px;">${badge}</td></tr>`;
     });
 
     critHTML += '</table>';
@@ -824,12 +825,12 @@ window.tests_egep5 = {
 
     // 3. TABLA DE INTENSIDADES
     let sympHTML = '<table style="width: 100%; border-collapse: collapse;">';
-    sympHTML += '<tr style="background: var(--bg-surface-2);"><th style="text-align: left; padding: 12px; border: 1px solid var(--border);">Escala</th><th style="text-align: center; padding: 12px; border: 1px solid var(--border);">Puntuación Directa</th><th style="text-align: center; padding: 12px; border: 1px solid var(--border);">Máximo</th></tr>';
-    sympHTML += `<tr><td style="padding: 12px; border: 1px solid var(--border);">I - Síntomas Intrusivos</td><td style="text-align: center; padding: 12px; border: 1px solid var(--border);">${intensidades.I}</td><td style="text-align: center; padding: 12px; border: 1px solid var(--border);">20</td></tr>`;
-    sympHTML += `<tr><td style="padding: 12px; border: 1px solid var(--border);">E - Evitación</td><td style="text-align: center; padding: 12px; border: 1px solid var(--border);">${intensidades.E}</td><td style="text-align: center; padding: 12px; border: 1px solid var(--border);">8</td></tr>`;
-    sympHTML += `<tr><td style="padding: 12px; border: 1px solid var(--border);">C - Alteraciones Cognitivas</td><td style="text-align: center; padding: 12px; border: 1px solid var(--border);">${intensidades.C}</td><td style="text-align: center; padding: 12px; border: 1px solid var(--border);">28</td></tr>`;
-    sympHTML += `<tr><td style="padding: 12px; border: 1px solid var(--border);">A - Alteraciones Activación</td><td style="text-align: center; padding: 12px; border: 1px solid var(--border);">${intensidades.A}</td><td style="text-align: center; padding: 12px; border: 1px solid var(--border);">24</td></tr>`;
-    sympHTML += `<tr style="background: rgba(107, 76, 122, 0.1); font-weight: 700;"><td style="padding: 12px; border: 1px solid var(--border);">TOTAL</td><td style="text-align: center; padding: 12px; border: 1px solid var(--border);">${totalIntensidad}</td><td style="text-align: center; padding: 12px; border: 1px solid var(--border);">80</td></tr>`;
+    sympHTML += '<tr style="background: rgba(107, 76, 122, 0.2);"><th style="text-align: left; padding: 12px; border: 1px solid var(--border); color: #e6eaf0; font-weight: 600;">Escala</th><th style="text-align: center; padding: 12px; border: 1px solid var(--border); color: #e6eaf0; font-weight: 600;">Puntuación Directa</th><th style="text-align: center; padding: 12px; border: 1px solid var(--border); color: #e6eaf0; font-weight: 600;">Máximo</th></tr>';
+    sympHTML += `<tr style="background: rgba(0,0,0,0.2);"><td style="padding: 12px; border: 1px solid var(--border); color: #e6eaf0;">I - Síntomas Intrusivos</td><td style="text-align: center; padding: 12px; border: 1px solid var(--border); color: #FFD54F; font-weight: 600; font-size: 15px;">${intensidades.I}</td><td style="text-align: center; padding: 12px; border: 1px solid var(--border); color: #e6eaf0;">20</td></tr>`;
+    sympHTML += `<tr><td style="padding: 12px; border: 1px solid var(--border); color: #e6eaf0;">E - Evitación</td><td style="text-align: center; padding: 12px; border: 1px solid var(--border); color: #FFD54F; font-weight: 600; font-size: 15px;">${intensidades.E}</td><td style="text-align: center; padding: 12px; border: 1px solid var(--border); color: #e6eaf0;">8</td></tr>`;
+    sympHTML += `<tr style="background: rgba(0,0,0,0.2);"><td style="padding: 12px; border: 1px solid var(--border); color: #e6eaf0;">C - Alteraciones Cognitivas</td><td style="text-align: center; padding: 12px; border: 1px solid var(--border); color: #FFD54F; font-weight: 600; font-size: 15px;">${intensidades.C}</td><td style="text-align: center; padding: 12px; border: 1px solid var(--border); color: #e6eaf0;">28</td></tr>`;
+    sympHTML += `<tr><td style="padding: 12px; border: 1px solid var(--border); color: #e6eaf0;">A - Alteraciones Activación</td><td style="text-align: center; padding: 12px; border: 1px solid var(--border); color: #FFD54F; font-weight: 600; font-size: 15px;">${intensidades.A}</td><td style="text-align: center; padding: 12px; border: 1px solid var(--border); color: #e6eaf0;">24</td></tr>`;
+    sympHTML += `<tr style="background: rgba(107, 76, 122, 0.3); font-weight: 700;"><td style="padding: 12px; border: 1px solid var(--border); color: #e6eaf0;">TOTAL</td><td style="text-align: center; padding: 12px; border: 1px solid var(--border); color: #FFD54F; font-size: 16px;">${totalIntensidad}</td><td style="text-align: center; padding: 12px; border: 1px solid var(--border); color: #e6eaf0;">80</td></tr>`;
     sympHTML += '</table>';
     document.getElementById('egep5-symptoms-summary').innerHTML = sympHTML;
 
