@@ -138,23 +138,31 @@ window.tests_mbi = {
 
       // Cargar respuestas: primero desde prueba.data, sino desde _json en subescalas
       let dataArray = prueba.data;
+      console.log('📦 prueba.data original:', dataArray);
+
       if (typeof dataArray === 'string') {
+        console.log('📝 Parseando prueba.data como string');
         dataArray = JSON.parse(dataArray);
       }
 
       // Si no viene prueba.data, extraer desde _json
       if (!dataArray || !Array.isArray(dataArray)) {
+        console.log('⚠️ prueba.data no es válido, buscando en _json');
         if (subescalas && subescalas._json) {
+          console.log('📋 subescalas._json encontrado');
           const jsonData = typeof subescalas._json === 'string' ? JSON.parse(subescalas._json) : subescalas._json;
+          console.log('📋 jsonData:', jsonData);
           dataArray = jsonData.respuestas;
+          console.log('📋 jsonData.respuestas extraído:', dataArray);
         }
       }
 
-      console.log('📊 dataArray:', dataArray);
+      console.log('📊 dataArray final:', dataArray);
 
       if (dataArray && Array.isArray(dataArray)) {
         console.log('✅ Cargando respuestas:', dataArray);
         this.respuestas.items = [0, ...dataArray];
+        console.log('✅ this.respuestas.items asignado:', this.respuestas.items);
       } else {
         console.warn('❌ No hay datos válidos:', dataArray);
       }
