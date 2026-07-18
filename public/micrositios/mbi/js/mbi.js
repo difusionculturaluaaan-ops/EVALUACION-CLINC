@@ -771,7 +771,7 @@ window.tests_mbi = {
     const btn = document.getElementById('btn-mbi-guardar');
     const btnOriginalText = btn.textContent;
     btn.disabled = true;
-    btn.textContent = '⏳ Guardando...';
+    btn.textContent = '⏳ Guardando JSON y PDF...';
 
     // Usar el mismo JSON que exportar
     const jsonCompleto = this.generarJSON();
@@ -779,42 +779,68 @@ window.tests_mbi = {
     const data = this.respuestas.items.slice(1);
     const { ae, d, rp } = this.resultados;
 
-    const subescalas = {
-      agotamiento_emocional: ae,
-      despersonalizacion: d,
-      realizacion_personal: rp,
-      diagnostico: this.resultados.diagnostico,
-      _evaluador: jsonCompleto.metadatos.evaluador,
-      _json: JSON.stringify(jsonCompleto)
-    };
-
-    api.guardarPrueba(
-      pacienteId,
-      'MBI',
-      data,
-      ae + d + rp,
-      subescalas,
-      localStorage.getItem('nombre')
-    ).then(() => {
-      // Mostrar éxito (patrón CUIDA - no ir atrás automáticamente)
-      const successMsg = document.createElement('div');
-      successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 15px 20px; border-radius: 8px; z-index: 9999; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
-      successMsg.innerHTML = `✅ JSON guardado en expediente correctamente`;
-      document.body.appendChild(successMsg);
-      setTimeout(() => successMsg.remove(), 3000);
-
-      console.log('✅ Prueba MBI guardada en expediente');
-    }).catch(error => {
-      const errorMsg = document.createElement('div');
-      errorMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #f44336; color: white; padding: 15px; border-radius: 8px; z-index: 9999;';
-      errorMsg.textContent = `❌ Error: ${error.message}`;
-      document.body.appendChild(errorMsg);
-      setTimeout(() => errorMsg.remove(), 5000);
-
-      console.error('Error:', error);
-    }).finally(() => {
+    // Generar PDF como base64
+    const resultContainer = document.getElementById('mbi-resultados-pdf');
+    if (!resultContainer) {
+      alert('⚠️ Primero visualiza los resultados antes de guardar.');
       btn.disabled = false;
       btn.textContent = btnOriginalText;
+      return;
+    }
+
+    // Usar html2pdf para generar PDF
+    html2pdf().set({
+      margin: 10,
+      filename: 'MBI_Reporte.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+    }).from(resultContainer).output('blob').then(pdfBlob => {
+      // Convertir PDF a base64
+      const reader = new FileReader();
+      reader.onload = () => {
+        const pdfBase64 = reader.result;
+
+        const subescalas = {
+          agotamiento_emocional: ae,
+          despersonalizacion: d,
+          realizacion_personal: rp,
+          diagnostico: this.resultados.diagnostico,
+          _evaluador: jsonCompleto.metadatos.evaluador,
+          _json: JSON.stringify(jsonCompleto),
+          _pdf_base64: pdfBase64
+        };
+
+        api.guardarPrueba(
+          pacienteId,
+          'MBI',
+          data,
+          ae + d + rp,
+          subescalas,
+          localStorage.getItem('nombre')
+        ).then(() => {
+          // Mostrar éxito
+          const successMsg = document.createElement('div');
+          successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 15px 20px; border-radius: 8px; z-index: 9999; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
+          successMsg.innerHTML = `✅ JSON y PDF guardados en expediente`;
+          document.body.appendChild(successMsg);
+          setTimeout(() => successMsg.remove(), 3000);
+
+          console.log('✅ Prueba MBI con PDF guardada en expediente');
+        }).catch(error => {
+          const errorMsg = document.createElement('div');
+          errorMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #f44336; color: white; padding: 15px; border-radius: 8px; z-index: 9999;';
+          errorMsg.textContent = `❌ Error: ${error.message}`;
+          document.body.appendChild(errorMsg);
+          setTimeout(() => errorMsg.remove(), 5000);
+
+          console.error('Error:', error);
+        }).finally(() => {
+          btn.disabled = false;
+          btn.textContent = btnOriginalText;
+        });
+      };
+      reader.readAsDataURL(pdfBlob);
     });
   },
 
