@@ -298,6 +298,55 @@ window.tests_mbi = {
     return "R.P. (Realización Personal)";
   },
 
+  generarTablaRespuestas() {
+    const coloresRespuesta = {
+      1: '#f3f4f6',     // Gris claro (Nunca)
+      2: '#fed7aa',     // Naranja (Algunas veces al año)
+      3: '#bfdbfe',     // Azul (Algunas veces al mes)
+      4: '#86efac',     // Verde (Algunas veces a la semana)
+      5: '#fca5a5'      // Rojo (Diariamente)
+    };
+
+    let html = `<div style="margin-bottom: 20px; page-break-inside: avoid;">
+      <h3 style="margin: 0 0 12px 0; color: #1f2937; font-size: 14px; font-weight: 600;">TABLA DE RESPUESTAS (22 ÍTEMS)</h3>
+      <table style="width: 100%; border-collapse: collapse; font-size: 11px; background: white;">
+        <tr style="background: #f3f4f6; border-bottom: 2px solid #d1d5db;">
+          <td style="border: 1px solid #e5e7eb; padding: 6px; text-align: center; font-weight: 600; color: #1f2937; width: 8%;">Ítem</td>`;
+
+    // Encabezados de columnas (ítems 1-22 en 3 columnas)
+    for (let i = 1; i <= 22; i++) {
+      html += `<td style="border: 1px solid #e5e7eb; padding: 6px; text-align: center; font-weight: 600; color: #4b5563; width: 3.6%;">${i}</td>`;
+    }
+    html += `</tr>`;
+
+    // Fila de respuestas
+    html += `<tr style="border-bottom: 1px solid #e5e7eb;">
+      <td style="border: 1px solid #e5e7eb; padding: 6px; text-align: center; font-weight: 600; color: #1f2937; background: #f9fafb;">Resp.</td>`;
+
+    for (let i = 1; i <= 22; i++) {
+      const respuesta = this.respuestas.items[i] || 0;
+      const color = respuesta > 0 ? coloresRespuesta[respuesta] : '#ffffff';
+      const textColor = respuesta > 0 ? '#1f2937' : '#9ca3af';
+      html += `<td style="border: 1px solid #e5e7eb; padding: 6px; text-align: center; background: ${color}; font-weight: 600; color: ${textColor};">${respuesta || '-'}</td>`;
+    }
+    html += `</tr>`;
+
+    // Fila de leyenda de colores
+    html += `<tr style="background: #f9fafb; border-top: 2px solid #d1d5db;">
+      <td colspan="23" style="border: 1px solid #e5e7eb; padding: 8px; font-size: 10px;">
+        <span style="display: inline-block; background: #f3f4f6; border: 1px solid #d1d5db; padding: 2px 6px; margin-right: 8px; border-radius: 3px;">1 = Nunca</span>
+        <span style="display: inline-block; background: #fed7aa; border: 1px solid #d1d5db; padding: 2px 6px; margin-right: 8px; border-radius: 3px;">2 = Algunas veces/año</span>
+        <span style="display: inline-block; background: #bfdbfe; border: 1px solid #d1d5db; padding: 2px 6px; margin-right: 8px; border-radius: 3px;">3 = Algunas veces/mes</span>
+        <span style="display: inline-block; background: #86efac; border: 1px solid #d1d5db; padding: 2px 6px; margin-right: 8px; border-radius: 3px;">4 = Algunas veces/semana</span>
+        <span style="display: inline-block; background: #fca5a5; border: 1px solid #d1d5db; padding: 2px 6px; border-radius: 3px;">5 = Diariamente</span>
+      </td>
+    </tr>
+    </table>
+    </div>`;
+
+    return html;
+  },
+
   cambiarRespuesta(numero, valor) {
     this.respuestas.items[numero] = valor;
     this.actualizarProgreso();
@@ -396,6 +445,8 @@ window.tests_mbi = {
         <p style="font-size: 24px; font-weight: bold; color: ${colorDiagnostico}; margin: 0;">${diagnostico}</p>
         <p style="color: #8b949e; margin: 8px 0 0 0; font-size: 14px;">Evaluado: ${new Date().toLocaleDateString('es-ES')}</p>
       </div>
+
+      ${this.generarTablaRespuestas()}
 
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 20px;">
 

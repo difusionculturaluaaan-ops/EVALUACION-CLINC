@@ -363,14 +363,193 @@ window.tests_cisneros = {
   },
 
   calcularResultados() {
-    // TODO: Implementar cálculo de puntuaciones por dimensión
-    // TODO: Implementar diagnóstico de mobbing
-    // TODO: Implementar interpretación clínica
-    alert('📊 Cálculo en desarrollo — próximamente');
+    const items = this.respuestas.items.slice(1, 44);
+
+    // Calcular puntuaciones por dimensión
+    const demerito = [1, 2, 3, 4, 5, 6, 7].reduce((s, i) => s + (items[i] || 0), 0);
+    const obstaculizacion = [8, 9, 10, 11, 12, 13, 14].reduce((s, i) => s + (items[i] || 0), 0);
+    const intimidacion = [15, 16, 17, 18, 19, 20, 21].reduce((s, i) => s + (items[i] || 0), 0);
+    const aislamiento = [22, 23, 24, 25, 26, 27].reduce((s, i) => s + (items[i] || 0), 0);
+    const acosoPersonal = [28, 29, 30, 31, 32, 33, 34, 35, 36, 37].reduce((s, i) => s + (items[i] || 0), 0);
+
+    const totalScore = demerito + obstaculizacion + intimidacion + aislamiento + acosoPersonal;
+    const intensidad = totalScore > 90 ? 'SEVERO' : totalScore > 60 ? 'MODERADO' : totalScore > 30 ? 'LEVE' : 'SIN MOBBING';
+
+    this.resultados = {
+      demerito,
+      obstaculizacion,
+      intimidacion,
+      aislamiento,
+      acosoPersonal,
+      totalScore,
+      intensidad
+    };
+
+    this.mostrarResultados();
+  },
+
+  mostrarResultados() {
+    const container = document.getElementById('cisneros-resultados');
+    if (!container || !this.resultados) return;
+
+    const nombre = document.getElementById('c_nombre')?.value || localStorage.getItem('paciente_nombre') || 'Paciente';
+    const edad = document.getElementById('c_edad')?.value || '';
+    const sexo = document.getElementById('c_sexo')?.value || '';
+    const empresa = document.getElementById('c_empresa')?.value || '';
+    const evaluador = document.getElementById('c_evaluador')?.value || localStorage.getItem('nombre') || '';
+    const fecha = document.getElementById('c_fecha')?.value || new Date().toISOString().split('T')[0];
+
+    const { demerito, obstaculizacion, intimidacion, aislamiento, acosoPersonal, totalScore, intensidad } = this.resultados;
+
+    const colorIntensidad = intensidad === 'SIN MOBBING' ? '#22c55e' :
+                           intensidad === 'LEVE' ? '#eab308' :
+                           intensidad === 'MODERADO' ? '#f97316' : '#ef4444';
+
+    let html = `
+      <div style="background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 8px; padding: 16px; margin-bottom: 20px; page-break-inside: avoid;">
+        <h3 style="margin: 0 0 12px 0; color: #1f2937; font-size: 14px; font-weight: 600;">DATOS DEL PACIENTE Y EVALUADOR</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13px;">
+          <div><span style="font-weight: 600; color: #4b5563;">Paciente:</span> <span>${nombre}</span></div>
+          <div><span style="font-weight: 600; color: #4b5563;">Edad:</span> <span>${edad} años</span></div>
+          <div><span style="font-weight: 600; color: #4b5563;">Sexo:</span> <span>${sexo}</span></div>
+          <div><span style="font-weight: 600; color: #4b5563;">Empresa:</span> <span>${empresa}</span></div>
+          <div><span style="font-weight: 600; color: #4b5563;">Evaluador:</span> <span>${evaluador}</span></div>
+          <div><span style="font-weight: 600; color: #4b5563;">Fecha:</span> <span>${fecha}</span></div>
+        </div>
+      </div>
+
+      <div style="background: ${colorIntensidad}20; border-left: 4px solid ${colorIntensidad}; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
+        <h2 style="color: ${colorIntensidad}; margin: 0 0 8px 0;">🔍 DIAGNÓSTICO</h2>
+        <p style="font-size: 24px; font-weight: bold; color: ${colorIntensidad}; margin: 0;">${intensidad}</p>
+        <p style="color: #8b949e; margin: 8px 0 0 0; font-size: 14px;">Puntuación Total: ${totalScore}/258</p>
+      </div>
+
+      ${this.generarTablaRespuestas()}
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px;">
+        <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid #ef4444; border-radius: 8px; padding: 16px;">
+          <h3 style="margin: 0 0 8px 0; color: #ef4444;">Demérito</h3>
+          <div style="font-size: 28px; font-weight: bold; color: #ef4444;">${demerito}</div>
+          <div style="font-size: 12px; color: #8b949e;">de 42 puntos</div>
+        </div>
+        <div style="background: rgba(249, 115, 22, 0.05); border: 1px solid #f97316; border-radius: 8px; padding: 16px;">
+          <h3 style="margin: 0 0 8px 0; color: #f97316;">Obstaculización</h3>
+          <div style="font-size: 28px; font-weight: bold; color: #f97316;">${obstaculizacion}</div>
+          <div style="font-size: 12px; color: #8b949e;">de 42 puntos</div>
+        </div>
+        <div style="background: rgba(245, 158, 11, 0.05); border: 1px solid #f59e0b; border-radius: 8px; padding: 16px;">
+          <h3 style="margin: 0 0 8px 0; color: #f59e0b;">Intimidación</h3>
+          <div style="font-size: 28px; font-weight: bold; color: #f59e0b;">${intimidacion}</div>
+          <div style="font-size: 12px; color: #8b949e;">de 42 puntos</div>
+        </div>
+        <div style="background: rgba(59, 130, 246, 0.05); border: 1px solid #3b82f6; border-radius: 8px; padding: 16px;">
+          <h3 style="margin: 0 0 8px 0; color: #3b82f6;">Aislamiento</h3>
+          <div style="font-size: 28px; font-weight: bold; color: #3b82f6;">${aislamiento}</div>
+          <div style="font-size: 12px; color: #8b949e;">de 36 puntos</div>
+        </div>
+        <div style="background: rgba(139, 92, 246, 0.05); border: 1px solid #8b5cf6; border-radius: 8px; padding: 16px;">
+          <h3 style="margin: 0 0 8px 0; color: #8b5cf6;">Acoso Personal</h3>
+          <div style="font-size: 28px; font-weight: bold; color: #8b5cf6;">${acosoPersonal}</div>
+          <div style="font-size: 12px; color: #8b949e;">de 60 puntos</div>
+        </div>
+        <div style="background: rgba(156, 163, 175, 0.1); border: 1px solid #9ca3af; border-radius: 8px; padding: 16px;">
+          <h3 style="margin: 0 0 8px 0; color: #4b5563;">Total</h3>
+          <div style="font-size: 28px; font-weight: bold; color: #4b5563;">${totalScore}</div>
+          <div style="font-size: 12px; color: #8b949e;">de 258 puntos</div>
+        </div>
+      </div>
+
+      <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+        <h3 style="margin: 0 0 12px 0; color: #1f2937; font-size: 14px;">📋 Interpretación</h3>
+        <p style="color: #374151; line-height: 1.6; margin: 0; font-size: 13px;">
+          ${this.generarInterpretacion(intensidad, totalScore)}
+        </p>
+      </div>
+    `;
+
+    container.innerHTML = html;
+  },
+
+  generarTablaRespuestas() {
+    const coloresRespuesta = {
+      0: '#f3f4f6',
+      1: '#fed7aa',
+      2: '#fed7aa',
+      3: '#bfdbfe',
+      4: '#bfdbfe',
+      5: '#86efac',
+      6: '#fca5a5'
+    };
+
+    let html = `<div style="margin-bottom: 20px; page-break-inside: avoid; overflow-x: auto;">
+      <h3 style="margin: 0 0 12px 0; color: #1f2937; font-size: 14px; font-weight: 600;">TABLA DE RESPUESTAS (43 ÍTEMS)</h3>
+      <table style="width: 100%; border-collapse: collapse; font-size: 10px; background: white; min-width: 600px;">
+        <tr style="background: #f3f4f6; border-bottom: 2px solid #d1d5db;">
+          <td style="border: 1px solid #e5e7eb; padding: 4px; text-align: center; font-weight: 600; color: #1f2937; width: 5%;">Ítem</td>`;
+
+    for (let i = 1; i <= 43; i++) {
+      html += `<td style="border: 1px solid #e5e7eb; padding: 4px; text-align: center; font-weight: 600; color: #4b5563; font-size: 9px; width: 2.2%;">${i}</td>`;
+    }
+    html += `</tr>`;
+
+    html += `<tr style="border-bottom: 1px solid #e5e7eb;">
+      <td style="border: 1px solid #e5e7eb; padding: 4px; text-align: center; font-weight: 600; color: #1f2937; background: #f9fafb; font-size: 9px;">Resp.</td>`;
+
+    for (let i = 1; i <= 43; i++) {
+      const respuesta = this.respuestas.items[i] || 0;
+      const color = coloresRespuesta[respuesta] || '#ffffff';
+      const textColor = respuesta > 0 ? '#1f2937' : '#9ca3af';
+      html += `<td style="border: 1px solid #e5e7eb; padding: 4px; text-align: center; background: ${color}; font-weight: 600; color: ${textColor}; font-size: 9px;">${respuesta || '-'}</td>`;
+    }
+    html += `</tr>`;
+
+    html += `<tr style="background: #f9fafb; border-top: 2px solid #d1d5db;">
+      <td colspan="44" style="border: 1px solid #e5e7eb; padding: 6px; font-size: 9px;">
+        <span style="display: inline-block; background: #fed7aa; border: 1px solid #d1d5db; padding: 2px 4px; margin-right: 6px; border-radius: 3px;">0-2</span>
+        <span style="display: inline-block; background: #bfdbfe; border: 1px solid #d1d5db; padding: 2px 4px; margin-right: 6px; border-radius: 3px;">3-4</span>
+        <span style="display: inline-block; background: #86efac; border: 1px solid #d1d5db; padding: 2px 4px; margin-right: 6px; border-radius: 3px;">5</span>
+        <span style="display: inline-block; background: #fca5a5; border: 1px solid #d1d5db; padding: 2px 4px; border-radius: 3px;">6</span>
+      </td>
+    </tr>
+    </table>
+    </div>`;
+
+    return html;
+  },
+
+  generarInterpretacion(intensidad, totalScore) {
+    if (intensidad === 'SIN MOBBING') {
+      return 'No se detecta evidencia de mobbing. La persona no ha experimentado conductas de acoso laboral significativas.';
+    } else if (intensidad === 'LEVE') {
+      return 'Se detectan algunas conductas de acoso, pero de baja intensidad. Se recomienda vigilancia y documentación de incidentes.';
+    } else if (intensidad === 'MODERADO') {
+      return 'Se evidencia acoso laboral de intensidad moderada. Se recomienda intervención psicológica y recursos humanos.';
+    } else {
+      return 'Se detecta mobbing severo. Se recomienda intervención inmediata: apoyo psicológico, mediación laboral, y revisión de políticas de empresa.';
+    }
   },
 
   generarPDF() {
-    alert('📄 PDF en desarrollo');
+    if (!this.resultados) {
+      alert('⚠️ Primero calcula los resultados');
+      return;
+    }
+
+    const element = document.getElementById('cisneros-resultados');
+    if (!element) {
+      alert('❌ No hay resultados para generar PDF');
+      return;
+    }
+
+    const opt = {
+      margin: 10,
+      filename: 'CISNEROS-' + new Date().toISOString().split('T')[0] + '.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, logging: false },
+      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+    };
+
+    html2pdf().set(opt).from(element).save();
   },
 
   generarJSON() {
