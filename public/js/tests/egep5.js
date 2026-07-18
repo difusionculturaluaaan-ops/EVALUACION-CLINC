@@ -976,6 +976,9 @@ window.tests_egep5 = {
             }
           }
 
+          // Cargar respuestas en DOM (marcar checkboxes y radios)
+          this.cargarRespuestasEnDOM(data);
+
           // Actualizar UI
           this.renderizarSintomas();
           this.renderizarFuncionamiento();
