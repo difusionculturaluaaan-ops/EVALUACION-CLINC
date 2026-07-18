@@ -473,10 +473,21 @@ window.tests_cisneros = {
       subescalas,
       localStorage.getItem('nombre')
     ).then(() => {
-      alert('✅ JSON guardado en expediente correctamente');
-      window.history.back();
+      // Mostrar éxito (patrón CUIDA - no ir atrás automáticamente)
+      const successMsg = document.createElement('div');
+      successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 15px 20px; border-radius: 8px; z-index: 9999; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
+      successMsg.innerHTML = `✅ JSON guardado en expediente correctamente`;
+      document.body.appendChild(successMsg);
+      setTimeout(() => successMsg.remove(), 3000);
+
+      console.log('✅ Prueba CISNEROS guardada en expediente');
     }).catch(error => {
-      alert('❌ Error al guardar: ' + error.message);
+      const errorMsg = document.createElement('div');
+      errorMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #f44336; color: white; padding: 15px; border-radius: 8px; z-index: 9999;';
+      errorMsg.textContent = `❌ Error: ${error.message}`;
+      document.body.appendChild(errorMsg);
+      setTimeout(() => errorMsg.remove(), 5000);
+
       console.error('Error:', error);
     });
   },
