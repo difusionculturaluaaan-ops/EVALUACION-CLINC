@@ -132,21 +132,47 @@ window.tests_mbi = {
       }
 
       const prueba = await response.json();
+      console.log('🔍 Prueba cargada:', prueba);
+
       const subescalas = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas;
 
-      // Cargar respuestas directamente desde prueba.data (array de 22 elementos)
-      if (prueba.data && Array.isArray(prueba.data)) {
-        this.respuestas.items = [0, ...prueba.data];
+      // Cargar respuestas: primero desde prueba.data, sino desde _json en subescalas
+      let dataArray = prueba.data;
+      if (typeof dataArray === 'string') {
+        dataArray = JSON.parse(dataArray);
       }
 
-      // Cargar metadatos desde subescalas
-      if (subescalas) {
-        if (document.getElementById('m_nombre')) document.getElementById('m_nombre').value = prueba.paciente_nombre || '';
-        if (document.getElementById('m_edad')) document.getElementById('m_edad').value = prueba.edad || '';
-        if (document.getElementById('m_sexo')) document.getElementById('m_sexo').value = prueba.sexo || '';
-        if (document.getElementById('m_centro')) document.getElementById('m_centro').value = prueba.centro || '';
-        if (document.getElementById('m_evaluador')) document.getElementById('m_evaluador').value = prueba.evaluador || '';
-        if (document.getElementById('m_fecha')) document.getElementById('m_fecha').value = prueba.fecha || '';
+      // Si no viene prueba.data, extraer desde _json
+      if (!dataArray || !Array.isArray(dataArray)) {
+        if (subescalas && subescalas._json) {
+          const jsonData = typeof subescalas._json === 'string' ? JSON.parse(subescalas._json) : subescalas._json;
+          dataArray = jsonData.respuestas;
+        }
+      }
+
+      console.log('📊 dataArray:', dataArray);
+
+      if (dataArray && Array.isArray(dataArray)) {
+        console.log('✅ Cargando respuestas:', dataArray);
+        this.respuestas.items = [0, ...dataArray];
+      } else {
+        console.warn('❌ No hay datos válidos:', dataArray);
+      }
+
+      // Cargar metadatos: desde _json en subescalas (patrón CUIDA)
+      let metadatos = null;
+      if (subescalas && subescalas._json) {
+        const jsonData = typeof subescalas._json === 'string' ? JSON.parse(subescalas._json) : subescalas._json;
+        metadatos = jsonData.metadatos;
+      }
+
+      if (metadatos) {
+        if (document.getElementById('m_nombre')) document.getElementById('m_nombre').value = metadatos.paciente_nombre || '';
+        if (document.getElementById('m_edad')) document.getElementById('m_edad').value = metadatos.edad || '';
+        if (document.getElementById('m_sexo')) document.getElementById('m_sexo').value = metadatos.sexo || '';
+        if (document.getElementById('m_centro')) document.getElementById('m_centro').value = metadatos.centro || '';
+        if (document.getElementById('m_evaluador')) document.getElementById('m_evaluador').value = metadatos.evaluador || '';
+        if (document.getElementById('m_fecha')) document.getElementById('m_fecha').value = metadatos.fecha_evaluacion || '';
       }
 
       // Renderizar nuevamente con los valores cargados
