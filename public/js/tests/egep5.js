@@ -959,8 +959,20 @@ window.tests_egep5 = {
             if (document.getElementById('m_nombre')) {
               document.getElementById('m_nombre').value = data.metadatos.paciente_nombre || '';
             }
+            if (document.getElementById('m_fecha')) {
+              document.getElementById('m_fecha').value = data.metadatos.fecha_evaluacion || '';
+            }
             if (document.getElementById('m_edad')) {
               document.getElementById('m_edad').value = data.metadatos.edad || '';
+            }
+            if (document.getElementById('m_sexo')) {
+              document.getElementById('m_sexo').value = data.metadatos.sexo || '';
+            }
+            if (document.getElementById('m_centro')) {
+              document.getElementById('m_centro').value = data.metadatos.centro || '';
+            }
+            if (document.getElementById('m_evaluador')) {
+              document.getElementById('m_evaluador').value = data.metadatos.evaluador || '';
             }
           }
 
@@ -969,7 +981,10 @@ window.tests_egep5 = {
           this.renderizarFuncionamiento();
           this.actualizarProgreso();
 
-          alert(`✅ Archivo "${file.name}" importado correctamente.\n\nVe a Tab 2 "Aplicar Test" y haz clic en "Calcular Resultados"`);
+          // Navegar a Tab 2 automáticamente
+          this.irTab('test');
+
+          alert(`✅ Archivo "${file.name}" importado correctamente.\n\nDatos cargados en Tab 1 ✓\nDatos y síntomas cargados en Tab 2 ✓\n\nAhora haz clic en "Calcular Resultados"`);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         } catch (error) {
           alert('❌ Error al parsear JSON: ' + error.message);
