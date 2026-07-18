@@ -1149,13 +1149,14 @@ window.tests_egep5 = {
 
   construirArrayRespuestas() {
     const data = [];
-    data.push(...this.respuestas.items_27_31);
-    data.push(...this.respuestas.items_32_33);
-    data.push(...this.respuestas.items_34_40);
-    data.push(...this.respuestas.items_41_46);
-    data.push(this.respuestas.symptom_duration || 0);
-    data.push(this.respuestas.symptom_onset || 0);
-    data.push(...this.respuestas.items_52_58);
+    data.push(...this.respuestas.items_27_31);    // 0-4 (5 items)
+    data.push(...this.respuestas.items_32_33);    // 5-6 (2 items)
+    data.push(...this.respuestas.items_34_40);    // 7-13 (7 items)
+    data.push(...this.respuestas.items_41_46);    // 14-19 (6 items)
+    data.push(...this.respuestas.items_47_49);    // 20-22 (3 items) ← AGREGADO
+    data.push(this.respuestas.symptom_duration || 0);  // 23
+    data.push(this.respuestas.symptom_onset || 0);     // 24
+    data.push(...this.respuestas.items_52_58);    // 25-31 (7 items)
     return data;
   },
 
@@ -1195,18 +1196,18 @@ window.tests_egep5 = {
       if (radio) radio.checked = true;
     });
 
-    // Item 50 (Duración)
-    if (data.metadatos?.symptom_duration) {
-      this.respuestas.symptom_duration = data.metadatos.symptom_duration;
+    // Item 50 (Duración) - índice 23
+    if (data.respuestas[23]) {
+      this.respuestas.symptom_duration = data.respuestas[23];
     }
 
-    // Item 51 (Onset)
-    if (data.metadatos?.symptom_onset) {
-      this.respuestas.symptom_onset = data.metadatos.symptom_onset;
+    // Item 51 (Onset) - índice 24
+    if (data.respuestas[24]) {
+      this.respuestas.symptom_onset = data.respuestas[24];
     }
 
-    // Items 52-58 (Funcionamiento)
-    data.respuestas.slice(23, 30).forEach((resp, i) => {
+    // Items 52-58 (Funcionamiento) - índices 25-31
+    data.respuestas.slice(25, 32).forEach((resp, i) => {
       const numero = 52 + i;
       const radio = document.querySelector(`input[name="item_${numero}"][value="si"]`);
       if (radio && resp === 1) radio.checked = true;
