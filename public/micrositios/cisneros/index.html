@@ -334,10 +334,17 @@
 <script src="/micrositios/cisneros/js/cisneros.js"></script>
 
 <script>
-  // Inicializar al cargar
+  // Detectar si se carga desde expediente (patrón CUIDA)
+  const params = new URLSearchParams(window.location.search);
+  const modoCargar = params.get('modo') === 'cargar';
+
   document.addEventListener('DOMContentLoaded', () => {
     window.tests_cisneros.init();
-    window.tests_cisneros.detectarModoCargar();
+
+    // Si es modo cargar, cargar datos desde API
+    if (modoCargar) {
+      window.tests_cisneros.cargarDesdePrueba(params.get('prueba_id'), params.get('token'));
+    }
   });
 </script>
 

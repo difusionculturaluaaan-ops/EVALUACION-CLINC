@@ -210,12 +210,6 @@ window.tests_cisneros = {
     }
   },
 
-  detectarModoCargar() {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('modo') === 'cargar' && params.get('prueba_id')) {
-      this.cargarDesdePrueba(params.get('prueba_id'), params.get('token'));
-    }
-  },
 
   cargarDatosPaciente() {
     const nombre = sessionStorage.getItem('paciente_nombre') || localStorage.getItem('paciente_nombre') || '';

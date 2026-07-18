@@ -403,10 +403,17 @@
 <script src="/micrositios/mbi/js/mbi.js"></script>
 
 <script>
-  // Inicializar al cargar
+  // Detectar si se carga desde expediente (patrón CUIDA)
+  const params = new URLSearchParams(window.location.search);
+  const modoCargar = params.get('modo') === 'cargar';
+
   document.addEventListener('DOMContentLoaded', () => {
     window.tests_mbi.init();
-    window.tests_mbi.detectarModoCargar();
+
+    // Si es modo cargar, cargar datos desde API
+    if (modoCargar) {
+      window.tests_mbi.cargarDesdePrueba(params.get('prueba_id'), params.get('token'));
+    }
   });
 </script>
 

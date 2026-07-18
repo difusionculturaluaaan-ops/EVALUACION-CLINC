@@ -191,13 +191,6 @@ window.tests_mbi = {
     }
   },
 
-  // En el html/init principal, después de renderizar, detectar modo=cargar y cargar datos
-  detectarModoCargar() {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('modo') === 'cargar' && params.get('prueba_id')) {
-      this.cargarDesdePrueba(params.get('prueba_id'), params.get('token'));
-    }
-  },
 
   cargarDatosPaciente() {
     const nombre = sessionStorage.getItem('paciente_nombre') || localStorage.getItem('paciente_nombre') || '';
