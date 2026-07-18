@@ -503,7 +503,25 @@ window.tests_mbi = {
       alert('⚠️ Primero calcula los resultados');
       return;
     }
-    alert('📄 PDF en desarrollo');
+
+    const nombre_paciente = localStorage.getItem('paciente_nombre') || 'Paciente';
+    const resultContainer = document.getElementById('mbi-resultados');
+
+    if (!resultContainer) {
+      alert('No se encontró el contenedor de resultados');
+      return;
+    }
+
+    const opt = {
+      margin: 10,
+      filename: `MBI_${nombre_paciente}_${new Date().toISOString().split('T')[0]}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+    };
+
+    html2pdf().set(opt).from(resultContainer).save();
+    alert('✅ PDF descargado correctamente');
   },
 
   exportarJSON() {
