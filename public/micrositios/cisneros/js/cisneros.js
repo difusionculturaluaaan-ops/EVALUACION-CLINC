@@ -627,27 +627,44 @@ window.tests_cisneros = {
       return;
     }
 
+    const btn = document.querySelector('button[onclick*="guardarEnExpediente"]');
+    const btnOriginalText = btn?.textContent || 'Guardar';
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = '⏳ Generando PDF...';
+    }
+
     const data = this.respuestas.items.slice(1, 44);
     const { demerito, obstaculizacion, intimidacion, aislamiento, acosoPersonal } = this.resultados;
+    const fecha = document.getElementById('c_fecha')?.value || new Date().toISOString().split('T')[0];
 
     // Generar PDF desde el contenedor de resultados
     const element = document.getElementById('cisneros-resultados');
     if (!element) {
       alert('❌ No hay resultados para guardar');
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = btnOriginalText;
+      }
       return;
     }
 
     const opt = {
       margin: 10,
-      filename: 'CISNEROS-' + new Date().toISOString().split('T')[0] + '.pdf',
+      filename: 'CISNEROS-' + fecha + '.pdf',
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2, logging: false },
       jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
     };
 
     html2pdf().set(opt).from(element).toPdf().get('pdf').then((pdf) => {
-      // Convertir PDF a base64
-      const pdfData = pdf.output('datauristring');
+      // Convertir PDF a base64 (sin prefijo)
+      const pdfDataUri = pdf.output('datauristring');
+      const pdfBase64 = pdfDataUri.split(',')[1]; // Quitar "data:application/pdf;base64,"
+
+      console.log('📄 PDF generado:', pdfBase64.substring(0, 50) + '...');
+
+      const totalScore = demerito + obstaculizacion + intimidacion + aislamiento + acosoPersonal;
 
       const subescalas = {
         demérito: demerito,
@@ -655,28 +672,43 @@ window.tests_cisneros = {
         intimidación: intimidacion,
         aislamiento: aislamiento,
         acoso_personal: acosoPersonal,
-        intensidad: this.resultados.intensidad,
-        _pdf_base64: pdfData
+        intensidad: this.resultados.intensidad
       };
 
-      const totalScore = demerito + obstaculizacion + intimidacion + aislamiento + acosoPersonal;
+      const bodyToSend = {
+        paciente_id: pacienteId,
+        tipo: 'CISNEROS',
+        data: data,
+        total: totalScore,
+        subescalas: subescalas,
+        pdf_base64: pdfBase64
+      };
 
-      return api.guardarPrueba(
-        pacienteId,
-        'CISNEROS',
-        data,
-        totalScore,
-        subescalas,
-        localStorage.getItem('nombre')
-      );
-    }).then(() => {
+      console.log('💾 Enviando a servidor:', { paciente_id: pacienteId, tipo: 'CISNEROS', pdf_size: pdfBase64.length });
+
+      return fetch('/api/pruebas', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+        },
+        body: JSON.stringify(bodyToSend)
+      });
+    }).then(response => {
+      if (!response.ok) {
+        return response.json().then(err => {
+          throw new Error(err.error || `HTTP ${response.status}`);
+        });
+      }
+      return response.json();
+    }).then(result => {
       const successMsg = document.createElement('div');
       successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 15px 20px; border-radius: 8px; z-index: 9999; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
       successMsg.innerHTML = `✅ Resultados guardados en expediente`;
       document.body.appendChild(successMsg);
       setTimeout(() => successMsg.remove(), 3000);
 
-      console.log('✅ CISNEROS guardado en expediente');
+      console.log('✅ CISNEROS guardado en expediente:', result);
       setTimeout(() => window.location.href = '/expedientes', 1500);
     }).catch(error => {
       const errorMsg = document.createElement('div');
@@ -686,6 +718,10 @@ window.tests_cisneros = {
       setTimeout(() => errorMsg.remove(), 5000);
 
       console.error('Error:', error);
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = btnOriginalText;
+      }
     });
   },
 

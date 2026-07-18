@@ -835,6 +835,8 @@ window.tests_mbi = {
     const pacienteId = sessionStorage.getItem('pacienteSeleccionado');
     const { ae, d, rp } = this.resultados;
     const data = this.respuestas.items.slice(1);
+    const nombre = document.getElementById('m_nombre')?.value || localStorage.getItem('paciente_nombre') || 'Paciente';
+    const fecha = document.getElementById('m_fecha')?.value || new Date().toISOString().split('T')[0];
 
     // Generar PDF desde el contenedor de resultados
     const element = document.getElementById('mbi-resultados-pdf');
@@ -847,43 +849,60 @@ window.tests_mbi = {
 
     const opt = {
       margin: 10,
-      filename: 'MBI-' + new Date().toISOString().split('T')[0] + '.pdf',
+      filename: 'MBI-' + fecha + '.pdf',
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2, logging: false },
       jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
     };
 
     html2pdf().set(opt).from(element).toPdf().get('pdf').then((pdf) => {
-      // Convertir PDF a base64
-      const pdfData = pdf.output('datauristring');
-      console.log('📄 PDF generado:', pdfData.substring(0, 100) + '...');
+      // Convertir PDF a base64 (sin prefijo)
+      const pdfDataUri = pdf.output('datauristring');
+      const pdfBase64 = pdfDataUri.split(',')[1]; // Quitar "data:application/pdf;base64,"
+
+      console.log('📄 PDF generado:', pdfBase64.substring(0, 50) + '...');
 
       const subescalas = {
         agotamiento_emocional: ae,
         despersonalizacion: d,
         realizacion_personal: rp,
-        diagnostico: this.resultados.diagnostico,
-        _pdf_base64: pdfData
+        diagnostico: this.resultados.diagnostico
       };
 
-      console.log('💾 Guardando PDF en expediente:', { pacienteId, subescalas });
+      const bodyToSend = {
+        paciente_id: pacienteId,
+        tipo: 'MBI',
+        data: data,
+        total: ae + d + rp,
+        subescalas: subescalas,
+        pdf_base64: pdfBase64
+      };
 
-      return api.guardarPrueba(
-        pacienteId,
-        'MBI',
-        data,
-        ae + d + rp,
-        subescalas,
-        localStorage.getItem('nombre')
-      );
-    }).then(() => {
+      console.log('💾 Enviando a servidor:', { paciente_id: pacienteId, tipo: 'MBI', pdf_size: pdfBase64.length });
+
+      return fetch('/api/pruebas', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+        },
+        body: JSON.stringify(bodyToSend)
+      });
+    }).then(response => {
+      if (!response.ok) {
+        return response.json().then(err => {
+          throw new Error(err.error || `HTTP ${response.status}`);
+        });
+      }
+      return response.json();
+    }).then(result => {
       const successMsg = document.createElement('div');
       successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 15px 20px; border-radius: 8px; z-index: 9999; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
       successMsg.innerHTML = `✅ Resultados guardados en expediente`;
       document.body.appendChild(successMsg);
       setTimeout(() => successMsg.remove(), 3000);
 
-      console.log('✅ MBI guardado en expediente');
+      console.log('✅ MBI guardado en expediente:', result);
       setTimeout(() => window.location.href = '/expedientes', 1500);
     }).catch(error => {
       const errorMsg = document.createElement('div');
@@ -893,7 +912,6 @@ window.tests_mbi = {
       setTimeout(() => errorMsg.remove(), 5000);
 
       console.error('Error:', error);
-    }).finally(() => {
       btn.disabled = false;
       btn.textContent = btnOriginalText;
     });
