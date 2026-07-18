@@ -289,7 +289,28 @@ window.tests_mbi = {
                             diagnostico === 'BURNOUT LEVE' ? '#eab308' :
                             diagnostico === 'BURNOUT MODERADO' ? '#f97316' : '#ef4444';
 
+    const nombre = document.getElementById('m_nombre')?.value || sessionStorage.getItem('paciente_nombre') || 'Paciente';
+    const edad = document.getElementById('m_edad')?.value || sessionStorage.getItem('paciente_edad') || '';
+    const sexo = document.getElementById('m_sexo')?.value || sessionStorage.getItem('paciente_sexo') || '';
+    const centro = document.getElementById('m_centro')?.value || sessionStorage.getItem('clinica_nombre') || '';
+    const evaluador = document.getElementById('m_evaluador')?.value || sessionStorage.getItem('usuario_nombre') || localStorage.getItem('nombre') || '';
+    const fecha = document.getElementById('m_fecha')?.value || new Date().toISOString().split('T')[0];
+    const hora = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+
     let html = `
+      <!-- DATOS DEL PACIENTE -->
+      <div style="background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 8px; padding: 16px; margin-bottom: 20px; page-break-inside: avoid;">
+        <h3 style="margin: 0 0 12px 0; color: #1f2937; font-size: 14px; font-weight: 600;">DATOS DEL PACIENTE Y EVALUADOR</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13px;">
+          <div><span style="font-weight: 600; color: #4b5563;">Paciente:</span> <span style="color: #1f2937;">${nombre}</span></div>
+          <div><span style="font-weight: 600; color: #4b5563;">Edad:</span> <span style="color: #1f2937;">${edad} años</span></div>
+          <div><span style="font-weight: 600; color: #4b5563;">Sexo:</span> <span style="color: #1f2937;">${sexo}</span></div>
+          <div><span style="font-weight: 600; color: #4b5563;">Centro:</span> <span style="color: #1f2937;">${centro}</span></div>
+          <div><span style="font-weight: 600; color: #4b5563;">Evaluador:</span> <span style="color: #1f2937;">${evaluador}</span></div>
+          <div><span style="font-weight: 600; color: #4b5563;">Fecha/Hora:</span> <span style="color: #1f2937;">${fecha} ${hora}</span></div>
+        </div>
+      </div>
+
       <div style="background: ${colorDiagnostico}20; border-left: 4px solid ${colorDiagnostico}; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
         <h2 style="color: ${colorDiagnostico}; margin: 0 0 8px 0;">🔍 DIAGNÓSTICO</h2>
         <p style="font-size: 24px; font-weight: bold; color: ${colorDiagnostico}; margin: 0;">${diagnostico}</p>
