@@ -672,11 +672,11 @@ window.tests_cisneros = {
     }).then(() => {
       const successMsg = document.createElement('div');
       successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 15px 20px; border-radius: 8px; z-index: 9999; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
-      successMsg.innerHTML = `✅ PDF guardado en expediente`;
+      successMsg.innerHTML = `✅ Resultados guardados en expediente`;
       document.body.appendChild(successMsg);
       setTimeout(() => successMsg.remove(), 3000);
 
-      console.log('✅ PDF CISNEROS guardado en expediente');
+      console.log('✅ CISNEROS guardado en expediente');
       setTimeout(() => window.location.href = '/expedientes', 1500);
     }).catch(error => {
       const errorMsg = document.createElement('div');
