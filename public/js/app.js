@@ -4686,6 +4686,7 @@ const app = {
       }
 
       const prueba = await response.json();
+      console.log('📥 Prueba recuperada:', prueba);
 
       // Buscar PDF en base64
       let pdfBase64 = null;
@@ -4693,10 +4694,13 @@ const app = {
       // Buscar en _pdf_base64 dentro de subescalas
       if (prueba.subescalas) {
         const subescalas = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas;
+        console.log('📋 Subescalas:', subescalas);
         pdfBase64 = subescalas._pdf_base64;
+        console.log('📄 PDF encontrado:', pdfBase64 ? pdfBase64.substring(0, 100) + '...' : 'NO ENCONTRADO');
       }
 
       if (!pdfBase64) {
+        console.warn('❌ No hay _pdf_base64 en subescalas', { subescalas: prueba.subescalas });
         this.mostrarToast('No hay PDF disponible para esta prueba', 'error');
         return;
       }

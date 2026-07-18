@@ -856,6 +856,7 @@ window.tests_mbi = {
     html2pdf().set(opt).from(element).toPdf().get('pdf').then((pdf) => {
       // Convertir PDF a base64
       const pdfData = pdf.output('datauristring');
+      console.log('📄 PDF generado:', pdfData.substring(0, 100) + '...');
 
       const subescalas = {
         agotamiento_emocional: ae,
@@ -864,6 +865,8 @@ window.tests_mbi = {
         diagnostico: this.resultados.diagnostico,
         _pdf_base64: pdfData
       };
+
+      console.log('💾 Guardando PDF en expediente:', { pacienteId, subescalas });
 
       return api.guardarPrueba(
         pacienteId,
