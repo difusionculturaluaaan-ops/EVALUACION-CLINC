@@ -136,16 +136,9 @@ window.tests_cisneros = {
     }
 
     this.renderizarItems();
-
-    // Verificar si se abre desde expediente (modo=cargar)
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('modo') === 'cargar' && params.get('prueba_id')) {
-      this.cargarDesdePrueba(params.get('prueba_id'), params.get('token'));
-    } else {
-      this.cargarDatosPaciente();
-      this.inicializarImportador();
-      this.actualizarProgreso();
-    }
+    this.cargarDatosPaciente();
+    this.inicializarImportador();
+    this.actualizarProgreso();
   },
 
   async cargarDesdePrueba(pruebaId, token) {
@@ -160,30 +153,21 @@ window.tests_cisneros = {
       }
 
       const prueba = await response.json();
-      const subescalas = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas;
 
-      // Parsear JSON guardado
-      if (subescalas && subescalas._json) {
-        const jsonData = typeof subescalas._json === 'string' ? JSON.parse(subescalas._json) : subescalas._json;
-
-        // Cargar respuestas desde el JSON
-        if (jsonData.respuestas && Array.isArray(jsonData.respuestas)) {
-          this.respuestas.items = [0, ...jsonData.respuestas];
-        }
-
-        // Cargar metadatos
-        if (jsonData.metadatos) {
-          const meta = jsonData.metadatos;
-          if (document.getElementById('c_nombre')) document.getElementById('c_nombre').value = meta.paciente_nombre || '';
-          if (document.getElementById('c_edad')) document.getElementById('c_edad').value = meta.edad || '';
-          if (document.getElementById('c_sexo')) document.getElementById('c_sexo').value = meta.sexo || '';
-          if (document.getElementById('c_empresa')) document.getElementById('c_empresa').value = meta.empresa || '';
-          if (document.getElementById('c_evaluador')) document.getElementById('c_evaluador').value = meta.evaluador || '';
-          if (document.getElementById('c_fecha')) document.getElementById('c_fecha').value = meta.fecha_evaluacion || '';
-        }
+      // Cargar respuestas directamente desde prueba.data (array de 43 elementos)
+      if (prueba.data && Array.isArray(prueba.data)) {
+        this.respuestas.items = [0, ...prueba.data];
       }
 
-      // Volver a renderizar la tabla con los valores cargados
+      // Cargar metadatos desde campos de prueba
+      if (document.getElementById('c_nombre')) document.getElementById('c_nombre').value = prueba.paciente_nombre || '';
+      if (document.getElementById('c_edad')) document.getElementById('c_edad').value = prueba.edad || '';
+      if (document.getElementById('c_sexo')) document.getElementById('c_sexo').value = prueba.sexo || '';
+      if (document.getElementById('c_empresa')) document.getElementById('c_empresa').value = prueba.empresa || '';
+      if (document.getElementById('c_evaluador')) document.getElementById('c_evaluador').value = prueba.evaluador || '';
+      if (document.getElementById('c_fecha')) document.getElementById('c_fecha').value = prueba.fecha || '';
+
+      // Renderizar nuevamente con los valores cargados
       this.renderizarItems();
 
       this.calcularResultados();
@@ -194,6 +178,13 @@ window.tests_cisneros = {
     } catch (error) {
       console.error('Error al cargar prueba:', error);
       alert('❌ Error al cargar la prueba: ' + error.message);
+    }
+  },
+
+  detectarModoCargar() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('modo') === 'cargar' && params.get('prueba_id')) {
+      this.cargarDesdePrueba(params.get('prueba_id'), params.get('token'));
     }
   },
 
