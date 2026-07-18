@@ -194,6 +194,35 @@
       background: #60a5fa;
       border-radius: 2px 2px 0 0;
     }
+
+    /* PRINT STYLES */
+    @media print {
+      header, .mbi-tabs, .button-group, .btn, #mbi-file-input {
+        display: none !important;
+      }
+      main {
+        max-width: 100%;
+        padding: 0 !important;
+      }
+      .mbi-tab-content {
+        display: block !important;
+        padding: 0 !important;
+      }
+      body {
+        background: white;
+        color: #000;
+        font-size: 12px;
+      }
+      .mbi-resultados-card {
+        page-break-inside: avoid;
+        break-inside: auto;
+        margin-bottom: 16px;
+      }
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
   </style>
 </head>
 <body data-theme="light">
