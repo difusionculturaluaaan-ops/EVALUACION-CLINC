@@ -441,9 +441,11 @@ window.tests_mbi = {
       </div>
 
       <div style="background: ${colorDiagnostico}20; border-left: 4px solid ${colorDiagnostico}; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
-        <h2 style="color: ${colorDiagnostico}; margin: 0 0 8px 0;">🔍 DIAGNÓSTICO</h2>
-        <p style="font-size: 24px; font-weight: bold; color: ${colorDiagnostico}; margin: 0;">${diagnostico}</p>
-        <p style="color: #8b949e; margin: 8px 0 0 0; font-size: 14px;">Evaluado: ${new Date().toLocaleDateString('es-ES')}</p>
+        <div style="display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px;">
+          <h2 style="color: ${colorDiagnostico}; margin: 0; font-size: 14px;">🔍 DIAGNÓSTICO</h2>
+          <p style="font-size: 24px; font-weight: bold; color: ${colorDiagnostico}; margin: 0;">${diagnostico}</p>
+        </div>
+        <p style="color: #8b949e; margin: 0; font-size: 14px;">Evaluado: ${new Date().toLocaleDateString('es-ES')}</p>
       </div>
 
       ${this.generarTablaRespuestas()}
