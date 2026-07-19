@@ -448,50 +448,50 @@ window.tests_mbi = {
 
       ${this.generarTablaRespuestas()}
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 20px;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 16px;">
 
         <!-- Agotamiento Emocional -->
-        <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid #ef4444; border-radius: 8px; padding: 16px;">
-          <h3 style="margin: 0 0 12px 0; color: #ef4444;">Agotamiento Emocional</h3>
-          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-            <div style="font-size: 32px; font-weight: bold; color: #ef4444;">${ae}</div>
-            <div>
-              <div style="font-size: 12px; color: #8b949e;">de 45 puntos</div>
-              <div style="font-size: 14px; font-weight: 600; color: ${baremosAE.color};">${baremosAE.nivel}</div>
+        <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid #ef4444; border-radius: 6px; padding: 12px;">
+          <h3 style="margin: 0 0 8px 0; color: #ef4444; font-size: 14px;">Agotamiento Emocional</h3>
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+            <div style="font-size: 28px; font-weight: bold; color: #ef4444;">${ae}</div>
+            <div style="font-size: 12px;">
+              <div style="color: #8b949e;">de 45</div>
+              <div style="font-weight: 600; color: ${baremosAE.color};">${baremosAE.nivel}</div>
             </div>
           </div>
-          <div style="font-size: 12px; color: #1f2937; background: #e5e7eb; padding: 8px; border-radius: 4px;">
-            Rango: ${baremosAE.min}-${baremosAE.max} puntos
+          <div style="font-size: 11px; color: #1f2937; background: #e5e7eb; padding: 6px; border-radius: 3px;">
+            Rango: ${baremosAE.min}-${baremosAE.max}
           </div>
         </div>
 
         <!-- Despersonalización -->
-        <div style="background: rgba(245, 158, 11, 0.05); border: 1px solid #f59e0b; border-radius: 8px; padding: 16px;">
-          <h3 style="margin: 0 0 12px 0; color: #f59e0b;">Despersonalización</h3>
-          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-            <div style="font-size: 32px; font-weight: bold; color: #f59e0b;">${d}</div>
-            <div>
-              <div style="font-size: 12px; color: #8b949e;">de 25 puntos</div>
-              <div style="font-size: 14px; font-weight: 600; color: ${baremosD.color};">${baremosD.nivel}</div>
+        <div style="background: rgba(245, 158, 11, 0.05); border: 1px solid #f59e0b; border-radius: 6px; padding: 12px;">
+          <h3 style="margin: 0 0 8px 0; color: #f59e0b; font-size: 14px;">Despersonalización</h3>
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+            <div style="font-size: 28px; font-weight: bold; color: #f59e0b;">${d}</div>
+            <div style="font-size: 12px;">
+              <div style="color: #8b949e;">de 25</div>
+              <div style="font-weight: 600; color: ${baremosD.color};">${baremosD.nivel}</div>
             </div>
           </div>
-          <div style="font-size: 12px; color: #1f2937; background: #e5e7eb; padding: 8px; border-radius: 4px;">
-            Rango: ${baremosD.min}-${baremosD.max} puntos
+          <div style="font-size: 11px; color: #1f2937; background: #e5e7eb; padding: 6px; border-radius: 3px;">
+            Rango: ${baremosD.min}-${baremosD.max}
           </div>
         </div>
 
         <!-- Realización Personal -->
-        <div style="background: rgba(34, 197, 94, 0.05); border: 1px solid #22c55e; border-radius: 8px; padding: 16px;">
-          <h3 style="margin: 0 0 12px 0; color: #22c55e;">Realización Personal</h3>
-          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-            <div style="font-size: 32px; font-weight: bold; color: #22c55e;">${rp}</div>
-            <div>
-              <div style="font-size: 12px; color: #8b949e;">de 40 puntos</div>
-              <div style="font-size: 14px; font-weight: 600; color: ${baremosRP.color};">${baremosRP.nivel}</div>
+        <div style="background: rgba(34, 197, 94, 0.05); border: 1px solid #22c55e; border-radius: 6px; padding: 12px;">
+          <h3 style="margin: 0 0 8px 0; color: #22c55e; font-size: 14px;">Realización Personal</h3>
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+            <div style="font-size: 28px; font-weight: bold; color: #22c55e;">${rp}</div>
+            <div style="font-size: 12px;">
+              <div style="color: #8b949e;">de 40</div>
+              <div style="font-weight: 600; color: ${baremosRP.color};">${baremosRP.nivel}</div>
             </div>
           </div>
-          <div style="font-size: 12px; color: #1f2937; background: #e5e7eb; padding: 8px; border-radius: 4px;">
-            ⚠️ Escala invertida: puntuaciones altas = bajo burnout
+          <div style="font-size: 11px; color: #1f2937; background: #e5e7eb; padding: 6px; border-radius: 3px;">
+            ⚠️ Escala invertida
           </div>
         </div>
 
