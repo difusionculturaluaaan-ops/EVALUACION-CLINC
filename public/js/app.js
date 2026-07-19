@@ -4688,26 +4688,28 @@ const app = {
       const prueba = await response.json();
       console.log('📥 Prueba recuperada:', prueba);
 
-      // Buscar PDF en base64
-      let pdfBase64 = null;
+      // Buscar PDF en base64 - primero en top-level, luego en subescalas
+      let pdfBase64 = prueba.pdf_base64;
+      console.log('📄 pdf_base64 en top-level:', pdfBase64 ? pdfBase64.substring(0, 50) + '...' : 'NO ENCONTRADO');
 
-      // Buscar en _pdf_base64 dentro de subescalas
-      if (prueba.subescalas) {
+      // Si no está en top-level, buscar en subescalas._pdf_base64
+      if (!pdfBase64 && prueba.subescalas) {
         const subescalas = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas;
         console.log('📋 Subescalas:', subescalas);
         pdfBase64 = subescalas._pdf_base64;
-        console.log('📄 PDF encontrado:', pdfBase64 ? pdfBase64.substring(0, 100) + '...' : 'NO ENCONTRADO');
+        console.log('📄 PDF en subescalas:', pdfBase64 ? pdfBase64.substring(0, 50) + '...' : 'NO ENCONTRADO');
       }
 
       if (!pdfBase64) {
-        console.warn('❌ No hay _pdf_base64 en subescalas', { subescalas: prueba.subescalas });
+        console.warn('❌ No hay PDF base64 disponible', { pdf_base64: prueba.pdf_base64, subescalas: prueba.subescalas });
         this.mostrarToast('No hay PDF disponible para esta prueba', 'error');
         return;
       }
 
-      // Abrir PDF en nueva pestaña
+      // Abrir PDF en nueva pestaña - si es base64 puro, agregar prefijo
+      const pdfDataUri = pdfBase64.startsWith('data:') ? pdfBase64 : `data:application/pdf;base64,${pdfBase64}`;
       const win = window.open();
-      win.document.write(`<iframe style="width:100%;height:100%;border:none;" src="${pdfBase64}"></iframe>`);
+      win.document.write(`<iframe style="width:100%;height:100%;border:none;" src="${pdfDataUri}"></iframe>`);
     } catch (error) {
       console.error('Error al ver PDF:', error);
       this.mostrarToast('Error al cargar el PDF', 'error');
