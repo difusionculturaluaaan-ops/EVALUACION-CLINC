@@ -448,7 +448,7 @@ window.tests_mbi = {
 
       ${this.generarTablaRespuestas()}
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 16px;">
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px;">
 
         <!-- Agotamiento Emocional -->
         <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid #ef4444; border-radius: 6px; padding: 10px;">

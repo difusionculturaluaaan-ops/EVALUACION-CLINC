@@ -426,7 +426,7 @@ window.tests_cisneros = {
 
       ${this.generarTablaRespuestas()}
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 14px;">
+      <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 14px;">
         <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid #ef4444; border-radius: 6px; padding: 8px;">
           <h3 style="margin: 0 0 4px 0; color: #ef4444; font-size: 12px; font-weight: 600;">Demérito</h3>
           <div style="font-size: 18px; font-weight: bold; color: #ef4444;">${demerito}</div>
