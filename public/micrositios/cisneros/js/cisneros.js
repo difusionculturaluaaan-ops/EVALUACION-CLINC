@@ -426,36 +426,36 @@ window.tests_cisneros = {
 
       ${this.generarTablaRespuestas()}
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 16px;">
-        <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid #ef4444; border-radius: 6px; padding: 10px;">
-          <h3 style="margin: 0 0 6px 0; color: #ef4444; font-size: 13px;">Demérito</h3>
-          <div style="font-size: 24px; font-weight: bold; color: #ef4444;">${demerito}</div>
-          <div style="font-size: 11px; color: #8b949e;">de 42</div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 14px;">
+        <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid #ef4444; border-radius: 6px; padding: 8px;">
+          <h3 style="margin: 0 0 4px 0; color: #ef4444; font-size: 12px; font-weight: 600;">Demérito</h3>
+          <div style="font-size: 18px; font-weight: bold; color: #ef4444;">${demerito}</div>
+          <div style="font-size: 10px; color: #8b949e;">de 42</div>
         </div>
-        <div style="background: rgba(249, 115, 22, 0.05); border: 1px solid #f97316; border-radius: 6px; padding: 10px;">
-          <h3 style="margin: 0 0 6px 0; color: #f97316; font-size: 13px;">Obstaculización</h3>
-          <div style="font-size: 24px; font-weight: bold; color: #f97316;">${obstaculizacion}</div>
-          <div style="font-size: 11px; color: #8b949e;">de 42</div>
+        <div style="background: rgba(249, 115, 22, 0.05); border: 1px solid #f97316; border-radius: 6px; padding: 8px;">
+          <h3 style="margin: 0 0 4px 0; color: #f97316; font-size: 12px; font-weight: 600;">Obstaculización</h3>
+          <div style="font-size: 18px; font-weight: bold; color: #f97316;">${obstaculizacion}</div>
+          <div style="font-size: 10px; color: #8b949e;">de 42</div>
         </div>
-        <div style="background: rgba(245, 158, 11, 0.05); border: 1px solid #f59e0b; border-radius: 6px; padding: 10px;">
-          <h3 style="margin: 0 0 6px 0; color: #f59e0b; font-size: 13px;">Intimidación</h3>
-          <div style="font-size: 24px; font-weight: bold; color: #f59e0b;">${intimidacion}</div>
-          <div style="font-size: 11px; color: #8b949e;">de 42</div>
+        <div style="background: rgba(245, 158, 11, 0.05); border: 1px solid #f59e0b; border-radius: 6px; padding: 8px;">
+          <h3 style="margin: 0 0 4px 0; color: #f59e0b; font-size: 12px; font-weight: 600;">Intimidación</h3>
+          <div style="font-size: 18px; font-weight: bold; color: #f59e0b;">${intimidacion}</div>
+          <div style="font-size: 10px; color: #8b949e;">de 42</div>
         </div>
-        <div style="background: rgba(59, 130, 246, 0.05); border: 1px solid #3b82f6; border-radius: 6px; padding: 10px;">
-          <h3 style="margin: 0 0 6px 0; color: #3b82f6; font-size: 13px;">Aislamiento</h3>
-          <div style="font-size: 24px; font-weight: bold; color: #3b82f6;">${aislamiento}</div>
-          <div style="font-size: 11px; color: #8b949e;">de 36</div>
+        <div style="background: rgba(59, 130, 246, 0.05); border: 1px solid #3b82f6; border-radius: 6px; padding: 8px;">
+          <h3 style="margin: 0 0 4px 0; color: #3b82f6; font-size: 12px; font-weight: 600;">Aislamiento</h3>
+          <div style="font-size: 18px; font-weight: bold; color: #3b82f6;">${aislamiento}</div>
+          <div style="font-size: 10px; color: #8b949e;">de 36</div>
         </div>
-        <div style="background: rgba(139, 92, 246, 0.05); border: 1px solid #8b5cf6; border-radius: 6px; padding: 10px;">
-          <h3 style="margin: 0 0 6px 0; color: #8b5cf6; font-size: 13px;">Acoso Personal</h3>
-          <div style="font-size: 24px; font-weight: bold; color: #8b5cf6;">${acosoPersonal}</div>
-          <div style="font-size: 11px; color: #8b949e;">de 60</div>
+        <div style="background: rgba(139, 92, 246, 0.05); border: 1px solid #8b5cf6; border-radius: 6px; padding: 8px;">
+          <h3 style="margin: 0 0 4px 0; color: #8b5cf6; font-size: 12px; font-weight: 600;">Acoso Personal</h3>
+          <div style="font-size: 18px; font-weight: bold; color: #8b5cf6;">${acosoPersonal}</div>
+          <div style="font-size: 10px; color: #8b949e;">de 60</div>
         </div>
-        <div style="background: rgba(156, 163, 175, 0.1); border: 1px solid #9ca3af; border-radius: 6px; padding: 10px;">
-          <h3 style="margin: 0 0 6px 0; color: #4b5563; font-size: 13px;">Total</h3>
-          <div style="font-size: 24px; font-weight: bold; color: #4b5563;">${totalScore}</div>
-          <div style="font-size: 11px; color: #8b949e;">de 258</div>
+        <div style="background: rgba(156, 163, 175, 0.1); border: 1px solid #9ca3af; border-radius: 6px; padding: 8px;">
+          <h3 style="margin: 0 0 4px 0; color: #4b5563; font-size: 12px; font-weight: 600;">Total</h3>
+          <div style="font-size: 18px; font-weight: bold; color: #4b5563;">${totalScore}</div>
+          <div style="font-size: 10px; color: #8b949e;">de 258</div>
         </div>
       </div>
 
