@@ -259,7 +259,9 @@
 
 <!-- Header -->
 <header style="display: flex; align-items: center; gap: 32px; padding: 28px 32px; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, #161b22 0%, #0d1117 100%); position: sticky; top: 0; z-index: 100;">
-  <button onclick="window.history.back()" style="background: none; border: none; cursor: pointer; color: #60a5fa; font-size: 18px;">← Volver</button>
+  <div onclick="window.location.href='/'" style="cursor: pointer; background: linear-gradient(135deg, #3b82f6, #60a5fa); width: 48px; height: 48px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 6px 16px rgba(96, 165, 250, 0.4)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 12px rgba(96, 165, 250, 0.3)';">
+    <span style="font-size: 20px; font-weight: 700; color: white; text-align: center; line-height: 1; word-break: break-word; padding: 4px;">EP</span>
+  </div>
   <div style="flex: 1; text-align: center;">
     <h1 style="font-size: 28px; font-weight: 400; letter-spacing: -0.3px; color: var(--text-primary); margin: 0;">MBI</h1>
     <p style="font-size: 12px; color: #8b949e; margin-top: 4px;">Inventario de Burnout de Maslach · Evaluación de Síndrome de Burnout</p>
