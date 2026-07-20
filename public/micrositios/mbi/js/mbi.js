@@ -822,7 +822,13 @@ window.tests_mbi = {
     btn.disabled = true;
     btn.textContent = '⏳ Generando PDF...';
 
-    const pacienteId = sessionStorage.getItem('pacienteSeleccionado');
+    const pacienteId = sessionStorage.getItem('pacienteSeleccionado') || this.pacienteId || localStorage.getItem('paciente_id');
+    if (!pacienteId) {
+      alert('❌ No hay paciente seleccionado. Verifica que hayas seleccionado un paciente.');
+      btn.disabled = false;
+      btn.textContent = btnOriginalText;
+      return;
+    }
     const { ae, d, rp } = this.resultados;
     const data = this.respuestas.items.slice(1);
     const nombre = document.getElementById('m_nombre')?.value || localStorage.getItem('paciente_nombre') || 'Paciente';
