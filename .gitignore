@@ -12,3 +12,5 @@ yarn-error.log*
 database/
 .vercel
 .claude/
+screenshots-*/
+verify-*.js
