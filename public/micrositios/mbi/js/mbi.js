@@ -441,67 +441,49 @@ window.tests_mbi = {
       </div>
 
       <div style="background: ${colorDiagnostico}20; border-left: 4px solid ${colorDiagnostico}; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
-        <div style="display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px;">
-          <h2 style="color: ${colorDiagnostico}; margin: 0; font-size: 14px;">🔍 DIAGNÓSTICO</h2>
-          <p style="font-size: 24px; font-weight: bold; color: ${colorDiagnostico}; margin: 0;">${diagnostico}</p>
+        <div style="margin-bottom: 8px;">
+          <span style="color: ${colorDiagnostico}; font-size: 13px; font-weight: 600;">🔍 DIAGNÓSTICO</span>
+          <span style="font-size: 16px; font-weight: bold; color: ${colorDiagnostico}; margin-left: 6px;">${diagnostico}</span>
         </div>
         <p style="color: #8b949e; margin: 0; font-size: 14px;">Evaluado: ${new Date().toLocaleDateString('es-ES')}</p>
       </div>
 
       ${this.generarTablaRespuestas()}
 
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px;">
-
-        <!-- Agotamiento Emocional -->
-        <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid #ef4444; border-radius: 6px; padding: 10px;">
-          <h3 style="margin: 0 0 6px 0; color: #ef4444; font-size: 13px; font-weight: 600;">Agotamiento Emocional</h3>
-          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-            <div style="font-size: 20px; font-weight: bold; color: #ef4444;">${ae}</div>
-            <div style="font-size: 11px;">
-              <div style="color: #8b949e;">de 45</div>
-              <div style="font-weight: 600; color: ${baremosAE.color};">${baremosAE.nivel}</div>
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px; page-break-inside: avoid; break-inside: avoid;">
+        <tr>
+          <td style="width: 32%; padding: 8px; vertical-align: top; background: rgba(239, 68, 68, 0.05); border: 1px solid #ef4444; border-radius: 6px;">
+            <h3 style="margin: 0 0 4px 0; color: #ef4444; font-size: 12px; font-weight: 600;">Agotamiento Emocional</h3>
+            <div style="font-size: 18px; font-weight: bold; color: #ef4444; margin-bottom: 2px;">${ae}</div>
+            <div style="font-size: 10px; color: #8b949e; margin-bottom: 4px;">de 45 - ${baremosAE.nivel}</div>
+            <div style="font-size: 9px; color: #1f2937; background: #e5e7eb; padding: 3px; border-radius: 3px;">
+              Rango: ${baremosAE.min}-${baremosAE.max}
             </div>
-          </div>
-          <div style="font-size: 10px; color: #1f2937; background: #e5e7eb; padding: 4px; border-radius: 3px;">
-            Rango: ${baremosAE.min}-${baremosAE.max}
-          </div>
-        </div>
-
-        <!-- Despersonalización -->
-        <div style="background: rgba(245, 158, 11, 0.05); border: 1px solid #f59e0b; border-radius: 6px; padding: 10px;">
-          <h3 style="margin: 0 0 6px 0; color: #f59e0b; font-size: 13px; font-weight: 600;">Despersonalización</h3>
-          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-            <div style="font-size: 20px; font-weight: bold; color: #f59e0b;">${d}</div>
-            <div style="font-size: 11px;">
-              <div style="color: #8b949e;">de 25</div>
-              <div style="font-weight: 600; color: ${baremosD.color};">${baremosD.nivel}</div>
+          </td>
+          <td style="width: 2%;"></td>
+          <td style="width: 32%; padding: 8px; vertical-align: top; background: rgba(245, 158, 11, 0.05); border: 1px solid #f59e0b; border-radius: 6px;">
+            <h3 style="margin: 0 0 4px 0; color: #f59e0b; font-size: 12px; font-weight: 600;">Despersonalización</h3>
+            <div style="font-size: 18px; font-weight: bold; color: #f59e0b; margin-bottom: 2px;">${d}</div>
+            <div style="font-size: 10px; color: #8b949e; margin-bottom: 4px;">de 25 - ${baremosD.nivel}</div>
+            <div style="font-size: 9px; color: #1f2937; background: #e5e7eb; padding: 3px; border-radius: 3px;">
+              Rango: ${baremosD.min}-${baremosD.max}
             </div>
-          </div>
-          <div style="font-size: 10px; color: #1f2937; background: #e5e7eb; padding: 4px; border-radius: 3px;">
-            Rango: ${baremosD.min}-${baremosD.max}
-          </div>
-        </div>
-
-        <!-- Realización Personal -->
-        <div style="background: rgba(34, 197, 94, 0.05); border: 1px solid #22c55e; border-radius: 6px; padding: 10px;">
-          <h3 style="margin: 0 0 6px 0; color: #22c55e; font-size: 13px; font-weight: 600;">Realización Personal</h3>
-          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-            <div style="font-size: 20px; font-weight: bold; color: #22c55e;">${rp}</div>
-            <div style="font-size: 11px;">
-              <div style="color: #8b949e;">de 40</div>
-              <div style="font-weight: 600; color: ${baremosRP.color};">${baremosRP.nivel}</div>
+          </td>
+          <td style="width: 2%;"></td>
+          <td style="width: 32%; padding: 8px; vertical-align: top; background: rgba(34, 197, 94, 0.05); border: 1px solid #22c55e; border-radius: 6px;">
+            <h3 style="margin: 0 0 4px 0; color: #22c55e; font-size: 12px; font-weight: 600;">Realización Personal</h3>
+            <div style="font-size: 18px; font-weight: bold; color: #22c55e; margin-bottom: 2px;">${rp}</div>
+            <div style="font-size: 10px; color: #8b949e; margin-bottom: 4px;">de 40 - ${baremosRP.nivel}</div>
+            <div style="font-size: 9px; color: #1f2937; background: #e5e7eb; padding: 3px; border-radius: 3px;">
+              ⚠️ Escala invertida
             </div>
-          </div>
-          <div style="font-size: 10px; color: #1f2937; background: #e5e7eb; padding: 4px; border-radius: 3px;">
-            ⚠️ Escala invertida
-          </div>
-        </div>
+          </td>
+        </tr>
+      </table>
 
-      </div>
-
-      <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+      <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px; page-break-inside: avoid; break-inside: avoid;">
         <h3 style="margin: 0 0 16px 0; color: #1f2937; font-size: 16px;">📊 Comparación vs Persona Normal</h3>
-        <div id="mbi-grafico-comparativo" style="width: 100%; min-height: 300px; display: flex; justify-content: center; align-items: center; background: white; border-radius: 6px;">
+        <div id="mbi-grafico-comparativo" style="width: 100%; min-height: 300px; display: flex; justify-content: center; align-items: center; background: white; border-radius: 6px; page-break-inside: avoid; break-inside: avoid;">
           <!-- SVG del gráfico se renderiza aquí -->
         </div>
         <p style="margin-top: 12px; font-size: 12px; color: #6b7280; text-align: center;">
@@ -509,14 +491,14 @@ window.tests_mbi = {
         </p>
       </div>
 
-      <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+      <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin-bottom: 20px; page-break-inside: avoid; break-inside: avoid;">
         <h3 style="margin: 0 0 12px 0; color: #1f2937;">Interpretación Clínica</h3>
         <p style="color: #374151; line-height: 1.6; margin: 0; font-size: 14px;">
           ${this.generarInterpretacion()}
         </p>
       </div>
 
-      <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+      <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin-bottom: 20px; page-break-inside: avoid; break-inside: avoid;">
         <h3 style="margin: 0 0 12px 0; color: #1f2937;">Recomendaciones</h3>
         <ul style="color: #374151; margin: 0; padding-left: 20px; font-size: 14px;">
           ${this.generarRecomendaciones()}
@@ -533,6 +515,7 @@ window.tests_mbi = {
     containerPDF.innerHTML = html;
     containerBotones.innerHTML = htmlBotones;
     containerBotones.style.display = 'flex';
+    containerBotones.style.gap = '10px';
 
     // Renderizar gráfico comparativo después de cargar el HTML
     setTimeout(() => this.renderizarGraficoComparativo(), 0);
@@ -744,14 +727,19 @@ window.tests_mbi = {
   },
 
   exportarJSON() {
+    // Calcular resultados si no existen
+    if (!this.resultados) {
+      this.calcularResultados();
+    }
+
     const data = this.generarJSON();
     if (!data) {
-      alert('Primero calcula los resultados');
+      alert('⚠️ Completa el test para exportar JSON');
       return;
     }
 
     const json = JSON.stringify(data, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
+    const blob = new Blob([new TextEncoder().encode(json)], { type: 'application/json;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
@@ -854,7 +842,8 @@ window.tests_mbi = {
       filename: 'MBI-' + fecha + '.pdf',
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2, logging: false },
-      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
+      pagebreak: { mode: ['avoid-all', 'css'] }
     };
 
     html2pdf().set(opt).from(element).toPdf().get('pdf').then((pdf) => {
