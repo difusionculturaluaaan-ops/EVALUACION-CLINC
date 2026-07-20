@@ -492,8 +492,8 @@ window.tests_mbi = {
       </div>
 
       <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin-bottom: 20px; page-break-inside: avoid; break-inside: avoid;">
-        <h3 style="margin: 0 0 12px 0; color: #1f2937;">Interpretación Clínica</h3>
-        <p style="color: #374151; line-height: 1.6; margin: 0; font-size: 14px;">
+        <h3 style="margin: 0 0 12px 0; color: #1f2937; page-break-after: avoid; break-after: avoid;">Interpretación Clínica</h3>
+        <p style="color: #374151; line-height: 1.6; margin: 0; font-size: 14px; page-break-inside: avoid; break-inside: avoid; orphans: 3; widows: 3;">
           ${this.generarInterpretacion()}
         </p>
       </div>
