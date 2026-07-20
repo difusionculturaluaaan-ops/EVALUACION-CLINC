@@ -843,16 +843,18 @@ window.tests_mbi = {
       return;
     }
 
-    const opt = {
-      margin: 10,
-      filename: 'MBI-' + fecha + '.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, logging: false },
-      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
-      pagebreak: { mode: ['avoid-all', 'css'] }
-    };
+    // Esperar a que el gráfico se renderice completamente
+    setTimeout(() => {
+      const opt = {
+        margin: 10,
+        filename: 'MBI-' + fecha + '.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, logging: false },
+        jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
+        pagebreak: { mode: ['avoid-all', 'css'] }
+      };
 
-    html2pdf().set(opt).from(element).toPdf().get('pdf').then((pdf) => {
+      html2pdf().set(opt).from(element).toPdf().get('pdf').then((pdf) => {
       // Convertir PDF a base64 (sin prefijo)
       const pdfDataUri = pdf.output('datauristring');
       const pdfBase64 = pdfDataUri.split(',')[1]; // Quitar "data:application/pdf;base64,"
@@ -912,6 +914,7 @@ window.tests_mbi = {
       btn.disabled = false;
       btn.textContent = btnOriginalText;
     });
+    }, 500); // Esperar 500ms a que el gráfico se renderice
   },
 
   limpiar() {
