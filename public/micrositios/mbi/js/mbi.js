@@ -914,7 +914,7 @@ window.tests_mbi = {
       btn.disabled = false;
       btn.textContent = btnOriginalText;
     });
-    }, 500); // Esperar 500ms a que el gráfico se renderice
+    }, 1000); // Esperar 1000ms a que TODO se renderice correctamente
   },
 
   limpiar() {
