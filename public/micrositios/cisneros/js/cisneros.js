@@ -711,7 +711,11 @@ window.tests_cisneros = {
       setTimeout(() => successMsg.remove(), 3000);
 
       console.log('✅ CISNEROS guardado en expediente:', result);
-      setTimeout(() => window.location.href = '/expedientes', 1500);
+
+      // Regresar al dashboard del paciente después de 2 segundos
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 2000);
     }).catch(error => {
       const errorMsg = document.createElement('div');
       errorMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #f44336; color: white; padding: 15px; border-radius: 8px; z-index: 9999;';
