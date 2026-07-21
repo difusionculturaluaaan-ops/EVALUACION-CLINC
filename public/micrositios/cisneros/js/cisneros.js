@@ -826,13 +826,26 @@ window.tests_cisneros = {
   },
 
   irTab(tab) {
+    // Remover active de todos los contenidos
     const tabs = document.querySelectorAll('.cisneros-tab-content');
     tabs.forEach(t => t.classList.remove('active'));
 
+    // Remover active de todos los botones de tab
+    const tabButtons = document.querySelectorAll('.cisneros-tab');
+    tabButtons.forEach(btn => btn.classList.remove('active'));
+
+    // Agregar active al contenido correcto
     const tabContent = document.getElementById(`tab-${tab}`);
     if (tabContent) {
       tabContent.classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    // Agregar active al botón de tab correcto
+    const tabButton = document.querySelector(`.cisneros-tab[data-tab="${tab}"]`);
+    if (tabButton) {
+      tabButton.classList.add('active');
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 };
