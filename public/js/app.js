@@ -174,11 +174,75 @@ const app = {
     this.setupEventListeners();
     this.setupAuth();
 
+    // Cargar tests habilitados para el tenant
+    await this.cargarTestsHabilitados();
+
     // Mostrar dashboard por defecto
     this.showPage('inicio');
 
     // Inicializar los módulos de tests (sin renderizar aún)
     console.log('Aplicación inicializada correctamente');
+  },
+
+  /**
+   * Cargar tests habilitados para el tenant actual
+   */
+  async cargarTestsHabilitados() {
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch('/api/tenants/tests-habilitados/list', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        console.warn('No se pudieron cargar los tests habilitados');
+        return;
+      }
+
+      const data = await response.json();
+      const testsHabilitados = data.tests || [];
+
+      // Mapa de tests a sus data-page en el HTML
+      const testMap = {
+        'SCL90R': 'scl90r',
+        'HAMILTON': 'hamilton',
+        'MMPI2PRO': 'mmpi-pro',
+        'CUIDA': 'cuida',
+        'ISRA': 'isra',
+        'TDS': 'tds',
+        'PCLR': 'pclr',
+        'SCID2': 'scid2',
+        'EGEP5': 'egep5',
+        'MBI': 'mbi',
+        'CISNEROS': 'cisneros'
+      };
+
+      // Ocultar todos los tests por defecto
+      document.querySelectorAll('[data-page="scl90r"], [data-page="hamilton"], [data-page="mmpi-pro"], [data-page="cuida"], [data-page="isra"], [data-page="tds"], [data-page="pclr"], [data-page="scid2"], [data-page="egep5"], [data-page="mbi"], [data-page="cisneros"]').forEach(btn => {
+        btn.style.display = 'none';
+      });
+
+      // Mostrar solo los tests habilitados
+      testsHabilitados.forEach(testId => {
+        const pageId = testMap[testId];
+        if (pageId) {
+          const btn = document.querySelector(`[data-page="${pageId}"]`);
+          if (btn) {
+            btn.style.display = 'block';
+          }
+        }
+      });
+
+      console.log('✓ Tests habilitados cargados:', testsHabilitados);
+    } catch (error) {
+      console.error('Error al cargar tests habilitados:', error);
+      // Si falla, mostrar todos los tests (fallback)
+      document.querySelectorAll('[data-page="scl90r"], [data-page="hamilton"], [data-page="mmpi-pro"], [data-page="cuida"], [data-page="isra"], [data-page="tds"], [data-page="pclr"], [data-page="scid2"], [data-page="egep5"], [data-page="mbi"], [data-page="cisneros"]').forEach(btn => {
+        btn.style.display = 'block';
+      });
+    }
   },
 
   /**
