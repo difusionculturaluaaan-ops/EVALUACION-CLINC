@@ -375,6 +375,17 @@ window.tests_cisneros = {
     const totalScore = demerito + obstaculizacion + intimidacion + aislamiento + acosoPersonal;
     const intensidad = totalScore > 90 ? 'SEVERO' : totalScore > 60 ? 'MODERADO' : totalScore > 30 ? 'LEVE' : 'SIN MOBBING';
 
+    // Calcular índices oficiales CISNEROS
+    // IGAP: Índice Global de Acoso Psicológico (promedio de todas las puntuaciones)
+    const IGAP = totalScore / 43;
+
+    // IMAP: Índice Medio de Acoso (promedio solo de ítems con puntuación ≥3)
+    const itemsAlerta = items.filter(val => (val || 0) >= 3);
+    const IMAP = itemsAlerta.length > 0 ? itemsAlerta.reduce((s, v) => s + v, 0) / itemsAlerta.length : 0;
+
+    // NEAP: Número de Estrategias de Acoso (cantidad de ítems con puntuación ≥3)
+    const NEAP = itemsAlerta.length;
+
     this.resultados = {
       demerito,
       obstaculizacion,
@@ -382,7 +393,10 @@ window.tests_cisneros = {
       aislamiento,
       acosoPersonal,
       totalScore,
-      intensidad
+      intensidad,
+      IGAP: parseFloat(IGAP.toFixed(2)),
+      IMAP: parseFloat(IMAP.toFixed(2)),
+      NEAP
     };
 
     this.mostrarResultados();
@@ -426,6 +440,8 @@ window.tests_cisneros = {
         <p style="color: #8b949e; margin: 0; font-size: 14px;">Puntuación Total: ${totalScore}/258</p>
       </div>
 
+      ${this.generarGraficoIndices()}
+
       ${this.generarTablaRespuestas()}
 
       <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 14px;">
@@ -466,6 +482,15 @@ window.tests_cisneros = {
         <p style="color: #374151; line-height: 1.6; margin: 0; font-size: 13px;">
           ${this.generarInterpretacion(intensidad, totalScore)}
         </p>
+      </div>
+
+      <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px;">
+        <button id="btn-cisneros-pdf" class="btn btn-secondary" onclick="window.tests_cisneros.generarPDF()" style="flex: 1; min-width: 150px;">
+          📄 Generar PDF
+        </button>
+        <button id="btn-cisneros-guardar" class="btn btn-primary" onclick="window.tests_cisneros.guardarEnExpediente()" style="flex: 1; min-width: 150px;">
+          💾 Guardar en Expediente
+        </button>
       </div>
     `;
 
@@ -529,6 +554,66 @@ window.tests_cisneros = {
     } else {
       return 'Se detecta mobbing severo. Se recomienda intervención inmediata: apoyo psicológico, mediación laboral, y revisión de políticas de empresa.';
     }
+  },
+
+  generarGraficoIndices() {
+    if (!this.resultados) return '';
+
+    const { IGAP, IMAP, NEAP } = this.resultados;
+    const umbralIGAP = 1.23;
+    const umbralIMAP = 2.80;
+    const umbralNEAP = 4;
+
+    const width = 600;
+    const height = 300;
+    const barWidth = 60;
+    const barGap = 100;
+    const maxValue = 5;
+
+    const scaleY = (height - 60) / maxValue;
+
+    let svg = `
+      <svg width="100%" height="${height}" viewBox="0 0 ${width} ${height}" style="max-width: 100%; margin: 0 auto;">
+        <!-- Línea de base -->
+        <line x1="50" y1="${height - 40}" x2="${width - 20}" y2="${height - 40}" stroke="#d1d5db" stroke-width="2"/>
+
+        <!-- Etiquetas Y -->
+        <text x="40" y="${height - 35}" font-size="12" fill="#6b7280">0</text>
+        <text x="30" y="${(height - 40) - (2.5 * scaleY) + 4}" font-size="12" fill="#6b7280">2.5</text>
+        <text x="35" y="${(height - 40) - (5 * scaleY) + 4}" font-size="12" fill="#6b7280">5</text>
+
+        <!-- IGAP -->
+        <line x1="80" y1="${(height - 40) - (umbralIGAP * scaleY)}" x2="160" y2="${(height - 40) - (umbralIGAP * scaleY)}" stroke="#ef4444" stroke-width="2" stroke-dasharray="5,5"/>
+        <rect x="80" y="${(height - 40) - (IGAP * scaleY)}" width="${barWidth}" height="${Math.max(IGAP * scaleY, 2)}" fill="#3b82f6" opacity="0.8"/>
+        <text x="${80 + barWidth / 2}" y="${height - 15}" text-anchor="middle" font-size="12" fill="#1f2937" font-weight="500">IGAP</text>
+        <text x="${80 + barWidth / 2}" y="${(height - 40) - (IGAP * scaleY) - 8}" text-anchor="middle" font-size="11" fill="#3b82f6" font-weight="600">${IGAP}</text>
+
+        <!-- IMAP -->
+        <line x1="250" y1="${(height - 40) - (umbralIMAP * scaleY)}" x2="330" y2="${(height - 40) - (umbralIMAP * scaleY)}" stroke="#ef4444" stroke-width="2" stroke-dasharray="5,5"/>
+        <rect x="250" y="${(height - 40) - (IMAP * scaleY)}" width="${barWidth}" height="${Math.max(IMAP * scaleY, 2)}" fill="#3b82f6" opacity="0.8"/>
+        <text x="${250 + barWidth / 2}" y="${height - 15}" text-anchor="middle" font-size="12" fill="#1f2937" font-weight="500">IMAP</text>
+        <text x="${250 + barWidth / 2}" y="${(height - 40) - (IMAP * scaleY) - 8}" text-anchor="middle" font-size="11" fill="#3b82f6" font-weight="600">${IMAP}</text>
+
+        <!-- NEAP (escala 0-8) -->
+        <line x1="420" y1="${(height - 40) - (umbralNEAP * scaleY / 1.6)}" x2="500" y2="${(height - 40) - (umbralNEAP * scaleY / 1.6)}" stroke="#ef4444" stroke-width="2" stroke-dasharray="5,5"/>
+        <rect x="420" y="${(height - 40) - (NEAP * scaleY / 1.6)}" width="${barWidth}" height="${Math.max(NEAP * scaleY / 1.6, 2)}" fill="#3b82f6" opacity="0.8"/>
+        <text x="${420 + barWidth / 2}" y="${height - 15}" text-anchor="middle" font-size="12" fill="#1f2937" font-weight="500">NEAP</text>
+        <text x="${420 + barWidth / 2}" y="${(height - 40) - (NEAP * scaleY / 1.6) - 8}" text-anchor="middle" font-size="11" fill="#3b82f6" font-weight="600">${NEAP}</text>
+
+        <!-- Leyenda -->
+        <line x1="80" y1="20" x2="100" y2="20" stroke="#ef4444" stroke-width="2" stroke-dasharray="5,5"/>
+        <text x="110" y="25" font-size="11" fill="#6b7280">Umbral de Alerta</text>
+
+        <rect x="80" y="33" width="10" height="10" fill="#3b82f6" opacity="0.8"/>
+        <text x="100" y="42" font-size="11" fill="#6b7280">Tu Puntuación</text>
+      </svg>
+    `;
+
+    return `
+      <div id="cisneros-grafico-indices" style="width: 100%; min-height: 300px; display: flex; justify-content: center; align-items: center; background: white; border-radius: 6px; page-break-inside: avoid; break-inside: avoid; margin-bottom: 20px;">
+        ${svg}
+      </div>
+    `;
   },
 
   generarPDF() {
