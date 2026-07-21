@@ -320,6 +320,7 @@ window.tests_cisneros = {
       </table>
 
       <div class="button-group" style="margin-top: 20px;">
+        <button onclick="window.tests_cisneros.irTab('resultados'); window.tests_cisneros.calcularResultados();" class="btn btn-primary">⊡ Calcular Resultados</button>
         <button onclick="window.tests_cisneros.exportarJSON()" class="btn btn-secondary">↓ Exportar JSON</button>
         <button onclick="document.getElementById('cisneros-file-input').click()" class="btn btn-secondary">↑ Importar JSON</button>
         <button onclick="window.tests_cisneros.limpiar()" class="btn btn-danger">✕ Limpiar</button>
