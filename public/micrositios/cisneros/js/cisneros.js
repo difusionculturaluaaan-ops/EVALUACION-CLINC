@@ -491,6 +491,12 @@ window.tests_cisneros = {
         <button id="btn-cisneros-guardar" class="btn btn-primary" onclick="window.tests_cisneros.guardarEnExpediente()" style="flex: 1; min-width: 150px;">
           💾 Guardar en Expediente
         </button>
+        <button id="btn-cisneros-exportar" class="btn btn-secondary" onclick="window.tests_cisneros.exportarJSON()" style="flex: 1; min-width: 150px;">
+          ↓ Exportar JSON
+        </button>
+        <button id="btn-cisneros-importar" class="btn btn-secondary" onclick="document.getElementById('cisneros-file-input').click()" style="flex: 1; min-width: 150px;">
+          ↑ Importar JSON
+        </button>
       </div>
     `;
 
@@ -719,14 +725,14 @@ window.tests_cisneros = {
   },
 
   exportarJSON() {
-    const data = this.generarJSON();
-    if (!data) {
-      alert('Primero calcula los resultados');
+    if (!this.resultados) {
+      alert('⚠️ Primero calcula los resultados');
       return;
     }
 
+    const data = this.generarJSON();
     const json = JSON.stringify(data, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
+    const blob = new Blob([new TextEncoder().encode(json)], { type: 'application/json;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
@@ -738,8 +744,52 @@ window.tests_cisneros = {
   inicializarImportador() {
     const fileInput = document.getElementById('cisneros-file-input');
     if (!fileInput) return;
+
     fileInput.addEventListener('change', (e) => {
-      alert('⬆️ Import en desarrollo');
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        try {
+          const data = JSON.parse(evt.target.result);
+
+          if (!data.respuestas || !Array.isArray(data.respuestas)) {
+            throw new Error('Formato de JSON inválido');
+          }
+
+          // Convertir a números (pueden venir como strings)
+          const respuestasNumeros = data.respuestas.map(v => {
+            const num = parseInt(v);
+            return isNaN(num) ? 0 : num;
+          });
+
+          // Cargar en respuestas (agregar 0 al inicio)
+          this.respuestas.items = [0, ...respuestasNumeros];
+
+          // Cargar metadatos
+          if (data.metadatos) {
+            if (data.metadatos.paciente_nombre) document.getElementById('c_nombre').value = data.metadatos.paciente_nombre;
+            if (data.metadatos.edad) document.getElementById('c_edad').value = data.metadatos.edad;
+            if (data.metadatos.sexo) document.getElementById('c_sexo').value = data.metadatos.sexo;
+            if (data.metadatos.empresa) document.getElementById('c_empresa').value = data.metadatos.empresa;
+            if (data.metadatos.evaluador) document.getElementById('c_evaluador').value = data.metadatos.evaluador;
+            if (data.metadatos.fecha_evaluacion) document.getElementById('c_fecha').value = data.metadatos.fecha_evaluacion;
+          }
+
+          // Guardar en localStorage
+          localStorage.setItem(`${this.tipo}_respuestas`, JSON.stringify(this.respuestas));
+
+          // Recalcular resultados y mostrar
+          this.calcularResultados();
+          this.irTab('resultados');
+
+          alert('✅ JSON importado exitosamente');
+        } catch (error) {
+          alert('❌ Error al importar: ' + error.message);
+        }
+      };
+      reader.readAsText(file);
     });
   },
 
