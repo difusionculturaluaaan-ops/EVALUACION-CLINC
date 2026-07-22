@@ -628,6 +628,42 @@ window.tests_cisneros = {
       return;
     }
 
+    // Detectar tenant y agregar logo si es Claudia Martín del Campo
+    const tenantName = localStorage.getItem('clinica_nombre') || '';
+    const isClaudioMartinDelCampo = tenantName.toLowerCase().includes('claudia') &&
+                                     tenantName.toLowerCase().includes('martín');
+
+    let elementToConvert = element;
+    let tempContainer = null;
+
+    if (isClaudioMartinDelCampo) {
+      // Crear contenedor temporal con logo
+      tempContainer = document.createElement('div');
+      tempContainer.style.position = 'relative';
+      tempContainer.style.width = '100%';
+      tempContainer.innerHTML = element.innerHTML;
+
+      // Agregar logo en esquina superior derecha
+      const logoDiv = document.createElement('div');
+      logoDiv.style.position = 'absolute';
+      logoDiv.style.top = '10px';
+      logoDiv.style.right = '10px';
+      logoDiv.style.width = '120px';
+      logoDiv.style.height = '90px';
+      logoDiv.style.zIndex = '1000';
+
+      const logoImg = document.createElement('img');
+      logoImg.src = '/logos/claudia-martin-del-campo.svg';
+      logoImg.style.width = '100%';
+      logoImg.style.height = '100%';
+      logoImg.style.objectFit = 'contain';
+
+      logoDiv.appendChild(logoImg);
+      tempContainer.appendChild(logoDiv);
+
+      elementToConvert = tempContainer;
+    }
+
     const opt = {
       margin: 10,
       filename: 'CISNEROS-' + new Date().toISOString().split('T')[0] + '.pdf',
@@ -636,7 +672,12 @@ window.tests_cisneros = {
       jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
     };
 
-    html2pdf().set(opt).from(element).save();
+    html2pdf().set(opt).from(elementToConvert).save().then(() => {
+      // Limpiar contenedor temporal si fue creado
+      if (tempContainer && tempContainer.parentNode) {
+        tempContainer.parentNode.removeChild(tempContainer);
+      }
+    });
   },
 
   generarJSON() {

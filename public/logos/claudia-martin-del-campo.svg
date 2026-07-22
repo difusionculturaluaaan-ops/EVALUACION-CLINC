@@ -1,0 +1,23 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Barra turquesa izquierda -->
+  <rect x="0" y="0" width="40" height="300" fill="#20B2AA"/>
+
+  <!-- Fondo degradado gris -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f5f5f5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e0e0e0;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect x="40" y="0" width="360" height="300" fill="url(#bgGradient)"/>
+
+  <!-- Círculo cerebro (simplificado) -->
+  <circle cx="280" cy="80" r="50" fill="#d0d0d0" opacity="0.6"/>
+  <path d="M 260 60 Q 270 50, 280 55 T 300 60 Q 310 55, 320 65" stroke="#b0b0b0" stroke-width="3" fill="none" opacity="0.7"/>
+
+  <!-- Texto principal PSYCHÉ -->
+  <text x="200" y="140" font-family="Georgia, serif" font-size="72" font-weight="300" text-anchor="middle" fill="#000">PSYCHÉ</text>
+
+  <!-- Texto secundario -->
+  <text x="200" y="185" font-family="Arial, sans-serif" font-size="16" font-weight="400" text-anchor="middle" fill="#333" letter-spacing="4">CLAUDIA MARTÍN DEL CAMPO</text>
+</svg>
