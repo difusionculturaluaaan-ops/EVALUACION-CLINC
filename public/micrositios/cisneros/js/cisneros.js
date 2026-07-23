@@ -459,6 +459,8 @@ window.tests_cisneros = {
 
       ${this.generarGraficoIndices()}
 
+      ${this.generarGraficoMobbingBossing()}
+
       ${this.generarTablaRespuestas()}
 
       <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 14px;">
@@ -659,6 +661,103 @@ window.tests_cisneros = {
 
     return `
       <div id="cisneros-grafico-indices" style="width: 100%; min-height: 320px; display: flex; justify-content: center; align-items: center; background: white; border-radius: 6px; page-break-inside: avoid; break-inside: avoid; margin-bottom: 20px;">
+        ${svg}
+      </div>
+    `;
+  },
+
+  generarGraficoMobbingBossing() {
+    if (!this.resultados) return '';
+
+    const { mobbingCount, bossingCount, NEAP } = this.resultados;
+
+    const width = 600;
+    const height = 400;
+    const padding = 60;
+    const graphWidth = width - (padding * 2);
+    const graphHeight = height - (padding * 2);
+
+    // Máximo para escalar
+    const maxValue = Math.max(mobbingCount, bossingCount, 15);
+
+    // Escala
+    const scaleX = graphWidth / maxValue;
+    const scaleY = graphHeight / maxValue;
+
+    // Coordenadas del punto
+    const pointX = padding + (mobbingCount * scaleX);
+    const pointY = height - padding - (bossingCount * scaleY);
+
+    // Colores
+    const colorMobbing = '#dc2626';  // Rojo
+    const colorBossing = '#2563eb';  // Azul
+
+    let svg = `
+      <svg width="100%" height="${height}" viewBox="0 0 ${width} ${height}" style="max-width: 100%; margin: 0 auto;">
+        <!-- Ejes -->
+        <line x1="${padding}" y1="${height - padding}" x2="${width - padding}" y2="${height - padding}" stroke="#d1d5db" stroke-width="2"/>
+        <line x1="${padding}" y1="${padding}" x2="${padding}" y2="${height - padding}" stroke="#d1d5db" stroke-width="2"/>
+
+        <!-- Grid -->
+        <defs>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#f0f0f0" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+        <rect x="${padding}" y="${padding}" width="${graphWidth}" height="${graphHeight}" fill="url(#grid)"/>
+
+        <!-- Marcas de eje X (Mobbing) -->
+        <text x="${width - padding}" y="${height - padding + 25}" text-anchor="middle" font-size="12" fill="#6b7280" font-weight="600">MOBBING (Horizontal)</text>
+
+        <!-- Marcas de eje Y (Bossing) -->
+        <text x="${padding - 35}" y="${padding}" text-anchor="middle" font-size="12" fill="#6b7280" font-weight="600" transform="rotate(-90 ${padding - 35} ${padding})">BOSSING (Vertical)</text>
+
+        <!-- Números en ejes -->
+        <text x="${padding - 8}" y="${height - padding + 4}" text-anchor="end" font-size="11" fill="#8b949e">0</text>
+        <text x="${padding - 8}" y="${padding + 4}" text-anchor="end" font-size="11" fill="#8b949e">${maxValue}</text>
+        <text x="${width - padding}" y="${height - padding + 15}" text-anchor="middle" font-size="11" fill="#8b949e">${maxValue}</text>
+
+        <!-- Líneas de referencia (cuadrantes) -->
+        <line x1="${padding + graphWidth / 2}" y1="${padding}" x2="${padding + graphWidth / 2}" y2="${height - padding}" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="${padding}" y1="${height - padding - graphHeight / 2}" x2="${width - padding}" y2="${height - padding - graphHeight / 2}" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="3,3"/>
+
+        <!-- Punto de paciente -->
+        <circle cx="${pointX}" cy="${pointY}" r="8" fill="#f97316" opacity="0.9" stroke="white" stroke-width="2"/>
+
+        <!-- Líneas desde ejes al punto -->
+        <line x1="${pointX}" y1="${height - padding}" x2="${pointX}" y2="${pointY}" stroke="${colorMobbing}" stroke-width="2" stroke-dasharray="4,4" opacity="0.6"/>
+        <line x1="${padding}" y1="${pointY}" x2="${pointX}" y2="${pointY}" stroke="${colorBossing}" stroke-width="2" stroke-dasharray="4,4" opacity="0.6"/>
+
+        <!-- Etiqueta del punto -->
+        <text x="${pointX + 15}" y="${pointY - 15}" text-anchor="start" font-size="13" fill="#1f2937" font-weight="700">
+          Paciente
+        </text>
+        <text x="${pointX + 15}" y="${pointY}" text-anchor="start" font-size="12" fill="#8b949e">
+          B: ${bossingCount} | M: ${mobbingCount}
+        </text>
+
+        <!-- Leyenda -->
+        <g>
+          <rect x="20" y="20" width="180" height="80" fill="white" stroke="#e5e7eb" stroke-width="1" rx="4"/>
+
+          <rect x="30" y="30" width="12" height="12" fill="${colorMobbing}" opacity="0.8"/>
+          <text x="50" y="39" font-size="12" fill="#1f2937" font-weight="600">MOBBING: ${mobbingCount}</text>
+          <text x="50" y="54" font-size="10" fill="#8b949e">(Estrategias Mobbing ≥3)</text>
+
+          <rect x="30" y="60" width="12" height="12" fill="${colorBossing}" opacity="0.8"/>
+          <text x="50" y="69" font-size="12" fill="#1f2937" font-weight="600">BOSSING: ${bossingCount}</text>
+          <text x="50" y="84" font-size="10" fill="#8b949e">(Estrategias Bossing ≥3)</text>
+        </g>
+
+        <!-- Total NEAP -->
+        <text x="${width / 2}" y="30" text-anchor="middle" font-size="13" fill="#1f2937" font-weight="700">
+          TOTAL ESTRATEGIAS DE ACOSO: ${NEAP}
+        </text>
+      </svg>
+    `;
+
+    return `
+      <div id="cisneros-grafico-mobbing-bossing" style="width: 100%; min-height: 380px; display: flex; justify-content: center; align-items: center; background: white; border-radius: 6px; page-break-inside: avoid; break-inside: avoid; margin-bottom: 20px;">
         ${svg}
       </div>
     `;
