@@ -1,0 +1,46 @@
+{
+  "paciente": {
+    "nombre": "Juan Pérez García",
+    "fecha": "2026-07-22",
+    "edad": "35",
+    "sexo": "Varón",
+    "centro": "Clínica Centro Psicológico",
+    "evaluador": "Dr. Luis Martínez",
+    "evento": "Accidente de tráfico grave hace 3 meses. El evaluado fue conductor del vehículo y experimentó temor intenso por su vida. Choque frontal a 80 km/h."
+  },
+  "respuestas": {
+    "event_type": {
+      "1": "me"
+    },
+    "evento_desc": "Choque frontal a 80 km/h. Vehículo quedó completamente destruido. El paciente fue atrapado dentro durante 30 minutos. Rescate de emergencia.",
+    "characteristics": {
+      "16": true,
+      "17": true,
+      "18": true,
+      "19": true,
+      "20": true,
+      "21": true,
+      "22": true,
+      "23": true,
+      "24": true,
+      "25": true,
+      "26": true
+    },
+    "items_27_31": [3, 3, 3, 3, 3],
+    "items_32_33": [2, 2],
+    "items_34_40": [2, 2, 2, 2, 2, 2, 2],
+    "items_41_46": [3, 3, 3, 3, 3, 3],
+    "items_47_49": [1, 1, 1],
+    "items_52_58": [1, 1, 1, 1, 0, 0, 0]
+  },
+  "resultados": {
+    "diagnostico": "CUMPLE CRITERIOS DSM-5",
+    "puntuacion_total": 37,
+    "interpretacion": "Diagnóstico clínico de TEPT con severidad moderada. Se recomienda intervención inmediata con psicoterapia especializada."
+  },
+  "metadata": {
+    "created_at": "2026-07-22T20:15:00Z",
+    "test_type": "EGEP-5",
+    "version": "1.0"
+  }
+}
