@@ -880,6 +880,66 @@ window.tests_egep5 = {
 
     bareHTML += '</table>';
     document.getElementById('egep5-baremos').innerHTML = bareHTML;
+
+    // 7. GRÁFICO DEL PERFIL (Tab 4)
+    const perfilHTML = window.EGEP5_GRAFICOS.generarPerfil(resultado);
+    document.getElementById('egep5-perfil-grafico').innerHTML = perfilHTML;
+
+    // 8. INTERPRETACIÓN CLÍNICA (Tab 5)
+    const interpretHTML = this.generarInterpretacion(resultado, intensidades, totalIntensidad);
+    document.getElementById('egep5-interpretacion-clinica').innerHTML = interpretHTML;
+  },
+
+  generarInterpretacion(resultado, intensidades, totalIntensidad) {
+    const { tept, criterios } = resultado;
+    let html = '<div style="font-size: 14px; line-height: 1.8; color: var(--text-primary);">';
+
+    // Diagnóstico general
+    if (tept === 'SI') {
+      html += '<div style="background: rgba(76, 175, 80, 0.15); border: 1px solid #4CAF50; border-radius: 8px; padding: 16px; margin-bottom: 20px;">';
+      html += '<strong style="color: #4CAF50; font-size: 15px;">✓ DIAGNÓSTICO: Trastorno por Estrés Postraumático (TEPT)</strong>';
+      html += '<p style="margin: 8px 0 0 0;">El paciente cumple con los criterios DSM-5 para TEPT. La intensidad de síntomas es ' + (totalIntensidad >= 60 ? 'SEVERA' : totalIntensidad >= 40 ? 'MODERADA' : 'LEVE') + '.</p>';
+      html += '</div>';
+    } else {
+      html += '<div style="background: rgba(244, 67, 54, 0.15); border: 1px solid #F44336; border-radius: 8px; padding: 16px; margin-bottom: 20px;">';
+      html += '<strong style="color: #F44336; font-size: 15px;">✗ DIAGNÓSTICO: No cumple criterios de TEPT</strong>';
+      html += '<p style="margin: 8px 0 0 0;">El paciente no cumple con los criterios DSM-5 para TEPT. Se recomienda evaluar otros diagnósticos relacionados con trauma.</p>';
+      html += '</div>';
+    }
+
+    // Síntomas predominantes
+    html += '<div style="margin-bottom: 20px;">';
+    html += '<h3 style="margin: 0 0 12px 0; color: #e6eaf0; font-weight: 600;">Síntomas Predominantes:</h3>';
+    const sintomas = [];
+    if (intensidades.I >= 10) sintomas.push('Reexperimentación/Intrusión');
+    if (intensidades.E >= 4) sintomas.push('Evitación');
+    if (intensidades.C >= 14) sintomas.push('Alteraciones Cognitivas');
+    if (intensidades.A >= 12) sintomas.push('Hiperactivación');
+    html += '<ul style="margin: 0; padding-left: 20px;">' + sintomas.map(s => `<li>${s}</li>`).join('') + '</ul>';
+    html += '</div>';
+
+    // Recomendaciones
+    html += '<div style="background: rgba(33, 150, 243, 0.1); border-radius: 8px; padding: 16px;">';
+    html += '<h3 style="margin: 0 0 12px 0; color: #60a5fa; font-weight: 600;">Recomendaciones Clínicas:</h3>';
+    html += '<ul style="margin: 0; padding-left: 20px;">';
+    if (tept === 'SI' && totalIntensidad >= 60) {
+      html += '<li>Psicoterapia especializada (TCC, EMDR) inmediata</li>';
+      html += '<li>Considerar evaluación psiquiátrica para farmacoterapia</li>';
+      html += '<li>Seguimiento clínico mensual</li>';
+    } else if (tept === 'SI') {
+      html += '<li>Psicoterapia especializada en trauma (TCC o EMDR)</li>';
+      html += '<li>Psicoeducación sobre TEPT</li>';
+      html += '<li>Seguimiento cada 3 meses</li>';
+    } else {
+      html += '<li>Continuar seguimiento de síntomas relacionados</li>';
+      html += '<li>Evaluación de otros diagnósticos de ansiedad/depresión</li>';
+      html += '<li>Seguimiento semestral</li>';
+    }
+    html += '</ul>';
+    html += '</div>';
+
+    html += '</div>';
+    return html;
   },
 
   /**
