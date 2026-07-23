@@ -11,18 +11,27 @@ window.EGEP5_GRAFICOS = {
    * @returns {string} HTML con SVG
    */
   generarPerfil(resultados, baremos = null) {
-    const usaPc = !!baremos;
-    const ESC = window.EGEP5_CORRECTOR.ESCALAS;
+    try {
+      const usaPc = !!baremos;
+      const ESC = window.EGEP5_CORRECTOR?.ESCALAS || {};
 
-    // Preparar datos de columnas
-    const cols = [
-      { k: 'I', l: 'I', n: ESC.I.nom, v: resultados.pd.I, max: 20, c: ESC.I.color },
-      { k: 'E', l: 'E', n: ESC.E.nom, v: resultados.pd.E, max: 8, c: ESC.E.color },
-      { k: 'C', l: 'C', n: ESC.C.nom, v: resultados.pd.C, max: 28, c: ESC.C.color },
-      { k: 'A', l: 'A', n: ESC.A.nom, v: resultados.pd.A, max: 24, c: ESC.A.color },
-      { k: 'Total', l: 'Total', n: 'Puntuación total', v: resultados.pd.Total, max: 80, c: '#c084fc' },
-      { k: 'F', l: 'F', n: 'Funcionamiento', v: resultados.pd.F, max: 7, c: '#a78bfa' }
-    ];
+      // Seguridad: verificar que pd existe
+      if (!resultados || !resultados.pd) {
+        return '<div style="padding: 20px; color: #ef5350;">⚠️ Datos insuficientes para generar el gráfico.</div>';
+      }
+
+      const pd = resultados.pd;
+      const Total = (pd.I || 0) + (pd.E || 0) + (pd.C || 0) + (pd.A || 0);
+
+      // Preparar datos de columnas
+      const cols = [
+        { k: 'I', l: 'I', n: ESC.I?.nom || 'Intrusivos', v: pd.I || 0, max: 20, c: ESC.I?.color || '#60a5fa' },
+        { k: 'E', l: 'E', n: ESC.E?.nom || 'Evitación', v: pd.E || 0, max: 8, c: ESC.E?.color || '#34d399' },
+        { k: 'C', l: 'C', n: ESC.C?.nom || 'Cognitivas', v: pd.C || 0, max: 28, c: ESC.C?.color || '#fbbf24' },
+        { k: 'A', l: 'A', n: ESC.A?.nom || 'Activación', v: pd.A || 0, max: 24, c: ESC.A?.color || '#f87171' },
+        { k: 'Total', l: 'Total', n: 'Puntuación total', v: Total, max: 80, c: '#c084fc' },
+        { k: 'F', l: 'F', n: 'Funcionamiento', v: pd.F || 0, max: 7, c: '#a78bfa' }
+      ];
 
     // Calcular percentiles si hay baremos
     cols.forEach(c => {
