@@ -31,52 +31,52 @@ window.tests_cisneros = {
     acosoPersonal: 0      // Ítems: 25,31,32,35,41,42,43
   },
 
-  // Definiciones de ítems (44 items)
+  // Definiciones de ítems (44 items) con clasificación Mobbing/Bossing
   itemDefinitions: {
-    1: "Mi superior restringe mis posibilidades de comunicarme, hablar o reunirme con él",
-    2: "Me ignoran, me excluyen o me hacen el vacío, fingen no verme o me hacen «invisible»",
-    3: "Me interrumpen continuamente impidiendo expresarme",
-    4: "Me fuerzan a realizar trabajos que van contra mis principios o mi ética",
-    5: "Evalúan mi trabajo de manera inequitativa o de forma sesgada",
-    6: "Me dejan sin ningún trabajo que hacer, ni siquiera a iniciativa propia",
-    7: "Me asignan tareas o trabajos absurdos o sin sentido",
-    8: "Me asignan tareas o trabajos por debajo de mi capacidad profesional o mis competencias",
-    9: "Me asignan tareas rutinarias o sin valor o interés alguno",
-    10: "Me abruman con una carga de trabajo insoportable de manera malintencionada",
-    11: "Me asignan tareas que ponen en peligro mi integridad física o mi salud a propósito",
-    12: "Me impiden que adopte las medidas de seguridad necesarias para realizar mi trabajo con la debida seguridad",
-    13: "Se me ocasionan gastos con intención de perjudicarme económicamente",
-    14: "Prohíben a mis compañeros o colegas hablar conmigo",
-    15: "Minusvaloran y echan por tierra mi trabajo, no importa lo que haga",
-    16: "Me acusan injustificadamente de incumplimientos, errores, fallos",
-    17: "Recibo críticas y reproches por cualquier cosa que haga o decisión que tome en mi trabajo",
-    18: "Se amplifican y dramatizan de manera injustificada errores pequeños o intrascendentes",
-    19: "Me humillan, desprecian o minusvaloran en público ante otros colegas o ante terceros",
-    20: "Me amenazan con usar instrumentos disciplinarios (rescisión, expedientes, despido, traslados)",
-    21: "Intentan aislarme de mis compañeros dándome trabajos o tareas que me alejan físicamente",
-    22: "Distorsionan malintencionadamente lo que digo o hago en mi trabajo",
-    23: "Se intenta buscarme las cosquillas para «hacerme explotar»",
-    24: "Me menosprecian personal o profesionalmente",
-    25: "Hacen burla de mí o bromas intentando ridiculizar mi forma de hablar, de andar, etc.",
-    26: "Recibo feroces e injustas críticas acerca de aspectos de mi vida personal",
-    27: "Recibo amenazas verbales o mediante gestos intimidatorios",
-    28: "Recibo amenazas por escrito o por teléfono en mi domicilio",
-    29: "Me chillan o gritan, o elevan la voz de manera a intimidarme",
-    30: "Me zarandean, empujan o avasallan físicamente para intimidarme",
-    31: "Se hacen bromas inapropiadas y crueles acerca de mí",
-    32: "Inventan y difunden rumores y calumnias acerca de mí de manera malintencionada",
-    33: "Me privan de información imprescindible y necesaria para hacer mi trabajo",
-    34: "Limitan malintencionadamente mi acceso a cursos, promociones, ascensos",
-    35: "Me atribuyen malintencionadamente conductas ilícitas o antiéticas para perjudicar mi imagen",
-    36: "Recibo una presión indebida para sacar adelante el trabajo",
-    37: "Me asignan plazos de ejecución o cargas de trabajo irrazonables",
-    38: "Modifican mis responsabilidades o las tareas a ejecutar sin decirme nada",
-    39: "Desvaloran continuamente mi esfuerzo profesional",
-    40: "Intentan persistentemente desmoralizarme",
-    41: "Utilizan varias formas de hacerme incurrir en errores profesionales de manera malintencionada",
-    42: "Controlan aspectos de mi trabajo de forma malintencionada para intentar «pillarme en algún renuncio»",
-    43: "Me lanzan insinuaciones o proposiciones sexuales directas o indirectas",
-    44: "¿Ha sido Ud víctima de por lo menos alguna de las anteriores formas de maltrato psicológico de manera continuada (más de 1 vez por semana)?"
+    1: { texto: "Mi superior restringe mis posibilidades de comunicarme, hablar o reunirme con él", tipo: "Bossing" },
+    2: { texto: "Me ignoran, me excluyen o me hacen el vacío, fingen no verme o me hacen «invisible»", tipo: "Mobbing" },
+    3: { texto: "Me interrumpen continuamente impidiendo expresarme", tipo: "Mobbing" },
+    4: { texto: "Me fuerzan a realizar trabajos que van contra mis principios o mi ética", tipo: "Bossing" },
+    5: { texto: "Evalúan mi trabajo de manera inequitativa o de forma sesgada", tipo: "Bossing" },
+    6: { texto: "Me dejan sin ningún trabajo que hacer, ni siquiera a iniciativa propia", tipo: "Mobbing" },
+    7: { texto: "Me asignan tareas o trabajos absurdos o sin sentido", tipo: "Bossing" },
+    8: { texto: "Me asignan tareas o trabajos por debajo de mi capacidad profesional o mis competencias", tipo: "Bossing" },
+    9: { texto: "Me asignan tareas rutinarias o sin valor o interés alguno", tipo: "Bossing" },
+    10: { texto: "Me abruman con una carga de trabajo insoportable de manera malintencionada", tipo: "Mobbing" },
+    11: { texto: "Me asignan tareas que ponen en peligro mi integridad física o mi salud a propósito", tipo: "Bossing" },
+    12: { texto: "Me impiden que adopte las medidas de seguridad necesarias para realizar mi trabajo con la debida seguridad", tipo: "Bossing" },
+    13: { texto: "Se me ocasionan gastos con intención de perjudicarme económicamente", tipo: "Bossing" },
+    14: { texto: "Prohíben a mis compañeros o colegas hablar conmigo", tipo: "Mobbing" },
+    15: { texto: "Minusvaloran y echan por tierra mi trabajo, no importa lo que haga", tipo: "Bossing" },
+    16: { texto: "Me acusan injustificadamente de incumplimientos, errores, fallos", tipo: "Mobbing" },
+    17: { texto: "Recibo críticas y reproches por cualquier cosa que haga o decisión que tome en mi trabajo", tipo: "Mobbing" },
+    18: { texto: "Se amplifican y dramatizan de manera injustificada errores pequeños o intrascendentes", tipo: "Mobbing" },
+    19: { texto: "Me humillan, desprecian o minusvaloran en público ante otros colegas o ante terceros", tipo: "Mobbing" },
+    20: { texto: "Me amenazan con usar instrumentos disciplinarios (rescisión, expedientes, despido, traslados)", tipo: "Bossing" },
+    21: { texto: "Intentan aislarme de mis compañeros dándome trabajos o tareas que me alejan físicamente", tipo: "Bossing" },
+    22: { texto: "Distorsionan malintencionadamente lo que digo o hago en mi trabajo", tipo: "Mobbing" },
+    23: { texto: "Se intenta buscarme las cosquillas para «hacerme explotar»", tipo: "Mobbing" },
+    24: { texto: "Me menosprecian personal o profesionalmente", tipo: "Mobbing" },
+    25: { texto: "Hacen burla de mí o bromas intentando ridiculizar mi forma de hablar, de andar, etc.", tipo: "Mobbing" },
+    26: { texto: "Recibo feroces e injustas críticas acerca de aspectos de mi vida personal", tipo: "Mobbing" },
+    27: { texto: "Recibo amenazas verbales o mediante gestos intimidatorios", tipo: "Mobbing" },
+    28: { texto: "Recibo amenazas por escrito o por teléfono en mi domicilio", tipo: "Mobbing" },
+    29: { texto: "Me chillan o gritan, o elevan la voz de manera a intimidarme", tipo: "Mobbing" },
+    30: { texto: "Me zarandean, empujan o avasallan físicamente para intimidarme", tipo: "Mobbing" },
+    31: { texto: "Se hacen bromas inapropiadas y crueles acerca de mí", tipo: "Mobbing" },
+    32: { texto: "Inventan y difunden rumores y calumnias acerca de mí de manera malintencionada", tipo: "Mobbing" },
+    33: { texto: "Me privan de información imprescindible y necesaria para hacer mi trabajo", tipo: "Mobbing" },
+    34: { texto: "Limitan malintencionadamente mi acceso a cursos, promociones, ascensos", tipo: "Mobbing" },
+    35: { texto: "Me atribuyen malintencionadamente conductas ilícitas o antiéticas para perjudicar mi imagen", tipo: "Mobbing" },
+    36: { texto: "Recibo una presión indebida para sacar adelante el trabajo", tipo: "Bossing" },
+    37: { texto: "Me asignan plazos de ejecución o cargas de trabajo irrazonables", tipo: "Bossing" },
+    38: { texto: "Modifican mis responsabilidades o las tareas a ejecutar sin decirme nada", tipo: "Bossing" },
+    39: { texto: "Desvaloran continuamente mi esfuerzo profesional", tipo: "Bossing" },
+    40: { texto: "Intentan persistentemente desmoralizarme", tipo: "Mobbing" },
+    41: { texto: "Utilizan varias formas de hacerme incurrir en errores profesionales de manera malintencionada", tipo: "Mobbing" },
+    42: { texto: "Controlan aspectos de mi trabajo de forma malintencionada para intentar «pillarme en algún renuncio»", tipo: "Mobbing" },
+    43: { texto: "Me lanzan insinuaciones o proposiciones sexuales directas o indirectas", tipo: "Mobbing" },
+    44: { texto: "¿Ha sido Ud víctima de por lo menos alguna de las anteriores formas de maltrato psicológico de manera continuada (más de 1 vez por semana)?", tipo: "Filtro" }
   },
 
   // Escala de frecuencia
@@ -264,14 +264,18 @@ window.tests_cisneros = {
                       dimension === 'Aislamiento' ? 'background: rgba(59, 130, 246, 0.05);' :
                       'background: rgba(139, 92, 246, 0.05);';
 
+      const tipo = this.itemDefinitions[i].tipo;
+      const tipoLabel = tipo === 'Mobbing' ? '<span style="background: #dc2626; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px;">MOBBING</span>' :
+                        tipo === 'Bossing' ? '<span style="background: #2563eb; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px;">BOSSING</span>' : '';
+
       html += `
         <tr style="${bgColor}">
           <td style="padding: 12px; border: 1px solid var(--border);">
             <strong style="color: #f97316;">${i}.</strong>
             <span style="color: #f97316; font-size: 13px;">
-              ${this.itemDefinitions[i]}
+              ${this.itemDefinitions[i].texto}
             </span>
-            <div style="font-size: 11px; color: #8b949e; margin-top: 4px;">${dimension}</div>
+            <div style="font-size: 11px; color: #8b949e; margin-top: 4px;">${dimension} ${tipoLabel}</div>
           </td>
       `;
 
@@ -298,7 +302,7 @@ window.tests_cisneros = {
         <td style="padding: 12px; border: 1px solid var(--border);">
           <strong style="color: #22c55e;">44.</strong>
           <span style="color: #22c55e; font-size: 13px;">
-            ${this.itemDefinitions[44]}
+            ${this.itemDefinitions[44].texto}
           </span>
           <div style="font-size: 11px; color: #8b949e; margin-top: 4px;">Chequeo Final</div>
         </td>
@@ -386,6 +390,17 @@ window.tests_cisneros = {
     // NEAP: Número de Estrategias de Acoso (cantidad de ítems con puntuación ≥3)
     const NEAP = itemsAlerta.length;
 
+    // Contar Mobbing vs Bossing
+    let mobbingCount = 0;
+    let bossingCount = 0;
+    for (let i = 1; i <= 43; i++) {
+      if ((items[i] || 0) >= 3) {
+        const tipo = this.itemDefinitions[i].tipo;
+        if (tipo === 'Mobbing') mobbingCount++;
+        else if (tipo === 'Bossing') bossingCount++;
+      }
+    }
+
     this.resultados = {
       demerito,
       obstaculizacion,
@@ -396,7 +411,9 @@ window.tests_cisneros = {
       intensidad,
       IGAP: parseFloat(IGAP.toFixed(2)),
       IMAP: parseFloat(IMAP.toFixed(2)),
-      NEAP
+      NEAP,
+      mobbingCount,
+      bossingCount
     };
 
     this.mostrarResultados();
@@ -566,57 +583,82 @@ window.tests_cisneros = {
     if (!this.resultados) return '';
 
     const { IGAP, IMAP, NEAP } = this.resultados;
-    const umbralIGAP = 1.23;
-    const umbralIMAP = 2.80;
-    const umbralNEAP = 4;
 
-    const width = 700;
+    // Umbrales específicos
+    const umbralNEAP_visual = 4;      // Umbral NEAP para visualización
+    const umbralIGAP = 1.23;          // Umbral IGAP
+    const umbralIMAP = 2.80;          // Umbral IMAP
+
+    const width = 800;
     const height = 380;
-    const barWidth = 50;
-    const barGap = 150;
-    const maxValue = 5;
+    const barWidth = 60;
+    const startX = 80;
+    const gapBars = 180;
+    const maxValueNEAP = 43;          // Max número de estrategias
+    const maxValueIGAP = 5;           // Max escala IGAP
+    const maxValueIMAP = 6;           // Max escala IMAP
 
-    const scaleY = (height - 80) / maxValue;
+    // Escalas Y diferentes por índice
+    const scaleY_NEAP = (height - 80) / maxValueNEAP;
+    const scaleY_IGAP = (height - 80) / maxValueIGAP;
+    const scaleY_IMAP = (height - 80) / maxValueIMAP;
 
     let svg = `
       <svg width="100%" height="${height}" viewBox="0 0 ${width} ${height}" style="max-width: 100%; margin: 0 auto;">
         <!-- Línea de base -->
         <line x1="60" y1="${height - 50}" x2="${width - 30}" y2="${height - 50}" stroke="#d1d5db" stroke-width="2"/>
 
-        <!-- Etiquetas Y -->
-        <text x="50" y="${height - 45}" font-size="12" fill="#6b7280">0</text>
-        <text x="40" y="${(height - 50) - (2.5 * scaleY) + 4}" font-size="12" fill="#6b7280">2.5</text>
-        <text x="45" y="${(height - 50) - (5 * scaleY) + 4}" font-size="12" fill="#6b7280">5</text>
+        <!-- ========== NEAP (Izquierda) ========== -->
+        <!-- Umbral NEAP -->
+        <line x1="${startX}" y1="${(height - 50) - (umbralNEAP_visual * scaleY_NEAP)}" x2="${startX + barWidth}" y2="${(height - 50) - (umbralNEAP_visual * scaleY_NEAP)}" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,5"/>
+        <!-- Barra NEAP -->
+        <rect x="${startX}" y="${(height - 50) - (NEAP * scaleY_NEAP)}" width="${barWidth}" height="${Math.max(NEAP * scaleY_NEAP, 2)}" fill="#22c55e" opacity="0.9"/>
+        <!-- Etiqueta NEAP -->
+        <text x="${startX + barWidth / 2}" y="${height - 20}" text-anchor="middle" font-size="14" fill="#1f2937" font-weight="700">NEAP</text>
+        <text x="${startX + barWidth / 2}" y="${(height - 50) - (NEAP * scaleY_NEAP) - 20}" text-anchor="middle" font-size="14" fill="#22c55e" font-weight="700">${NEAP}</text>
+        <text x="${startX + barWidth / 2}" y="${(height - 50) - (NEAP * scaleY_NEAP) - 5}" text-anchor="middle" font-size="10" fill="#6b7280">estrategias</text>
 
-        <!-- IGAP -->
-        <line x1="100" y1="${(height - 50) - (umbralIGAP * scaleY)}" x2="160" y2="${(height - 50) - (umbralIGAP * scaleY)}" stroke="#ef4444" stroke-width="2" stroke-dasharray="5,5"/>
-        <rect x="105" y="${(height - 50) - (IGAP * scaleY)}" width="${barWidth}" height="${Math.max(IGAP * scaleY, 2)}" fill="#3b82f6" opacity="0.8"/>
-        <text x="${105 + barWidth / 2}" y="${height - 20}" text-anchor="middle" font-size="13" fill="#1f2937" font-weight="600">IGAP</text>
-        <text x="${105 + barWidth / 2}" y="${(height - 50) - (IGAP * scaleY) - 15}" text-anchor="middle" font-size="12" fill="#3b82f6" font-weight="700" background="white">${IGAP}</text>
+        <!-- ========== IGAP (Centro) ========== -->
+        <!-- Etiquetas Y IGAP -->
+        <text x="50" y="${height - 45}" font-size="11" fill="#6b7280">0</text>
+        <text x="40" y="${(height - 50) - (2.5 * scaleY_IGAP) + 4}" font-size="11" fill="#6b7280">2.5</text>
+        <text x="45" y="${(height - 50) - (5 * scaleY_IGAP) + 4}" font-size="11" fill="#6b7280">5</text>
+        <!-- Umbral IGAP -->
+        <line x1="${startX + gapBars}" y1="${(height - 50) - (umbralIGAP * scaleY_IGAP)}" x2="${startX + gapBars + barWidth}" y2="${(height - 50) - (umbralIGAP * scaleY_IGAP)}" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,5"/>
+        <!-- Barra IGAP -->
+        <rect x="${startX + gapBars}" y="${(height - 50) - (IGAP * scaleY_IGAP)}" width="${barWidth}" height="${Math.max(IGAP * scaleY_IGAP, 2)}" fill="#3b82f6" opacity="0.9"/>
+        <!-- Etiqueta IGAP -->
+        <text x="${startX + gapBars + barWidth / 2}" y="${height - 20}" text-anchor="middle" font-size="14" fill="#1f2937" font-weight="700">IGAP</text>
+        <text x="${startX + gapBars + barWidth / 2}" y="${(height - 50) - (IGAP * scaleY_IGAP) - 20}" text-anchor="middle" font-size="14" fill="#3b82f6" font-weight="700">${IGAP}</text>
+        <text x="${startX + gapBars + barWidth / 2}" y="${(height - 50) - (IGAP * scaleY_IGAP) - 5}" text-anchor="middle" font-size="10" fill="#6b7280">grado agresión</text>
 
-        <!-- IMAP -->
-        <line x1="275" y1="${(height - 50) - (umbralIMAP * scaleY)}" x2="335" y2="${(height - 50) - (umbralIMAP * scaleY)}" stroke="#ef4444" stroke-width="2" stroke-dasharray="5,5"/>
-        <rect x="280" y="${(height - 50) - (IMAP * scaleY)}" width="${barWidth}" height="${Math.max(IMAP * scaleY, 2)}" fill="#3b82f6" opacity="0.8"/>
-        <text x="${280 + barWidth / 2}" y="${height - 20}" text-anchor="middle" font-size="13" fill="#1f2937" font-weight="600">IMAP</text>
-        <text x="${280 + barWidth / 2}" y="${(height - 50) - (IMAP * scaleY) - 15}" text-anchor="middle" font-size="12" fill="#3b82f6" font-weight="700">${IMAP}</text>
+        <!-- ========== IMAP (Derecha) ========== -->
+        <!-- Umbral IMAP -->
+        <line x1="${startX + gapBars * 2}" y1="${(height - 50) - (umbralIMAP * scaleY_IMAP)}" x2="${startX + gapBars * 2 + barWidth}" y2="${(height - 50) - (umbralIMAP * scaleY_IMAP)}" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,5"/>
+        <!-- Barra IMAP -->
+        <rect x="${startX + gapBars * 2}" y="${(height - 50) - (IMAP * scaleY_IMAP)}" width="${barWidth}" height="${Math.max(IMAP * scaleY_IMAP, 2)}" fill="#f59e0b" opacity="0.9"/>
+        <!-- Etiqueta IMAP -->
+        <text x="${startX + gapBars * 2 + barWidth / 2}" y="${height - 20}" text-anchor="middle" font-size="14" fill="#1f2937" font-weight="700">IMAP</text>
+        <text x="${startX + gapBars * 2 + barWidth / 2}" y="${(height - 50) - (IMAP * scaleY_IMAP) - 20}" text-anchor="middle" font-size="14" fill="#f59e0b" font-weight="700">${IMAP}</text>
+        <text x="${startX + gapBars * 2 + barWidth / 2}" y="${(height - 50) - (IMAP * scaleY_IMAP) - 5}" text-anchor="middle" font-size="10" fill="#6b7280">máx/mín</text>
 
-        <!-- NEAP -->
-        <line x1="450" y1="${(height - 50) - (umbralNEAP * scaleY / 1.6)}" x2="510" y2="${(height - 50) - (umbralNEAP * scaleY / 1.6)}" stroke="#ef4444" stroke-width="2" stroke-dasharray="5,5"/>
-        <rect x="455" y="${(height - 50) - (NEAP * scaleY / 1.6)}" width="${barWidth}" height="${Math.max(NEAP * scaleY / 1.6, 2)}" fill="#3b82f6" opacity="0.8"/>
-        <text x="${455 + barWidth / 2}" y="${height - 20}" text-anchor="middle" font-size="13" fill="#1f2937" font-weight="600">NEAP</text>
-        <text x="${455 + barWidth / 2}" y="${(height - 50) - (NEAP * scaleY / 1.6) - 15}" text-anchor="middle" font-size="12" fill="#3b82f6" font-weight="700">${NEAP}</text>
+        <!-- Leyenda -->
+        <line x1="620" y1="30" x2="640" y2="30" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,5"/>
+        <text x="650" y="35" font-size="11" fill="#6b7280">Umbral de Alerta</text>
 
-        <!-- Leyenda (derecha) -->
-        <line x1="560" y1="30" x2="580" y2="30" stroke="#ef4444" stroke-width="2" stroke-dasharray="5,5"/>
-        <text x="590" y="35" font-size="11" fill="#6b7280">Umbral de Alerta</text>
+        <rect x="620" y="48" width="12" height="12" fill="#22c55e" opacity="0.9"/>
+        <text x="650" y="57" font-size="11" fill="#6b7280">NEAP: Estrategias</text>
 
-        <rect x="560" y="48" width="10" height="10" fill="#3b82f6" opacity="0.8"/>
-        <text x="580" y="57" font-size="11" fill="#6b7280">Tu Puntuación</text>
+        <rect x="620" y="68" width="12" height="12" fill="#3b82f6" opacity="0.9"/>
+        <text x="650" y="77" font-size="11" fill="#6b7280">IGAP: Grado agresión</text>
+
+        <rect x="620" y="88" width="12" height="12" fill="#f59e0b" opacity="0.9"/>
+        <text x="650" y="97" font-size="11" fill="#6b7280">IMAP: Comparación</text>
       </svg>
     `;
 
     return `
-      <div id="cisneros-grafico-indices" style="width: 100%; min-height: 300px; display: flex; justify-content: center; align-items: center; background: white; border-radius: 6px; page-break-inside: avoid; break-inside: avoid; margin-bottom: 20px;">
+      <div id="cisneros-grafico-indices" style="width: 100%; min-height: 320px; display: flex; justify-content: center; align-items: center; background: white; border-radius: 6px; page-break-inside: avoid; break-inside: avoid; margin-bottom: 20px;">
         ${svg}
       </div>
     `;
