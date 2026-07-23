@@ -769,10 +769,12 @@ window.tests_egep5 = {
     };
 
     const todosCumplen = Object.values(criterios).every(c => c === 'SI');
+    const pd = this.calcularIntensidades();
     return {
       tept: todosCumplen ? 'SI' : 'NO',
       criterios: criterios,
-      intensidades: this.calcularIntensidades(),
+      pd: pd,
+      intensidades: pd,  // Mantener compatibilidad
       especificaciones: this.detectarEspecificaciones()
     };
   },
