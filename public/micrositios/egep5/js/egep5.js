@@ -270,10 +270,10 @@ window.tests_egep5 = {
         <tr>
           <td style="padding: 12px; border: 1px solid var(--border); width: 70%; text-transform: capitalize;"><strong style="color: var(--accent-light);">${i}.</strong> <span style="color: var(--accent-light);">${this.caracteristicaDefinitions[i]}</span></td>
           <td class="table-center" style="border: 1px solid var(--border);">
-            <input type="radio" name="caract_${i}" value="si" onchange="window.tests_egep5.cambiarCaracteristica(${i}, true)">
+            <input type="radio" id="caract_${i}_si" name="caract_${i}" value="si" onchange="window.tests_egep5.cambiarCaracteristica(${i}, true)" style="cursor: pointer; width: 18px; height: 18px;">
           </td>
           <td class="table-center" style="border: 1px solid var(--border);">
-            <input type="radio" name="caract_${i}" value="no" onchange="window.tests_egep5.cambiarCaracteristica(${i}, false)">
+            <input type="radio" id="caract_${i}_no" name="caract_${i}" value="no" onchange="window.tests_egep5.cambiarCaracteristica(${i}, false)" style="cursor: pointer; width: 18px; height: 18px;">
           </td>
         </tr>
       `;
@@ -293,10 +293,10 @@ window.tests_egep5 = {
         <tr>
           <td style="padding: 12px; border: 1px solid var(--border); width: 70%; text-transform: capitalize;"><strong style="color: var(--accent-light);">${i}.</strong> <span style="color: var(--accent-light);">${this.caracteristicaDefinitions[i]}</span></td>
           <td class="table-center" style="border: 1px solid var(--border);">
-            <input type="radio" name="caract_${i}" value="si" onchange="window.tests_egep5.cambiarCaracteristica(${i}, true)">
+            <input type="radio" id="caract_${i}_si" name="caract_${i}" value="si" onchange="window.tests_egep5.cambiarCaracteristica(${i}, true)" style="cursor: pointer; width: 18px; height: 18px;">
           </td>
           <td class="table-center" style="border: 1px solid var(--border);">
-            <input type="radio" name="caract_${i}" value="no" onchange="window.tests_egep5.cambiarCaracteristica(${i}, false)">
+            <input type="radio" id="caract_${i}_no" name="caract_${i}" value="no" onchange="window.tests_egep5.cambiarCaracteristica(${i}, false)" style="cursor: pointer; width: 18px; height: 18px;">
           </td>
         </tr>
       `;
@@ -369,10 +369,10 @@ window.tests_egep5 = {
         <tr style="${bgColor}">
           <td style="padding: 12px; border: 1px solid var(--border); text-transform: capitalize;"><strong style="color: var(--accent-light);">${i}.</strong> <span style="color: var(--accent-light);">${this.symptomDefinitions[i]}</span></td>
           <td class="table-center" style="border: 1px solid var(--border);">
-            <input type="radio" name="symptom_respuesta_${i}" value="si" onchange="window.tests_egep5.cambiarSintomaSI(${i}, 'si')">
+            <input type="radio" id="symptom_${i}_si" name="symptom_respuesta_${i}" value="si" onchange="window.tests_egep5.cambiarSintomaSI(${i}, 'si')" style="cursor: pointer; width: 18px; height: 18px;">
           </td>
           <td class="table-center" style="border: 1px solid var(--border);">
-            <input type="radio" name="symptom_respuesta_${i}" value="no" onchange="window.tests_egep5.cambiarSintomaNO(${i}, 'no')">
+            <input type="radio" id="symptom_${i}_no" name="symptom_respuesta_${i}" value="no" onchange="window.tests_egep5.cambiarSintomaNO(${i}, 'no')" style="cursor: pointer; width: 18px; height: 18px;">
           </td>
       `;
 
