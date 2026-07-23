@@ -1476,97 +1476,44 @@ window.tests_egep5 = {
     const btn = document.getElementById('btn-egep5-guardar');
     const btnOriginalText = btn.textContent;
     btn.disabled = true;
-    btn.textContent = '⏳ Generando PDF...';
+    btn.textContent = '⏳ Guardando...';
 
-    const pacienteId = sessionStorage.getItem('pacienteSeleccionado');
-    if (!pacienteId) {
-      alert('❌ No hay paciente seleccionado.');
-      btn.disabled = false;
-      btn.textContent = btnOriginalText;
-      return;
-    }
+    // Preparar datos numéricos para guardar
+    const data = [];
+    data.push(...this.respuestas.items_27_31);
+    data.push(...this.respuestas.items_32_33);
+    data.push(...this.respuestas.items_34_40);
+    data.push(...this.respuestas.items_41_46);
+    data.push(this.respuestas.symptom_duration || 0, this.respuestas.symptom_onset || 0);
+    data.push(...this.respuestas.items_52_58);
 
-    // Generar PDF completo (Tab 3 + 4 + 5)
-    const tempContainer = this.crearContenedorPDFCompleto();
-    document.body.appendChild(tempContainer);
-
-    const fecha = new Date().toISOString().split('T')[0];
-    const nombrePaciente = localStorage.getItem('paciente_nombre') || 'Paciente';
-
-    const opt = {
-      margin: 10,
-      filename: `EGEP-5_${nombrePaciente}_${fecha}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
-      pagebreak: { mode: ['avoid-all', 'css'] }
+    const totalIntensidad = this.resultados.pd.I + this.resultados.pd.E + this.resultados.pd.C + this.resultados.pd.A;
+    const subescalas = {
+      reexperimentacion: this.resultados.pd.I,
+      evitacion: this.resultados.pd.E,
+      cognitivas_animo: this.resultados.pd.C,
+      activacion: this.resultados.pd.A,
+      funcionamiento: this.respuestas.items_52_58.filter(x => x > 0).length,
+      intensidad_total: totalIntensidad,
+      _criterios_dsm5: this.resultados.criterios,
+      _tept_presente: this.resultados.tept,
+      _evaluador: localStorage.getItem('nombre') || 'Sin especificar'
     };
 
-    // Generar PDF y convertir a base64
-    html2pdf().set(opt).from(tempContainer).toPdf().get('pdf').then((pdf) => {
-      document.body.removeChild(tempContainer);
-
-      // Convertir PDF a base64
-      const pdfDataUri = pdf.output('datauristring');
-      const pdfBase64 = pdfDataUri.split(',')[1]; // Quitar "data:application/pdf;base64,"
-
-      console.log('📄 PDF completo generado:', pdfBase64.substring(0, 50) + '...');
-
-      // Preparar datos para guardar
-      const data = [];
-      data.push(...this.respuestas.items_27_31);
-      data.push(...this.respuestas.items_32_33);
-      data.push(...this.respuestas.items_34_40);
-      data.push(...this.respuestas.items_41_46);
-      data.push(this.respuestas.symptom_duration || 0, this.respuestas.symptom_onset || 0);
-      data.push(...this.respuestas.items_52_58);
-
-      const totalIntensidad = this.resultados.pd.I + this.resultados.pd.E + this.resultados.pd.C + this.resultados.pd.A;
-      const subescalas = {
-        reexperimentacion: this.resultados.pd.I,
-        evitacion: this.resultados.pd.E,
-        cognitivas_animo: this.resultados.pd.C,
-        activacion: this.resultados.pd.A,
-        funcionamiento: this.respuestas.items_52_58.filter(x => x > 0).length,
-        intensidad_total: totalIntensidad,
-        _criterios_dsm5: this.resultados.criterios,
-        _tept_presente: this.resultados.tept,
-        _evaluador: localStorage.getItem('nombre') || 'Sin especificar'
-      };
-
-      const bodyToSend = {
-        paciente_id: pacienteId,
-        tipo: 'EGEP-5',
-        data: data,
-        total: totalIntensidad,
-        subescalas: subescalas,
-        pdf_base64: pdfBase64
-      };
-
-      console.log('💾 Enviando PDF completo al servidor...');
-
-      return fetch('/api/pruebas', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
-        },
-        body: JSON.stringify(bodyToSend)
-      });
-    }).then(response => {
-      if (!response.ok) {
-        return response.json().then(err => {
-          throw new Error(err.error || `HTTP ${response.status}`);
-        });
-      }
-      return response.json();
-    }).then(resultado => {
+    // Usar api.guardarPrueba() para guardar datos numéricos
+    api.guardarPrueba(
+      sessionStorage.getItem('pacienteSeleccionado'),
+      'EGEP-5',
+      data,
+      totalIntensidad,
+      subescalas,
+      localStorage.getItem('nombre')
+    ).then(resultado => {
       btn.disabled = false;
       btn.textContent = btnOriginalText;
-      alert('✅ Resultados y PDF completo guardados en expediente correctamente');
+      alert('✅ Resultados guardados en expediente correctamente');
       window.history.back();
     }).catch(error => {
-      document.body.removeChild(document.querySelector('[style*="display: none"]'));
       btn.disabled = false;
       btn.textContent = btnOriginalText;
       alert('❌ Error al guardar: ' + error.message);
