@@ -270,10 +270,10 @@ window.tests_egep5 = {
         <tr>
           <td style="padding: 12px; border: 1px solid var(--border); width: 70%; text-transform: capitalize;"><strong style="color: var(--accent-light);">${i}.</strong> <span style="color: var(--accent-light);">${this.caracteristicaDefinitions[i]}</span></td>
           <td class="table-center" style="border: 1px solid var(--border);">
-            <input type="checkbox" name="caract_${i}_si" onchange="window.tests_egep5.cambiarCaracteristica(${i}, true)">
+            <input type="radio" name="caract_${i}" value="si" onchange="window.tests_egep5.cambiarCaracteristica(${i}, true)">
           </td>
           <td class="table-center" style="border: 1px solid var(--border);">
-            <input type="checkbox" name="caract_${i}_no" onchange="window.tests_egep5.cambiarCaracteristica(${i}, false)">
+            <input type="radio" name="caract_${i}" value="no" onchange="window.tests_egep5.cambiarCaracteristica(${i}, false)">
           </td>
         </tr>
       `;
@@ -293,10 +293,10 @@ window.tests_egep5 = {
         <tr>
           <td style="padding: 12px; border: 1px solid var(--border); width: 70%; text-transform: capitalize;"><strong style="color: var(--accent-light);">${i}.</strong> <span style="color: var(--accent-light);">${this.caracteristicaDefinitions[i]}</span></td>
           <td class="table-center" style="border: 1px solid var(--border);">
-            <input type="checkbox" name="caract_${i}_si" onchange="window.tests_egep5.cambiarCaracteristica(${i}, true)">
+            <input type="radio" name="caract_${i}" value="si" onchange="window.tests_egep5.cambiarCaracteristica(${i}, true)">
           </td>
           <td class="table-center" style="border: 1px solid var(--border);">
-            <input type="checkbox" name="caract_${i}_no" onchange="window.tests_egep5.cambiarCaracteristica(${i}, false)">
+            <input type="radio" name="caract_${i}" value="no" onchange="window.tests_egep5.cambiarCaracteristica(${i}, false)">
           </td>
         </tr>
       `;
