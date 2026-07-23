@@ -835,7 +835,7 @@ const app = {
     sessionStorage.setItem('usuario_nombre', usuarioLogueado);
 
     console.log('EGEP5 - Paciente:', nombrePaciente, 'ID:', this.pacienteActivo.id);
-    window.location.href = `/egep5.html?paciente_id=${this.pacienteActivo.id}&token=${encodeURIComponent(token)}`;
+    window.location.href = `/micrositios/egep5/?paciente_id=${this.pacienteActivo.id}&token=${encodeURIComponent(token)}`;
   },
 
   iniciarMBI() {
