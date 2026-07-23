@@ -870,12 +870,24 @@ window.tests_egep5 = {
     document.getElementById('egep5-baremos').innerHTML = bareHTML;
 
     // 7. GRÁFICO DEL PERFIL (Tab 4)
-    const perfilHTML = window.EGEP5_GRAFICOS.generarPerfil(resultado);
-    document.getElementById('egep5-perfil-grafico').innerHTML = perfilHTML;
+    try {
+      if (window.EGEP5_GRAFICOS && window.EGEP5_GRAFICOS.generarPerfil) {
+        const perfilHTML = window.EGEP5_GRAFICOS.generarPerfil(resultado);
+        const perfilEl = document.getElementById('egep5-perfil-grafico');
+        if (perfilEl) perfilEl.innerHTML = perfilHTML;
+      }
+    } catch (e) {
+      console.error('Error generando gráfico:', e);
+    }
 
     // 8. INTERPRETACIÓN CLÍNICA (Tab 5)
-    const interpretHTML = this.generarInterpretacion(resultado, intensidades, totalIntensidad);
-    document.getElementById('egep5-interpretacion-clinica').innerHTML = interpretHTML;
+    try {
+      const interpretHTML = this.generarInterpretacion(resultado, intensidades, totalIntensidad);
+      const interpEl = document.getElementById('egep5-interpretacion-clinica');
+      if (interpEl) interpEl.innerHTML = interpretHTML;
+    } catch (e) {
+      console.error('Error generando interpretación:', e);
+    }
   },
 
   generarInterpretacion(resultado, intensidades, totalIntensidad) {
