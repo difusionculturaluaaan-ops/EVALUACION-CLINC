@@ -672,7 +672,7 @@ window.tests_cisneros = {
     const { mobbingCount, bossingCount, NEAP } = this.resultados;
 
     const width = 600;
-    const height = 400;
+    const height = 480;
     const padding = 60;
     const graphWidth = width - (padding * 2);
     const graphHeight = height - (padding * 2);
@@ -736,28 +736,28 @@ window.tests_cisneros = {
           B: ${bossingCount} | M: ${mobbingCount}
         </text>
 
-        <!-- Leyenda -->
-        <g>
-          <rect x="20" y="20" width="180" height="80" fill="white" stroke="#e5e7eb" stroke-width="1" rx="4"/>
-
-          <rect x="30" y="30" width="12" height="12" fill="${colorMobbing}" opacity="0.8"/>
-          <text x="50" y="39" font-size="12" fill="#1f2937" font-weight="600">MOBBING: ${mobbingCount}</text>
-          <text x="50" y="54" font-size="10" fill="#8b949e">(Estrategias Mobbing ≥3)</text>
-
-          <rect x="30" y="60" width="12" height="12" fill="${colorBossing}" opacity="0.8"/>
-          <text x="50" y="69" font-size="12" fill="#1f2937" font-weight="600">BOSSING: ${bossingCount}</text>
-          <text x="50" y="84" font-size="10" fill="#8b949e">(Estrategias Bossing ≥3)</text>
-        </g>
-
-        <!-- Total NEAP -->
+        <!-- Total NEAP (arriba) -->
         <text x="${width / 2}" y="30" text-anchor="middle" font-size="13" fill="#1f2937" font-weight="700">
           TOTAL ESTRATEGIAS DE ACOSO: ${NEAP}
         </text>
+
+        <!-- Leyenda (abajo, fuera del gráfico) -->
+        <g>
+          <rect x="20" y="${height - 65}" width="560" height="55" fill="white" stroke="#e5e7eb" stroke-width="1" rx="4"/>
+
+          <rect x="30" y="${height - 50}" width="14" height="14" fill="${colorMobbing}" opacity="0.8"/>
+          <text x="50" y="${height - 40}" font-size="12" fill="#1f2937" font-weight="600">MOBBING: ${mobbingCount} estrategias</text>
+          <text x="50" y="${height - 25}" font-size="10" fill="#8b949e">(Ítems con respuesta ≥3)</text>
+
+          <rect x="280" y="${height - 50}" width="14" height="14" fill="${colorBossing}" opacity="0.8"/>
+          <text x="300" y="${height - 40}" font-size="12" fill="#1f2937" font-weight="600">BOSSING: ${bossingCount} estrategias</text>
+          <text x="300" y="${height - 25}" font-size="10" fill="#8b949e">(Ítems con respuesta ≥3)</text>
+        </g>
       </svg>
     `;
 
     return `
-      <div id="cisneros-grafico-mobbing-bossing" style="width: 100%; min-height: 380px; display: flex; justify-content: center; align-items: center; background: white; border-radius: 6px; page-break-inside: avoid; break-inside: avoid; margin-bottom: 20px;">
+      <div id="cisneros-grafico-mobbing-bossing" style="width: 100%; min-height: 460px; display: flex; justify-content: center; align-items: center; background: white; border-radius: 6px; page-break-inside: avoid; break-inside: avoid; margin-bottom: 20px;">
         ${svg}
       </div>
     `;
