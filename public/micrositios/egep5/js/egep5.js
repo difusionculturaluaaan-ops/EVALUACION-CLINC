@@ -369,10 +369,10 @@ window.tests_egep5 = {
         <tr style="${bgColor}">
           <td style="padding: 12px; border: 1px solid var(--border); text-transform: capitalize;"><strong style="color: var(--accent-light);">${i}.</strong> <span style="color: var(--accent-light);">${this.symptomDefinitions[i]}</span></td>
           <td class="table-center" style="border: 1px solid var(--border);">
-            <input type="checkbox" name="symptom_${i}_si" onchange="window.tests_egep5.cambiarSintomaSI(${i}, this.checked)">
+            <input type="radio" name="symptom_respuesta_${i}" value="si" onchange="window.tests_egep5.cambiarSintomaSI(${i}, 'si')">
           </td>
           <td class="table-center" style="border: 1px solid var(--border);">
-            <input type="checkbox" name="symptom_${i}_no" onchange="window.tests_egep5.cambiarSintomaNO(${i}, this.checked)">
+            <input type="radio" name="symptom_respuesta_${i}" value="no" onchange="window.tests_egep5.cambiarSintomaNO(${i}, 'no')">
           </td>
       `;
 
@@ -437,32 +437,18 @@ window.tests_egep5 = {
     this.actualizarProgreso();
   },
 
-  cambiarSintomaSI(numero, checked) {
+  cambiarSintomaSI(numero, valor) {
     if (!this.respuestas.sintomas_si_no) {
       this.respuestas.sintomas_si_no = {};
     }
-    if (checked) {
-      this.respuestas.sintomas_si_no[numero] = 'SÍ';
-      // Desmarcar NO si está marcado
-      const noCheckbox = document.querySelector(`input[name="symptom_${numero}_no"]`);
-      if (noCheckbox) noCheckbox.checked = false;
-    } else {
-      delete this.respuestas.sintomas_si_no[numero];
-    }
+    this.respuestas.sintomas_si_no[numero] = valor === 'si' ? 'SÍ' : 'NO';
   },
 
-  cambiarSintomaNO(numero, checked) {
+  cambiarSintomaNO(numero, valor) {
     if (!this.respuestas.sintomas_si_no) {
       this.respuestas.sintomas_si_no = {};
     }
-    if (checked) {
-      this.respuestas.sintomas_si_no[numero] = 'NO';
-      // Desmarcar SÍ si está marcado
-      const siCheckbox = document.querySelector(`input[name="symptom_${numero}_si"]`);
-      if (siCheckbox) siCheckbox.checked = false;
-    } else {
-      delete this.respuestas.sintomas_si_no[numero];
-    }
+    this.respuestas.sintomas_si_no[numero] = valor === 'no' ? 'NO' : 'SÍ';
   },
 
   cambiarFuncionamiento(indice, valor) {
