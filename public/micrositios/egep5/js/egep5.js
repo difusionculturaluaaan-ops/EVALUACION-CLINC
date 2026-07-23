@@ -214,6 +214,12 @@ window.tests_egep5 = {
       desc11El.style.display = numero === 11 && valor ? 'block' : 'none';
     }
 
+    // Mostrar/ocultar Ítem 12 (Descripción) cuando Ítem 11 está seleccionado
+    const item12El = document.getElementById('egep5-item12-section');
+    if (item12El) {
+      item12El.style.display = numero === 11 && valor ? 'block' : 'none';
+    }
+
     console.log(`Evento ${numero} marcado como: ${valor}`);
   },
 
