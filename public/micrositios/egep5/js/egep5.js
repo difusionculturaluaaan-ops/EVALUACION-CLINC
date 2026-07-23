@@ -1178,12 +1178,12 @@ window.tests_egep5 = {
           throw new Error('El archivo no es un EGEP-5 válido');
         }
 
-        if (!data.respuestas || data.respuestas.length !== 58) {
-          throw new Error(`El archivo debe tener 58 respuestas (tiene ${data.respuestas.length})`);
+        if (!data.respuestas || data.respuestas.length < 31) {
+          throw new Error(`El archivo debe tener al menos 32 respuestas (tiene ${data.respuestas.length})`);
         }
 
-        if (!data.respuestas.every(r => [0, 1, 2, 3, 4].includes(r))) {
-          throw new Error('Las respuestas deben estar entre 0 y 4');
+        if (!data.respuestas.slice(0, Math.min(32, data.respuestas.length)).every(r => typeof r === 'number' && r >= 0 && r <= 4)) {
+          throw new Error('Las respuestas deben ser números entre 0 y 4');
         }
 
         // Confirmar antes de cargar
@@ -1207,21 +1207,26 @@ window.tests_egep5 = {
           if (data.metadatos.evaluador) localStorage.setItem('nombre', data.metadatos.evaluador);
         }
 
-        // 3. Reconstruir respuestas en el DOM
-        this.cargarRespuestasEnDOM(data);
+        // 3. Ir a Tab 2 para renderizar elementos antes de cargar respuestas
+        this.irTab('test');
 
-        // 4. Recalcular diagnóstico desde respuestas cargadas
-        const resultado = this.diagnosticarTEPT();
-        this.resultados = resultado;
+        // 4. Esperar a que se rendericen los elementos
+        setTimeout(() => {
+          this.cargarRespuestasEnDOM(data);
 
-        // 5. Mostrar resultados
-        this.mostrarResultados(resultado);
+          // 5. Recalcular diagnóstico desde respuestas cargadas
+          const resultado = this.diagnosticarTEPT();
+          this.resultados = resultado;
 
-        // 6. Navegar a resultados
-        this.irTab('resultados');
+          // 6. Mostrar resultados
+          this.mostrarResultados(resultado);
 
-        // 7. Mostrar éxito
-        this.mostrarMensajeExito(`✅ JSON importado correctamente<br>Respuestas cargadas: ${data.respondidas || 58}/58<br>Diagnóstico: ${resultado.tept === 'SI' ? '✓ TEPT PRESENTE' : '✗ TEPT AUSENTE'}`);
+          // 7. Navegar a resultados
+          this.irTab('resultados');
+
+          // 8. Mostrar éxito
+          this.mostrarMensajeExito(`✅ JSON importado correctamente<br>Respuestas cargadas: ${data.respondidas || 58}/58<br>Diagnóstico: ${resultado.tept === 'SI' ? '✓ TEPT PRESENTE' : '✗ TEPT AUSENTE'}`);
+        }, 500);
 
       } catch (error) {
         this.mostrarMensajeError(`❌ Error: ${error.message}`);
@@ -1245,39 +1250,67 @@ window.tests_egep5 = {
   },
 
   cargarRespuestasEnDOM(data) {
+    console.log('📍 cargarRespuestasEnDOM: iniciando carga...', data.respuestas.length, 'items');
+
+    // Helper para cargar síntoma con Sí/No Y molestia
+    const cargarSintoma = (numero, molestia) => {
+      if (molestia > 0) {
+        // Si hay molestia, marcar Sí
+        const radioSi = document.querySelector(`input[name="symptom_respuesta_${numero}"][value="si"]`);
+        if (radioSi) {
+          radioSi.checked = true;
+          console.log(`✅ Marcado Sí para item ${numero}`);
+        } else {
+          console.log(`⚠️ NO encontrado radio Sí para item ${numero}`);
+        }
+      } else {
+        // Si molestia es 0, marcar No
+        const radioNo = document.querySelector(`input[name="symptom_respuesta_${numero}"][value="no"]`);
+        if (radioNo) {
+          radioNo.checked = true;
+          console.log(`✅ Marcado No para item ${numero}`);
+        } else {
+          console.log(`⚠️ NO encontrado radio No para item ${numero}`);
+        }
+      }
+      // Siempre cargar el valor de molestia
+      const radioMolestia = document.querySelector(`input[name="symptom_${numero}"][value="${molestia}"]`);
+      if (radioMolestia) {
+        radioMolestia.checked = true;
+        console.log(`✅ Marcada molestia ${molestia} para item ${numero}`);
+      } else {
+        console.log(`⚠️ NO encontrado radio molestia ${molestia} para item ${numero}`);
+      }
+    };
+
     // Items 27-31 (Síntomas Intrusivos)
     data.respuestas.slice(0, 5).forEach((resp, i) => {
       const numero = 27 + i;
-      const radio = document.querySelector(`input[name="symptom_${numero}"][value="${resp}"]`);
-      if (radio) radio.checked = true;
+      cargarSintoma(numero, resp);
     });
 
     // Items 32-33 (Evitación)
     data.respuestas.slice(5, 7).forEach((resp, i) => {
       const numero = 32 + i;
-      const radio = document.querySelector(`input[name="symptom_${numero}"][value="${resp}"]`);
-      if (radio) radio.checked = true;
+      cargarSintoma(numero, resp);
     });
 
     // Items 34-40 (Alteraciones Cognitivas)
     data.respuestas.slice(7, 14).forEach((resp, i) => {
       const numero = 34 + i;
-      const radio = document.querySelector(`input[name="symptom_${numero}"][value="${resp}"]`);
-      if (radio) radio.checked = true;
+      cargarSintoma(numero, resp);
     });
 
     // Items 41-46 (Activación)
     data.respuestas.slice(14, 20).forEach((resp, i) => {
       const numero = 41 + i;
-      const radio = document.querySelector(`input[name="symptom_${numero}"][value="${resp}"]`);
-      if (radio) radio.checked = true;
+      cargarSintoma(numero, resp);
     });
 
     // Items 47-49 (Síntomas Disociativos)
     data.respuestas.slice(20, 23).forEach((resp, i) => {
       const numero = 47 + i;
-      const radio = document.querySelector(`input[name="symptom_${numero}"][value="${resp}"]`);
-      if (radio) radio.checked = true;
+      cargarSintoma(numero, resp);
     });
 
     // Item 50 (Duración) - índice 23
@@ -1368,16 +1401,16 @@ window.tests_egep5 = {
     data.push(...this.respuestas.items_52_58);
 
     // Subescalas con criterios DSM-5 y metadatos
+    const totalIntensidad = this.resultados.pd.I + this.resultados.pd.E + this.resultados.pd.C + this.resultados.pd.A;
     const subescalas = {
-      reexperimentacion: this.resultados.reexper,
-      evitacion: this.resultados.evitar,
-      cognitivas_animo: this.resultados.cognit,
-      activacion: this.resultados.activa,
+      reexperimentacion: this.resultados.pd.I,
+      evitacion: this.resultados.pd.E,
+      cognitivas_animo: this.resultados.pd.C,
+      activacion: this.resultados.pd.A,
       funcionamiento: this.respuestas.items_52_58.filter(x => x > 0).length,
-      intensidad_total: this.resultados.intensidadTotal,
-      nivel: this.resultados.nivelIntensidad,
+      intensidad_total: totalIntensidad,
       _criterios_dsm5: this.resultados.criterios,
-      _tept_presente: this.resultados.teptPresente,
+      _tept_presente: this.resultados.tept,
       _evaluador: localStorage.getItem('nombre') || 'Sin especificar'
     };
 
@@ -1387,7 +1420,7 @@ window.tests_egep5 = {
       pacienteId,
       'EGEP-5',
       data,
-      this.resultados.intensidadTotal,
+      totalIntensidad,
       subescalas,
       localStorage.getItem('nombre')
     ).then(resultado => {
