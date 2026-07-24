@@ -921,11 +921,14 @@ window.tests_cisneros = {
           // Guardar en localStorage
           localStorage.setItem(`${this.tipo}_respuestas`, JSON.stringify(this.respuestas));
 
-          // Recalcular resultados y mostrar
-          this.calcularResultados();
-          this.irTab('resultados');
+          // 🔑 CLAVE: Renderizar items para mostrar radio buttons seleccionados (como MBI)
+          this.renderizarItems();
+          this.irTab('test');
 
-          alert('✅ JSON importado exitosamente');
+          alert('✅ JSON importado exitosamente. Radio buttons cargados.');
+
+          // Actualizar progreso
+          this.actualizarProgreso();
         } catch (error) {
           alert('❌ Error al importar: ' + error.message);
         }
