@@ -908,18 +908,25 @@ window.tests_cisneros = {
           // Cargar en respuestas (agregar 0 al inicio)
           this.respuestas.items = [0, ...respuestasNumeros];
 
-          // Cargar metadatos
-          if (data.metadatos) {
-            if (data.metadatos.paciente_nombre) document.getElementById('c_nombre').value = data.metadatos.paciente_nombre;
-            if (data.metadatos.edad) document.getElementById('c_edad').value = data.metadatos.edad;
-            if (data.metadatos.sexo) document.getElementById('c_sexo').value = data.metadatos.sexo;
-            if (data.metadatos.empresa) document.getElementById('c_empresa').value = data.metadatos.empresa;
-            if (data.metadatos.evaluador) document.getElementById('c_evaluador').value = data.metadatos.evaluador;
-            if (data.metadatos.fecha_evaluacion) document.getElementById('c_fecha').value = data.metadatos.fecha_evaluacion;
-          }
-
           // Guardar en localStorage
           localStorage.setItem(`${this.tipo}_respuestas`, JSON.stringify(this.respuestas));
+
+          // Cargar metadatos (con verificación segura)
+          if (data.metadatos) {
+            const nombre = document.getElementById('c_nombre');
+            const edad = document.getElementById('c_edad');
+            const sexo = document.getElementById('c_sexo');
+            const empresa = document.getElementById('c_empresa');
+            const evaluador = document.getElementById('c_evaluador');
+            const fecha = document.getElementById('c_fecha');
+
+            if (nombre && data.metadatos.paciente_nombre) nombre.value = data.metadatos.paciente_nombre;
+            if (edad && data.metadatos.edad) edad.value = data.metadatos.edad;
+            if (sexo && data.metadatos.sexo) sexo.value = data.metadatos.sexo;
+            if (empresa && data.metadatos.empresa) empresa.value = data.metadatos.empresa;
+            if (evaluador && data.metadatos.evaluador) evaluador.value = data.metadatos.evaluador;
+            if (fecha && data.metadatos.fecha_evaluacion) fecha.value = data.metadatos.fecha_evaluacion;
+          }
 
           // 🔑 CLAVE: Renderizar items para mostrar radio buttons seleccionados (como MBI)
           this.renderizarItems();
