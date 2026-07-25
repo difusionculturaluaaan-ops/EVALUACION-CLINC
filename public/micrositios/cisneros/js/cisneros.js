@@ -640,18 +640,18 @@ window.tests_cisneros = {
         <text x="${startX + gapBars * 2 + barWidth / 2}" y="${(height - 50) - (IMAP * scaleY_IMAP) - 20}" text-anchor="middle" font-size="14" fill="#f59e0b" font-weight="700">${IMAP}</text>
         <text x="${startX + gapBars * 2 + barWidth / 2}" y="${(height - 50) - (IMAP * scaleY_IMAP) - 5}" text-anchor="middle" font-size="10" fill="#6b7280">máx/mín</text>
 
-        <!-- Leyenda (más a la izquierda, cerca de las barras) -->
-        <line x1="380" y1="30" x2="400" y2="30" stroke="#000000" stroke-width="2" stroke-dasharray="5,5"/>
-        <text x="410" y="35" font-size="10" fill="#6b7280">Umbral de Alerta</text>
+        <!-- Leyenda (lado derecho, sin interferir) -->
+        <line x1="510" y1="30" x2="530" y2="30" stroke="#000000" stroke-width="2" stroke-dasharray="5,5"/>
+        <text x="540" y="35" font-size="9" fill="#6b7280">Umbral de Alerta</text>
 
-        <rect x="380" y="48" width="10" height="10" fill="#22c55e" opacity="0.9"/>
-        <text x="410" y="56" font-size="10" fill="#6b7280">NEAP: Estrategias</text>
+        <rect x="510" y="45" width="9" height="9" fill="#22c55e" opacity="0.9"/>
+        <text x="540" y="53" font-size="9" fill="#6b7280">NEAP: Estrategias</text>
 
-        <rect x="380" y="68" width="10" height="10" fill="#3b82f6" opacity="0.9"/>
-        <text x="410" y="76" font-size="10" fill="#6b7280">IGAP: Grado agresión</text>
+        <rect x="510" y="62" width="9" height="9" fill="#3b82f6" opacity="0.9"/>
+        <text x="540" y="70" font-size="9" fill="#6b7280">IGAP: Grado agresión</text>
 
-        <rect x="380" y="88" width="10" height="10" fill="#f59e0b" opacity="0.9"/>
-        <text x="410" y="96" font-size="10" fill="#6b7280">IMAP: Comparación</text>
+        <rect x="510" y="79" width="9" height="9" fill="#f59e0b" opacity="0.9"/>
+        <text x="540" y="87" font-size="9" fill="#6b7280">IMAP: Comparación</text>
       </svg>
     `;
 
