@@ -588,7 +588,7 @@ window.tests_cisneros = {
     const umbralIMAP = 2.80;          // Umbral IMAP
 
     const width = 800;
-    const height = 380;
+    const height = 320;
     const barWidth = 60;
     const startX = 80;
     const gapBars = 180;
@@ -607,10 +607,10 @@ window.tests_cisneros = {
         <line x1="60" y1="${height - 50}" x2="${width - 30}" y2="${height - 50}" stroke="#d1d5db" stroke-width="2"/>
 
         <!-- ========== NEAP (Izquierda) ========== -->
-        <!-- Umbral NEAP -->
-        <line x1="${startX}" y1="${(height - 50) - (umbralNEAP_visual * scaleY_NEAP)}" x2="${startX + barWidth}" y2="${(height - 50) - (umbralNEAP_visual * scaleY_NEAP)}" stroke="#000000" stroke-width="2" stroke-dasharray="5,5"/>
         <!-- Barra NEAP -->
         <rect x="${startX}" y="${(height - 50) - (NEAP * scaleY_NEAP)}" width="${barWidth}" height="${Math.max(NEAP * scaleY_NEAP, 2)}" fill="#22c55e" opacity="0.9"/>
+        <!-- Umbral NEAP (DESPUÉS de la barra, para que aparezca encima) -->
+        <line x1="${startX}" y1="${(height - 50) - (umbralNEAP_visual * scaleY_NEAP)}" x2="${startX + barWidth}" y2="${(height - 50) - (umbralNEAP_visual * scaleY_NEAP)}" stroke="#000000" stroke-width="2" stroke-dasharray="5,5"/>
         <!-- Etiqueta NEAP -->
         <text x="${startX + barWidth / 2}" y="${height - 20}" text-anchor="middle" font-size="14" fill="#1f2937" font-weight="700">NEAP</text>
         <text x="${startX + barWidth / 2}" y="${(height - 50) - (NEAP * scaleY_NEAP) - 20}" text-anchor="middle" font-size="14" fill="#22c55e" font-weight="700">${NEAP}</text>
@@ -621,20 +621,20 @@ window.tests_cisneros = {
         <text x="50" y="${height - 45}" font-size="11" fill="#6b7280">0</text>
         <text x="40" y="${(height - 50) - (2.5 * scaleY_IGAP) + 4}" font-size="11" fill="#6b7280">2.5</text>
         <text x="45" y="${(height - 50) - (5 * scaleY_IGAP) + 4}" font-size="11" fill="#6b7280">5</text>
-        <!-- Umbral IGAP -->
-        <line x1="${startX + gapBars}" y1="${(height - 50) - (umbralIGAP * scaleY_IGAP)}" x2="${startX + gapBars + barWidth}" y2="${(height - 50) - (umbralIGAP * scaleY_IGAP)}" stroke="#000000" stroke-width="2" stroke-dasharray="5,5"/>
         <!-- Barra IGAP -->
         <rect x="${startX + gapBars}" y="${(height - 50) - (IGAP * scaleY_IGAP)}" width="${barWidth}" height="${Math.max(IGAP * scaleY_IGAP, 2)}" fill="#3b82f6" opacity="0.9"/>
+        <!-- Umbral IGAP (DESPUÉS de la barra, para que aparezca encima) -->
+        <line x1="${startX + gapBars}" y1="${(height - 50) - (umbralIGAP * scaleY_IGAP)}" x2="${startX + gapBars + barWidth}" y2="${(height - 50) - (umbralIGAP * scaleY_IGAP)}" stroke="#000000" stroke-width="2" stroke-dasharray="5,5"/>
         <!-- Etiqueta IGAP -->
         <text x="${startX + gapBars + barWidth / 2}" y="${height - 20}" text-anchor="middle" font-size="14" fill="#1f2937" font-weight="700">IGAP</text>
         <text x="${startX + gapBars + barWidth / 2}" y="${(height - 50) - (IGAP * scaleY_IGAP) - 20}" text-anchor="middle" font-size="14" fill="#3b82f6" font-weight="700">${IGAP}</text>
         <text x="${startX + gapBars + barWidth / 2}" y="${(height - 50) - (IGAP * scaleY_IGAP) - 5}" text-anchor="middle" font-size="10" fill="#6b7280">grado agresión</text>
 
         <!-- ========== IMAP (Derecha) ========== -->
-        <!-- Umbral IMAP -->
-        <line x1="${startX + gapBars * 2}" y1="${(height - 50) - (umbralIMAP * scaleY_IMAP)}" x2="${startX + gapBars * 2 + barWidth}" y2="${(height - 50) - (umbralIMAP * scaleY_IMAP)}" stroke="#000000" stroke-width="2" stroke-dasharray="5,5"/>
         <!-- Barra IMAP -->
         <rect x="${startX + gapBars * 2}" y="${(height - 50) - (IMAP * scaleY_IMAP)}" width="${barWidth}" height="${Math.max(IMAP * scaleY_IMAP, 2)}" fill="#f59e0b" opacity="0.9"/>
+        <!-- Umbral IMAP (DESPUÉS de la barra, para que aparezca encima) -->
+        <line x1="${startX + gapBars * 2}" y1="${(height - 50) - (umbralIMAP * scaleY_IMAP)}" x2="${startX + gapBars * 2 + barWidth}" y2="${(height - 50) - (umbralIMAP * scaleY_IMAP)}" stroke="#000000" stroke-width="2" stroke-dasharray="5,5"/>
         <!-- Etiqueta IMAP -->
         <text x="${startX + gapBars * 2 + barWidth / 2}" y="${height - 20}" text-anchor="middle" font-size="14" fill="#1f2937" font-weight="700">IMAP</text>
         <text x="${startX + gapBars * 2 + barWidth / 2}" y="${(height - 50) - (IMAP * scaleY_IMAP) - 20}" text-anchor="middle" font-size="14" fill="#f59e0b" font-weight="700">${IMAP}</text>
@@ -656,7 +656,7 @@ window.tests_cisneros = {
     `;
 
     return `
-      <div id="cisneros-grafico-indices" style="width: 100%; min-height: 320px; display: flex; justify-content: center; align-items: center; background: white; border-radius: 6px; page-break-inside: avoid; break-inside: avoid; margin-bottom: 20px;">
+      <div id="cisneros-grafico-indices" style="width: 100%; min-height: 300px; display: flex; justify-content: center; align-items: center; background: white; border-radius: 6px; page-break-inside: avoid; break-inside: avoid; margin-bottom: 20px;">
         ${svg}
       </div>
     `;
@@ -668,7 +668,7 @@ window.tests_cisneros = {
     const { mobbingCount, bossingCount, NEAP } = this.resultados;
 
     const width = 600;
-    const height = 480;
+    const height = 400;
     const padding = 60;
     const graphWidth = width - (padding * 2);
     const graphHeight = height - (padding * 2);
@@ -749,7 +749,7 @@ window.tests_cisneros = {
     `;
 
     return `
-      <div id="cisneros-grafico-mobbing-bossing" style="width: 100%; min-height: 460px; display: flex; justify-content: center; align-items: center; background: white; border-radius: 6px; page-break-inside: avoid; break-inside: avoid; margin-bottom: 20px;">
+      <div id="cisneros-grafico-mobbing-bossing" style="width: 100%; min-height: 380px; display: flex; justify-content: center; align-items: center; background: white; border-radius: 6px; page-break-inside: avoid; break-inside: avoid; margin-bottom: 20px;">
         ${svg}
       </div>
     `;
@@ -812,11 +812,12 @@ window.tests_cisneros = {
     }
 
     const opt = {
-      margin: 10,
+      margin: [8, 8, 8, 8],
       filename: 'CISNEROS-' + new Date().toISOString().split('T')[0] + '.pdf',
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, logging: false },
-      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+      html2canvas: { scale: 2, logging: false, useCORS: true },
+      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     };
 
     html2pdf().set(opt).from(elementToConvert).save().then(() => {
