@@ -747,20 +747,20 @@ Usar sempre `this.resultados` como fuente única de verdad.
 
 ## 🚀 Tests Implementados
 
-| Test | Status | Patrón PDF | Patrón JSON | Gráficos |
-|------|--------|-----------|-----------|----------|
-| MBI | ✅ | OPCIÓN A (separado) | ✅ correcto | Recharts |
-| CISNEROS | ✅ | OPCIÓN B (dinámico) | ✅ correcto | SVG inline |
-| EGEP-5 | ✅ | OPCIÓN ? | ? | ? |
-| CUIDA | ✅ | OPCIÓN ? | ? | ? |
-| SCID-II | ✅ | OPCIÓN ? | ? | ? |
-| MMPI-2-RF | ✅ | OPCIÓN ? | ? | ? |
-| SCL-90R | ✅ | OPCIÓN ? | ? | ? |
-| PCL-R | ✅ | OPCIÓN ? | ? | ? |
-| ISRA | ✅ | OPCIÓN ? | ? | ? |
-| Hamilton | ✅ | OPCIÓN ? | ? | ? |
+| Test | Status | Patrón PDF | Patrón JSON | Gráficos | Cache-Busting |
+|------|--------|-----------|-----------|----------|---|
+| MBI | ✅ | OPCIÓN A (separado) | ✅ `inicializarImportador()` | Recharts | ✅ |
+| CISNEROS | ✅ | OPCIÓN B (dinámico) | ✅ `inicializarImportador()` | SVG inline | ✅ v20260725d |
+| EGEP-5 | ✅ | OPCIÓN B (try/finally) | ⚠️ Verificar | SVG inline | ✅ v20260722 |
+| CUIDA | ✅ | OPCIÓN A (separado) | ✅ | SVG inline | ✅ |
+| SCID-II | ✅ | OPCIÓN B (try/finally) | ? | SVG inline | ✅ |
+| MMPI-2-RF | ✅ | OPCIÓN B (try/finally) | ? | SVG inline | ✅ |
+| SCL-90R | ✅ | OPCIÓN B (try/finally) | ? | SVG inline | ✅ |
+| PCL-R | ✅ | OPCIÓN B (try/finally) | ? | SVG inline | ✅ |
+| ISRA | ✅ | OPCIÓN B (try/finally) | ? | SVG inline | ✅ |
+| Hamilton | ✅ | OPCIÓN B (try/finally) | ? | SVG inline | ✅ |
 
-**TODO:** Verificar otros tests y documentar patrones.
+**Pendiente:** Verificar e implementar JSON import/export en tests faltantes, siguiendo patrón MBI.
 
 ---
 
