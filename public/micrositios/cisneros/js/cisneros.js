@@ -512,9 +512,6 @@ window.tests_cisneros = {
         <button id="btn-cisneros-exportar" class="btn btn-secondary" onclick="window.tests_cisneros.exportarJSON()" style="flex: 1; min-width: 150px;">
           ↓ Exportar JSON
         </button>
-        <button id="btn-cisneros-importar" class="btn btn-secondary" onclick="document.getElementById('cisneros-file-input').click()" style="flex: 1; min-width: 150px;">
-          ↑ Importar JSON
-        </button>
       </div>
     `;
 
