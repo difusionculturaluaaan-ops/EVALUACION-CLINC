@@ -740,18 +740,14 @@ window.tests_cisneros = {
           TOTAL ESTRATEGIAS DE ACOSO: ${NEAP}
         </text>
 
-        <!-- Leyenda (arriba a la izquierda, sin tapar nada) -->
-        <g>
-          <rect x="10" y="5" width="240" height="45" fill="white" stroke="#e5e7eb" stroke-width="1" rx="4"/>
+        <!-- Leyenda (arriba a la derecha, sin caja, independiente) -->
+        <!-- Línea 1: MOBBING -->
+        <rect x="${width - 175}" y="8" width="10" height="10" fill="${colorMobbing}" opacity="0.9"/>
+        <text x="${width - 160}" y="16" font-size="11" fill="#1f2937" font-weight="500">MOBBING: ${mobbingCount}</text>
 
-          <!-- Línea 1: MOBBING -->
-          <rect x="18" y="11" width="11" height="11" fill="${colorMobbing}" opacity="0.8"/>
-          <text x="34" y="19" font-size="10" fill="#1f2937" font-weight="600">MOBBING: ${mobbingCount}</text>
-
-          <!-- Línea 2: BOSSING -->
-          <rect x="18" y="28" width="11" height="11" fill="${colorBossing}" opacity="0.8"/>
-          <text x="34" y="36" font-size="10" fill="#1f2937" font-weight="600">BOSSING: ${bossingCount}</text>
-        </g>
+        <!-- Línea 2: BOSSING -->
+        <rect x="${width - 175}" y="23" width="10" height="10" fill="${colorBossing}" opacity="0.9"/>
+        <text x="${width - 160}" y="31" font-size="11" fill="#1f2937" font-weight="500">BOSSING: ${bossingCount}</text>
       </svg>
     `;
 
