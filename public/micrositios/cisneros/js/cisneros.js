@@ -529,9 +529,9 @@ window.tests_cisneros = {
       6: '#fca5a5'
     };
 
-    let html = `<div style="margin-bottom: 20px; page-break-inside: avoid; overflow-x: auto;">
-      <h3 style="margin: 0 0 12px 0; color: #1f2937; font-size: 14px; font-weight: 600;">TABLA DE RESPUESTAS (43 ÍTEMS)</h3>
-      <table style="width: 100%; border-collapse: collapse; font-size: 10px; background: white; min-width: 600px;">
+    let html = `<div style="margin-bottom: 20px; page-break-inside: avoid; overflow-x: auto; width: 100%;">
+      <h3 style="margin: 0 0 12px 0; color: #1f2937; font-size: 13px; font-weight: 600;">TABLA DE RESPUESTAS (43 ÍTEMS)</h3>
+      <table style="width: 100%; border-collapse: collapse; font-size: 9px; background: white;">
         <tr style="background: #f3f4f6; border-bottom: 2px solid #d1d5db;">
           <td style="border: 1px solid #e5e7eb; padding: 4px; text-align: center; font-weight: 600; color: #1f2937; width: 5%;">Ítem</td>`;
 
@@ -587,11 +587,11 @@ window.tests_cisneros = {
     const umbralIGAP = 1.23;          // Umbral IGAP
     const umbralIMAP = 2.80;          // Umbral IMAP
 
-    const width = 800;
-    const height = 320;
-    const barWidth = 60;
-    const startX = 80;
-    const gapBars = 180;
+    const width = 700;
+    const height = 280;
+    const barWidth = 55;
+    const startX = 70;
+    const gapBars = 160;
     const maxValueNEAP = 43;          // Max número de estrategias
     const maxValueIGAP = 5;           // Max escala IGAP
     const maxValueIMAP = 6;           // Max escala IMAP
@@ -656,7 +656,7 @@ window.tests_cisneros = {
     `;
 
     return `
-      <div id="cisneros-grafico-indices" style="width: 100%; min-height: 300px; display: flex; justify-content: center; align-items: center; background: white; border-radius: 6px; page-break-inside: avoid; break-inside: avoid; margin-bottom: 20px;">
+      <div id="cisneros-grafico-indices" style="width: 100%; min-height: 270px; display: flex; justify-content: center; align-items: center; background: white; border-radius: 6px; page-break-inside: avoid; break-inside: avoid; margin-bottom: 12px;">
         ${svg}
       </div>
     `;
@@ -667,9 +667,9 @@ window.tests_cisneros = {
 
     const { mobbingCount, bossingCount, NEAP } = this.resultados;
 
-    const width = 600;
-    const height = 400;
-    const padding = 60;
+    const width = 550;
+    const height = 350;
+    const padding = 50;
     const graphWidth = width - (padding * 2);
     const graphHeight = height - (padding * 2);
 
@@ -749,7 +749,7 @@ window.tests_cisneros = {
     `;
 
     return `
-      <div id="cisneros-grafico-mobbing-bossing" style="width: 100%; min-height: 380px; display: flex; justify-content: center; align-items: center; background: white; border-radius: 6px; page-break-inside: avoid; break-inside: avoid; margin-bottom: 20px;">
+      <div id="cisneros-grafico-mobbing-bossing" style="width: 100%; min-height: 320px; display: flex; justify-content: center; align-items: center; background: white; border-radius: 6px; page-break-inside: avoid; break-inside: avoid; margin-bottom: 12px;">
         ${svg}
       </div>
     `;
@@ -812,12 +812,12 @@ window.tests_cisneros = {
     }
 
     const opt = {
-      margin: [8, 8, 8, 8],
+      margin: [5, 5, 5, 5],
       filename: 'CISNEROS-' + new Date().toISOString().split('T')[0] + '.pdf',
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2, logging: false, useCORS: true },
       jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
-      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+      pagebreak: { mode: 'avoid-all' }
     };
 
     html2pdf().set(opt).from(elementToConvert).save().then(() => {
