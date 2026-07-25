@@ -448,8 +448,14 @@
 
   <!-- ========== TAB 3: RESULTADOS ========== -->
   <div class="cisneros-tab-content" id="tab-resultados">
-    <div id="cisneros-resultados">
+    <!-- Contenedor para PDF: gráficos + tabla + datos (SIN botones) -->
+    <div id="cisneros-resultados-pdf" style="page-break-inside: avoid; break-inside: avoid;">
       <!-- Se renderiza después de calcular -->
+    </div>
+
+    <!-- Contenedor para botones (separado) -->
+    <div id="cisneros-resultados-botones" style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px;">
+      <!-- Botones se renderizarán aquí -->
     </div>
   </div>
 
@@ -459,8 +465,8 @@
 <input type="file" id="cisneros-file-input" accept=".json,application/json" style="display: none;" onchange="window.tests_cisneros.inicializarImportador()">
 
 <!-- Scripts -->
-<script src="/js/api.js?v=20260725h"></script>
-<script src="/micrositios/cisneros/js/cisneros.js?v=20260725h"></script>
+<script src="/js/api.js?v=20260726a"></script>
+<script src="/micrositios/cisneros/js/cisneros.js?v=20260726a"></script>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {

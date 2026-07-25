@@ -419,8 +419,9 @@ window.tests_cisneros = {
   },
 
   mostrarResultados() {
-    const container = document.getElementById('cisneros-resultados');
-    if (!container || !this.resultados) return;
+    const containerPDF = document.getElementById('cisneros-resultados-pdf');
+    const containerBotones = document.getElementById('cisneros-resultados-botones');
+    if (!containerPDF || !containerBotones || !this.resultados) return;
 
     const nombre = document.getElementById('c_nombre')?.value || localStorage.getItem('paciente_nombre') || 'Paciente';
     const edad = document.getElementById('c_edad')?.value || '';
@@ -501,21 +502,23 @@ window.tests_cisneros = {
           ${this.generarInterpretacion(intensidad, totalScore)}
         </p>
       </div>
-
-      <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px;">
-        <button id="btn-cisneros-pdf" class="btn btn-secondary" onclick="window.tests_cisneros.generarPDF()" style="flex: 1; min-width: 150px;">
-          📄 Generar PDF
-        </button>
-        <button id="btn-cisneros-guardar" class="btn btn-primary" onclick="window.tests_cisneros.guardarEnExpediente()" style="flex: 1; min-width: 150px;">
-          💾 Guardar en Expediente
-        </button>
-        <button id="btn-cisneros-exportar" class="btn btn-secondary" onclick="window.tests_cisneros.exportarJSON()" style="flex: 1; min-width: 150px;">
-          ↓ Exportar JSON
-        </button>
-      </div>
     `;
 
-    container.innerHTML = html;
+    const htmlBotones = `
+      <button id="btn-cisneros-pdf" class="btn btn-secondary" onclick="window.tests_cisneros.generarPDF()" style="flex: 1; min-width: 150px;">
+        📄 Generar PDF
+      </button>
+      <button id="btn-cisneros-guardar" class="btn btn-primary" onclick="window.tests_cisneros.guardarEnExpediente()" style="flex: 1; min-width: 150px;">
+        💾 Guardar en Expediente
+      </button>
+      <button id="btn-cisneros-exportar" class="btn btn-secondary" onclick="window.tests_cisneros.exportarJSON()" style="flex: 1; min-width: 150px;">
+        ↓ Exportar JSON
+      </button>
+    `;
+
+    // Renderizar: contenido en PDF container, botones separados
+    containerPDF.innerHTML = html;
+    containerBotones.innerHTML = htmlBotones;
   },
 
   generarTablaRespuestas() {
@@ -761,54 +764,11 @@ window.tests_cisneros = {
       return;
     }
 
-    const element = document.getElementById('cisneros-resultados');
-    if (!element) {
+    // Usar SOLO el contenedor PDF (sin botones)
+    const pdfContainer = document.getElementById('cisneros-resultados-pdf');
+    if (!pdfContainer) {
       alert('❌ No hay resultados para generar PDF');
       return;
-    }
-
-    // Ocultar botones antes de generar PDF
-    const buttons = element.querySelectorAll('button');
-    const buttonStyles = [];
-    buttons.forEach(btn => {
-      buttonStyles.push(btn.style.display);
-      btn.style.display = 'none';
-    });
-
-    // Detectar tenant y agregar logo si es Claudia Martín del Campo
-    const tenantName = localStorage.getItem('clinica_nombre') || '';
-    const isClaudioMartinDelCampo = tenantName.toLowerCase().includes('claudia') &&
-                                     tenantName.toLowerCase().includes('martín');
-
-    let elementToConvert = element;
-    let tempContainer = null;
-
-    if (isClaudioMartinDelCampo) {
-      // Crear contenedor temporal con logo
-      tempContainer = document.createElement('div');
-      tempContainer.style.position = 'relative';
-      tempContainer.style.width = '100%';
-      tempContainer.innerHTML = element.innerHTML;
-
-      // Agregar logo en esquina superior derecha
-      const logoDiv = document.createElement('div');
-      logoDiv.style.position = 'absolute';
-      logoDiv.style.top = '10px';
-      logoDiv.style.right = '10px';
-      logoDiv.style.width = '120px';
-      logoDiv.style.height = '90px';
-      logoDiv.style.zIndex = '1000';
-
-      const logoImg = document.createElement('img');
-      logoImg.src = '/logos/claudia-martin-del-campo.svg';
-      logoImg.style.width = '100%';
-      logoImg.style.height = '100%';
-      logoImg.style.objectFit = 'contain';
-
-      logoDiv.appendChild(logoImg);
-      tempContainer.appendChild(logoDiv);
-
-      elementToConvert = tempContainer;
     }
 
     const opt = {
@@ -820,17 +780,7 @@ window.tests_cisneros = {
       pagebreak: { mode: 'avoid-all' }
     };
 
-    html2pdf().set(opt).from(elementToConvert).save().then(() => {
-      // Restaurar visibilidad de botones
-      buttons.forEach((btn, idx) => {
-        btn.style.display = buttonStyles[idx];
-      });
-
-      // Limpiar contenedor temporal si fue creado
-      if (tempContainer && tempContainer.parentNode) {
-        tempContainer.parentNode.removeChild(tempContainer);
-      }
-    });
+    html2pdf().set(opt).from(pdfContainer).save();
   },
 
   generarJSON() {
