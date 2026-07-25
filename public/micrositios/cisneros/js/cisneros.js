@@ -742,12 +742,12 @@ window.tests_cisneros = {
 
         <!-- Leyenda (arriba a la derecha, sin caja, independiente) -->
         <!-- Línea 1: MOBBING -->
-        <rect x="${width - 175}" y="8" width="10" height="10" fill="${colorMobbing}" opacity="0.9"/>
-        <text x="${width - 160}" y="16" font-size="11" fill="#1f2937" font-weight="500">MOBBING: ${mobbingCount}</text>
+        <rect x="${width - 120}" y="8" width="10" height="10" fill="${colorMobbing}" opacity="0.9"/>
+        <text x="${width - 105}" y="16" font-size="11" fill="#1f2937" font-weight="500">MOBBING: ${mobbingCount}</text>
 
         <!-- Línea 2: BOSSING -->
-        <rect x="${width - 175}" y="23" width="10" height="10" fill="${colorBossing}" opacity="0.9"/>
-        <text x="${width - 160}" y="31" font-size="11" fill="#1f2937" font-weight="500">BOSSING: ${bossingCount}</text>
+        <rect x="${width - 120}" y="23" width="10" height="10" fill="${colorBossing}" opacity="0.9"/>
+        <text x="${width - 105}" y="31" font-size="11" fill="#1f2937" font-weight="500">BOSSING: ${bossingCount}</text>
       </svg>
     `;
 
