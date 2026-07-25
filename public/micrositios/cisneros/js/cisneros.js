@@ -740,20 +740,17 @@ window.tests_cisneros = {
           TOTAL ESTRATEGIAS DE ACOSO: ${NEAP}
         </text>
 
-        <!-- Leyenda (arriba derecha, en dos líneas) -->
+        <!-- Leyenda (al lado derecho del título, en dos líneas) -->
         <g>
-          <rect x="${width - 290}" y="45" width="280" height="70" fill="white" stroke="#e5e7eb" stroke-width="1" rx="4"/>
+          <rect x="${width - 320}" y="8" width="310" height="45" fill="white" stroke="#e5e7eb" stroke-width="1" rx="4"/>
 
           <!-- Línea 1: MOBBING -->
-          <rect x="${width - 280}" y="55" width="12" height="12" fill="${colorMobbing}" opacity="0.8"/>
-          <text x="${width - 260}" y="64" font-size="11" fill="#1f2937" font-weight="600">MOBBING: ${mobbingCount} estrategias</text>
+          <rect x="${width - 310}" y="14" width="11" height="11" fill="${colorMobbing}" opacity="0.8"/>
+          <text x="${width - 294}" y="22" font-size="10" fill="#1f2937" font-weight="600">MOBBING: ${mobbingCount} estrategias</text>
 
           <!-- Línea 2: BOSSING -->
-          <rect x="${width - 280}" y="75" width="12" height="12" fill="${colorBossing}" opacity="0.8"/>
-          <text x="${width - 260}" y="84" font-size="11" fill="#1f2937" font-weight="600">BOSSING: ${bossingCount} estrategias</text>
-
-          <!-- Subtítulo -->
-          <text x="${width - 260}" y="102" font-size="9" fill="#8b949e">(Ítems con respuesta ≥3)</text>
+          <rect x="${width - 310}" y="30" width="11" height="11" fill="${colorBossing}" opacity="0.8"/>
+          <text x="${width - 294}" y="38" font-size="10" fill="#1f2937" font-weight="600">BOSSING: ${bossingCount} estrategias</text>
         </g>
       </svg>
     `;
