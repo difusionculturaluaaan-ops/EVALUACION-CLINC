@@ -896,7 +896,7 @@ window.tests_cisneros = {
           const data = JSON.parse(evt.target.result);
 
           if (!data.respuestas || !Array.isArray(data.respuestas)) {
-            throw new Error('Formato de JSON inválido');
+            throw new Error('Formato de JSON inválido: falta array "respuestas"');
           }
 
           // Convertir a números (pueden venir como strings)
@@ -909,38 +909,62 @@ window.tests_cisneros = {
           this.respuestas.items = [0, ...respuestasNumeros];
 
           // Guardar en localStorage
-          localStorage.setItem(`${this.tipo}_respuestas`, JSON.stringify(this.respuestas));
+          localStorage.setItem('CISNEROS_respuestas', JSON.stringify(this.respuestas));
 
-          // Cargar metadatos (con verificación segura)
-          if (data.metadatos) {
-            const nombre = document.getElementById('c_nombre');
-            const edad = document.getElementById('c_edad');
-            const sexo = document.getElementById('c_sexo');
-            const empresa = document.getElementById('c_empresa');
-            const evaluador = document.getElementById('c_evaluador');
-            const fecha = document.getElementById('c_fecha');
-
-            if (nombre && data.metadatos.paciente_nombre) nombre.value = data.metadatos.paciente_nombre;
-            if (edad && data.metadatos.edad) edad.value = data.metadatos.edad;
-            if (sexo && data.metadatos.sexo) sexo.value = data.metadatos.sexo;
-            if (empresa && data.metadatos.empresa) empresa.value = data.metadatos.empresa;
-            if (evaluador && data.metadatos.evaluador) evaluador.value = data.metadatos.evaluador;
-            if (fecha && data.metadatos.fecha_evaluacion) fecha.value = data.metadatos.fecha_evaluacion;
+          // Cargar metadatos EN LOCALSTORAGE (no en DOM, como MBI)
+          if (data.metadatos && typeof data.metadatos === 'object') {
+            if (data.metadatos.paciente_nombre) {
+              localStorage.setItem('paciente_nombre', data.metadatos.paciente_nombre);
+            }
+            if (data.metadatos.edad) {
+              localStorage.setItem('paciente_edad', data.metadatos.edad);
+            }
+            if (data.metadatos.sexo) {
+              localStorage.setItem('paciente_sexo', data.metadatos.sexo);
+            }
+            if (data.metadatos.empresa) {
+              localStorage.setItem('clinica_nombre', data.metadatos.empresa);
+            }
+            if (data.metadatos.evaluador) {
+              localStorage.setItem('usuario_nombre', data.metadatos.evaluador);
+            }
+            if (data.metadatos.fecha_evaluacion) {
+              localStorage.setItem('paciente_fecha', data.metadatos.fecha_evaluacion);
+            }
           }
 
-          // 🔑 CLAVE: Renderizar items para mostrar radio buttons seleccionados (como MBI)
-          this.renderizarItems();
-          this.irTab('test');
+          // 🔑 CLAVE: Cargar respuestas en DOM (marcar radio buttons como checked)
+          this.cargarRespuestasEnDOM(data);
 
-          alert('✅ JSON importado exitosamente. Radio buttons cargados.');
+          // Renderizar items para mostrar radio buttons seleccionados (como MBI)
+          this.renderizarItems();
+
+          // Cargar datos de paciente en formulario (desde localStorage)
+          this.cargarDatosPaciente();
+
+          alert(`✅ Archivo "${file.name}" importado correctamente.\n\nAhora haz clic en "Calcular Resultados"`);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
 
           // Actualizar progreso
           this.actualizarProgreso();
         } catch (error) {
+          console.error('Error al importar JSON:', error, error.stack);
           alert('❌ Error al importar: ' + error.message);
         }
       };
       reader.readAsText(file);
+    });
+  },
+
+  cargarRespuestasEnDOM(data) {
+    if (!data.respuestas || !Array.isArray(data.respuestas)) return;
+
+    data.respuestas.forEach((resp, index) => {
+      const numero = index + 1;
+      if (numero <= 43) {
+        const radio = document.querySelector(`input[name="cisneros_item_${numero}"][value="${resp}"]`);
+        if (radio) radio.checked = true;
+      }
     });
   },
 
