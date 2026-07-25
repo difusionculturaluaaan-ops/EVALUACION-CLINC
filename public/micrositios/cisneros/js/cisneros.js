@@ -767,6 +767,14 @@ window.tests_cisneros = {
       return;
     }
 
+    // Ocultar botones antes de generar PDF
+    const buttons = element.querySelectorAll('button');
+    const buttonStyles = [];
+    buttons.forEach(btn => {
+      buttonStyles.push(btn.style.display);
+      btn.style.display = 'none';
+    });
+
     // Detectar tenant y agregar logo si es Claudia Martín del Campo
     const tenantName = localStorage.getItem('clinica_nombre') || '';
     const isClaudioMartinDelCampo = tenantName.toLowerCase().includes('claudia') &&
@@ -812,6 +820,11 @@ window.tests_cisneros = {
     };
 
     html2pdf().set(opt).from(elementToConvert).save().then(() => {
+      // Restaurar visibilidad de botones
+      buttons.forEach((btn, idx) => {
+        btn.style.display = buttonStyles[idx];
+      });
+
       // Limpiar contenedor temporal si fue creado
       if (tempContainer && tempContainer.parentNode) {
         tempContainer.parentNode.removeChild(tempContainer);
