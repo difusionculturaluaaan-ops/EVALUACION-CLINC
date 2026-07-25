@@ -531,32 +531,32 @@ window.tests_cisneros = {
 
     let html = `<div style="margin-bottom: 20px; page-break-inside: avoid; overflow-x: auto; width: 100%;">
       <h3 style="margin: 0 0 12px 0; color: #1f2937; font-size: 13px; font-weight: 600;">TABLA DE RESPUESTAS (43 ÍTEMS)</h3>
-      <table style="width: 100%; border-collapse: collapse; font-size: 9px; background: white;">
-        <tr style="background: #f3f4f6; border-bottom: 2px solid #d1d5db;">
-          <td style="border: 1px solid #e5e7eb; padding: 4px; text-align: center; font-weight: 600; color: #1f2937; width: 5%;">Ítem</td>`;
+      <table style="width: 100%; border-collapse: collapse; font-size: 8px; background: white;">
+        <tr style="background: #f3f4f6; border-bottom: 1px solid #d1d5db;">
+          <td style="border: 1px solid #e5e7eb; padding: 2px 3px; text-align: center; font-weight: 600; color: #1f2937; width: 5%; font-size: 7px;">Ítem</td>`;
 
     for (let i = 1; i <= 43; i++) {
-      html += `<td style="border: 1px solid #e5e7eb; padding: 4px; text-align: center; font-weight: 600; color: #4b5563; font-size: 9px; width: 2.2%;">${i}</td>`;
+      html += `<td style="border: 1px solid #e5e7eb; padding: 1px 2px; text-align: center; font-weight: 600; color: #4b5563; font-size: 7px; width: 2.2%;">${i}</td>`;
     }
     html += `</tr>`;
 
     html += `<tr style="border-bottom: 1px solid #e5e7eb;">
-      <td style="border: 1px solid #e5e7eb; padding: 4px; text-align: center; font-weight: 600; color: #1f2937; background: #f9fafb; font-size: 9px;">Resp.</td>`;
+      <td style="border: 1px solid #e5e7eb; padding: 2px 3px; text-align: center; font-weight: 600; color: #1f2937; background: #f9fafb; font-size: 7px;">Resp.</td>`;
 
     for (let i = 1; i <= 43; i++) {
       const respuesta = this.respuestas.items[i] || 0;
       const color = coloresRespuesta[respuesta] || '#ffffff';
       const textColor = respuesta > 0 ? '#1f2937' : '#9ca3af';
-      html += `<td style="border: 1px solid #e5e7eb; padding: 4px; text-align: center; background: ${color}; font-weight: 600; color: ${textColor}; font-size: 9px;">${respuesta || '-'}</td>`;
+      html += `<td style="border: 1px solid #e5e7eb; padding: 1px 2px; text-align: center; background: ${color}; font-weight: 600; color: ${textColor}; font-size: 7px;">${respuesta || '-'}</td>`;
     }
     html += `</tr>`;
 
-    html += `<tr style="background: #f9fafb; border-top: 2px solid #d1d5db;">
-      <td colspan="44" style="border: 1px solid #e5e7eb; padding: 6px; font-size: 9px;">
-        <span style="display: inline-block; background: #fed7aa; border: 1px solid #d1d5db; padding: 2px 4px; margin-right: 6px; border-radius: 3px;">0-2</span>
-        <span style="display: inline-block; background: #bfdbfe; border: 1px solid #d1d5db; padding: 2px 4px; margin-right: 6px; border-radius: 3px;">3-4</span>
-        <span style="display: inline-block; background: #86efac; border: 1px solid #d1d5db; padding: 2px 4px; margin-right: 6px; border-radius: 3px;">5</span>
-        <span style="display: inline-block; background: #fca5a5; border: 1px solid #d1d5db; padding: 2px 4px; border-radius: 3px;">6</span>
+    html += `<tr style="background: #f9fafb; border-top: 1px solid #d1d5db;">
+      <td colspan="44" style="border: 1px solid #e5e7eb; padding: 3px 4px; font-size: 7px;">
+        <span style="display: inline-block; background: #fed7aa; border: 1px solid #d1d5db; padding: 1px 3px; margin-right: 4px; border-radius: 2px; font-size: 7px;">0-2</span>
+        <span style="display: inline-block; background: #bfdbfe; border: 1px solid #d1d5db; padding: 1px 3px; margin-right: 4px; border-radius: 2px; font-size: 7px;">3-4</span>
+        <span style="display: inline-block; background: #86efac; border: 1px solid #d1d5db; padding: 1px 3px; margin-right: 4px; border-radius: 2px; font-size: 7px;">5</span>
+        <span style="display: inline-block; background: #fca5a5; border: 1px solid #d1d5db; padding: 1px 3px; border-radius: 2px; font-size: 7px;">6</span>
       </td>
     </tr>
     </table>
@@ -640,18 +640,18 @@ window.tests_cisneros = {
         <text x="${startX + gapBars * 2 + barWidth / 2}" y="${(height - 50) - (IMAP * scaleY_IMAP) - 20}" text-anchor="middle" font-size="14" fill="#f59e0b" font-weight="700">${IMAP}</text>
         <text x="${startX + gapBars * 2 + barWidth / 2}" y="${(height - 50) - (IMAP * scaleY_IMAP) - 5}" text-anchor="middle" font-size="10" fill="#6b7280">máx/mín</text>
 
-        <!-- Leyenda -->
-        <line x1="620" y1="30" x2="640" y2="30" stroke="#000000" stroke-width="2" stroke-dasharray="5,5"/>
-        <text x="650" y="35" font-size="11" fill="#6b7280">Umbral de Alerta</text>
+        <!-- Leyenda (más a la izquierda, cerca de las barras) -->
+        <line x1="380" y1="30" x2="400" y2="30" stroke="#000000" stroke-width="2" stroke-dasharray="5,5"/>
+        <text x="410" y="35" font-size="10" fill="#6b7280">Umbral de Alerta</text>
 
-        <rect x="620" y="48" width="12" height="12" fill="#22c55e" opacity="0.9"/>
-        <text x="650" y="57" font-size="11" fill="#6b7280">NEAP: Estrategias</text>
+        <rect x="380" y="48" width="10" height="10" fill="#22c55e" opacity="0.9"/>
+        <text x="410" y="56" font-size="10" fill="#6b7280">NEAP: Estrategias</text>
 
-        <rect x="620" y="68" width="12" height="12" fill="#3b82f6" opacity="0.9"/>
-        <text x="650" y="77" font-size="11" fill="#6b7280">IGAP: Grado agresión</text>
+        <rect x="380" y="68" width="10" height="10" fill="#3b82f6" opacity="0.9"/>
+        <text x="410" y="76" font-size="10" fill="#6b7280">IGAP: Grado agresión</text>
 
-        <rect x="620" y="88" width="12" height="12" fill="#f59e0b" opacity="0.9"/>
-        <text x="650" y="97" font-size="11" fill="#6b7280">IMAP: Comparación</text>
+        <rect x="380" y="88" width="10" height="10" fill="#f59e0b" opacity="0.9"/>
+        <text x="410" y="96" font-size="10" fill="#6b7280">IMAP: Comparación</text>
       </svg>
     `;
 
@@ -812,7 +812,7 @@ window.tests_cisneros = {
     }
 
     const opt = {
-      margin: [5, 5, 5, 5],
+      margin: [7, 7, 7, 7],
       filename: 'CISNEROS-' + new Date().toISOString().split('T')[0] + '.pdf',
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2, logging: false, useCORS: true },
