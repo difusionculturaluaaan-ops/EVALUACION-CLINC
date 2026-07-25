@@ -608,7 +608,7 @@ window.tests_cisneros = {
 
         <!-- ========== NEAP (Izquierda) ========== -->
         <!-- Umbral NEAP -->
-        <line x1="${startX}" y1="${(height - 50) - (umbralNEAP_visual * scaleY_NEAP)}" x2="${startX + barWidth}" y2="${(height - 50) - (umbralNEAP_visual * scaleY_NEAP)}" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,5"/>
+        <line x1="${startX}" y1="${(height - 50) - (umbralNEAP_visual * scaleY_NEAP)}" x2="${startX + barWidth}" y2="${(height - 50) - (umbralNEAP_visual * scaleY_NEAP)}" stroke="#000000" stroke-width="2" stroke-dasharray="5,5"/>
         <!-- Barra NEAP -->
         <rect x="${startX}" y="${(height - 50) - (NEAP * scaleY_NEAP)}" width="${barWidth}" height="${Math.max(NEAP * scaleY_NEAP, 2)}" fill="#22c55e" opacity="0.9"/>
         <!-- Etiqueta NEAP -->
@@ -622,7 +622,7 @@ window.tests_cisneros = {
         <text x="40" y="${(height - 50) - (2.5 * scaleY_IGAP) + 4}" font-size="11" fill="#6b7280">2.5</text>
         <text x="45" y="${(height - 50) - (5 * scaleY_IGAP) + 4}" font-size="11" fill="#6b7280">5</text>
         <!-- Umbral IGAP -->
-        <line x1="${startX + gapBars}" y1="${(height - 50) - (umbralIGAP * scaleY_IGAP)}" x2="${startX + gapBars + barWidth}" y2="${(height - 50) - (umbralIGAP * scaleY_IGAP)}" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,5"/>
+        <line x1="${startX + gapBars}" y1="${(height - 50) - (umbralIGAP * scaleY_IGAP)}" x2="${startX + gapBars + barWidth}" y2="${(height - 50) - (umbralIGAP * scaleY_IGAP)}" stroke="#000000" stroke-width="2" stroke-dasharray="5,5"/>
         <!-- Barra IGAP -->
         <rect x="${startX + gapBars}" y="${(height - 50) - (IGAP * scaleY_IGAP)}" width="${barWidth}" height="${Math.max(IGAP * scaleY_IGAP, 2)}" fill="#3b82f6" opacity="0.9"/>
         <!-- Etiqueta IGAP -->
@@ -632,7 +632,7 @@ window.tests_cisneros = {
 
         <!-- ========== IMAP (Derecha) ========== -->
         <!-- Umbral IMAP -->
-        <line x1="${startX + gapBars * 2}" y1="${(height - 50) - (umbralIMAP * scaleY_IMAP)}" x2="${startX + gapBars * 2 + barWidth}" y2="${(height - 50) - (umbralIMAP * scaleY_IMAP)}" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,5"/>
+        <line x1="${startX + gapBars * 2}" y1="${(height - 50) - (umbralIMAP * scaleY_IMAP)}" x2="${startX + gapBars * 2 + barWidth}" y2="${(height - 50) - (umbralIMAP * scaleY_IMAP)}" stroke="#000000" stroke-width="2" stroke-dasharray="5,5"/>
         <!-- Barra IMAP -->
         <rect x="${startX + gapBars * 2}" y="${(height - 50) - (IMAP * scaleY_IMAP)}" width="${barWidth}" height="${Math.max(IMAP * scaleY_IMAP, 2)}" fill="#f59e0b" opacity="0.9"/>
         <!-- Etiqueta IMAP -->
@@ -641,7 +641,7 @@ window.tests_cisneros = {
         <text x="${startX + gapBars * 2 + barWidth / 2}" y="${(height - 50) - (IMAP * scaleY_IMAP) - 5}" text-anchor="middle" font-size="10" fill="#6b7280">máx/mín</text>
 
         <!-- Leyenda -->
-        <line x1="620" y1="30" x2="640" y2="30" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,5"/>
+        <line x1="620" y1="30" x2="640" y2="30" stroke="#000000" stroke-width="2" stroke-dasharray="5,5"/>
         <text x="650" y="35" font-size="11" fill="#6b7280">Umbral de Alerta</text>
 
         <rect x="620" y="48" width="12" height="12" fill="#22c55e" opacity="0.9"/>
