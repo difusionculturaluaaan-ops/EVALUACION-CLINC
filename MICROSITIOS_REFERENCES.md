@@ -9,6 +9,206 @@
 
 ## 🔴 PROBLEMAS CRÍTICOS Y SOLUCIONES
 
+---
+
+## 📊 JSON EXPORT/IMPORT (CRÍTICO - LEER SIEMPRE)
+
+### Estructura Correcta de JSON Export
+
+**SIEMPRE usar esta estructura exacta:**
+
+```javascript
+generarJSON() {
+  if (!this.resultados) return null;
+  
+  // Obtener datos (con fallbacks a localStorage)
+  const paciente_nombre = document.getElementById('m_nombre')?.value || 
+                          localStorage.getItem('paciente_nombre') || 
+                          'Paciente';
+  const evaluador = document.getElementById('m_evaluador')?.value || 
+                    localStorage.getItem('nombre') || 'Sin especificar';
+  const edad = document.getElementById('m_edad')?.value || '';
+  const sexo = document.getElementById('m_sexo')?.value || '';
+  const centro = localStorage.getItem('clinica_nombre') || 'No especificado';
+  const fecha_eval = document.getElementById('m_fecha')?.value || 
+                     new Date().toISOString().split('T')[0];
+
+  return {
+    testType: 'TEST_NAME',
+    version: '1.0',
+    respuestas: this.respuestas.items.slice(1),  // Array de números (0-6, depende del test)
+    metadatos: {
+      paciente_nombre,
+      paciente_id: sessionStorage.getItem('pacienteSeleccionado'),
+      evaluador,
+      fecha_evaluacion: fecha_eval,
+      edad,
+      sexo,
+      centro
+    },
+    puntuaciones: {
+      // Escalas específicas del test
+      escala1: this.resultados.valor1,
+      escala2: this.resultados.valor2
+    },
+    diagnostico: {
+      // Diagnóstico e interpretación
+      diagnostico: this.resultados.diagnostico,
+      intensidad: this.resultados.intensidad
+    },
+    respondidas: this.respuestas.items.slice(1).filter(x => x > 0).length,
+    timestamp: new Date().toISOString()
+  };
+}
+
+exportarJSON() {
+  if (!this.resultados) {
+    alert('⚠️ Primero calcula los resultados');
+    return;
+  }
+
+  const data = this.generarJSON();
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([new TextEncoder().encode(json)], 
+                        { type: 'application/json;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `TEST_NAME_${data.metadatos.paciente_nombre}_${Date.now()}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+```
+
+### JSON Import - Paso a Paso (MBI Pattern)
+
+**❌ INCORRECTO (problema): Llenar DOM antes de renderizar**
+```javascript
+inicializarImportador() {
+  const fileInput = document.getElementById('test-file-input');
+  fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const data = JSON.parse(evt.target.result);
+      
+      // ❌ ERROR: Intentar llenar campos que aún no existen
+      document.getElementById('m_nombre').value = data.metadatos.paciente_nombre;
+      
+      // Ahora renderiza - PERO ES TARDE
+      this.renderizarItems();
+    };
+    reader.readAsText(file);
+  });
+}
+```
+
+**✅ CORRECTO (MBI pattern): Guardar en localStorage, renderizar, luego llenar**
+```javascript
+inicializarImportador() {
+  const fileInput = document.getElementById('test-file-input');
+  if (!fileInput) return;
+
+  fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const data = JSON.parse(evt.target.result);
+
+        // Validar estructura
+        if (!data.respuestas || !Array.isArray(data.respuestas)) {
+          throw new Error('Formato de JSON inválido');
+        }
+
+        // PASO 1: Convertir a números (por si vienen como strings)
+        const respuestasNumeros = data.respuestas.map(v => {
+          const num = parseInt(v);
+          return isNaN(num) ? 0 : num;
+        });
+
+        // PASO 2: Cargar en respuestas (agregar 0 al inicio para índice 1-based)
+        this.respuestas.items = [0, ...respuestasNumeros];
+
+        // PASO 3: Guardar metadatos en localStorage (NO en DOM)
+        if (data.metadatos) {
+          if (data.metadatos.paciente_nombre) {
+            localStorage.setItem('paciente_nombre', data.metadatos.paciente_nombre);
+          }
+          if (data.metadatos.edad) {
+            localStorage.setItem('paciente_edad', data.metadatos.edad);
+          }
+          if (data.metadatos.sexo) {
+            localStorage.setItem('paciente_sexo', data.metadatos.sexo);
+          }
+          // ... otros campos
+        }
+
+        // PASO 4: Marcar radio buttons como checked (ANTES de renderizar)
+        this.cargarRespuestasEnDOM(data);
+
+        // PASO 5: Renderizar items (ahora sí)
+        this.renderizarItems();
+
+        // PASO 6: Cargar datos en formulario DESDE localStorage
+        this.cargarDatosPaciente();
+
+        alert(`✅ Archivo "${file.name}" importado correctamente`);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      } catch (error) {
+        alert('❌ Error al importar: ' + error.message);
+        console.error('Parse error:', error);
+      }
+    };
+    reader.readAsText(file);
+  });
+}
+
+// Función crucial: Marcar radio buttons
+cargarRespuestasEnDOM(data) {
+  if (!data.respuestas || !Array.isArray(data.respuestas)) return;
+
+  data.respuestas.forEach((resp, index) => {
+    const numero = index + 1;
+    if (numero <= 22) {  // Ajustar según número de items
+      const radio = document.querySelector(
+        `input[name="test_item_${numero}"][value="${resp}"]`
+      );
+      if (radio) radio.checked = true;  // Marcar en DOM
+    }
+  });
+}
+
+// Función para cargar datos del formulario desde localStorage
+cargarDatosPaciente() {
+  const nombre = localStorage.getItem('paciente_nombre') || '';
+  const edad = localStorage.getItem('paciente_edad') || '';
+  const sexo = localStorage.getItem('paciente_sexo') || '';
+  // ... otros campos
+
+  // Ahora SÍ los elementos existen, asignar valores
+  if (document.getElementById('m_nombre')) {
+    document.getElementById('m_nombre').value = nombre;
+  }
+  if (document.getElementById('m_edad')) {
+    document.getElementById('m_edad').value = edad;
+  }
+  // ... llenar los demás
+}
+```
+
+**Orden crítico (NO cambiar):**
+1. Parse JSON ✓
+2. Convertir a números ✓
+3. Cargar en `this.respuestas.items` ✓
+4. Guardar metadatos en localStorage ✓
+5. **Marcar radio buttons** ✓
+6. Renderizar items ✓
+7. Cargar datos en formulario ✓
+
 ### 1. JSON Import/Export - Radio Buttons No Se Marcan
 **Problema:** Al importar JSON, los radio buttons no se renderizaban, bloqueando el cálculo de resultados.
 
@@ -48,59 +248,302 @@ this.renderizarItems(); // Ahora el input existe, pero es tarde
 
 ---
 
-### 2. Botones en PDF Generado
-**Problema:** Al usar `html2pdf.js`, los botones HTML aparecían en el PDF descargado.
+---
 
-**Causa:** `@media print` NO funciona con `html2pdf.js` (genera PDF desde DOM actual, no desde CSS print).
+## 📄 PDF GENERATION (CRÍTICO - LEER SIEMPRE)
 
-**Soluciones Probadas:**
+### Problema Principal: @media print NO funciona con html2pdf.js
 
-#### ✅ OPCIÓN A: Separar Contenedores (MBI pattern - más limpio)
+**❌ INCORRECTO (no funciona):**
 ```html
-<!-- En index.html -->
-<div id="test-resultados-pdf"><!-- contenido, SIN botones --></div>
-<div id="test-resultados-botones"><!-- botones --></div>
+<style>
+  @media print {
+    .action-buttons { display: none !important; }
+    .test-controls { display: none !important; }
+  }
+</style>
+
+<div id="tab-resultados">
+  <div class="action-buttons">
+    <button onclick="exportarJSON()">Descargar JSON</button>
+    <button onclick="generarPDF()">Descargar PDF</button>
+  </div>
+  <div id="content">Contenido del PDF</div>
+</div>
 ```
 
-```javascript
-// En mostrarResultados()
-const containerPDF = document.getElementById('test-resultados-pdf');
-const containerBotones = document.getElementById('test-resultados-botones');
-containerPDF.innerHTML = html; // contenido
-containerBotones.innerHTML = htmlBotones; // botones
+**Razón:** html2pdf.js copia el DOM directamente sin interpretar `@media print`. Los botones aparecerán en el PDF aunque tengas `display: none` en la media query.
+
+### ✅ SOLUCIÓN A: Dos Contenedores (MBI Pattern - Separación Física)
+
+**Estructura:**
+```html
+<!-- Contenedor para Test (con botones) -->
+<div id="tab-test-resultados">
+  <div class="controls">
+    <button onclick="exportarJSON()">Descargar JSON</button>
+    <button onclick="guardarEnExpediente()">Guardar en Expediente</button>
+  </div>
+  <div id="content">Gráficos y tablas</div>
+</div>
+
+<!-- Contenedor para PDF (SIN botones) -->
+<div id="tab-resultados-pdf" style="display: none;">
+  <!-- SOLO gráficos y tablas, nada de botones -->
+  <div id="content-copy">Gráficos y tablas (copia idéntica)</div>
+</div>
+
+<!-- Botones globales (fuera de cualquier contenedor PDF) -->
+<div class="global-actions">
+  <button onclick="generarPDF()">Descargar PDF</button>
+</div>
 ```
 
+**En JavaScript:**
 ```javascript
-// En generarPDF()
-html2pdf().set(opt).from(document.getElementById('test-resultados-pdf')).save();
+generarPDF() {
+  const pdfContent = document.getElementById('tab-resultados-pdf');
+  
+  const opt = {
+    margin: 10,
+    filename: 'reporte.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+  };
+  
+  html2pdf().set(opt).from(pdfContent).save();
+}
 ```
 
-**Ventajas:** Arquitectura clara, separación de responsabilidades
-**Desventajas:** Requiere cambiar estructura HTML
+**Ventajas:** ✅ Seguro, sin efectos secundarios  
+**Desventajas:** ❌ Duplicar HTML, mantener dos copias sincronizadas
 
-#### ✅ OPCIÓN B: Ocultar Dinámicamente (CISNEROS pattern - pragmático)
+**¿Cuándo usar?** Cuando tienes control total sobre la estructura (MBI, CUIDA)
+
+---
+
+### ✅ SOLUCIÓN B: Dynamic Hiding (CISNEROS Pattern - Pragmático)
+
+**Estructura:**
+```html
+<div id="tab-resultados">
+  <!-- Botones SIEMPRE en el HTML -->
+  <div class="action-buttons" id="export-buttons">
+    <button onclick="exportarJSON()">Descargar JSON</button>
+    <button onclick="generarPDF()">Descargar PDF</button>
+  </div>
+  
+  <!-- Contenido -->
+  <div id="content">Gráficos y tablas</div>
+</div>
+```
+
+**En JavaScript:**
 ```javascript
-// En generarPDF()
-const buttons = element.querySelectorAll('button');
-const buttonStyles = [];
-buttons.forEach(btn => {
-  buttonStyles.push(btn.style.display);
-  btn.style.display = 'none';  // Ocultar antes
-});
+generarPDF() {
+  // PASO 1: Obtener botones
+  const buttons = document.getElementById('export-buttons');
+  if (!buttons) return;
+  
+  // PASO 2: Guardar estilos originales
+  const originalDisplay = buttons.style.display;
+  const originalVisibility = buttons.style.visibility;
+  
+  // PASO 3: Ocultar botones
+  buttons.style.display = 'none';
+  
+  try {
+    // PASO 4: Generar PDF (SIN botones)
+    const contentDiv = document.getElementById('tab-resultados');
+    const opt = {
+      margin: 10,
+      filename: `reporte_${Date.now()}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }  // IMPORTANTE
+    };
+    
+    html2pdf().set(opt).from(contentDiv).save();
+    
+  } finally {
+    // PASO 5: Restaurar estilos originales (SIEMPRE ejecutar)
+    buttons.style.display = originalDisplay;
+    buttons.style.visibility = originalVisibility;
+  }
+}
+```
 
-// Generar PDF
-html2pdf().set(opt).from(element).save().then(() => {
-  // Restaurar después
-  buttons.forEach((btn, idx) => {
-    btn.style.display = buttonStyles[idx];
+**Ventajas:** ✅ Simple, flexible, una sola copia de HTML  
+**Desventajas:** ⚠️ Debe restaurar estilos en el `finally`
+
+**¿Cuándo usar?** Para cambios rápidos, tests con muchos botones (CISNEROS)
+
+---
+
+### 📊 Comparación: A vs B
+
+| Aspecto | Solución A (MBI) | Solución B (CISNEROS) |
+|---------|-----------------|----------------------|
+| Código duplicado | ✅ Sí (2 contenedores) | ❌ No |
+| Mantenimiento | ⚠️ Difícil (2 fuentes de verdad) | ✅ Fácil (1 fuente) |
+| Sincronización | ⚠️ Manual | ✅ Automática |
+| Complejidad HTML | ✅ Normal | ✅ Simple |
+| Complejidad JS | ✅ Simple | ⚠️ Con try/finally |
+| Tiempo implementación | ⚠️ Más lento | ✅ Más rápido |
+| Riesgo de bugs | ✅ Bajo | ⚠️ Medio (si olvidas `finally`) |
+
+**Recomendación:** Usar **Solución B** para nuevos tests. Solución A solo si necesitas control absoluto.
+
+---
+
+### Anti-Patterns (QUÉ NO HACER)
+
+**❌ Error 1: Ocultar sin restaurar**
+```javascript
+// MALO - Los botones desaparecen para siempre
+generarPDF() {
+  document.getElementById('export-buttons').style.display = 'none';
+  const opt = { ... };
+  html2pdf().set(opt).from(document.getElementById('tab-resultados')).save();
+  // ❌ Falta restaurar aquí
+}
+```
+
+**❌ Error 2: Confiar en @media print**
+```html
+<!-- MALO - No funciona con html2pdf -->
+<style>
+  @media print {
+    .buttons { display: none !important; }
+  }
+</style>
+```
+
+**❌ Error 3: Copiar manualmente (Solución A sin sincronizar)**
+```javascript
+// MALO - Los dos contenedores pueden divergir
+const pdfContent = document.getElementById('tab-resultados-pdf');
+// ... editar contenido del tab principal
+// pero la copia en PDF no se actualiza
+```
+
+**❌ Error 4: Usar `visibility: hidden` en lugar de `display: none`**
+```javascript
+// MALO - Reserva espacio, visible en PDF
+buttons.style.visibility = 'hidden';  // Ocupa espacio pero no se ve
+// Usar display: none en su lugar
+buttons.style.display = 'none';  // No ocupa espacio
+```
+
+---
+
+### Verificación: ¿El PDF genera sin botones?
+
+**Checklist Local (ANTES de push):**
+```bash
+✅ 1. npm run dev (levanta servidor)
+✅ 2. Abrir http://localhost:3000/micrositios/test-name
+✅ 3. Llenar test completamente
+✅ 4. Click "Calcular Resultados"
+✅ 5. Click "Descargar PDF"
+✅ 6. Abrir PDF descargado → ¿Aparecen botones?
+    - SI: Hay bug
+    - NO: Está correcto
+✅ 7. Volver a página → ¿Funcionan botones?
+    - SI: Está correcto
+    - NO: try/finally roto, bug crítico
+✅ 8. Screenshot del PDF sin botones
+```
+
+**Comando Playwright:**
+```javascript
+const { chromium } = require('playwright');
+
+(async () => {
+  const browser = await chromium.launch();
+  const page = await browser.newPage();
+  
+  await page.goto('http://localhost:3000/micrositios/test', { 
+    waitUntil: 'networkidle' 
   });
-});
+  
+  // Llenar y calcular
+  await page.fill('#nombre', 'Test');
+  // ... llenar items
+  await page.click('button:has-text("Calcular Resultados")');
+  await page.waitForTimeout(1500);
+  
+  // Generar PDF
+  await Promise.all([
+    page.waitForEvent('download'),
+    page.click('button:has-text("Descargar PDF")')
+  ]).then(async ([download]) => {
+    const path = await download.path();
+    console.log(`✅ PDF descargado: ${path}`);
+    // Aquí podrías inspeccionar el PDF con una librería si necesitas
+  });
+  
+  // Verificar botones volvieron
+  const buttonsVisible = await page.evaluate(() => {
+    const btn = document.querySelector('.action-buttons');
+    return btn && getComputedStyle(btn).display !== 'none';
+  });
+  
+  console.log(buttonsVisible ? '✅ Botones restaurados' : '❌ Botones no se restauraron');
+  
+  await browser.close();
+})();
 ```
 
-**Ventajas:** Simple, sin cambiar HTML, pragmático
-**Desventajas:** Menos limpio arquitectónicamente
+---
 
-**Recomendación:** Usar OPCIÓN A para nuevos tests (más limpio), OPCIÓN B si es urgente.
+### Ejemplo Real: CISNEROS
+
+**Implementación correcta en `public/micrositios/cisneros/js/cisneros.js`:**
+
+```javascript
+generarPDF() {
+  if (!this.resultados) {
+    alert('⚠️ Primero calcula los resultados');
+    return;
+  }
+
+  const tabResultados = document.getElementById('tab-resultados');
+  const exportButtons = document.getElementById('export-buttons');
+  
+  // Guardar estilos originales
+  const originalDisplay = exportButtons?.style.display || '';
+  
+  try {
+    // Ocultar botones
+    if (exportButtons) {
+      exportButtons.style.display = 'none';
+    }
+    
+    // Generar PDF
+    const opt = {
+      margin: 10,
+      filename: `CISNEROS_${this.paciente_nombre || 'reporte'}_${new Date().toISOString().split('T')[0]}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    };
+    
+    html2pdf().set(opt).from(tabResultados).save();
+    
+  } finally {
+    // Restaurar botones (SIEMPRE ejecutar)
+    if (exportButtons) {
+      exportButtons.style.display = originalDisplay;
+    }
+  }
+}
+```
+
+### 2. Botones en PDF Generado
 
 ---
 
