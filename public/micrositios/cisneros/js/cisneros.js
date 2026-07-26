@@ -989,11 +989,11 @@ window.tests_cisneros = {
         tipo: 'CISNEROS',
         data: data,
         total: totalScore,
-        subescalas: subescalas,
-        pdf_base64: pdfBase64
+        subescalas: subescalas
+        // PDF no se envía - se generará bajo demanda
       };
 
-      console.log('💾 Enviando a servidor:', { paciente_id: pacienteId, tipo: 'CISNEROS', pdf_size: pdfBase64.length });
+      console.log('💾 Enviando a servidor:', { paciente_id: pacienteId, tipo: 'CISNEROS' });
 
       return fetch('/api/pruebas', {
         method: 'POST',
