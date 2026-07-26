@@ -947,8 +947,8 @@ window.tests_cisneros = {
     const { demerito, obstaculizacion, intimidacion, aislamiento, acosoPersonal } = this.resultados;
     const fecha = document.getElementById('c_fecha')?.value || new Date().toISOString().split('T')[0];
 
-    // Generar PDF desde el contenedor de resultados
-    const element = document.getElementById('cisneros-resultados');
+    // Generar PDF desde el contenedor de resultados (patrón MBI: solo PDF, sin botones)
+    const element = document.getElementById('cisneros-resultados-pdf');
     if (!element) {
       alert('❌ No hay resultados para guardar');
       if (btn) {
