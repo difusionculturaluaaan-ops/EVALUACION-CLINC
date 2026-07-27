@@ -1217,7 +1217,7 @@ window.tests_egep5 = {
         // 3. Ir a Tab 2 para renderizar elementos antes de cargar respuestas
         this.irTab('test');
 
-        // 4. Esperar a que se rendericen los elementos
+        // 4. Esperar a que se rendericen los elementos (1.5s)
         setTimeout(() => {
           this.cargarRespuestasEnDOM(data);
 
@@ -1233,7 +1233,7 @@ window.tests_egep5 = {
 
           // 8. Mostrar éxito
           this.mostrarMensajeExito(`✅ JSON importado correctamente<br>Respuestas cargadas: ${data.respondidas || 58}/58<br>Diagnóstico: ${resultado.tept === 'SI' ? '✓ TEPT PRESENTE' : '✗ TEPT AUSENTE'}`);
-        }, 500);
+        }, 1500);
 
       } catch (error) {
         this.mostrarMensajeError(`❌ Error: ${error.message}`);
@@ -1266,6 +1266,7 @@ window.tests_egep5 = {
         const radioSi = document.querySelector(`input[name="symptom_respuesta_${numero}"][value="si"]`);
         if (radioSi) {
           radioSi.checked = true;
+          radioSi.dispatchEvent(new Event('change', { bubbles: true }));
           console.log(`✅ Marcado Sí para item ${numero}`);
         } else {
           console.log(`⚠️ NO encontrado radio Sí para item ${numero}`);
@@ -1275,6 +1276,7 @@ window.tests_egep5 = {
         const radioNo = document.querySelector(`input[name="symptom_respuesta_${numero}"][value="no"]`);
         if (radioNo) {
           radioNo.checked = true;
+          radioNo.dispatchEvent(new Event('change', { bubbles: true }));
           console.log(`✅ Marcado No para item ${numero}`);
         } else {
           console.log(`⚠️ NO encontrado radio No para item ${numero}`);
@@ -1284,6 +1286,7 @@ window.tests_egep5 = {
       const radioMolestia = document.querySelector(`input[name="symptom_${numero}"][value="${molestia}"]`);
       if (radioMolestia) {
         radioMolestia.checked = true;
+        radioMolestia.dispatchEvent(new Event('change', { bubbles: true }));
         console.log(`✅ Marcada molestia ${molestia} para item ${numero}`);
       } else {
         console.log(`⚠️ NO encontrado radio molestia ${molestia} para item ${numero}`);
@@ -1334,7 +1337,10 @@ window.tests_egep5 = {
     data.respuestas.slice(25, 32).forEach((resp, i) => {
       const numero = 52 + i;
       const radio = document.querySelector(`input[name="item_${numero}"][value="si"]`);
-      if (radio && resp === 1) radio.checked = true;
+      if (radio && resp === 1) {
+        radio.checked = true;
+        radio.dispatchEvent(new Event('change', { bubbles: true }));
+      }
     });
   },
 
