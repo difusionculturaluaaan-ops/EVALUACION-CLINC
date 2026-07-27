@@ -1049,12 +1049,13 @@ window.tests_egep5 = {
             }
           }
 
-          // Cargar respuestas en DOM (marcar checkboxes y radios)
-          this.cargarRespuestasEnDOM(data);
-
-          // Actualizar UI
+          // Actualizar UI: primero renderizar (crear elementos), DESPUÉS cargar respuestas
           this.renderizarSintomas();
           this.renderizarFuncionamiento();
+
+          // Cargar respuestas en DOM (marcar checkboxes y radios) DESPUÉS de renderizar
+          this.cargarRespuestasEnDOM(data);
+
           this.actualizarProgreso();
 
           // Navegar a Tab 2 automáticamente
