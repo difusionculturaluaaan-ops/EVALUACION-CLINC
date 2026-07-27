@@ -1525,7 +1525,7 @@ window.tests_egep5 = {
       btn.disabled = false;
       btn.textContent = btnOriginalText;
       alert('✅ Resultados guardados en expediente correctamente');
-      window.history.back();
+      // window.history.back();  ← Comentado: mantener ventana abierta para exportar JSON y PDF
     }).catch(error => {
       btn.disabled = false;
       btn.textContent = btnOriginalText;
