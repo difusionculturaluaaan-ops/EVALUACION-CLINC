@@ -888,6 +888,13 @@ window.tests_egep5 = {
     } catch (e) {
       console.error('Error generando interpretación:', e);
     }
+
+    // 9. HISTOGRAMA DE RESPUESTAS
+    try {
+      this.generarHistograma();
+    } catch (e) {
+      console.error('Error generando histograma:', e);
+    }
   },
 
   generarInterpretacion(resultado, intensidades, totalIntensidad) {
@@ -1518,6 +1525,61 @@ window.tests_egep5 = {
       btn.textContent = btnOriginalText;
       alert('❌ Error al guardar: ' + error.message);
       console.error('Error:', error);
+    });
+  },
+
+  generarHistograma() {
+    if (!this.respuestas || Object.keys(this.respuestas).length === 0) return;
+
+    // Contar respuestas por escala (0, 1, 2, 3, 4)
+    const respuestasArray = [];
+    respuestasArray.push(...this.respuestas.items_27_31 || []);
+    respuestasArray.push(...this.respuestas.items_32_33 || []);
+    respuestasArray.push(...this.respuestas.items_34_40 || []);
+    respuestasArray.push(...this.respuestas.items_41_46 || []);
+    respuestasArray.push(this.respuestas.symptom_duration || 0);
+    respuestasArray.push(this.respuestas.symptom_onset || 0);
+    respuestasArray.push(...this.respuestas.items_52_58 || []);
+
+    const conteos = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 };
+    respuestasArray.forEach(r => {
+      if (r >= 0 && r <= 4) conteos[r]++;
+    });
+
+    const canvas = document.getElementById('egep5-histograma');
+    if (!canvas || !window.Chart) return;
+
+    // Destruir gráfico anterior si existe
+    if (this.charInstance) this.charInstance.destroy();
+
+    const ctx = canvas.getContext('2d');
+    this.charInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['No (0)', 'Leve (1)', 'Moderado (2)', 'Severo (3)', 'Muy Severo (4)'],
+        datasets: [{
+          label: 'Cantidad de respuestas',
+          data: [conteos[0], conteos[1], conteos[2], conteos[3], conteos[4]],
+          backgroundColor: ['#ef4444', '#f97316', '#eab308', '#84cc16', '#22c55e'],
+          borderColor: ['#dc2626', '#ea580c', '#ca8a04', '#65a30d', '#16a34a'],
+          borderWidth: 2,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: true, position: 'top' },
+          tooltip: { backgroundColor: 'rgba(0,0,0,0.8)', padding: 12 }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { stepSize: 1 }
+          }
+        }
+      }
     });
   }
 };

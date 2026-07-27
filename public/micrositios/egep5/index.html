@@ -413,6 +413,16 @@
         <div class="card-body" id="egep5-diagnostico"></div>
       </div>
 
+      <!-- Histograma de Respuestas -->
+      <div class="egep5-card" style="margin-bottom: 20px;">
+        <div class="card-header">
+          <h2>📊 Distribución de Respuestas</h2>
+        </div>
+        <div class="card-body" style="display: flex; justify-content: center; align-items: center; min-height: 300px;">
+          <canvas id="egep5-histograma" style="max-width: 100%; height: 300px;"></canvas>
+        </div>
+      </div>
+
       <!-- Criterios DSM-5 -->
       <div class="egep5-card" style="margin-bottom: 20px;">
         <div class="card-header">
@@ -499,11 +509,14 @@
 <!-- Hidden file input -->
 <input type="file" id="egep5-file-input" accept=".json,application/json" style="display: none;" onchange="window.tests_egep5.inicializarImportador()">
 
+<!-- Chart.js para gráficos -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
 <!-- Scripts modulares EGEP-5 -->
-<script src="js/egep5-corrector.js?v=20260726c"></script>
-<script src="js/egep5-graficos.js?v=20260726c"></script>
-<script src="js/egep5-baremos.js?v=20260726c"></script>
-<script src="js/egep5.js?v=20260726c"></script>
+<script src="js/egep5-corrector.js?v=20260726d"></script>
+<script src="js/egep5-graficos.js?v=20260726d"></script>
+<script src="js/egep5-baremos.js?v=20260726d"></script>
+<script src="js/egep5.js?v=20260726d"></script>
 <script src="/js/api.js"></script>
 
 <script>
