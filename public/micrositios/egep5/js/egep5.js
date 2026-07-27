@@ -1385,27 +1385,27 @@ window.tests_egep5 = {
 
   generarPDF() {
     if (!this.resultados) {
-      alert('Primero calcula los resultados');
+      alert('⚠️ Primero calcula los resultados');
+      return;
+    }
+
+    const pdfContainer = document.getElementById('egep5-resultados-pdf');
+    if (!pdfContainer) {
+      alert('❌ No hay contenedor de resultados para PDF');
       return;
     }
 
     const nombre_paciente = localStorage.getItem('paciente_nombre') || 'Paciente';
-    const tempContainer = this.crearContenedorPDFCompleto();
-    document.body.appendChild(tempContainer);
-
     const opt = {
-      margin: 10,
+      margin: [7, 7, 7, 7],  // 7mm márgenes (profesional)
       filename: `EGEP-5_${nombre_paciente}_${new Date().toISOString().split('T')[0]}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
+      html2canvas: { scale: 2, logging: false, useCORS: true },
       jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
-      pagebreak: { mode: ['avoid-all', 'css'] }
+      pagebreak: { mode: 'avoid-all' }  // Mantener juntos los elementos
     };
 
-    html2pdf().set(opt).from(tempContainer).save().then(() => {
-      document.body.removeChild(tempContainer);
-      alert('✅ PDF descargado correctamente');
-    });
+    html2pdf().set(opt).from(pdfContainer).save();
   },
 
   guardarResultados() {

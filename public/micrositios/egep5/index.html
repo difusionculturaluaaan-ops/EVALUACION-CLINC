@@ -403,56 +403,59 @@
 
   <!-- ========== TAB 3: RESULTADOS ========== -->
   <div class="egep5-tab-content" id="tab-resultados">
-    <!-- Diagnóstico Principal -->
-    <div class="egep5-card" style="margin-bottom: 20px;">
-      <div class="card-header">
-        <h2>📋 Diagnóstico DSM-5</h2>
+    <!-- Contenedor para PDF: diagnóstico + criterios + síntomas + baremos (SIN botones) -->
+    <div id="egep5-resultados-pdf" style="page-break-inside: avoid; break-inside: avoid;">
+      <!-- Diagnóstico Principal -->
+      <div class="egep5-card" style="margin-bottom: 20px;">
+        <div class="card-header">
+          <h2>📋 Diagnóstico DSM-5</h2>
+        </div>
+        <div class="card-body" id="egep5-diagnostico"></div>
       </div>
-      <div class="card-body" id="egep5-diagnostico"></div>
+
+      <!-- Criterios DSM-5 -->
+      <div class="egep5-card" style="margin-bottom: 20px;">
+        <div class="card-header">
+          <h2>✓ Criterios de Evaluación (A-G)</h2>
+        </div>
+        <div class="card-body" id="egep5-criteria-table"></div>
+      </div>
+
+      <!-- Síntomas por Escala -->
+      <div class="egep5-card" style="margin-bottom: 20px;">
+        <div class="card-header">
+          <h2>📊 Síntomas por Escala</h2>
+        </div>
+        <div class="card-body" id="egep5-symptoms-summary"></div>
+      </div>
+
+      <!-- Funcionamiento -->
+      <div class="egep5-card" style="margin-bottom: 20px;">
+        <div class="card-header">
+          <h2>🔗 Impacto Funcional</h2>
+        </div>
+        <div class="card-body" id="egep5-functioning-summary"></div>
+      </div>
+
+      <!-- Especificaciones -->
+      <div class="egep5-card" style="margin-bottom: 20px;">
+        <div class="card-header">
+          <h2>⚙️ Especificaciones</h2>
+        </div>
+        <div class="card-body" id="egep5-specifications"></div>
+      </div>
+
+      <!-- Baremos -->
+      <div class="egep5-card" style="margin-bottom: 20px;">
+        <div class="card-header">
+          <h2>📊 Intensidad de Síntomas - Baremos</h2>
+        </div>
+        <div class="card-body" id="egep5-baremos" style="overflow-x: auto;"></div>
+      </div>
     </div>
 
-    <!-- Criterios DSM-5 -->
-    <div class="egep5-card" style="margin-bottom: 20px;">
-      <div class="card-header">
-        <h2>✓ Criterios de Evaluación (A-G)</h2>
-      </div>
-      <div class="card-body" id="egep5-criteria-table"></div>
-    </div>
-
-    <!-- Síntomas por Escala -->
-    <div class="egep5-card" style="margin-bottom: 20px;">
-      <div class="card-header">
-        <h2>📊 Síntomas por Escala</h2>
-      </div>
-      <div class="card-body" id="egep5-symptoms-summary"></div>
-    </div>
-
-    <!-- Funcionamiento -->
-    <div class="egep5-card" style="margin-bottom: 20px;">
-      <div class="card-header">
-        <h2>🔗 Impacto Funcional</h2>
-      </div>
-      <div class="card-body" id="egep5-functioning-summary"></div>
-    </div>
-
-    <!-- Especificaciones -->
-    <div class="egep5-card" style="margin-bottom: 20px;">
-      <div class="card-header">
-        <h2>⚙️ Especificaciones</h2>
-      </div>
-      <div class="card-body" id="egep5-specifications"></div>
-    </div>
-
-    <!-- Baremos -->
-    <div class="egep5-card" style="margin-bottom: 20px;">
-      <div class="card-header">
-        <h2>📊 Intensidad de Síntomas - Baremos</h2>
-      </div>
-      <div class="card-body" id="egep5-baremos" style="overflow-x: auto;"></div>
-    </div>
-
-    <!-- Botones de Acción -->
-    <div class="button-group" style="margin-top: 20px;">
+    <!-- Contenedor para botones (separado) -->
+    <div id="egep5-resultados-botones" style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px;">
       <button onclick="window.tests_egep5.generarPDF()" class="btn btn-primary">📄 Generar PDF</button>
       <button class="btn btn-primary" id="btn-egep5-guardar" onclick="window.tests_egep5.guardarEnExpediente()" style="background:#27ae60">💾 Guardar en Expediente</button>
       <button onclick="window.tests_egep5.exportarJSON()" class="btn btn-secondary">↓ Exportar JSON</button>
@@ -497,10 +500,10 @@
 <input type="file" id="egep5-file-input" accept=".json,application/json" style="display: none;" onchange="window.tests_egep5.inicializarImportador()">
 
 <!-- Scripts modulares EGEP-5 -->
-<script src="js/egep5-corrector.js?v=20260726"></script>
-<script src="js/egep5-graficos.js?v=20260726"></script>
-<script src="js/egep5-baremos.js?v=20260726"></script>
-<script src="js/egep5.js?v=20260726"></script>
+<script src="js/egep5-corrector.js?v=20260726b"></script>
+<script src="js/egep5-graficos.js?v=20260726b"></script>
+<script src="js/egep5-baremos.js?v=20260726b"></script>
+<script src="js/egep5.js?v=20260726b"></script>
 <script src="/js/api.js"></script>
 
 <script>
