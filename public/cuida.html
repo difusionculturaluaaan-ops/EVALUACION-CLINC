@@ -508,39 +508,44 @@ tr.pt-div .dl{height:2px;background:var(--border);border-radius:2px}
 
 <!-- ── TAB REPORTE ── -->
 <div id="tab-reporte" class="screen">
-  <div class="wrap">
-    <!-- Logo Header (solo en PDF, no en pantalla) -->
-    <div id="pdf-logo-header" style="display:none;text-align:center;margin-bottom:20px;padding:15px;border-bottom:2px solid var(--border)">
-      <img id="pdf-logo-img" src="" style="max-width:120px;max-height:80px;object-fit:contain" alt="Logo Institución">
-    </div>
-    <div class="card" id="rpt-hdr"></div>
-    <div class="card" id="rpt-chart">
-      <div class="card-hdr"><h3>Perfil Gráfico — Eneatipos</h3><span>media=5, DT=2</span></div>
-      <div class="card-body">
-        <div class="p-legend">
-          <div class="pl-i"><div class="pl-d" style="background:var(--zone-low)"></div>Bajo (1–3)</div>
-          <div class="pl-i"><div class="pl-d" style="background:var(--zone-mid)"></div>Normal (4–6)</div>
-          <div class="pl-i"><div class="pl-d" style="background:var(--zone-high)"></div>Alto (7–9)</div>
+  <!-- Contenedor para PDF: reporte + gráficos + tabla (SIN botones) -->
+  <div id="cuida-resultados-pdf" style="page-break-inside: avoid; break-inside: avoid;">
+    <div class="wrap">
+      <!-- Logo Header (solo en PDF, no en pantalla) -->
+      <div id="pdf-logo-header" style="display:none;text-align:center;margin-bottom:20px;padding:15px;border-bottom:2px solid var(--border)">
+        <img id="pdf-logo-img" src="" style="max-width:120px;max-height:80px;object-fit:contain" alt="Logo Institución">
+      </div>
+      <div class="card" id="rpt-hdr"></div>
+      <div class="card" id="rpt-chart">
+        <div class="card-hdr"><h3>Perfil Gráfico — Eneatipos</h3><span>media=5, DT=2</span></div>
+        <div class="card-body">
+          <div class="p-legend">
+            <div class="pl-i"><div class="pl-d" style="background:var(--zone-low)"></div>Bajo (1–3)</div>
+            <div class="pl-i"><div class="pl-d" style="background:var(--zone-mid)"></div>Normal (4–6)</div>
+            <div class="pl-i"><div class="pl-d" style="background:var(--zone-high)"></div>Alto (7–9)</div>
+          </div>
+          <div style="overflow-x:auto"><div id="rpt-chart-tbl"></div></div>
         </div>
-        <div style="overflow-x:auto"><div id="rpt-chart-tbl"></div></div>
+      </div>
+      <div class="card" id="rpt-validez"></div>
+      <div class="card">
+        <div class="card-hdr"><h3>Tabla de Respuestas (189 ítems)</h3></div>
+        <div class="card-body" style="padding:10px"><div class="resp-grid" id="resp-grid"></div></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><h3>Informe Interpretativo</h3><span>Generado automáticamente</span></div>
+        <div class="card-body" id="rpt-informe"></div>
       </div>
     </div>
-    <div class="card" id="rpt-validez"></div>
-    <div class="card">
-      <div class="card-hdr"><h3>Tabla de Respuestas (189 ítems)</h3></div>
-      <div class="card-body" style="padding:10px"><div class="resp-grid" id="resp-grid"></div></div>
-    </div>
-    <div class="card">
-      <div class="card-hdr"><h3>Informe Interpretativo</h3><span>Generado automáticamente</span></div>
-      <div class="card-body" id="rpt-informe"></div>
-    </div>
-    <div class="no-print" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
-      <button class="btn btn-navy" onclick="guardarCUIDA()" style="display:none"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Guardar Evaluación</button>
-      <button class="btn btn-out" onclick="descargarYGuardarPDF()"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-6 0v4m-3-4h6"/></svg> ⊡ Guardar en Expediente</button>
-      <button class="btn btn-out" id="btn-actualizar" onclick="actualizarEnExpediente()" style="display:none"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> 🔄 Actualizar en Expediente</button>
-      <button class="btn btn-out" onclick="exportarJSON()"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m7-4l-4 4m0 0l4 4m-4-4h12"/></svg> ↓ Descargar JSON</button>
-      <button class="btn btn-out" onclick="goTab('capture')">⟲ Volver al cuestionario</button>
-    </div>
+  </div>
+
+  <!-- Contenedor para botones (separado) -->
+  <div id="cuida-resultados-botones" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;padding:0 24px">
+    <button class="btn btn-navy" onclick="guardarCUIDA()" style="display:none"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Guardar Evaluación</button>
+    <button class="btn btn-out" onclick="descargarYGuardarPDF()"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-6 0v4m-3-4h6"/></svg> ⊡ Guardar en Expediente</button>
+    <button class="btn btn-out" id="btn-actualizar" onclick="actualizarEnExpediente()" style="display:none"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> 🔄 Actualizar en Expediente</button>
+    <button class="btn btn-out" onclick="exportarJSON()"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m7-4l-4 4m0 0l4 4m-4-4h12"/></svg> ↓ Descargar JSON</button>
+    <button class="btn btn-out" onclick="goTab('capture')">⟲ Volver al cuestionario</button>
   </div>
 </div>
 
@@ -1066,22 +1071,47 @@ async function generarPDFCUIDA() {
   }
 }
 
+// Nueva función generarPDFCUIDA simplificada (patrón MBI)
+async function generarPDFCUIDAsimple() {
+  try {
+    const pdfContainer = document.getElementById('cuida-resultados-pdf');
+    if (!pdfContainer) throw new Error('No se encontró contenedor PDF');
+
+    const fecha = new Date().toISOString().split('T')[0];
+    const opt = {
+      margin: [7, 7, 7, 7],
+      filename: `CUIDA_${fecha}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, logging: false, useCORS: true },
+      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
+      pagebreak: { mode: 'avoid-all' }
+    };
+
+    html2pdf().set(opt).from(pdfContainer).save();
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
 // ─────────── GUARDAR DATOS EN EXPEDIENTE ───────────
 async function descargarYGuardarPDF() {
   try {
     const btnDescargar = event.target;
     const textoOriginal = btnDescargar.textContent;
     btnDescargar.disabled = true;
-    btnDescargar.textContent = '⏳ Guardando...';
+    btnDescargar.textContent = '⏳ Procesando...';
 
-    // Calcular resultado
+    // 1. Descargar PDF
+    console.log('📄 Generando PDF...');
+    await generarPDFCUIDAsimple();
+    console.log('✅ PDF descargado');
+
+    // 2. Calcular resultado y guardar en expediente
     const resultado = calcularCUIDALocal();
 
-    // GUARDAR SOLO JSON EN EXPEDIENTE
     if (pacienteId) {
       console.log('📤 Guardando datos en expediente...');
 
-      // SIEMPRE leer directamente del formulario (como hace exportarJSON)
       const metadatos = {
         nombre: document.getElementById('f-nombre')?.value || '–',
         edad: document.getElementById('f-edad')?.value || '–',
@@ -1112,8 +1142,6 @@ async function descargarYGuardarPDF() {
       });
 
       const responseData = await response.json();
-      console.log('📥 Respuesta del servidor:', responseData);
-
       if (!response.ok) {
         throw new Error(responseData.message || `Error ${response.status}`);
       }
@@ -1124,12 +1152,12 @@ async function descargarYGuardarPDF() {
     }
 
     // Mostrar éxito
-    btnDescargar.textContent = '✅ Guardado';
+    btnDescargar.textContent = '✅ Completado';
     btnDescargar.style.backgroundColor = '#4CAF50';
 
     const successMsg = document.createElement('div');
     successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 15px 20px; border-radius: 8px; z-index: 9999; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
-    successMsg.innerHTML = `✅ <strong>Datos guardados en expediente</strong>`;
+    successMsg.innerHTML = `✅ PDF descargado y datos guardados en expediente`;
     document.body.appendChild(successMsg);
     setTimeout(() => successMsg.remove(), 4000);
 
