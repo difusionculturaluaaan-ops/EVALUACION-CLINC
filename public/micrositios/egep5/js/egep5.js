@@ -1259,6 +1259,12 @@ window.tests_egep5 = {
   cargarRespuestasEnDOM(data) {
     console.log('📍 cargarRespuestasEnDOM: iniciando carga...', data.respuestas.length, 'items');
 
+    // Convertir todos los valores a números (pueden venir como strings)
+    const respuestasNumeros = data.respuestas.map(v => {
+      const num = parseInt(v);
+      return isNaN(num) ? 0 : num;
+    });
+
     // Helper para cargar síntoma con Sí/No Y molestia
     const cargarSintoma = (numero, molestia) => {
       if (molestia > 0) {
@@ -1294,47 +1300,47 @@ window.tests_egep5 = {
     };
 
     // Items 27-31 (Síntomas Intrusivos)
-    data.respuestas.slice(0, 5).forEach((resp, i) => {
+    respuestasNumeros.slice(0, 5).forEach((resp, i) => {
       const numero = 27 + i;
       cargarSintoma(numero, resp);
     });
 
     // Items 32-33 (Evitación)
-    data.respuestas.slice(5, 7).forEach((resp, i) => {
+    respuestasNumeros.slice(5, 7).forEach((resp, i) => {
       const numero = 32 + i;
       cargarSintoma(numero, resp);
     });
 
     // Items 34-40 (Alteraciones Cognitivas)
-    data.respuestas.slice(7, 14).forEach((resp, i) => {
+    respuestasNumeros.slice(7, 14).forEach((resp, i) => {
       const numero = 34 + i;
       cargarSintoma(numero, resp);
     });
 
     // Items 41-46 (Activación)
-    data.respuestas.slice(14, 20).forEach((resp, i) => {
+    respuestasNumeros.slice(14, 20).forEach((resp, i) => {
       const numero = 41 + i;
       cargarSintoma(numero, resp);
     });
 
     // Items 47-49 (Síntomas Disociativos)
-    data.respuestas.slice(20, 23).forEach((resp, i) => {
+    respuestasNumeros.slice(20, 23).forEach((resp, i) => {
       const numero = 47 + i;
       cargarSintoma(numero, resp);
     });
 
     // Item 50 (Duración) - índice 23
-    if (data.respuestas[23]) {
-      this.respuestas.symptom_duration = data.respuestas[23];
+    if (respuestasNumeros[23]) {
+      this.respuestas.symptom_duration = respuestasNumeros[23];
     }
 
     // Item 51 (Onset) - índice 24
-    if (data.respuestas[24]) {
-      this.respuestas.symptom_onset = data.respuestas[24];
+    if (respuestasNumeros[24]) {
+      this.respuestas.symptom_onset = respuestasNumeros[24];
     }
 
     // Items 52-58 (Funcionamiento) - índices 25-31
-    data.respuestas.slice(25, 32).forEach((resp, i) => {
+    respuestasNumeros.slice(25, 32).forEach((resp, i) => {
       const numero = 52 + i;
       const radio = document.querySelector(`input[name="item_${numero}"][value="si"]`);
       if (radio && resp === 1) {
