@@ -802,11 +802,20 @@ window.tests_mbi = {
   cargarRespuestasEnDOM(data) {
     if (!data.respuestas || !Array.isArray(data.respuestas)) return;
 
-    data.respuestas.forEach((resp, index) => {
+    // Convertir todos los valores a números (pueden venir como strings)
+    const respuestasNumeros = data.respuestas.map(v => {
+      const num = parseInt(v);
+      return isNaN(num) ? 0 : num;
+    });
+
+    respuestasNumeros.forEach((resp, index) => {
       const numero = index + 1;
       if (numero <= 22) {
         const radio = document.querySelector(`input[name="mbi_item_${numero}"][value="${resp}"]`);
-        if (radio) radio.checked = true;
+        if (radio) {
+          radio.checked = true;
+          radio.dispatchEvent(new Event('change', { bubbles: true }));
+        }
       }
     });
   },
