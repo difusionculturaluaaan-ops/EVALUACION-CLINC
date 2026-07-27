@@ -915,20 +915,11 @@ window.tests_cisneros = {
   cargarRespuestasEnDOM(data) {
     if (!data.respuestas || !Array.isArray(data.respuestas)) return;
 
-    // Convertir todos los valores a números (pueden venir como strings)
-    const respuestasNumeros = data.respuestas.map(v => {
-      const num = parseInt(v);
-      return isNaN(num) ? 0 : num;
-    });
-
-    respuestasNumeros.forEach((resp, index) => {
+    data.respuestas.forEach((resp, index) => {
       const numero = index + 1;
       if (numero <= 43) {
         const radio = document.querySelector(`input[name="cisneros_item_${numero}"][value="${resp}"]`);
-        if (radio) {
-          radio.checked = true;
-          radio.dispatchEvent(new Event('change', { bubbles: true }));
-        }
+        if (radio) radio.checked = true;
       }
     });
   },
