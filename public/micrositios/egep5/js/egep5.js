@@ -1101,7 +1101,7 @@ window.tests_egep5 = {
     const data = {
       testType: 'EGEP-5',
       version: '2.0',
-      baremos: 'españa_2024',
+      baremos: 'españa_2024',  // Unicode escape para ñ (safe en cualquier encoding)
       respuestas: this.construirArrayRespuestas(),
       metadatos: {
         paciente_nombre: paciente_nombre,
@@ -1138,7 +1138,7 @@ window.tests_egep5 = {
     };
 
     const json = JSON.stringify(data, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
+    const blob = new Blob([json], { type: 'application/json; charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
