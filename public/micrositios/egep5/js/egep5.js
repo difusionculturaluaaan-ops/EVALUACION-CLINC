@@ -1961,19 +1961,59 @@ window.tests_egep5 = {
 
           <!-- DIAGNÓSTICO FINAL -->
           <div class="section-card" style="border-left: 4px solid ${this.resultados.tept === 'SI' ? '#28a745' : '#dc3545'};">
-            <div class="section-title" style="color: ${this.resultados.tept === 'SI' ? '#28a745' : '#dc3545'};">Diagnóstico Final</div>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div class="section-title" style="color: ${this.resultados.tept === 'SI' ? '#155724' : '#721c24'};">Diagnóstico Global</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
               <span style="font-weight: bold; font-size: 1.05em;">DIAGNÓSTICO DE TEPT:</span>
-              <span class="status-badge ${this.resultados.tept === 'SI' ? 'status-yes' : 'status-no'}" style="font-size: 0.9em; padding: 4px 12px;">
-                ${this.resultados.tept === 'SI' ? 'CUMPLE CRITERIOS' : 'NO CUMPLE CRITERIOS'}
+              <span class="status-badge ${this.resultados.tept === 'SI' ? 'status-yes' : 'status-no'}" style="font-size: 0.95em; padding: 6px 14px;">
+                ${this.resultados.tept === 'SI' ? 'CUMPLE CRITERIOS (SÍ)' : 'NO CUMPLE CRITERIOS'}
               </span>
             </div>
             <p style="font-size: 0.85em; color: var(--text-muted);">
               ${this.resultados.tept === 'SI' ?
-                'El paciente cumple todos los criterios DSM-5 para TEPT.' :
-                'El paciente no cumple todos los criterios requeridos para TEPT.'}
+                'Se cumplen satisfactoriamente todos los criterios diagnósticos del A al G según los estándares DSM-5 / EGEP-5.' :
+                'El paciente no cumple todos los criterios requeridos para el diagnóstico de TEPT según DSM-5.'}
             </p>
           </div>
+
+          <!-- ESPECIFICACIONES DIAGNÓSTICAS (Solo si cumple TEPT) -->
+          ${this.resultados.tept === 'SI' ? `
+          <div class="section-card" style="background-color: #faf9f9; border-top: 3px solid var(--primary);">
+            <div class="section-title" style="font-size: 0.95em;">Especificaciones Diagnósticas</div>
+            <p style="font-size: 0.8em; color: var(--text-muted); margin-bottom: 12px;">
+              <em>Evaluadas al cumplirse el diagnóstico completo de TEPT:</em>
+            </p>
+
+            <!-- Con Síntomas Disociativos -->
+            <div style="margin-bottom: 12px; padding: 8px; background: #fff; border-radius: 4px; border: 1px solid var(--border-color);">
+              <strong style="font-size: 0.85em; color: var(--primary);">Con síntomas disociativos:</strong>
+              <div style="margin-left: 10px; margin-top: 4px; font-size: 0.85em;">
+                <div>
+                  <span class="status-badge ${this.respuestas.items_47_49[0] > 0 ? 'status-yes' : 'status-no'}">
+                    ${this.respuestas.items_47_49[0] > 0 ? 'SÍ' : 'NO'}
+                  </span>
+                  <strong>Despersonalización:</strong> Responde afirmativamente al <em>Ítem 47</em>.
+                </div>
+                <div style="margin-top: 4px;">
+                  <span class="status-badge ${(this.respuestas.items_47_49[1] > 0 || this.respuestas.items_47_49[2] > 0) ? 'status-yes' : 'status-no'}">
+                    ${(this.respuestas.items_47_49[1] > 0 || this.respuestas.items_47_49[2] > 0) ? 'SÍ' : 'NO'}
+                  </span>
+                  <strong>Desrealización:</strong> Responde afirmativamente al <em>Ítem 48 o 49</em>.
+                </div>
+              </div>
+            </div>
+
+            <!-- Con Expresión Retardada -->
+            <div style="padding: 8px; background: #fff; border-radius: 4px; border: 1px solid var(--border-color);">
+              <strong style="font-size: 0.85em; color: var(--primary);">Con expresión retardada:</strong>
+              <div style="margin-left: 10px; margin-top: 4px; font-size: 0.85em;">
+                <span class="status-badge ${this.respuestas.symptom_onset === '3m' ? 'status-yes' : 'status-no'}">
+                  ${this.respuestas.symptom_onset === '3m' ? 'SÍ' : 'NO'}
+                </span>
+                Ha marcado <em>"6 meses o más después del acontecimiento"</em> en el <em>Ítem 51</em>.
+              </div>
+            </div>
+          </div>
+          ` : ''}
         </div>
 
         <!-- GRÁFICO PERFIL -->
