@@ -938,13 +938,13 @@ window.tests_egep5 = {
     // Diagnóstico general
     if (tept === 'SI') {
       html += '<div style="background: rgba(76, 175, 80, 0.15); border: 1px solid #4CAF50; border-radius: 8px; padding: 16px; margin-bottom: 20px;">';
-      html += '<strong style="color: #4CAF50; font-size: 15px;">✓ DIAGNÓSTICO: Trastorno por Estrés Postraumático (TEPT)</strong>';
-      html += '<p style="margin: 8px 0 0 0;">El paciente cumple con los criterios DSM-5 para TEPT. La intensidad de síntomas es ' + (totalIntensidad >= 60 ? 'SEVERA' : totalIntensidad >= 40 ? 'MODERADA' : 'LEVE') + '.</p>';
+      html += '<strong style="color: #FFFFFF; font-size: 15px; text-shadow: 0 1px 3px rgba(0,0,0,0.5);">✓ DIAGNÓSTICO: Trastorno por Estrés Postraumático (TEPT)</strong>';
+      html += '<p style="margin: 8px 0 0 0; color: #e6eaf0;">El paciente cumple con los criterios DSM-5 para TEPT. La intensidad de síntomas es ' + (totalIntensidad >= 60 ? 'SEVERA' : totalIntensidad >= 40 ? 'MODERADA' : 'LEVE') + '.</p>';
       html += '</div>';
     } else {
       html += '<div style="background: rgba(244, 67, 54, 0.15); border: 1px solid #F44336; border-radius: 8px; padding: 16px; margin-bottom: 20px;">';
-      html += '<strong style="color: #F44336; font-size: 15px;">✗ DIAGNÓSTICO: No cumple criterios de TEPT</strong>';
-      html += '<p style="margin: 8px 0 0 0;">El paciente no cumple con los criterios DSM-5 para TEPT. Se recomienda evaluar otros diagnósticos relacionados con trauma.</p>';
+      html += '<strong style="color: #FFFFFF; font-size: 15px; text-shadow: 0 1px 3px rgba(0,0,0,0.5);">✗ DIAGNÓSTICO: No cumple criterios de TEPT</strong>';
+      html += '<p style="margin: 8px 0 0 0; color: #e6eaf0;">El paciente no cumple con los criterios DSM-5 para TEPT. Se recomienda evaluar otros diagnósticos relacionados con trauma.</p>';
       html += '</div>';
     }
 
