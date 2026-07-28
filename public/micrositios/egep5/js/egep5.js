@@ -538,16 +538,35 @@ window.tests_egep5 = {
     const itemsEl = document.getElementById('pg_n');
 
     if (fillEl) fillEl.style.width = porcentaje + '%';
-    if (itemsEl) itemsEl.textContent = completadas;
+    if (itemsEl) itemsEl.textContent = completadas + ' / 58';
 
     // Actualizar estadísticas
+    const acontecimientosEl = document.getElementById('st_ev');
     const siEl = document.getElementById('st_si');
     const noEl = document.getElementById('st_no');
-    if (siEl) siEl.textContent = this.respuestas.items_27_31.filter(x => x > 0).length +
-                                  this.respuestas.items_32_33.filter(x => x > 0).length +
-                                  this.respuestas.items_34_40.filter(x => x > 0).length +
-                                  this.respuestas.items_41_46.filter(x => x > 0).length;
-    if (noEl) noEl.textContent = 46 - (siEl ? parseInt(siEl.textContent) : 0);
+
+    // ACONTECIMIENTOS: Contar eventos traumáticos (items 1-11)
+    if (acontecimientosEl) {
+      const eventosCount = this.respuestas.event_type && typeof this.respuestas.event_type === 'object'
+        ? Object.values(this.respuestas.event_type).filter(v => v).length
+        : 0;
+      acontecimientosEl.textContent = eventosCount;
+    }
+
+    // SÍ: Contar TODOS los síntomas con valor > 0 (items 27-58 = 32 síntomas)
+    const totalSintomas = (this.respuestas.items_27_31.filter(x => x > 0).length +
+                           this.respuestas.items_32_33.filter(x => x > 0).length +
+                           this.respuestas.items_34_40.filter(x => x > 0).length +
+                           this.respuestas.items_41_46.filter(x => x > 0).length +
+                           this.respuestas.items_47_49.filter(x => x > 0).length +
+                           (this.respuestas.symptom_duration ? 1 : 0) +
+                           (this.respuestas.symptom_onset ? 1 : 0) +
+                           this.respuestas.items_52_58.filter(x => x > 0).length);
+
+    if (siEl) siEl.textContent = totalSintomas;
+
+    // NO: Síntomas no respondidos (32 síntomas totales - síntomas respondidos)
+    if (noEl) noEl.textContent = 32 - totalSintomas;
   },
 
   // Funciones de navegación por secciones (LEGACY - usar irTab() en su lugar)
