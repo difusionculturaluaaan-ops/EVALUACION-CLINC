@@ -1265,6 +1265,11 @@ window.tests_egep5 = {
     document.querySelector(`.egep5-tab[data-tab="${tabName}"]`)?.classList.add('active');
     document.getElementById(`tab-${tabName}`)?.classList.add('active');
 
+    // Generar informe automáticamente cuando se navega a la pestaña "informe"
+    if (tabName === 'informe' && this.resultados) {
+      this.generarInformeImprimible();
+    }
+
     window.scrollTo(0, 0);
   },
 
@@ -2127,7 +2132,6 @@ window.tests_egep5 = {
     `;
 
     document.getElementById('egep5-informe-contenido').innerHTML = html;
-    alert('✅ Informe generado correctamente');
   },
 
 };
