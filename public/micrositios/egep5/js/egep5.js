@@ -2094,33 +2094,4 @@ window.tests_egep5 = {
     alert('✅ Informe generado correctamente');
   },
 
-  descargarInformeHTML() {
-    const contenido = document.getElementById('egep5-informe-contenido').innerHTML;
-    const html = `<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>EGEP-5 Informe</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background: #f0f0f0; }
-  </style>
-</head>
-<body>
-  ${contenido}
-</body>
-</html>`;
-
-    const blob = new Blob([html], { type: 'text/html; charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `EGEP-5_Informe_${new Date().getTime()}.html`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  }
 };
