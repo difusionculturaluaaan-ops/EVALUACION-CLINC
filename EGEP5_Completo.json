@@ -1,0 +1,23 @@
+{
+  "testType": "EGEP-5",
+  "version": "2.0",
+  "respuestas": [
+    4, 3, 2, 1, 0, 4, 3, 2, 1, 0,
+    4, 3, 2, 1, 0, 4, 3, 2, 1, 0,
+    4, 3, 2, 1, 0, 4, 3, 2, 1, 0,
+    4, 3, 2, 1, 0, 4, 3, 2, 1, 0,
+    4, 3, 2, 1, 0, 4, 3, 2, 1, 0,
+    4, 3, 2, 1, 0, 4, 3
+  ],
+  "metadatos": {
+    "paciente_nombre": "Test Completo",
+    "paciente_id": "999",
+    "edad": "35",
+    "sexo": "No especificado",
+    "evaluador": "Sistema",
+    "centro": "Lab",
+    "fecha_evaluacion": "2026-07-27"
+  },
+  "respondidas": 58,
+  "timestamp": "2026-07-27T14:00:00.000Z"
+}
