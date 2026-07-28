@@ -1053,8 +1053,10 @@ window.tests_egep5 = {
           this.renderizarSintomas();
           this.renderizarFuncionamiento();
 
-          // Cargar respuestas en DOM (marcar checkboxes y radios) DESPUÉS de renderizar
-          this.cargarRespuestasEnDOM(data);
+          // Esperar a que renderizado se complete (browser reflow), LUEGO cargar respuestas
+          setTimeout(() => {
+            this.cargarRespuestasEnDOM(data);
+          }, 100);
 
           this.actualizarProgreso();
 

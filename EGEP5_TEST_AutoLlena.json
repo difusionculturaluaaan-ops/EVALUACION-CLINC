@@ -1,0 +1,76 @@
+{
+  "testType": "EGEP-5",
+  "version": "2.0",
+  "baremos": "españa_2024",
+  "respuestas": [
+    4,
+    3,
+    2,
+    1,
+    0,
+    4,
+    3,
+    2,
+    1,
+    0,
+    4,
+    3,
+    2,
+    1,
+    0,
+    4,
+    3,
+    2,
+    1,
+    0,
+    4,
+    3,
+    2,
+    1,
+    0,
+    4,
+    3,
+    2,
+    1,
+    0,
+    4,
+    3
+  ],
+  "metadatos": {
+    "paciente_nombre": "Test AutoLlena",
+    "paciente_id": "999",
+    "edad": "35",
+    "sexo": "No especificado",
+    "evaluador": "Claude Test",
+    "centro": "Lab Verificación",
+    "fecha_evaluacion": "2026-07-27",
+    "tipo_trauma": "Test",
+    "descripcion_evento": "Verificación de auto-llenado",
+    "severidad_evento": "severa",
+    "tiempo_evento": "hace3m"
+  },
+  "diagnostico": {
+    "tept_presente": "SI",
+    "puntuaciones_directas": {
+      "I": 12,
+      "E": 4,
+      "C": 18,
+      "A": 14,
+      "F": 4
+    },
+    "percentiles": {
+      "I": 75,
+      "E": 50,
+      "C": 70,
+      "A": 60,
+      "Total": 65
+    }
+  },
+  "funcionamiento": {
+    "areas_afectadas": 5,
+    "total_areas": 7,
+    "areas_detalles": []
+  },
+  "respondidas": 32,
+  "timestamp": "2026-07-27T14:00:00.000Z"
+}
