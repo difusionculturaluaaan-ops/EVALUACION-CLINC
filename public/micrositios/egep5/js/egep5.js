@@ -1772,5 +1772,178 @@ window.tests_egep5 = {
         }
       }
     });
+  },
+
+  generarInformeImprimible() {
+    if (!this.resultados) {
+      alert('Por favor, calcula los resultados primero');
+      return;
+    }
+
+    const paciente_nombre = document.getElementById('m_nombre')?.value || 'No especificado';
+    const edad = document.getElementById('m_edad')?.value || 'No especificada';
+    const sexo = document.getElementById('m_sexo')?.value || 'No especificado';
+    const fecha = document.getElementById('m_fecha')?.value || new Date().toISOString().split('T')[0];
+    const centro = document.getElementById('m_centro')?.value || 'No especificado';
+    const evaluador = document.getElementById('m_evaluador')?.value || 'No especificado';
+    const descripcion = document.getElementById('test_evento_desc')?.value || 'No especificada';
+
+    let html = `
+    <h1 style="text-align: center; font-size: 18px; margin-bottom: 10px;">EGEP-5</h1>
+    <p style="text-align: center; font-size: 12px; color: #666; margin-bottom: 30px;">Evaluación Global de Estrés Postraumático - Informe Clínico</p>
+
+    <!-- DATOS DEL PACIENTE -->
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+      <tr>
+        <td style="padding: 8px; border: 1px solid #ccc; width: 40%;"><strong>Nombre y Apellidos:</strong> ${paciente_nombre}</td>
+        <td style="padding: 8px; border: 1px solid #ccc; width: 20%;"><strong>Edad:</strong> ${edad}</td>
+        <td style="padding: 8px; border: 1px solid #ccc; width: 20%;"><strong>Sexo:</strong> ${sexo}</td>
+        <td style="padding: 8px; border: 1px solid #ccc; width: 20%;"><strong>Fecha:</strong> ${fecha}</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #ccc;" colspan="2"><strong>Centro:</strong> ${centro}</td>
+        <td style="padding: 8px; border: 1px solid #ccc;" colspan="2"><strong>Evaluador:</strong> ${evaluador}</td>
+      </tr>
+    </table>
+
+    <!-- ACONTECIMIENTO SUFRIDO -->
+    <h3 style="background: #9b6b8c; color: white; padding: 8px 12px; margin: 20px 0 10px 0; font-size: 13px;">ACONTECIMIENTO SUFRIDO</h3>
+    <div style="border: 1px solid #ccc; padding: 12px; min-height: 60px; background: #f9f9f9; margin-bottom: 20px;">
+      ${descripcion}
+    </div>
+
+    <!-- CRITERIOS DSM-5 -->
+    <h3 style="background: #9b6b8c; color: white; padding: 8px 12px; margin: 20px 0 10px 0; font-size: 13px;">CRITERIOS DSM-5</h3>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px;">
+      <tr style="background: #f0f0f0;">
+        <th style="border: 1px solid #ccc; padding: 8px; text-align: left;">CRITERIO</th>
+        <th style="border: 1px solid #ccc; padding: 8px; width: 60px;">SÍ</th>
+        <th style="border: 1px solid #ccc; padding: 8px; width: 60px;">NO</th>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #ccc; padding: 8px;"><strong>A:</strong> Exposición a acontecimiento traumático</td>
+        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">☑</td>
+        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">☐</td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #ccc; padding: 8px;"><strong>B:</strong> Síntomas intrusivos (I)</td>
+        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${this.resultados.criterios?.B ? '☑' : '☐'}</td>
+        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${this.resultados.criterios?.B ? '☐' : '☑'}</td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #ccc; padding: 8px;"><strong>C:</strong> Evitación (E)</td>
+        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${this.resultados.criterios?.C ? '☑' : '☐'}</td>
+        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${this.resultados.criterios?.C ? '☐' : '☑'}</td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #ccc; padding: 8px;"><strong>D:</strong> Alteraciones cognitivas y del estado de ánimo (C)</td>
+        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${this.resultados.criterios?.D ? '☑' : '☐'}</td>
+        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${this.resultados.criterios?.D ? '☐' : '☑'}</td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #ccc; padding: 8px;"><strong>E:</strong> Alteraciones en la activación y reactividad (A)</td>
+        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${this.resultados.criterios?.E ? '☑' : '☐'}</td>
+        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${this.resultados.criterios?.E ? '☐' : '☑'}</td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #ccc; padding: 8px;"><strong>F:</strong> Duración (≥1 mes)</td>
+        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${this.resultados.criterios?.F ? '☑' : '☐'}</td>
+        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${this.resultados.criterios?.F ? '☐' : '☑'}</td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #ccc; padding: 8px;"><strong>G:</strong> Funcionamiento (afecta vida diaria)</td>
+        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${this.resultados.criterios?.G ? '☑' : '☐'}</td>
+        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${this.resultados.criterios?.G ? '☐' : '☑'}</td>
+      </tr>
+    </table>
+
+    <!-- DIAGNÓSTICO FINAL -->
+    <div style="background: ${this.resultados.tept === 'SI' ? '#d4edda' : '#f8d7da'}; border: 2px solid ${this.resultados.tept === 'SI' ? '#28a745' : '#dc3545'}; padding: 16px; margin-bottom: 20px; text-align: center;">
+      <h3 style="margin: 0; color: ${this.resultados.tept === 'SI' ? '#155724' : '#721c24'}; font-size: 16px;">
+        ${this.resultados.tept === 'SI' ? '✓ DIAGNÓSTICO: TEPT PRESENTE' : '✗ DIAGNÓSTICO: NO CUMPLE CRITERIOS DE TEPT'}
+      </h3>
+      <p style="margin: 8px 0 0 0; font-size: 12px; color: ${this.resultados.tept === 'SI' ? '#155724' : '#721c24'};">
+        Puntuación Total: <strong>${(this.resultados.pd.I + this.resultados.pd.E + this.resultados.pd.C + this.resultados.pd.A)}/80</strong>
+      </p>
+    </div>
+
+    <!-- INTENSIDAD DE SÍNTOMAS -->
+    <h3 style="background: #9b6b8c; color: white; padding: 8px 12px; margin: 20px 0 10px 0; font-size: 13px;">INTENSIDAD DE LOS SÍNTOMAS</h3>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11px;">
+      <tr style="background: #f0f0f0;">
+        <th style="border: 1px solid #ccc; padding: 6px;">ESCALA</th>
+        <th style="border: 1px solid #ccc; padding: 6px;">PD</th>
+        <th style="border: 1px solid #ccc; padding: 6px;">T</th>
+        <th style="border: 1px solid #ccc; padding: 6px;">PC</th>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #ccc; padding: 6px;"><strong>Intrusivos (I)</strong></td>
+        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">${this.resultados.pd.I}</td>
+        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">-</td>
+        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">-</td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #ccc; padding: 6px;"><strong>Evitación (E)</strong></td>
+        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">${this.resultados.pd.E}</td>
+        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">-</td>
+        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">-</td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #ccc; padding: 6px;"><strong>Cognitivos (C)</strong></td>
+        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">${this.resultados.pd.C}</td>
+        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">-</td>
+        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">-</td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #ccc; padding: 6px;"><strong>Activación (A)</strong></td>
+        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">${this.resultados.pd.A}</td>
+        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">-</td>
+        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">-</td>
+      </tr>
+      <tr style="background: #f0f0f0; font-weight: bold;">
+        <td style="border: 1px solid #ccc; padding: 6px;">TOTAL</td>
+        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">${this.resultados.pd.I + this.resultados.pd.E + this.resultados.pd.C + this.resultados.pd.A}</td>
+        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">-</td>
+        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">-</td>
+      </tr>
+    </table>
+
+    <p style="font-size: 10px; color: #999; text-align: center; margin-top: 30px;">
+      Informe generado el ${new Date().toLocaleDateString('es-ES')} · EGEP-5 DSM-5
+    </p>
+    `;
+
+    document.getElementById('egep5-informe-contenido').innerHTML = html;
+    alert('✅ Informe generado correctamente');
+  },
+
+  descargarInformeHTML() {
+    const contenido = document.getElementById('egep5-informe-contenido').innerHTML;
+    const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>EGEP-5 Informe</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #f0f0f0; }
+  </style>
+</head>
+<body>
+  ${contenido}
+</body>
+</html>`;
+
+    const blob = new Blob([html], { type: 'text/html; charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `EGEP-5_Informe_${new Date().getTime()}.html`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   }
 };

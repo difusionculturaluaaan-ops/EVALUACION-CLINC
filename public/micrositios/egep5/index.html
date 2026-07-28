@@ -44,6 +44,9 @@
   <button class="egep5-tab" data-tab="interpretacion" onclick="window.tests_egep5.irTab('interpretacion')">
     <span class="tab-num">4</span> Interpretación
   </button>
+  <button class="egep5-tab" data-tab="informe" onclick="window.tests_egep5.irTab('informe')">
+    <span class="tab-num">5</span> Informe Imprimible
+  </button>
 </div>
 
 <main class="egep5-container">
@@ -485,6 +488,28 @@
     </div>
   </div>
 
+  <!-- ========== TAB 5: INFORME IMPRIMIBLE ========== -->
+  <div class="egep5-tab-content" id="tab-informe">
+    <div class="egep5-instruction">
+      <div class="instr-icon">i</div>
+      <div>
+        <strong>Informe Imprimible:</strong> Documento clínico completo en formato estándar para impresión. Contiene todos los criterios DSM-5, respuestas y diagnóstico.
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 16px; margin-bottom: 20px;">
+      <button onclick="window.tests_egep5.generarInformeImprimible()" class="btn btn-primary">🖨️ Generar Informe</button>
+      <button onclick="window.print()" class="btn btn-secondary">📄 Imprimir</button>
+      <button onclick="window.tests_egep5.descargarInformeHTML()" class="btn btn-secondary">⬇️ Descargar HTML</button>
+    </div>
+
+    <!-- Contenedor del informe imprimible -->
+    <div id="egep5-informe-contenido" style="background: white; padding: 40px; color: #000; font-family: Arial, sans-serif; line-height: 1.6; max-width: 900px; margin: 0 auto; border: 1px solid #ddd;">
+      <!-- AQUÍ SE GENERARÁ DINÁMICAMENTE EL INFORME -->
+      <p style="text-align: center; color: #999;">El informe aparecerá aquí al hacer clic en "Generar Informe"</p>
+    </div>
+  </div>
+
 </main>
 
 <!-- Hidden file input -->
@@ -494,10 +519,10 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
 <!-- Scripts modulares EGEP-5 -->
-<script src="js/egep5-corrector.js?v=20260726p"></script>
-<script src="js/egep5-graficos.js?v=20260726p"></script>
-<script src="js/egep5-baremos.js?v=20260726p"></script>
-<script src="js/egep5.js?v=20260726p"></script>
+<script src="js/egep5-corrector.js?v=20260726q"></script>
+<script src="js/egep5-graficos.js?v=20260726q"></script>
+<script src="js/egep5-baremos.js?v=20260726q"></script>
+<script src="js/egep5.js?v=20260726q"></script>
 <script src="/js/api.js"></script>
 
 <script>
