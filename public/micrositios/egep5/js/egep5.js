@@ -1833,12 +1833,12 @@ window.tests_egep5 = {
     const calcYPos = (pd, maxPD) => {
       const pc = Math.min(99, Math.max(1, (pd / maxPD) * 99));
 
-      if (pc >= 85) return 30 + (99 - pc) / (99 - 85) * 100; // 30 a 130
-      if (pc >= 60) return 130 + (85 - pc) / (85 - 60) * 110; // 130 a 240
-      if (pc >= 40) return 240 + (60 - pc) / (60 - 40) * 100; // 240 a 340
-      if (pc >= 15) return 340 + (40 - pc) / (40 - 15) * 60; // 340 a 400
-      if (pc >= 10) return 400 + (15 - pc) / (15 - 10) * 50; // 400 a 450
-      return 450 + (10 - pc) / 10 * 70; // 450 a 520
+      if (pc >= 85) return 20 + (99 - pc) / (99 - 85) * 80; // 20 a 100
+      if (pc >= 60) return 100 + (85 - pc) / (85 - 60) * 85; // 100 a 185
+      if (pc >= 40) return 185 + (60 - pc) / (60 - 40) * 80; // 185 a 265
+      if (pc >= 15) return 265 + (40 - pc) / (40 - 15) * 50; // 265 a 315
+      if (pc >= 10) return 315 + (15 - pc) / (15 - 10) * 35; // 315 a 350
+      return 350; // Mínimo pc 1
     };
 
     const yI = calcYPos(pd.I, 20);
@@ -2056,7 +2056,7 @@ window.tests_egep5 = {
               <span style="font-weight: normal; font-size: 0.7em;">España | Baremo Clínico | Varones + Mujeres</span>
             </div>
             <div class="chart-wrapper">
-              <svg viewBox="0 0 340 460" width="100%" height="auto" style="font-family: 'Segoe UI', system-ui, sans-serif; background-color: #ffffff; max-width: 100%;">
+              <svg viewBox="0 0 340 380" width="100%" height="auto" style="font-family: 'Segoe UI', system-ui, sans-serif; background-color: #ffffff; max-width: 100%; max-height: 340px;">
                 <defs>
                   <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
                     <feDropShadow dx="1" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity="0.25"/>
@@ -2064,34 +2064,32 @@ window.tests_egep5 = {
                 </defs>
 
                 <!-- ZONAS DE SIGNIFICACIÓN CLÍNICA -->
-                <rect x="55" y="30" width="270" height="100" fill="#f8d7da" opacity="0.45"/>
-                <rect x="55" y="130" width="270" height="110" fill="#fff3cd" opacity="0.45"/>
-                <rect x="55" y="240" width="270" height="160" fill="#d1e7dd" opacity="0.35"/>
-                <rect x="55" y="400" width="270" height="120" fill="#e2e3e5" opacity="0.4"/>
+                <rect x="55" y="20" width="270" height="80" fill="#f8d7da" opacity="0.45"/>
+                <rect x="55" y="100" width="270" height="85" fill="#fff3cd" opacity="0.45"/>
+                <rect x="55" y="185" width="270" height="130" fill="#d1e7dd" opacity="0.35"/>
+                <rect x="55" y="315" width="270" height="65" fill="#e2e3e5" opacity="0.4"/>
 
                 <!-- MEDIANA POBLACIONAL (Pc 50) -->
-                <rect x="55" y="278" width="270" height="24" fill="#5c1d38" opacity="0.12"/>
-                <line x1="55" y1="290" x2="325" y2="290" stroke="#5c1d38" stroke-width="2" stroke-dasharray="4,2"/>
-                <text x="328" y="294" font-size="9" font-weight="bold" fill="#5c1d38">Pc 50</text>
+                <rect x="55" y="215" width="270" height="20" fill="#5c1d38" opacity="0.12"/>
+                <line x1="55" y1="225" x2="325" y2="225" stroke="#5c1d38" stroke-width="2" stroke-dasharray="4,2"/>
+                <text x="328" y="229" font-size="9" font-weight="bold" fill="#5c1d38">Pc 50</text>
 
                 <!-- RETÍCULA DE PERCENTILES -->
-                <line x1="55" y1="30" x2="325" y2="30" stroke="#b8daff" stroke-width="1"/>
-                <line x1="55" y1="130" x2="325" y2="130" stroke="#adb5bd" stroke-width="1.5"/>
-                <line x1="55" y1="240" x2="325" y2="240" stroke="#ccc" stroke-dasharray="2,2"/>
-                <line x1="55" y1="340" x2="325" y2="340" stroke="#ccc" stroke-dasharray="2,2"/>
-                <line x1="55" y1="400" x2="325" y2="400" stroke="#adb5bd" stroke-width="1.5"/>
-                <line x1="55" y1="450" x2="325" y2="450" stroke="#ccc" stroke-dasharray="2,2"/>
-                <line x1="55" y1="520" x2="325" y2="520" stroke="#adb5bd" stroke-width="1"/>
+                <line x1="55" y1="20" x2="325" y2="20" stroke="#b8daff" stroke-width="1"/>
+                <line x1="55" y1="100" x2="325" y2="100" stroke="#adb5bd" stroke-width="1.5"/>
+                <line x1="55" y1="185" x2="325" y2="185" stroke="#ccc" stroke-dasharray="2,2"/>
+                <line x1="55" y1="265" x2="325" y2="265" stroke="#ccc" stroke-dasharray="2,2"/>
+                <line x1="55" y1="315" x2="325" y2="315" stroke="#adb5bd" stroke-width="1.5"/>
+                <line x1="55" y1="350" x2="325" y2="350" stroke="#ccc" stroke-dasharray="2,2"/>
 
                 <!-- MARCAS DE PERCENTILES IZQUIERDA -->
-                <text x="48" y="34" font-size="10" font-weight="bold" text-anchor="end" fill="#495057">99</text>
-                <text x="48" y="134" font-size="10" font-weight="bold" text-anchor="end" fill="#495057">85</text>
-                <text x="48" y="244" font-size="10" font-weight="bold" text-anchor="end" fill="#495057">60</text>
-                <text x="48" y="294" font-size="10" font-weight="bold" text-anchor="end" fill="#5c1d38">50</text>
-                <text x="48" y="344" font-size="10" font-weight="bold" text-anchor="end" fill="#495057">40</text>
-                <text x="48" y="404" font-size="10" font-weight="bold" text-anchor="end" fill="#495057">15</text>
-                <text x="48" y="454" font-size="10" font-weight="bold" text-anchor="end" fill="#495057">10</text>
-                <text x="48" y="524" font-size="10" font-weight="bold" text-anchor="end" fill="#495057">1</text>
+                <text x="48" y="24" font-size="10" font-weight="bold" text-anchor="end" fill="#495057">99</text>
+                <text x="48" y="104" font-size="10" font-weight="bold" text-anchor="end" fill="#495057">85</text>
+                <text x="48" y="189" font-size="10" font-weight="bold" text-anchor="end" fill="#495057">60</text>
+                <text x="48" y="229" font-size="10" font-weight="bold" text-anchor="end" fill="#5c1d38">50</text>
+                <text x="48" y="269" font-size="10" font-weight="bold" text-anchor="end" fill="#495057">40</text>
+                <text x="48" y="319" font-size="10" font-weight="bold" text-anchor="end" fill="#495057">15</text>
+                <text x="48" y="354" font-size="10" font-weight="bold" text-anchor="end" fill="#495057">10</text>
 
                 <!-- COLUMNAS VERTICALES -->
                 <g stroke="#dee2e6" stroke-width="1">
@@ -2140,16 +2138,11 @@ window.tests_egep5 = {
                 <text x="260" y="380" font-size="9" font-weight="bold" text-anchor="middle" fill="#212529">PD: ${total}</text>
                 <text x="305" y="380" font-size="9" font-weight="bold" text-anchor="middle" fill="#212529">PD: ${countF}</text>
 
-                <!-- CUADRO INTERPRETATIVO -->
-                <g transform="translate(15, 395)">
-                  <rect x="0" y="0" width="310" height="50" fill="#ffffff" stroke="#dee2e6" rx="4"/>
-                  <text x="10" y="15" font-size="8.5" font-weight="bold" fill="#5c1d38">CÓMO INTERPRETAR:</text>
-                  <circle cx="15" cy="28" r="3" fill="#5c1d38"/>
-                  <text x="23" y="31" font-size="7.5" fill="#495057"><tspan font-weight="bold">Línea Punteada (Pc 50):</tspan> Promedio normal.</text>
-                  <circle cx="15" cy="39" r="3" fill="#000000"/>
-                  <text x="23" y="42" font-size="7.5" fill="#495057"><tspan font-weight="bold">Línea Negra:</tspan> Puntuación real del paciente.</text>
-                </g>
               </svg>
+            </div>
+            <div style="font-size: 0.7em; margin-top: 8px; color: var(--text-muted); line-height: 1.4;">
+              <div><strong style="color: var(--primary);">Cómo interpretar:</strong></div>
+              <div>— Línea punteada (Pc 50): Promedio normal | — Línea negra: Puntuación real</div>
             </div>
           </div>
         </div>
