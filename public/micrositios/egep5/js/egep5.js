@@ -1689,6 +1689,9 @@ window.tests_egep5 = {
       return;
     }
 
+    // IMPORTANTE: Regenerar el informe para asegurar que tenga datos actualizados
+    this.generarInformeImprimible();
+
     const data = [];
     data.push(...this.respuestas.items_27_31);
     data.push(...this.respuestas.items_32_33);
@@ -1717,7 +1720,7 @@ window.tests_egep5 = {
       return;
     }
 
-    // Generar PDF del Informe Final
+    // Generar PDF del Informe Final después de regenerar
     setTimeout(() => {
       const fecha = document.getElementById('m_fecha')?.value || new Date().toISOString().split('T')[0];
       const opt = {
