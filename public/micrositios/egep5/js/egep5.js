@@ -2140,10 +2140,11 @@ window.tests_egep5 = {
 
               </svg>
             </div>
-            <div style="font-size: 0.7em; margin-top: 8px; color: var(--text-muted); line-height: 1.4;">
-              <div><strong style="color: var(--primary);">Cómo interpretar:</strong></div>
-              <div>— Línea punteada (Pc 50): Promedio normal | — Línea negra: Puntuación real</div>
-            </div>
+          </div>
+          <div style="font-size: 0.7em; margin-top: 12px; color: var(--text-muted); line-height: 1.5; padding: 8px; border-top: 1px solid var(--border-color);">
+            <div><strong style="color: var(--primary);">Cómo interpretar:</strong></div>
+            <div style="margin-top: 4px;">— Línea punteada (Pc 50): Promedio normal de la población</div>
+            <div>— Línea negra sólida: Puntuación real del paciente evaluado</div>
           </div>
         </div>
       </div>
