@@ -1007,9 +1007,9 @@ window.tests_egep5 = {
 
           // CARGAR DATOS DE ITEMS 1-26 (si existen)
           if (data.items_1_26) {
-            // Items 1-11: trauma_type (array de strings)
-            if (data.items_1_26.trauma_type) {
-              this.respuestas.trauma_type = data.items_1_26.trauma_type;
+            // Items 1-11: event_type (objeto con relación a cada evento)
+            if (data.items_1_26.event_type) {
+              this.respuestas.event_type = data.items_1_26.event_type;
             }
             // Item 12: trauma_description
             if (data.items_1_26.trauma_description) {
@@ -1145,7 +1145,7 @@ window.tests_egep5 = {
       baremos: 'españa_2024',  // Unicode escape para ñ (safe en cualquier encoding)
       // Items 1-26: Datos del evento y características
       items_1_26: {
-        trauma_type: this.respuestas.trauma_type || [],
+        event_type: this.respuestas.event_type || {},
         trauma_description: this.respuestas.trauma_description || '',
         trauma_severity: this.respuestas.trauma_severity || null,
         trauma_timing: this.respuestas.trauma_timing || null,
@@ -1310,14 +1310,14 @@ window.tests_egep5 = {
 
     const items = data.items_1_26;
 
-    // Items 1-11: Marcar checkboxes de eventos traumáticos
-    if (items.trauma_type && Array.isArray(items.trauma_type)) {
-      items.trauma_type.forEach(eventId => {
-        const checkbox = document.querySelector(`input[name="trauma_type"][value="${eventId}"]`);
-        if (checkbox) {
-          checkbox.checked = true;
-          checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-          console.log(`✅ Marcado evento traumático ${eventId}`);
+    // Items 1-11: Marcar radios de eventos traumáticos
+    if (items.event_type && typeof items.event_type === 'object') {
+      Object.entries(items.event_type).forEach(([eventNum, valor]) => {
+        const radio = document.querySelector(`input[name="event_${eventNum}"][value="${valor}"]`);
+        if (radio) {
+          radio.checked = true;
+          radio.dispatchEvent(new Event('change', { bubbles: true }));
+          console.log(`✅ Evento ${eventNum} marcado: ${valor}`);
         }
       });
     }

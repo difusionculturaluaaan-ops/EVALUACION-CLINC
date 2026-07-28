@@ -3,12 +3,12 @@
   "version": "2.0",
   "baremos": "españa_2024",
   "items_1_26": {
-    "trauma_type": [
-      "1",
-      "3",
-      "5",
-      "7"
-    ],
+    "event_type": {
+      "1": "me",
+      "3": "presencié",
+      "5": "cercano",
+      "7": "me"
+    },
     "trauma_description": "Fue un evento traumático severo que ocurrió hace unos meses. El paciente reporta síntomas persistentes.",
     "trauma_severity": "grave",
     "trauma_timing": "mas3m",
