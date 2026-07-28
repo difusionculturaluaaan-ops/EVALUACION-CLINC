@@ -2056,7 +2056,7 @@ window.tests_egep5 = {
               <span style="font-weight: normal; font-size: 0.7em;">España | Baremo Clínico | Varones + Mujeres</span>
             </div>
             <div class="chart-wrapper">
-              <svg viewBox="0 0 380 620" width="100%" style="font-family: 'Segoe UI', system-ui, sans-serif; background-color: #ffffff;">
+              <svg viewBox="0 0 340 460" width="100%" height="auto" style="font-family: 'Segoe UI', system-ui, sans-serif; background-color: #ffffff; max-width: 100%;">
                 <defs>
                   <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
                     <feDropShadow dx="1" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity="0.25"/>
@@ -2132,22 +2132,22 @@ window.tests_egep5 = {
                 </g>
 
                 <!-- VALORES PD EN BASE -->
-                <rect x="55" y="525" width="270" height="25" fill="#f1f3f5" rx="4"/>
-                <text x="80" y="542" font-size="10" font-weight="bold" text-anchor="middle" fill="#212529">PD: ${pd.I}</text>
-                <text x="125" y="542" font-size="10" font-weight="bold" text-anchor="middle" fill="#212529">PD: ${pd.E}</text>
-                <text x="170" y="542" font-size="10" font-weight="bold" text-anchor="middle" fill="#212529">PD: ${pd.C}</text>
-                <text x="215" y="542" font-size="10" font-weight="bold" text-anchor="middle" fill="#212529">PD: ${pd.A}</text>
-                <text x="260" y="542" font-size="10" font-weight="bold" text-anchor="middle" fill="#212529">PD: ${total}</text>
-                <text x="305" y="542" font-size="10" font-weight="bold" text-anchor="middle" fill="#212529">PD: ${countF}</text>
+                <rect x="55" y="365" width="270" height="22" fill="#f1f3f5" rx="4"/>
+                <text x="80" y="380" font-size="9" font-weight="bold" text-anchor="middle" fill="#212529">PD: ${pd.I}</text>
+                <text x="125" y="380" font-size="9" font-weight="bold" text-anchor="middle" fill="#212529">PD: ${pd.E}</text>
+                <text x="170" y="380" font-size="9" font-weight="bold" text-anchor="middle" fill="#212529">PD: ${pd.C}</text>
+                <text x="215" y="380" font-size="9" font-weight="bold" text-anchor="middle" fill="#212529">PD: ${pd.A}</text>
+                <text x="260" y="380" font-size="9" font-weight="bold" text-anchor="middle" fill="#212529">PD: ${total}</text>
+                <text x="305" y="380" font-size="9" font-weight="bold" text-anchor="middle" fill="#212529">PD: ${countF}</text>
 
                 <!-- CUADRO INTERPRETATIVO -->
-                <g transform="translate(15, 560)">
-                  <rect x="0" y="0" width="350" height="50" fill="#ffffff" stroke="#dee2e6" rx="4"/>
+                <g transform="translate(15, 395)">
+                  <rect x="0" y="0" width="310" height="50" fill="#ffffff" stroke="#dee2e6" rx="4"/>
                   <text x="10" y="15" font-size="8.5" font-weight="bold" fill="#5c1d38">CÓMO INTERPRETAR:</text>
                   <circle cx="15" cy="28" r="3" fill="#5c1d38"/>
-                  <text x="23" y="31" font-size="7.5" fill="#495057"><tspan font-weight="bold">Línea Punteada (Pc 50):</tspan> Promedio normal de la población.</text>
+                  <text x="23" y="31" font-size="7.5" fill="#495057"><tspan font-weight="bold">Línea Punteada (Pc 50):</tspan> Promedio normal.</text>
                   <circle cx="15" cy="39" r="3" fill="#000000"/>
-                  <text x="23" y="42" font-size="7.5" fill="#495057"><tspan font-weight="bold">Línea Negra:</tspan> Puntuación real del paciente evaluado.</text>
+                  <text x="23" y="42" font-size="7.5" fill="#495057"><tspan font-weight="bold">Línea Negra:</tspan> Puntuación real del paciente.</text>
                 </g>
               </svg>
             </div>
