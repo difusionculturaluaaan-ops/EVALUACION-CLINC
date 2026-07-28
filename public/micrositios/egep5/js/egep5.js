@@ -1780,137 +1780,274 @@ window.tests_egep5 = {
       return;
     }
 
-    const paciente_nombre = document.getElementById('m_nombre')?.value || 'No especificado';
-    const edad = document.getElementById('m_edad')?.value || 'No especificada';
-    const sexo = document.getElementById('m_sexo')?.value || 'No especificado';
-    const fecha = document.getElementById('m_fecha')?.value || new Date().toISOString().split('T')[0];
-    const centro = document.getElementById('m_centro')?.value || 'No especificado';
-    const evaluador = document.getElementById('m_evaluador')?.value || 'No especificado';
+    const paciente_nombre = document.getElementById('m_nombre')?.value || '-';
+    const edad = document.getElementById('m_edad')?.value || '-';
+    const sexo = document.getElementById('m_sexo')?.value || '-';
+    const fecha = document.getElementById('m_fecha')?.value || '-';
+    const centro = document.getElementById('m_centro')?.value || '-';
+    const evaluador = document.getElementById('m_evaluador')?.value || '-';
     const descripcion = document.getElementById('test_evento_desc')?.value || 'No especificada';
 
+    const pd = this.resultados.pd;
+    const total = pd.I + pd.E + pd.C + pd.A;
+
+    // Contar síntomas por escala
+    const countI = this.respuestas.items_27_31.filter(x => x > 0).length;
+    const countE = this.respuestas.items_32_33.filter(x => x > 0).length;
+    const countC = this.respuestas.items_34_40.filter(x => x > 0).length;
+    const countA = this.respuestas.items_41_46.filter(x => x > 0).length;
+    const countF = this.respuestas.items_52_58.filter(x => x > 0).length;
+
+    // Calcular posiciones Y en el gráfico (SVG) basado en percentiles
+    const calcYPos = (pd, maxPD) => {
+      const pc = Math.round((pd / maxPD) * 99);
+      if (pc >= 85) return 60;
+      if (pc >= 60) return 150;
+      if (pc >= 50) return 220;
+      if (pc >= 40) return 280;
+      if (pc >= 15) return 350;
+      return 400;
+    };
+
+    const yI = calcYPos(pd.I, 20);
+    const yE = calcYPos(pd.E, 8);
+    const yC = calcYPos(pd.C, 28);
+    const yA = calcYPos(pd.A, 24);
+    const yTotal = calcYPos(total, 80);
+    const yF = calcYPos(this.respuestas.items_52_58.filter(x => x > 0).length, 7);
+
     let html = `
-    <h1 style="text-align: center; font-size: 18px; margin-bottom: 10px;">EGEP-5</h1>
-    <p style="text-align: center; font-size: 12px; color: #666; margin-bottom: 30px;">Evaluación Global de Estrés Postraumático - Informe Clínico</p>
+    <style>
+      :root {
+        --primary: #5c1d38;
+        --text-dark: #212529;
+        --text-muted: #6c757d;
+        --border-color: #dee2e6;
+        --accent-bg: #f3e8ee;
+      }
+      body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+      .container { max-width: 1100px; margin: 0 auto; background: white; }
+      header { background: var(--primary); color: white; padding: 20px; }
+      header h1 { margin: 0; font-size: 1.8em; }
+      .subtitle { font-size: 0.9em; opacity: 0.9; }
+      .content-grid { display: grid; grid-template-columns: 1fr 350px; gap: 20px; padding: 20px; }
+      .section-card { border: 1px solid var(--border-color); border-radius: 6px; padding: 15px; margin-bottom: 15px; }
+      .section-title { color: var(--primary); font-weight: bold; border-bottom: 2px solid var(--accent-bg); padding-bottom: 6px; margin-bottom: 10px; font-size: 1em; text-transform: uppercase; }
+      .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+      .info-item { font-size: 0.9em; }
+      .info-label { font-size: 0.75em; text-transform: uppercase; color: var(--text-muted); font-weight: bold; }
+      .info-value { background: #f1f3f5; padding: 5px 8px; border-radius: 3px; margin-top: 3px; font-weight: 600; }
+      table { width: 100%; border-collapse: collapse; font-size: 0.9em; margin-top: 8px; }
+      th, td { padding: 8px; text-align: left; border-bottom: 1px solid var(--border-color); }
+      th { background: var(--accent-bg); color: var(--primary); font-weight: bold; font-size: 0.8em; }
+      .status-badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.75em; font-weight: bold; }
+      .status-yes { background: #d4edda; color: #155724; }
+      .status-no { background: #f8d7da; color: #721c24; }
+      .score-box { display: inline-block; min-width: 24px; text-align: center; font-weight: bold; background: #e9ecef; padding: 2px 6px; border-radius: 3px; }
+      .profile-container { background: #faf9f9; border: 1px solid var(--border-color); border-radius: 6px; padding: 12px; }
+      .chart-wrapper { background: white; border: 1px solid var(--border-color); border-radius: 4px; }
+      @media print { .content-grid { display: grid; grid-template-columns: 1fr 1fr; } }
+    </style>
 
-    <!-- DATOS DEL PACIENTE -->
-    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-      <tr>
-        <td style="padding: 8px; border: 1px solid #ccc; width: 40%;"><strong>Nombre y Apellidos:</strong> ${paciente_nombre}</td>
-        <td style="padding: 8px; border: 1px solid #ccc; width: 20%;"><strong>Edad:</strong> ${edad}</td>
-        <td style="padding: 8px; border: 1px solid #ccc; width: 20%;"><strong>Sexo:</strong> ${sexo}</td>
-        <td style="padding: 8px; border: 1px solid #ccc; width: 20%;"><strong>Fecha:</strong> ${fecha}</td>
-      </tr>
-      <tr>
-        <td style="padding: 8px; border: 1px solid #ccc;" colspan="2"><strong>Centro:</strong> ${centro}</td>
-        <td style="padding: 8px; border: 1px solid #ccc;" colspan="2"><strong>Evaluador:</strong> ${evaluador}</td>
-      </tr>
-    </table>
+    <div class="container">
+      <header>
+        <h1>EGEP-5</h1>
+        <div class="subtitle">Evaluación Global del Estrés Postraumático (DSM-5) · HOJA DE CORRECCIÓN</div>
+      </header>
 
-    <!-- ACONTECIMIENTO SUFRIDO -->
-    <h3 style="background: #9b6b8c; color: white; padding: 8px 12px; margin: 20px 0 10px 0; font-size: 13px;">ACONTECIMIENTO SUFRIDO</h3>
-    <div style="border: 1px solid #ccc; padding: 12px; min-height: 60px; background: #f9f9f9; margin-bottom: 20px;">
-      ${descripcion}
+      <div class="content-grid">
+        <div>
+          <!-- DATOS DEL PACIENTE -->
+          <div class="section-card">
+            <div class="section-title">Datos del Evaluado</div>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Nombre / Iniciales</span>
+                <span class="info-value">${paciente_nombre}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Edad</span>
+                <span class="info-value">${edad}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Sexo</span>
+                <span class="info-value">${sexo}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Fecha</span>
+                <span class="info-value">${fecha}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Centro</span>
+                <span class="info-value">${centro}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Evaluador</span>
+                <span class="info-value">${evaluador}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ACONTECIMIENTO SUFRIDO -->
+          <div class="section-card">
+            <div class="section-title">Acontecimiento Sufrido</div>
+            <p style="font-style: italic; font-size: 0.9em; background: #f8f9fa; padding: 10px; border-left: 4px solid var(--primary); border-radius: 0 4px 4px 0;">
+              "${descripcion}"
+            </p>
+          </div>
+
+          <!-- EVALUACIÓN POR CRITERIOS -->
+          <div class="section-card">
+            <div class="section-title">Evaluación por Criterios (DSM-5)</div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Criterio / Escala</th>
+                  <th style="text-align: center; width: 70px;">N.º Síntomas</th>
+                  <th style="text-align: center; width: 70px;">Intensidad (PD)</th>
+                  <th style="text-align: center; width: 100px;">Cumple Criterio</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>A. Exposición a Acontecimiento Traumático</strong><br><small style="color:var(--text-muted)">Ítems 1-11 y Ítem 14</small></td>
+                  <td style="text-align: center;">-</td>
+                  <td style="text-align: center;">-</td>
+                  <td style="text-align: center;"><span class="status-badge status-yes">SÍ</span></td>
+                </tr>
+                <tr>
+                  <td><strong>B. Síntomas Intrusivos (I)</strong><br><small style="color:var(--text-muted)">Ítems 27 a 31 (Mínimo: 1)</small></td>
+                  <td style="text-align: center;"><span class="score-box">${countI}</span> / 5</td>
+                  <td style="text-align: center;"><span class="score-box">${pd.I}</span> / 20</td>
+                  <td style="text-align: center;"><span class="status-badge ${this.resultados.criterios?.B ? 'status-yes' : 'status-no'}">${this.resultados.criterios?.B ? 'SÍ' : 'NO'}</span></td>
+                </tr>
+                <tr>
+                  <td><strong>C. Evitación (E)</strong><br><small style="color:var(--text-muted)">Ítems 32 a 33 (Mínimo: 1)</small></td>
+                  <td style="text-align: center;"><span class="score-box">${countE}</span> / 2</td>
+                  <td style="text-align: center;"><span class="score-box">${pd.E}</span> / 8</td>
+                  <td style="text-align: center;"><span class="status-badge ${this.resultados.criterios?.C ? 'status-yes' : 'status-no'}">${this.resultados.criterios?.C ? 'SÍ' : 'NO'}</span></td>
+                </tr>
+                <tr>
+                  <td><strong>D. Alteraciones Cognitivas y Ánimo (C)</strong><br><small style="color:var(--text-muted)">Ítems 34 a 40 (Mínimo: 2)</small></td>
+                  <td style="text-align: center;"><span class="score-box">${countC}</span> / 7</td>
+                  <td style="text-align: center;"><span class="score-box">${pd.C}</span> / 28</td>
+                  <td style="text-align: center;"><span class="status-badge ${this.resultados.criterios?.D ? 'status-yes' : 'status-no'}">${this.resultados.criterios?.D ? 'SÍ' : 'NO'}</span></td>
+                </tr>
+                <tr>
+                  <td><strong>E. Alteraciones Activación / Reactividad (A)</strong><br><small style="color:var(--text-muted)">Ítems 41 a 46 (Mínimo: 2)</small></td>
+                  <td style="text-align: center;"><span class="score-box">${countA}</span> / 6</td>
+                  <td style="text-align: center;"><span class="score-box">${pd.A}</span> / 24</td>
+                  <td style="text-align: center;"><span class="status-badge ${this.resultados.criterios?.E ? 'status-yes' : 'status-no'}">${this.resultados.criterios?.E ? 'SÍ' : 'NO'}</span></td>
+                </tr>
+                <tr>
+                  <td><strong>F. Duración</strong><br><small style="color:var(--text-muted)">Ítem 50 (> 1 mes)</small></td>
+                  <td style="text-align: center;">-</td>
+                  <td style="text-align: center;">-</td>
+                  <td style="text-align: center;"><span class="status-badge ${this.resultados.criterios?.F ? 'status-yes' : 'status-no'}">${this.resultados.criterios?.F ? 'SÍ' : 'NO'}</span></td>
+                </tr>
+                <tr>
+                  <td><strong>G. Funcionamiento (F)</strong><br><small style="color:var(--text-muted)">Ítems 52 a 58 (Mínimo: 2)</small></td>
+                  <td style="text-align: center;"><span class="score-box">${countF}</span> / 7</td>
+                  <td style="text-align: center;">-</td>
+                  <td style="text-align: center;"><span class="status-badge ${this.resultados.criterios?.G ? 'status-yes' : 'status-no'}">${this.resultados.criterios?.G ? 'SÍ' : 'NO'}</span></td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="background: var(--accent-bg); border-radius: 6px; padding: 10px; margin-top: 10px; display: flex; justify-content: space-between; font-weight: bold; color: var(--primary);">
+              <span>PUNTUACIÓN DIRECTA TOTAL INTENSIDAD SÍNTOMAS:</span>
+              <span style="font-size: 1.1em; background: var(--primary); color: white; padding: 2px 10px; border-radius: 3px;">PD = ${total}</span>
+            </div>
+          </div>
+
+          <!-- DIAGNÓSTICO FINAL -->
+          <div class="section-card" style="border-left: 4px solid ${this.resultados.tept === 'SI' ? '#28a745' : '#dc3545'};">
+            <div class="section-title" style="color: ${this.resultados.tept === 'SI' ? '#28a745' : '#dc3545'};">Diagnóstico Final</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <span style="font-weight: bold; font-size: 1.05em;">DIAGNÓSTICO DE TEPT:</span>
+              <span class="status-badge ${this.resultados.tept === 'SI' ? 'status-yes' : 'status-no'}" style="font-size: 0.9em; padding: 4px 12px;">
+                ${this.resultados.tept === 'SI' ? 'CUMPLE CRITERIOS' : 'NO CUMPLE CRITERIOS'}
+              </span>
+            </div>
+            <p style="font-size: 0.85em; color: var(--text-muted);">
+              ${this.resultados.tept === 'SI' ?
+                'El paciente cumple todos los criterios DSM-5 para TEPT.' :
+                'El paciente no cumple todos los criterios requeridos para TEPT.'}
+            </p>
+          </div>
+        </div>
+
+        <!-- GRÁFICO PERFIL -->
+        <div>
+          <div class="profile-container">
+            <div style="text-align: center; font-size: 0.8em; font-weight: bold; color: white; background: var(--primary); padding: 8px; border-radius: 4px; margin-bottom: 10px;">
+              PERFIL BAREMADO<br>
+              <span style="font-weight: normal; font-size: 0.7em;">España, baremo clínico</span>
+            </div>
+            <div class="chart-wrapper">
+              <svg viewBox="0 0 340 520" width="100%" style="font-family: Arial, sans-serif;">
+                <!-- Fondos por región -->
+                <rect x="50" y="20" width="240" height="90" fill="#fce4ec" opacity="0.4"/>
+                <rect x="50" y="110" width="240" height="110" fill="#fff8e1" opacity="0.4"/>
+                <rect x="50" y="220" width="240" height="130" fill="#f1f8e9" opacity="0.4"/>
+                <rect x="50" y="350" width="240" height="130" fill="#e3f2fd" opacity="0.4"/>
+
+                <!-- Líneas de percentiles -->
+                <line x1="50" y1="25" x2="290" y2="25" stroke="#ccc" stroke-dasharray="2,2"/>
+                <text x="35" y="29" font-size="9" text-anchor="end" fill="#666">99</text>
+                <line x1="50" y1="110" x2="290" y2="110" stroke="#888"/>
+                <text x="35" y="114" font-size="9" text-anchor="end" fill="#666">85</text>
+                <line x1="50" y1="180" x2="290" y2="180" stroke="#ccc" stroke-dasharray="2,2"/>
+                <text x="35" y="184" font-size="9" text-anchor="end" fill="#666">60</text>
+                <line x1="50" y1="220" x2="290" y2="220" stroke="#5c1d38" stroke-width="1.5"/>
+                <text x="35" y="224" font-size="9" font-weight="bold" text-anchor="end" fill="#5c1d38">50</text>
+                <line x1="50" y1="280" x2="290" y2="280" stroke="#ccc" stroke-dasharray="2,2"/>
+                <text x="35" y="284" font-size="9" text-anchor="end" fill="#666">40</text>
+                <line x1="50" y1="350" x2="290" y2="350" stroke="#888"/>
+                <text x="35" y="354" font-size="9" text-anchor="end" fill="#666">15</text>
+                <line x1="50" y1="410" x2="290" y2="410" stroke="#ccc" stroke-dasharray="2,2"/>
+                <text x="35" y="414" font-size="9" text-anchor="end" fill="#666">10</text>
+
+                <!-- Líneas verticales de escalas -->
+                <line x1="70" y1="20" x2="70" y2="480" stroke="#ddd"/>
+                <line x1="110" y1="20" x2="110" y2="480" stroke="#ddd"/>
+                <line x1="150" y1="20" x2="150" y2="480" stroke="#ddd"/>
+                <line x1="190" y1="20" x2="190" y2="480" stroke="#ddd"/>
+                <line x1="230" y1="20" x2="230" y2="480" stroke="#ddd"/>
+                <line x1="270" y1="20" x2="270" y2="480" stroke="#ddd"/>
+
+                <!-- Encabezados de escalas -->
+                <text x="70" y="12" font-size="11" font-weight="bold" text-anchor="middle" fill="#5c1d38">I</text>
+                <text x="110" y="12" font-size="11" font-weight="bold" text-anchor="middle" fill="#5c1d38">E</text>
+                <text x="150" y="12" font-size="11" font-weight="bold" text-anchor="middle" fill="#5c1d38">C</text>
+                <text x="190" y="12" font-size="11" font-weight="bold" text-anchor="middle" fill="#5c1d38">A</text>
+                <text x="230" y="12" font-size="11" font-weight="bold" text-anchor="middle" fill="#5c1d38">Total</text>
+                <text x="270" y="12" font-size="11" font-weight="bold" text-anchor="middle" fill="#5c1d38">F</text>
+
+                <!-- Línea de datos -->
+                <polyline points="70,${yI} 110,${yE} 150,${yC} 190,${yA} 230,${yTotal} 270,${yF}"
+                          fill="none" stroke="#000000" stroke-width="2.5"/>
+
+                <!-- Puntos de datos -->
+                <circle cx="70" cy="${yI}" r="4.5" fill="#000000"/>
+                <circle cx="110" cy="${yE}" r="4.5" fill="#000000"/>
+                <circle cx="150" cy="${yC}" r="4.5" fill="#000000"/>
+                <circle cx="190" cy="${yA}" r="4.5" fill="#000000"/>
+                <circle cx="230" cy="${yTotal}" r="4.5" fill="#000000"/>
+                <circle cx="270" cy="${yF}" r="4.5" fill="#000000"/>
+
+                <!-- PD valores en pie -->
+                <text x="70" y="500" font-size="10" font-weight="bold" text-anchor="middle">PD: ${pd.I}</text>
+                <text x="110" y="500" font-size="10" font-weight="bold" text-anchor="middle">PD: ${pd.E}</text>
+                <text x="150" y="500" font-size="10" font-weight="bold" text-anchor="middle">PD: ${pd.C}</text>
+                <text x="190" y="500" font-size="10" font-weight="bold" text-anchor="middle">PD: ${pd.A}</text>
+                <text x="230" y="500" font-size="10" font-weight="bold" text-anchor="middle">PD: ${total}</text>
+                <text x="270" y="500" font-size="10" font-weight="bold" text-anchor="middle">PD: ${countF}</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <!-- CRITERIOS DSM-5 -->
-    <h3 style="background: #9b6b8c; color: white; padding: 8px 12px; margin: 20px 0 10px 0; font-size: 13px;">CRITERIOS DSM-5</h3>
-    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px;">
-      <tr style="background: #f0f0f0;">
-        <th style="border: 1px solid #ccc; padding: 8px; text-align: left;">CRITERIO</th>
-        <th style="border: 1px solid #ccc; padding: 8px; width: 60px;">SÍ</th>
-        <th style="border: 1px solid #ccc; padding: 8px; width: 60px;">NO</th>
-      </tr>
-      <tr>
-        <td style="border: 1px solid #ccc; padding: 8px;"><strong>A:</strong> Exposición a acontecimiento traumático</td>
-        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">☑</td>
-        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">☐</td>
-      </tr>
-      <tr>
-        <td style="border: 1px solid #ccc; padding: 8px;"><strong>B:</strong> Síntomas intrusivos (I)</td>
-        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${this.resultados.criterios?.B ? '☑' : '☐'}</td>
-        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${this.resultados.criterios?.B ? '☐' : '☑'}</td>
-      </tr>
-      <tr>
-        <td style="border: 1px solid #ccc; padding: 8px;"><strong>C:</strong> Evitación (E)</td>
-        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${this.resultados.criterios?.C ? '☑' : '☐'}</td>
-        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${this.resultados.criterios?.C ? '☐' : '☑'}</td>
-      </tr>
-      <tr>
-        <td style="border: 1px solid #ccc; padding: 8px;"><strong>D:</strong> Alteraciones cognitivas y del estado de ánimo (C)</td>
-        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${this.resultados.criterios?.D ? '☑' : '☐'}</td>
-        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${this.resultados.criterios?.D ? '☐' : '☑'}</td>
-      </tr>
-      <tr>
-        <td style="border: 1px solid #ccc; padding: 8px;"><strong>E:</strong> Alteraciones en la activación y reactividad (A)</td>
-        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${this.resultados.criterios?.E ? '☑' : '☐'}</td>
-        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${this.resultados.criterios?.E ? '☐' : '☑'}</td>
-      </tr>
-      <tr>
-        <td style="border: 1px solid #ccc; padding: 8px;"><strong>F:</strong> Duración (≥1 mes)</td>
-        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${this.resultados.criterios?.F ? '☑' : '☐'}</td>
-        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${this.resultados.criterios?.F ? '☐' : '☑'}</td>
-      </tr>
-      <tr>
-        <td style="border: 1px solid #ccc; padding: 8px;"><strong>G:</strong> Funcionamiento (afecta vida diaria)</td>
-        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${this.resultados.criterios?.G ? '☑' : '☐'}</td>
-        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${this.resultados.criterios?.G ? '☐' : '☑'}</td>
-      </tr>
-    </table>
-
-    <!-- DIAGNÓSTICO FINAL -->
-    <div style="background: ${this.resultados.tept === 'SI' ? '#d4edda' : '#f8d7da'}; border: 2px solid ${this.resultados.tept === 'SI' ? '#28a745' : '#dc3545'}; padding: 16px; margin-bottom: 20px; text-align: center;">
-      <h3 style="margin: 0; color: ${this.resultados.tept === 'SI' ? '#155724' : '#721c24'}; font-size: 16px;">
-        ${this.resultados.tept === 'SI' ? '✓ DIAGNÓSTICO: TEPT PRESENTE' : '✗ DIAGNÓSTICO: NO CUMPLE CRITERIOS DE TEPT'}
-      </h3>
-      <p style="margin: 8px 0 0 0; font-size: 12px; color: ${this.resultados.tept === 'SI' ? '#155724' : '#721c24'};">
-        Puntuación Total: <strong>${(this.resultados.pd.I + this.resultados.pd.E + this.resultados.pd.C + this.resultados.pd.A)}/80</strong>
-      </p>
-    </div>
-
-    <!-- INTENSIDAD DE SÍNTOMAS -->
-    <h3 style="background: #9b6b8c; color: white; padding: 8px 12px; margin: 20px 0 10px 0; font-size: 13px;">INTENSIDAD DE LOS SÍNTOMAS</h3>
-    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11px;">
-      <tr style="background: #f0f0f0;">
-        <th style="border: 1px solid #ccc; padding: 6px;">ESCALA</th>
-        <th style="border: 1px solid #ccc; padding: 6px;">PD</th>
-        <th style="border: 1px solid #ccc; padding: 6px;">T</th>
-        <th style="border: 1px solid #ccc; padding: 6px;">PC</th>
-      </tr>
-      <tr>
-        <td style="border: 1px solid #ccc; padding: 6px;"><strong>Intrusivos (I)</strong></td>
-        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">${this.resultados.pd.I}</td>
-        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">-</td>
-        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">-</td>
-      </tr>
-      <tr>
-        <td style="border: 1px solid #ccc; padding: 6px;"><strong>Evitación (E)</strong></td>
-        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">${this.resultados.pd.E}</td>
-        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">-</td>
-        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">-</td>
-      </tr>
-      <tr>
-        <td style="border: 1px solid #ccc; padding: 6px;"><strong>Cognitivos (C)</strong></td>
-        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">${this.resultados.pd.C}</td>
-        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">-</td>
-        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">-</td>
-      </tr>
-      <tr>
-        <td style="border: 1px solid #ccc; padding: 6px;"><strong>Activación (A)</strong></td>
-        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">${this.resultados.pd.A}</td>
-        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">-</td>
-        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">-</td>
-      </tr>
-      <tr style="background: #f0f0f0; font-weight: bold;">
-        <td style="border: 1px solid #ccc; padding: 6px;">TOTAL</td>
-        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">${this.resultados.pd.I + this.resultados.pd.E + this.resultados.pd.C + this.resultados.pd.A}</td>
-        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">-</td>
-        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">-</td>
-      </tr>
-    </table>
-
-    <p style="font-size: 10px; color: #999; text-align: center; margin-top: 30px;">
-      Informe generado el ${new Date().toLocaleDateString('es-ES')} · EGEP-5 DSM-5
-    </p>
     `;
 
     document.getElementById('egep5-informe-contenido').innerHTML = html;
