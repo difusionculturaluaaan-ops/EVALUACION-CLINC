@@ -464,12 +464,6 @@
       </div>
     </div>
 
-    <!-- Contenedor para botones (separado) -->
-    <div id="egep5-resultados-botones" style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px;">
-      <button onclick="window.tests_egep5.generarPDF()" class="btn btn-primary">📄 Generar PDF</button>
-      <button class="btn btn-primary" id="btn-egep5-guardar" onclick="window.tests_egep5.guardarEnExpediente()" style="background:#27ae60">💾 Guardar en Expediente</button>
-      <button onclick="window.tests_egep5.exportarJSON()" class="btn btn-secondary">↓ Exportar JSON</button>
-    </div>
   </div>
 
   <!-- ========== TAB 4: INTERPRETACIÓN ========== -->
@@ -497,9 +491,11 @@
       </div>
     </div>
 
-    <div style="display: flex; gap: 16px; margin-bottom: 20px;">
-      <button onclick="window.tests_egep5.generarInformeImprimible()" class="btn btn-secondary">🔄 Regenerar Informe</button>
-      <button onclick="window.print()" class="btn btn-primary">📄 Imprimir Informe</button>
+    <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px;">
+      <button onclick="window.tests_egep5.generarInformeImprimible()" class="btn btn-secondary">🔄 Regenerar</button>
+      <button onclick="window.print()" class="btn btn-primary">📄 Imprimir</button>
+      <button class="btn btn-primary" id="btn-egep5-guardar" onclick="window.tests_egep5.guardarEnExpediente()" style="background:#27ae60">💾 Guardar en Expediente</button>
+      <button onclick="window.tests_egep5.exportarJSON()" class="btn btn-secondary">⬇️ Exportar JSON</button>
     </div>
 
     <!-- Contenedor del informe imprimible -->
@@ -518,10 +514,10 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
 <!-- Scripts modulares EGEP-5 -->
-<script src="js/egep5-corrector.js?v=20260726v"></script>
-<script src="js/egep5-graficos.js?v=20260726v"></script>
-<script src="js/egep5-baremos.js?v=20260726v"></script>
-<script src="js/egep5.js?v=20260726v"></script>
+<script src="js/egep5-corrector.js?v=20260726w"></script>
+<script src="js/egep5-graficos.js?v=20260726w"></script>
+<script src="js/egep5-baremos.js?v=20260726w"></script>
+<script src="js/egep5.js?v=20260726w"></script>
 <script src="/js/api.js"></script>
 
 <script>
