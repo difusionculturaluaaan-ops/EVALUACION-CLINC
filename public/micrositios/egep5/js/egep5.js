@@ -2055,8 +2055,8 @@ window.tests_egep5 = {
               PERFIL BAREMADO DE EVALUACIÓN<br>
               <span style="font-weight: normal; font-size: 0.7em;">España | Baremo Clínico | Varones + Mujeres</span>
             </div>
-            <div class="chart-wrapper">
-              <svg viewBox="0 0 340 380" width="100%" height="auto" style="font-family: 'Segoe UI', system-ui, sans-serif; background-color: #ffffff; max-width: 100%; max-height: 340px;">
+            <div class="chart-wrapper" style="width: 100%; max-width: 340px; height: 380px; overflow: hidden;">
+              <svg viewBox="0 0 340 380" width="340" height="380" style="font-family: 'Segoe UI', system-ui, sans-serif; background-color: #ffffff; display: block;">
                 <defs>
                   <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
                     <feDropShadow dx="1" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity="0.25"/>
