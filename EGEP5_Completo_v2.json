@@ -1,0 +1,82 @@
+{
+  "testType": "EGEP-5",
+  "version": "2.0",
+  "baremos": "españa_2024",
+  "items_1_26": {
+    "trauma_type": [
+      "1",
+      "3",
+      "5",
+      "7"
+    ],
+    "trauma_description": "Fue un evento traumático severo que ocurrió hace unos meses. El paciente reporta síntomas persistentes.",
+    "trauma_severity": "grave",
+    "trauma_timing": "mas3m",
+    "trauma_frequency": [
+      "unica",
+      "varias"
+    ],
+    "characteristics": {
+      "16": true,
+      "17": true,
+      "18": false,
+      "19": true,
+      "20": true,
+      "21": false,
+      "22": true,
+      "23": true,
+      "24": false,
+      "25": true,
+      "26": false
+    }
+  },
+  "respuestas": [
+    4,
+    3,
+    2,
+    1,
+    0,
+    4,
+    3,
+    2,
+    1,
+    0,
+    4,
+    3,
+    2,
+    1,
+    0,
+    4,
+    3,
+    2,
+    1,
+    0,
+    4,
+    3,
+    2,
+    1,
+    0,
+    4,
+    3,
+    2,
+    1,
+    0,
+    4,
+    3
+  ],
+  "metadatos": {
+    "paciente_nombre": "Test Completo Items 1-26",
+    "paciente_id": "9999",
+    "edad": "40",
+    "sexo": "No especificado",
+    "evaluador": "Sistema Test",
+    "centro": "Centro de Pruebas",
+    "fecha_evaluacion": "2026-07-27",
+    "tipo_trauma": "1,3,5,7",
+    "descripcion_evento": "Fue un evento traumático severo que ocurrió hace unos meses",
+    "severidad_evento": "grave",
+    "tiempo_evento": "mas3m"
+  },
+  "respondidas": 32,
+  "timestamp": "2026-07-27T15:00:00.000Z"
+}

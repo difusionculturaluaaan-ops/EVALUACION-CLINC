@@ -1005,6 +1005,34 @@ window.tests_egep5 = {
             throw new Error('El archivo no contiene "respuestas"');
           }
 
+          // CARGAR DATOS DE ITEMS 1-26 (si existen)
+          if (data.items_1_26) {
+            // Items 1-11: trauma_type (array de strings)
+            if (data.items_1_26.trauma_type) {
+              this.respuestas.trauma_type = data.items_1_26.trauma_type;
+            }
+            // Item 12: trauma_description
+            if (data.items_1_26.trauma_description) {
+              this.respuestas.trauma_description = data.items_1_26.trauma_description;
+            }
+            // Item 13: trauma_severity
+            if (data.items_1_26.trauma_severity) {
+              this.respuestas.trauma_severity = data.items_1_26.trauma_severity;
+            }
+            // Item 14: trauma_timing
+            if (data.items_1_26.trauma_timing) {
+              this.respuestas.trauma_timing = data.items_1_26.trauma_timing;
+            }
+            // Item 15: trauma_frequency (array)
+            if (data.items_1_26.trauma_frequency) {
+              this.respuestas.trauma_frequency = data.items_1_26.trauma_frequency;
+            }
+            // Items 16-26: characteristics (objeto con true/false)
+            if (data.items_1_26.characteristics) {
+              this.respuestas.characteristics = data.items_1_26.characteristics;
+            }
+          }
+
           // Mapear respuestas según formato (array o objeto)
           if (Array.isArray(data.respuestas)) {
             // Formato v2.0: array de 32 números
@@ -1050,20 +1078,23 @@ window.tests_egep5 = {
           }
 
           // Actualizar UI: primero renderizar (crear elementos), DESPUÉS cargar respuestas
+          this.renderizarEventos();
+          this.renderizarCaracteristicas();
           this.renderizarSintomas();
           this.renderizarFuncionamiento();
 
           // Esperar a que renderizado se complete (browser reflow), LUEGO cargar respuestas
           setTimeout(() => {
+            this.cargarItems1_26enDOM(data);
             this.cargarRespuestasEnDOM(data);
           }, 100);
 
           this.actualizarProgreso();
 
-          // Navegar a Tab 2 automáticamente
-          this.irTab('test');
+          // Navegar a Tab 1 (datos) automáticamente
+          this.irTab('datos');
 
-          alert(`✅ Archivo "${file.name}" importado correctamente.\n\nDatos cargados en Tab 1 ✓\nDatos y síntomas cargados en Tab 2 ✓\n\nAhora haz clic en "Calcular Resultados"`);
+          alert(`✅ Archivo "${file.name}" importado correctamente.\n\nItems 1-26 cargados en Tab 1 ✓\nDatos y síntomas cargados en Tab 2 ✓\n\nAhora haz clic en "Calcular Resultados"`);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         } catch (error) {
           alert('❌ Error al parsear JSON: ' + error.message);
@@ -1112,6 +1143,16 @@ window.tests_egep5 = {
       testType: 'EGEP-5',
       version: '2.0',
       baremos: 'españa_2024',  // Unicode escape para ñ (safe en cualquier encoding)
+      // Items 1-26: Datos del evento y características
+      items_1_26: {
+        trauma_type: this.respuestas.trauma_type || [],
+        trauma_description: this.respuestas.trauma_description || '',
+        trauma_severity: this.respuestas.trauma_severity || null,
+        trauma_timing: this.respuestas.trauma_timing || null,
+        trauma_frequency: this.respuestas.trauma_frequency || [],
+        characteristics: this.respuestas.characteristics || {}
+      },
+      // Items 27-58: Síntomas (32 valores)
       respuestas: this.construirArrayRespuestas(),
       metadatos: {
         paciente_nombre: paciente_nombre,
@@ -1257,6 +1298,88 @@ window.tests_egep5 = {
     data.push(this.respuestas.symptom_onset || 0);     // 24
     data.push(...this.respuestas.items_52_58);    // 25-31 (7 items)
     return data;
+  },
+
+  cargarItems1_26enDOM(data) {
+    console.log('📍 cargarItems1_26enDOM: iniciando carga de items 1-26...');
+
+    if (!data.items_1_26) {
+      console.log('⚠️ No hay datos para items 1-26');
+      return;
+    }
+
+    const items = data.items_1_26;
+
+    // Items 1-11: Marcar checkboxes de eventos traumáticos
+    if (items.trauma_type && Array.isArray(items.trauma_type)) {
+      items.trauma_type.forEach(eventId => {
+        const checkbox = document.querySelector(`input[name="trauma_type"][value="${eventId}"]`);
+        if (checkbox) {
+          checkbox.checked = true;
+          checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+          console.log(`✅ Marcado evento traumático ${eventId}`);
+        }
+      });
+    }
+
+    // Item 12: Llenar descripción del evento
+    if (items.trauma_description) {
+      const textarea = document.getElementById('test_evento_desc');
+      if (textarea) {
+        textarea.value = items.trauma_description;
+        textarea.dispatchEvent(new Event('change', { bubbles: true }));
+        console.log('✅ Descripción del evento cargada');
+      }
+    }
+
+    // Item 13: Marcar radio de gravedad
+    if (items.trauma_severity) {
+      const radio = document.querySelector(`input[name="item13"][value="${items.trauma_severity}"]`);
+      if (radio) {
+        radio.checked = true;
+        radio.dispatchEvent(new Event('change', { bubbles: true }));
+        console.log(`✅ Gravedad marcada: ${items.trauma_severity}`);
+      }
+    }
+
+    // Item 14: Marcar radio de cuándo ocurrió
+    if (items.trauma_timing) {
+      const radio = document.querySelector(`input[name="item14"][value="${items.trauma_timing}"]`);
+      if (radio) {
+        radio.checked = true;
+        radio.dispatchEvent(new Event('change', { bubbles: true }));
+        console.log(`✅ Cuándo ocurrió marcado: ${items.trauma_timing}`);
+      }
+    }
+
+    // Item 15: Marcar checkboxes de frecuencia
+    if (items.trauma_frequency && Array.isArray(items.trauma_frequency)) {
+      items.trauma_frequency.forEach(freq => {
+        const checkbox = document.querySelector(`input[name="item15"][value="${freq}"]`);
+        if (checkbox) {
+          checkbox.checked = true;
+          checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+          console.log(`✅ Frecuencia marcada: ${freq}`);
+        }
+      });
+    }
+
+    // Items 16-26: Marcar radios de características
+    if (items.characteristics && typeof items.characteristics === 'object') {
+      Object.entries(items.characteristics).forEach(([itemNum, valor]) => {
+        const valorStr = valor === true ? 'si' : valor === false ? 'no' : null;
+        if (valorStr) {
+          const radio = document.querySelector(`input[name="caract_${itemNum}"][value="${valorStr}"]`);
+          if (radio) {
+            radio.checked = true;
+            radio.dispatchEvent(new Event('change', { bubbles: true }));
+            console.log(`✅ Característica ${itemNum} marcada: ${valorStr}`);
+          }
+        }
+      });
+    }
+
+    console.log('✅ Items 1-26 cargados en DOM');
   },
 
   cargarRespuestasEnDOM(data) {
