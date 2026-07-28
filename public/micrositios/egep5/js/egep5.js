@@ -1779,6 +1779,32 @@ window.tests_egep5 = {
     });
   },
 
+  descargarPDF() {
+    if (!this.resultados) {
+      alert('⚠️ Primero calcula los resultados');
+      return;
+    }
+
+    const paciente_nombre = document.getElementById('m_nombre')?.value || localStorage.getItem('paciente_nombre') || 'Paciente';
+    const contenedorPDF = document.getElementById('egep5-informe-contenido');
+
+    if (!contenedorPDF) {
+      alert('No se encontró el contenedor del informe');
+      return;
+    }
+
+    const opt = {
+      margin: 10,
+      filename: `EGEP5_${paciente_nombre}_${new Date().toISOString().split('T')[0]}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
+      pagebreak: { mode: ['avoid-all', 'css'] }
+    };
+
+    html2pdf().set(opt).from(contenedorPDF).save();
+  },
+
   generarInformeImprimible() {
     if (!this.resultados) {
       alert('Por favor, calcula los resultados primero');
