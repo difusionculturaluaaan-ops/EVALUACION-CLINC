@@ -484,17 +484,51 @@ window.tests_egep5 = {
 
   actualizarProgreso() {
     let completadas = 0;
-    if (this.respuestas.trauma_type.length > 0) completadas++;
-    if (this.respuestas.trauma_description.trim()) completadas++;
+
+    // Items 1-11: Eventos traumáticos (contar values no vacíos en event_type object)
+    if (this.respuestas.event_type && typeof this.respuestas.event_type === 'object') {
+      completadas += Object.values(this.respuestas.event_type).filter(v => v).length;
+    }
+
+    // Item 12: Descripción del evento
+    if (this.respuestas.trauma_description && this.respuestas.trauma_description.trim()) completadas++;
+
+    // Item 13: Gravedad
     if (this.respuestas.trauma_severity) completadas++;
+
+    // Item 14: Cuándo ocurrió
     if (this.respuestas.trauma_timing) completadas++;
-    if (this.respuestas.trauma_frequency) completadas++;
+
+    // Item 15: Frecuencia
+    if (this.respuestas.trauma_frequency && Array.isArray(this.respuestas.trauma_frequency) && this.respuestas.trauma_frequency.length > 0) completadas++;
+
+    // Items 16-26: Características (contar values true/false en object)
+    if (this.respuestas.characteristics && typeof this.respuestas.characteristics === 'object') {
+      completadas += Object.values(this.respuestas.characteristics).filter(v => v !== undefined && v !== null).length;
+    }
+
+    // Items 27-31: Síntomas Reexperimentación
     completadas += this.respuestas.items_27_31.filter(x => x > 0).length;
+
+    // Items 32-33: Síntomas Evitación
     completadas += this.respuestas.items_32_33.filter(x => x > 0).length;
+
+    // Items 34-40: Síntomas Cognitivos
     completadas += this.respuestas.items_34_40.filter(x => x > 0).length;
+
+    // Items 41-46: Síntomas Activación
     completadas += this.respuestas.items_41_46.filter(x => x > 0).length;
+
+    // Items 47-49: Otros síntomas
+    completadas += this.respuestas.items_47_49.filter(x => x > 0).length;
+
+    // Item 50: Duración síntomas
     if (this.respuestas.symptom_duration) completadas++;
+
+    // Item 51: Onset síntomas
     if (this.respuestas.symptom_onset) completadas++;
+
+    // Items 52-58: Funcionamiento
     completadas += this.respuestas.items_52_58.filter(x => x > 0).length;
 
     const porcentaje = Math.round((completadas / 58) * 100);
