@@ -1676,21 +1676,18 @@ window.tests_egep5 = {
       return;
     }
 
-    const btn = document.getElementById('btn-egep5-guardar');
-    const btnOriginalText = btn.textContent;
-    btn.disabled = true;
-    btn.textContent = '⏳ Generando PDF...';
-
-    const pacienteId = sessionStorage.getItem('pacienteSeleccionado') || this.pacienteId || localStorage.getItem('paciente_id');
+    const pacienteId = sessionStorage.getItem('pacienteSeleccionado');
     if (!pacienteId) {
-      alert('❌ No hay paciente seleccionado.');
-      btn.disabled = false;
-      btn.textContent = btnOriginalText;
+      alert('❌ No hay paciente seleccionado. Vuelve al expediente.');
       return;
     }
 
-    // IMPORTANTE: Regenerar el informe para asegurar que tenga datos actualizados
-    this.generarInformeImprimible();
+    const btn = document.querySelector('button[onclick*="guardarEnExpediente"]');
+    const btnOriginalText = btn?.textContent || 'Guardar';
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = '⏳ Guardando...';
+    }
 
     const data = [];
     data.push(...this.respuestas.items_27_31);
@@ -1701,6 +1698,8 @@ window.tests_egep5 = {
     data.push(...this.respuestas.items_52_58);
 
     const totalIntensidad = this.resultados.pd.I + this.resultados.pd.E + this.resultados.pd.C + this.resultados.pd.A;
+    const { criterios, tept } = this.resultados;
+
     const subescalas = {
       reexperimentacion: this.resultados.pd.I,
       evitacion: this.resultados.pd.E,
@@ -1708,72 +1707,61 @@ window.tests_egep5 = {
       activacion: this.resultados.pd.A,
       funcionamiento: this.respuestas.items_52_58.filter(x => x > 0).length,
       intensidad_total: totalIntensidad,
-      criterios_dsm5: this.resultados.criterios,
-      tept_presente: this.resultados.tept
+      criterios_dsm5: criterios,
+      tept_presente: tept
     };
 
-    const element = document.getElementById('egep5-informe-contenido');
-    if (!element) {
-      alert('❌ No se encontró el informe para guardar');
-      btn.disabled = false;
-      btn.textContent = btnOriginalText;
-      return;
-    }
+    const bodyToSend = {
+      paciente_id: pacienteId,
+      tipo: 'EGEP-5',
+      data: data,
+      total: totalIntensidad,
+      subescalas: subescalas
+      // PDF no se envía - se generará bajo demanda
+    };
 
-    // Generar PDF del Informe Final después de regenerar
-    setTimeout(() => {
-      const fecha = document.getElementById('m_fecha')?.value || new Date().toISOString().split('T')[0];
-      const opt = {
-        margin: 10,
-        filename: `EGEP5_${fecha}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, logging: false },
-        jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
-        pagebreak: { mode: ['avoid-all', 'css'] }
-      };
+    console.log('💾 Enviando EGEP-5 a servidor:', { paciente_id: pacienteId, tipo: 'EGEP-5' });
 
-      html2pdf().set(opt).from(element).toPdf().get('pdf').then((pdf) => {
-        const pdfDataUri = pdf.output('datauristring');
-        const pdfBase64 = pdfDataUri.split(',')[1];
-
-        console.log('📄 PDF EGEP-5 generado:', pdfBase64.substring(0, 50) + '...');
-
-        const bodyToSend = {
-          paciente_id: pacienteId,
-          tipo: 'EGEP-5',
-          data: data,
-          total: totalIntensidad,
-          subescalas: subescalas,
-          pdf_base64: pdfBase64
-        };
-
-        return fetch('/api/pruebas', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
-          },
-          body: JSON.stringify(bodyToSend)
+    fetch('/api/pruebas', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+      },
+      body: JSON.stringify(bodyToSend)
+    }).then(response => {
+      if (!response.ok) {
+        return response.json().then(err => {
+          throw new Error(err.error || `HTTP ${response.status}`);
         });
-      }).then(response => {
-        if (!response.ok) {
-          return response.json().then(err => {
-            throw new Error(err.error || `HTTP ${response.status}`);
-          });
-        }
-        return response.json();
-      }).then(result => {
+      }
+      return response.json();
+    }).then(result => {
+      const successMsg = document.createElement('div');
+      successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 15px 20px; border-radius: 8px; z-index: 9999; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
+      successMsg.innerHTML = `✅ Resultados EGEP-5 guardados en expediente`;
+      document.body.appendChild(successMsg);
+      setTimeout(() => successMsg.remove(), 3000);
+
+      console.log('✅ EGEP-5 guardado en expediente:', result);
+
+      if (btn) {
         btn.disabled = false;
         btn.textContent = btnOriginalText;
-        alert('✅ Informe EGEP-5 guardado en expediente correctamente');
-        console.log('Resultado:', result);
-      }).catch(error => {
+      }
+    }).catch(error => {
+      const errorMsg = document.createElement('div');
+      errorMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #f44336; color: white; padding: 15px; border-radius: 8px; z-index: 9999;';
+      errorMsg.textContent = `❌ Error: ${error.message}`;
+      document.body.appendChild(errorMsg);
+      setTimeout(() => errorMsg.remove(), 5000);
+
+      console.error('Error:', error);
+      if (btn) {
         btn.disabled = false;
         btn.textContent = btnOriginalText;
-        alert('❌ Error al guardar: ' + error.message);
-        console.error('Error:', error);
-      });
-    }, 500);
+      }
+    });
   },
 
   generarHistograma() {
