@@ -1941,7 +1941,7 @@ window.tests_egep5 = {
       body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
       .container { max-width: 1100px; margin: 0 auto; background: white; }
       header { background: var(--primary); color: white; padding: 20px; }
-      header h1 { margin: 0; font-size: 1.8em; }
+      header h1 { margin: 0; font-size: 1.8em; color: #ffffff; }
       .subtitle { font-size: 0.9em; opacity: 0.9; }
       .content-grid { display: grid; grid-template-columns: 1fr 350px; gap: 20px; padding: 20px; }
       .section-card { border: 1px solid var(--border-color); border-radius: 6px; padding: 15px; margin-bottom: 15px; }
