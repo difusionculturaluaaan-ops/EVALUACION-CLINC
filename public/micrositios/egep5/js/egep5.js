@@ -188,15 +188,18 @@ window.tests_egep5 = {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return response.json();
     }).then(prueba => {
-      if (!prueba.respuestas) {
+      // Extraer datos de subescalas (donde se guardaron como _)
+      const subescalas = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas;
+
+      if (!subescalas || !subescalas._respuestas_completas) {
         throw new Error('No hay datos guardados para esta evaluación');
       }
 
       console.log('✅ Datos cargados desde expediente');
 
       // Cargar datos del paciente
-      if (prueba.datos_paciente) {
-        const dp = prueba.datos_paciente;
+      if (subescalas._datos_paciente) {
+        const dp = subescalas._datos_paciente;
         if (dp.nombre && document.getElementById('m_nombre')) document.getElementById('m_nombre').value = dp.nombre;
         if (dp.edad && document.getElementById('m_edad')) document.getElementById('m_edad').value = dp.edad;
         if (dp.sexo && document.getElementById('m_sexo')) document.getElementById('m_sexo').value = dp.sexo;
@@ -204,7 +207,7 @@ window.tests_egep5 = {
       }
 
       // Cargar respuestas
-      this.respuestas = { ...this.respuestas, ...prueba.respuestas };
+      this.respuestas = { ...this.respuestas, ...subescalas._respuestas_completas };
 
       // Marcar radios automáticamente y sincronizar con respuestas
       setTimeout(() => {
@@ -212,8 +215,8 @@ window.tests_egep5 = {
       }, 100);
 
       // Si hay resultados previos, mostrarlos
-      if (prueba.resultados) {
-        this.resultados = prueba.resultados;
+      if (subescalas._resultados) {
+        this.resultados = subescalas._resultados;
         setTimeout(() => {
           this.mostrarResultados();
         }, 200);
@@ -1834,24 +1837,37 @@ window.tests_egep5 = {
     };
 
     // Guardar JSON en expediente (patrón CUIDA)
+    // Armar array de respuestas (compatible con sistema)
+    const data = [];
+    data.push(...this.respuestas.items_27_31);
+    data.push(...this.respuestas.items_32_33);
+    data.push(...this.respuestas.items_34_40);
+    data.push(...this.respuestas.items_41_46);
+    data.push(this.respuestas.symptom_duration || 0, this.respuestas.symptom_onset || 0);
+    data.push(...this.respuestas.items_52_58);
+
     const bodyToSend = {
       paciente_id: pacienteId,
       tipo: 'EGEP-5',
-      respuestas: this.respuestas,
-      datos_paciente: {
-        fecha: document.getElementById('m_fecha')?.value || new Date().toISOString().split('T')[0],
-        nombre: document.getElementById('m_nombre')?.value || '',
-        edad: document.getElementById('m_edad')?.value || '',
-        sexo: document.getElementById('m_sexo')?.value || ''
-      },
-      resultados: {
-        pd: this.resultados.pd,
-        criterios: this.resultados.criterios,
-        tept: this.resultados.tept,
-        intensidades: this.resultados.intensidades,
-        especificaciones: this.resultados.especificaciones
-      },
-      subescalas: subescalas
+      data: data,
+      total: totalIntensidad,
+      subescalas: {
+        ...subescalas,
+        _respuestas_completas: this.respuestas,
+        _datos_paciente: {
+          fecha: document.getElementById('m_fecha')?.value || new Date().toISOString().split('T')[0],
+          nombre: document.getElementById('m_nombre')?.value || '',
+          edad: document.getElementById('m_edad')?.value || '',
+          sexo: document.getElementById('m_sexo')?.value || ''
+        },
+        _resultados: {
+          pd: this.resultados.pd,
+          criterios: this.resultados.criterios,
+          tept: this.resultados.tept,
+          intensidades: this.resultados.intensidades,
+          especificaciones: this.resultados.especificaciones
+        }
+      }
     };
 
     console.log('💾 Guardando JSON en expediente:', { paciente_id: pacienteId, tipo: 'EGEP-5' });
