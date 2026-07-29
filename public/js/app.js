@@ -1800,6 +1800,71 @@ const app = {
         }
       }
 
+      // PARA EGEP-5: Ocultar botón "Descargar Reporte" SIEMPRE
+      if (prueba.tipo === 'EGEP5' || prueba.tipo === 'EGEP-5') {
+        console.log('EGEP-5 - Estructura completa de prueba:', prueba);
+        console.log('EGEP-5 - Keys en prueba:', Object.keys(prueba));
+
+        const btnDescargar = document.getElementById('btn-descargar-reporte');
+        if (btnDescargar) {
+          btnDescargar.style.display = 'none';
+        }
+
+        // Si existe PDF guardado, mostrar SOLO ese PDF
+        let pdfBase64 = prueba.pdf_base64;
+
+        // Si no está en prueba, buscar en subescalas
+        if (!pdfBase64 && prueba.subescalas) {
+          let subescalas = prueba.subescalas;
+          if (typeof subescalas === 'string') {
+            try {
+              subescalas = JSON.parse(subescalas);
+            } catch (e) {
+              console.log('Error parseando subescalas:', e);
+              subescalas = {};
+            }
+          }
+          pdfBase64 = subescalas?.pdf_base64;
+        }
+
+        if (pdfBase64) {
+          console.log('Mostrando PDF EGEP-5 desde base64');
+          console.log('   Tamaño base64:', pdfBase64.length);
+
+          // Crear blob desde base64
+          try {
+            const binaryString = atob(pdfBase64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+              bytes[i] = binaryString.charCodeAt(i);
+            }
+            const blob = new Blob([bytes], { type: 'application/pdf' });
+            const blobUrl = URL.createObjectURL(blob);
+
+            console.log('Blob URL creado:', blobUrl);
+
+            // Mostrar PDF en viewer
+            contenido.innerHTML = `
+              <object
+                data="${blobUrl}"
+                type="application/pdf"
+                style="width: 100%; height: 85vh; border: none;">
+                <p>Tu navegador no puede mostrar PDFs. <a href="${blobUrl}" download="EGEP-5.pdf">Descargar PDF</a></p>
+              </object>
+            `;
+            modal.classList.add('active');
+
+            console.log('Modal abierto con PDF EGEP-5');
+            return;
+          } catch (error) {
+            console.error('Error al procesar PDF EGEP-5:', error);
+            contenido.innerHTML = '<p style="color: red; padding: 20px;">Error al cargar PDF: ' + error.message + '</p>';
+            modal.classList.add('active');
+          }
+        }
+      }
+
     // Parsear datos si están en JSON
     const subescalas = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas;
 
