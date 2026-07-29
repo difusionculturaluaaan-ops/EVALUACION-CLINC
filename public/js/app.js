@@ -4729,6 +4729,16 @@ const app = {
     }
   },
 
+  async abrirEvaluacionEGEP5(pruebaId) {
+    try {
+      const token = localStorage.getItem('auth_token');
+      window.open(`/micrositios/egep5/?modo=cargar&prueba_id=${pruebaId}&token=${token}`, '_blank');
+    } catch (error) {
+      console.error('Error al abrir evaluación EGEP-5:', error);
+      this.mostrarToast('Error al cargar evaluación EGEP-5', 'error');
+    }
+  },
+
   async abrirEvaluacionMMPI(pruebaId) {
     try {
       const response = await fetch(`/api/pruebas/${pruebaId}`, {
@@ -4908,11 +4918,16 @@ const app = {
           </div>
 
           <div class="estudio-actions">
-            <button class="btn-ver-reporte ${(prueba.tipo.toUpperCase().includes('CUIDA') || prueba.tipo.toUpperCase().includes('MMPI') || prueba.tipo === 'MBI' || prueba.tipo === 'CISNEROS') ? 'oculto' : ''}" data-prueba-id="${prueba.id}" onclick="app.abrirReportePrueba(this.getAttribute('data-prueba-id'))">
+            <button class="btn-ver-reporte ${(prueba.tipo.toUpperCase().includes('CUIDA') || prueba.tipo.toUpperCase().includes('MMPI') || prueba.tipo === 'MBI' || prueba.tipo === 'CISNEROS' || prueba.tipo.toUpperCase().includes('EGEP')) ? 'oculto' : ''}" data-prueba-id="${prueba.id}" onclick="app.abrirReportePrueba(this.getAttribute('data-prueba-id'))">
               Ver Reporte
             </button>
             ${prueba.tipo.toUpperCase().includes('CUIDA') ? `
               <button class="btn-abrir-evaluacion" onclick="app.abrirEvaluacionCUIDA(${prueba.id})">
+                Abrir JSON
+              </button>
+            ` : ''}
+            ${prueba.tipo.toUpperCase().includes('EGEP') ? `
+              <button class="btn-abrir-evaluacion" onclick="app.abrirEvaluacionEGEP5(${prueba.id})">
                 Abrir JSON
               </button>
             ` : ''}
