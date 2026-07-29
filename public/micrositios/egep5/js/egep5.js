@@ -1737,28 +1737,34 @@ window.tests_egep5 = {
         pagebreak: { mode: ['avoid-all', 'css'] }
       };
 
-      html2pdf().set(opt).from(element).toPdf().get('pdf').then((pdf) => {
-        const pdfBlob = pdf.output('blob');
+      html2pdf().set(opt).from(element).save().then(() => {
+        console.log('✅ PDF generado correctamente');
 
-        // Usar FormData para enviar PDF sin problemas de Node.js
-        const formData = new FormData();
-        formData.append('paciente_id', pacienteId);
-        formData.append('tipo', 'EGEP-5');
-        formData.append('data', JSON.stringify(data));
-        formData.append('total', totalIntensidad);
-        formData.append('subescalas', JSON.stringify(subescalas));
-        formData.append('pdf', pdfBlob, `EGEP5_${fecha}.pdf`);
+        // Después de generar, obtener el PDF desde el canvas
+        html2pdf().set(opt).from(element).toPdf().get('pdf').then((pdf) => {
+          console.log('📄 PDF obtenido, convertiendo a blob...');
+          const pdfBlob = pdf.output('blob');
+          console.log('📄 Blob creado, tamaño:', pdfBlob.size, 'bytes');
 
-        console.log('📄 PDF EGEP-5 generado y enviando a servidor');
+          // Usar FormData para enviar PDF sin problemas de Node.js
+          const formData = new FormData();
+          formData.append('paciente_id', pacienteId);
+          formData.append('tipo', 'EGEP-5');
+          formData.append('data', JSON.stringify(data));
+          formData.append('total', totalIntensidad);
+          formData.append('subescalas', JSON.stringify(subescalas));
+          formData.append('pdf', pdfBlob, `EGEP5_${fecha}.pdf`);
 
-        return fetch('/api/pruebas', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
-          },
-          body: formData
-        });
-      }).then(response => {
+          console.log('📄 FormData preparado con PDF, enviando a servidor');
+
+          return fetch('/api/pruebas', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+            },
+            body: formData
+          });
+        }).then(response => {
         if (!response.ok) {
           return response.json().then(err => {
             throw new Error(err.error || `HTTP ${response.status}`);
@@ -1779,17 +1785,33 @@ window.tests_egep5 = {
           btn.textContent = btnOriginalText;
         }
       }).catch(error => {
+        console.error('❌ Error en fetch/PDF:', error);
         const errorMsg = document.createElement('div');
         errorMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #f44336; color: white; padding: 15px; border-radius: 8px; z-index: 9999;';
         errorMsg.textContent = `❌ Error: ${error.message}`;
         document.body.appendChild(errorMsg);
         setTimeout(() => errorMsg.remove(), 5000);
 
-        console.error('Error:', error);
         if (btn) {
           btn.disabled = false;
           btn.textContent = btnOriginalText;
         }
+      });
+        }).catch(pdfError => {
+          console.error('❌ Error generando PDF:', pdfError);
+          const errorMsg = document.createElement('div');
+          errorMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #f44336; color: white; padding: 15px; border-radius: 8px; z-index: 9999;';
+          errorMsg.textContent = `❌ Error generando PDF: ${pdfError.message}`;
+          document.body.appendChild(errorMsg);
+          setTimeout(() => errorMsg.remove(), 5000);
+
+          if (btn) {
+            btn.disabled = false;
+            btn.textContent = btnOriginalText;
+          }
+        });
+      }).catch(saveError => {
+        console.error('❌ Error en html2pdf.save():', saveError);
       });
     }, 300);
   },
