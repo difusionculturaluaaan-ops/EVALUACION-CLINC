@@ -1659,6 +1659,7 @@ const app = {
    */
   async mostrarReporteDetallado(prueba, paciente) {
     try {
+      console.log('🔍 [DEBUG] Reporte detallado - tipo recibido:', { tipo: prueba.tipo, tipo_lower: prueba.tipo?.toLowerCase(), tiene_pdf: !!prueba.pdf_base64 });
       console.log('Mostrando reporte detallado:', { prueba, paciente });
 
       const modal = document.getElementById('modal-reporte');
@@ -1801,7 +1802,9 @@ const app = {
       }
 
       // PARA EGEP-5: Ocultar botón "Descargar Reporte" SIEMPRE
-      if (prueba.tipo === 'EGEP5' || prueba.tipo === 'EGEP-5') {
+      const tipoNormalized = (prueba.tipo || '').toUpperCase().replace(/\s+/g, '');
+      if (tipoNormalized === 'EGEP5') {
+        console.log('✅ EGEP-5 detectado - tipo normalizado:', tipoNormalized);
         console.log('EGEP-5 - Estructura completa de prueba:', prueba);
         console.log('EGEP-5 - Keys en prueba:', Object.keys(prueba));
 
