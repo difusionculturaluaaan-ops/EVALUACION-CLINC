@@ -1690,7 +1690,9 @@ window.tests_egep5 = {
     }
 
     // Regenerar informe para asegurar datos actualizados
+    console.log('🔄 Regenerando informe...');
     this.generarInformeImprimible();
+    console.log('✅ Informe regenerado');
 
     const data = [];
     data.push(...this.respuestas.items_27_31);
