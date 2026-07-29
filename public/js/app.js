@@ -1802,7 +1802,7 @@ const app = {
       }
 
       // PARA EGEP-5: Ocultar botón "Descargar Reporte" SIEMPRE
-      const tipoNormalized = (prueba.tipo || '').toUpperCase().replace(/\s+/g, '');
+      const tipoNormalized = (prueba.tipo || '').toUpperCase().replace(/[\s\-]/g, '');
       if (tipoNormalized === 'EGEP5') {
         console.log('✅ EGEP-5 detectado - tipo normalizado:', tipoNormalized);
         console.log('EGEP-5 - Estructura completa de prueba:', prueba);
