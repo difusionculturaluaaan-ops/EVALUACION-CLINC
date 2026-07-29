@@ -227,11 +227,60 @@ const tests_cuida = {
   pdToEn: [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,8,8,8,8,8,8,9,9,9,9,9,9,9,9],
 
   init() {
+    // Verificar si viene en modo cargar (desde expediente)
+    const params = new URLSearchParams(window.location.search);
+    const modo = params.get('modo');
+    const pruebaId = params.get('prueba_id');
+    const token = params.get('token');
+
+    if (modo === 'cargar' && pruebaId && token) {
+      console.log('🔄 Cargando CUIDA desde expediente...');
+      this.cargarDesdePrueba(pruebaId, token);
+      return;
+    }
+
     // Limpiar localStorage anterior si existe
     for (let i = 1; i <= this.items.length; i++) {
       if (!localStorage.getItem(`cuida_r${i}`)) {
         localStorage.setItem(`cuida_r${i}`, '0');
       }
+    }
+  },
+
+  async cargarDesdePrueba(pruebaId, token) {
+    try {
+      const response = await fetch(`/api/pruebas/${pruebaId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const prueba = await response.json();
+      console.log('✅ Prueba cargada:', prueba);
+
+      // Extraer datos del paciente
+      const subescalas = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas;
+
+      if (subescalas && subescalas._datos_paciente) {
+        const dp = subescalas._datos_paciente;
+        console.log('👤 Datos del paciente:', dp);
+        if (dp.nombre) document.getElementById('paciente_nombre').value = dp.nombre;
+        if (dp.edad) document.getElementById('paciente_edad').value = dp.edad;
+        if (dp.sexo) document.getElementById('paciente_sexo').value = dp.sexo;
+        if (dp.fecha) document.getElementById('paciente_fecha').value = dp.fecha;
+      }
+
+      // Cargar respuestas desde prueba.data
+      if (prueba.data && Array.isArray(prueba.data)) {
+        console.log('📝 Cargando respuestas:', prueba.data);
+        for (let i = 0; i < prueba.data.length && i < this.items.length; i++) {
+          localStorage.setItem(`cuida_r${i + 1}`, prueba.data[i] || '0');
+        }
+      }
+
+      console.log('✅ CUIDA cargado desde expediente');
+    } catch (error) {
+      console.error('❌ Error cargando CUIDA:', error);
+      alert('❌ Error: ' + error.message);
     }
   },
 

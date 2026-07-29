@@ -485,8 +485,68 @@ const tests_mmpi2rf = {
    * Inicializar el test
    */
   init() {
+    // Verificar si viene en modo cargar (desde expediente)
+    const params = new URLSearchParams(window.location.search);
+    const modo = params.get('modo');
+    const pruebaId = params.get('prueba_id');
+    const token = params.get('token');
+
+    if (modo === 'cargar' && pruebaId && token) {
+      console.log('🔄 Cargando MMPI-2-RF desde expediente...');
+      this.cargarDesdePrueba(pruebaId, token);
+      return;
+    }
+
     testRenderer.renderYesNo('mmpi2rf-container', this.items, 'mmpi2rf');
     this.setupEventListeners();
+  },
+
+  async cargarDesdePrueba(pruebaId, token) {
+    try {
+      const response = await fetch(`/api/pruebas/${pruebaId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const prueba = await response.json();
+      console.log('✅ Prueba cargada:', prueba);
+
+      // Extraer datos del paciente
+      const subescalas = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas;
+
+      if (subescalas && subescalas._datos_paciente) {
+        const dp = subescalas._datos_paciente;
+        console.log('👤 Datos del paciente:', dp);
+        if (dp.nombre) document.getElementById('paciente_nombre').value = dp.nombre;
+        if (dp.edad) document.getElementById('paciente_edad').value = dp.edad;
+        if (dp.sexo) document.getElementById('paciente_sexo').value = dp.sexo;
+        if (dp.fecha) document.getElementById('paciente_fecha').value = dp.fecha;
+      }
+
+      // Renderizar formulario
+      testRenderer.renderYesNo('mmpi2rf-container', this.items, 'mmpi2rf');
+
+      // Cargar respuestas desde prueba.data
+      if (prueba.data && Array.isArray(prueba.data)) {
+        console.log('📝 Cargando respuestas:', prueba.data);
+        for (let i = 0; i < prueba.data.length && i < this.items.length; i++) {
+          const radio = document.querySelector(`input[name="mmpi2rf"][data-item="${i}"][value="${prueba.data[i]}"]`);
+          if (radio) {
+            radio.checked = true;
+            radio.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        }
+      }
+
+      this.setupEventListeners();
+      console.log('✅ MMPI-2-RF cargado desde expediente');
+    } catch (error) {
+      console.error('❌ Error cargando MMPI-2-RF:', error);
+      alert('❌ Error: ' + error.message);
+      // Fallback: cargar formulario vacío
+      testRenderer.renderYesNo('mmpi2rf-container', this.items, 'mmpi2rf');
+      this.setupEventListeners();
+    }
   },
 
   /**
