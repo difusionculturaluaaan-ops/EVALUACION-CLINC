@@ -101,6 +101,10 @@ window.EGEP5_GRAFICOS = {
     html += `</div>`;
 
     return html;
+    } catch (error) {
+      console.error('❌ Error en generarPerfil:', error);
+      return '<div style="padding: 20px; color: #ef5350;">⚠️ Error al generar el gráfico: ' + error.message + '</div>';
+    }
   },
 
   /**
