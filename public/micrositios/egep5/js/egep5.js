@@ -130,6 +130,18 @@ window.tests_egep5 = {
   },
 
   cargarDatosAutomaticos() {
+    // Verificar si viene en modo cargar (desde expediente)
+    const params = new URLSearchParams(window.location.search);
+    const modo = params.get('modo');
+    const pruebaId = params.get('prueba_id');
+    const token = params.get('token');
+
+    if (modo === 'cargar' && pruebaId && token) {
+      console.log('🔄 Cargando EGEP-5 desde expediente...');
+      this.cargarDesdePrueba(pruebaId, token);
+      return;
+    }
+
     // Nombre del paciente
     const nombrePaciente = localStorage.getItem('paciente_nombre') || sessionStorage.getItem('paciente_nombre');
     if (nombrePaciente && document.getElementById('m_nombre')) {
@@ -165,6 +177,116 @@ window.tests_egep5 = {
     if (evaluador && document.getElementById('m_evaluador')) {
       document.getElementById('m_evaluador').value = evaluador;
     }
+  },
+
+  cargarDesdePrueba(pruebaId, token) {
+    fetch(`/api/pruebas/${pruebaId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }).then(response => {
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return response.json();
+    }).then(prueba => {
+      if (!prueba.respuestas) {
+        throw new Error('No hay datos guardados para esta evaluación');
+      }
+
+      console.log('✅ Datos cargados desde expediente');
+
+      // Cargar datos del paciente
+      if (prueba.datos_paciente) {
+        const dp = prueba.datos_paciente;
+        if (dp.nombre && document.getElementById('m_nombre')) document.getElementById('m_nombre').value = dp.nombre;
+        if (dp.edad && document.getElementById('m_edad')) document.getElementById('m_edad').value = dp.edad;
+        if (dp.sexo && document.getElementById('m_sexo')) document.getElementById('m_sexo').value = dp.sexo;
+        if (dp.fecha && document.getElementById('m_fecha')) document.getElementById('m_fecha').value = dp.fecha;
+      }
+
+      // Cargar respuestas
+      this.respuestas = { ...this.respuestas, ...prueba.respuestas };
+
+      // Marcar radios automáticamente y sincronizar con respuestas
+      setTimeout(() => {
+        this.autoRellenarFormulario();
+      }, 100);
+
+      // Si hay resultados previos, mostrarlos
+      if (prueba.resultados) {
+        this.resultados = prueba.resultados;
+        setTimeout(() => {
+          this.mostrarResultados();
+        }, 200);
+      }
+    }).catch(error => {
+      console.error('❌ Error cargando datos:', error);
+      alert('❌ No se pudo cargar la evaluación: ' + error.message);
+    });
+  },
+
+  autoRellenarFormulario() {
+    // Llenar eventos traumáticos
+    const eventos = this.respuestas.trauma_type || [];
+    eventos.forEach((evento, idx) => {
+      const eventNum = idx + 1;
+      const radio = document.querySelector(`input[name="event_${eventNum}"][value="${evento}"]`);
+      if (radio) {
+        radio.checked = true;
+        radio.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    });
+
+    // Llenar síntomas intrusivos (items_27_31)
+    const items27_31 = this.respuestas.items_27_31 || [];
+    items27_31.forEach((val, idx) => {
+      const radio = document.querySelector(`input[name="item_${27 + idx}"][value="${val}"]`);
+      if (radio) {
+        radio.checked = true;
+        radio.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    });
+
+    // Llenar evitación (items_32_33)
+    const items32_33 = this.respuestas.items_32_33 || [];
+    items32_33.forEach((val, idx) => {
+      const radio = document.querySelector(`input[name="item_${32 + idx}"][value="${val}"]`);
+      if (radio) {
+        radio.checked = true;
+        radio.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    });
+
+    // Llenar cognitivas (items_34_40)
+    const items34_40 = this.respuestas.items_34_40 || [];
+    items34_40.forEach((val, idx) => {
+      const radio = document.querySelector(`input[name="item_${34 + idx}"][value="${val}"]`);
+      if (radio) {
+        radio.checked = true;
+        radio.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    });
+
+    // Llenar activación (items_41_46)
+    const items41_46 = this.respuestas.items_41_46 || [];
+    items41_46.forEach((val, idx) => {
+      const radio = document.querySelector(`input[name="item_${41 + idx}"][value="${val}"]`);
+      if (radio) {
+        radio.checked = true;
+        radio.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    });
+
+    // Llenar funcionamiento (items_52_58)
+    const items52_58 = this.respuestas.items_52_58 || [];
+    items52_58.forEach((val, idx) => {
+      const radio = document.querySelector(`input[name="item_${52 + idx}"][value="${val}"]`);
+      if (radio) {
+        radio.checked = true;
+        radio.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    });
+
+    console.log('✅ Formulario auto-rellenado');
   },
 
   mostrarPaciente() {
@@ -1686,13 +1808,8 @@ window.tests_egep5 = {
     const btnOriginalText = btn?.textContent || 'Guardar';
     if (btn) {
       btn.disabled = true;
-      btn.textContent = '⏳ Generando PDF...';
+      btn.textContent = '⏳ Guardando...';
     }
-
-    // Regenerar informe para asegurar datos actualizados
-    console.log('🔄 Regenerando informe...');
-    this.generarInformeImprimible();
-    console.log('✅ Informe regenerado');
 
     const data = [];
     data.push(...this.respuestas.items_27_31);
@@ -1716,93 +1833,69 @@ window.tests_egep5 = {
       tept_presente: tept
     };
 
-    // Generar PDF del Informe Final y enviarlo
-    setTimeout(() => {
-      const element = document.getElementById('egep5-informe-contenido');
-      const fecha = document.getElementById('m_fecha')?.value || new Date().toISOString().split('T')[0];
+    // Guardar JSON en expediente (patrón CUIDA)
+    const bodyToSend = {
+      paciente_id: pacienteId,
+      tipo: 'EGEP-5',
+      respuestas: this.respuestas,
+      datos_paciente: {
+        fecha: document.getElementById('m_fecha')?.value || new Date().toISOString().split('T')[0],
+        nombre: document.getElementById('m_nombre')?.value || '',
+        edad: document.getElementById('m_edad')?.value || '',
+        sexo: document.getElementById('m_sexo')?.value || ''
+      },
+      resultados: {
+        pd: this.resultados.pd,
+        criterios: this.resultados.criterios,
+        tept: this.resultados.tept,
+        intensidades: this.resultados.intensidades,
+        especificaciones: this.resultados.especificaciones
+      },
+      subescalas: subescalas
+    };
 
-      if (!element) {
-        alert('❌ No se encontró el informe para guardar');
-        console.error('❌ Elemento egep5-informe-contenido no encontrado');
-        if (btn) {
-          btn.disabled = false;
-          btn.textContent = btnOriginalText;
-        }
-        return;
-      }
+    console.log('💾 Guardando JSON en expediente:', { paciente_id: pacienteId, tipo: 'EGEP-5' });
 
-      console.log('📄 Elemento encontrado, tamaño HTML:', element.innerHTML.length, 'caracteres');
-      console.log('📄 Primeros 200 caracteres:', element.innerHTML.substring(0, 200));
-
-      const opt = {
-        margin: 10,
-        filename: `EGEP5_${fecha}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, logging: true },
-        jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
-        pagebreak: { mode: ['avoid-all', 'css'] }
-      };
-
-      html2pdf().set(opt).from(element).toPdf().get('pdf').then((pdf) => {
-        // Convertir PDF a base64 (igual que MBI)
-        const pdfDataUri = pdf.output('datauristring');
-        const pdfBase64 = pdfDataUri.split(',')[1]; // Quitar "data:application/pdf;base64,"
-
-        console.log('📄 PDF generado:', pdfBase64.substring(0, 50) + '...');
-
-        const bodyToSend = {
-          paciente_id: pacienteId,
-          tipo: 'EGEP-5',
-          data: data,
-          total: totalIntensidad,
-          subescalas: subescalas,
-          pdf_base64: pdfBase64
-        };
-
-        console.log('💾 Enviando a servidor:', { paciente_id: pacienteId, tipo: 'EGEP-5', pdf_size: pdfBase64.length });
-
-        return fetch('/api/pruebas', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
-          },
-          body: JSON.stringify(bodyToSend)
+    fetch('/api/pruebas', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+      },
+      body: JSON.stringify(bodyToSend)
+    }).then(response => {
+      if (!response.ok) {
+        return response.json().then(err => {
+          throw new Error(err.error || `HTTP ${response.status}`);
         });
-      }).then(response => {
-        if (!response.ok) {
-          return response.json().then(err => {
-            throw new Error(err.error || `HTTP ${response.status}`);
-          });
-        }
-        return response.json();
-      }).then(result => {
-        const successMsg = document.createElement('div');
-        successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 15px 20px; border-radius: 8px; z-index: 9999; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
-        successMsg.innerHTML = `✅ Informe EGEP-5 guardado en expediente`;
-        document.body.appendChild(successMsg);
-        setTimeout(() => successMsg.remove(), 3000);
+      }
+      return response.json();
+    }).then(result => {
+      const successMsg = document.createElement('div');
+      successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 15px 20px; border-radius: 8px; z-index: 9999; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
+      successMsg.innerHTML = `✅ Evaluación EGEP-5 guardada en expediente`;
+      document.body.appendChild(successMsg);
+      setTimeout(() => successMsg.remove(), 3000);
 
-        console.log('✅ EGEP-5 guardado en expediente:', result);
+      console.log('✅ EGEP-5 guardado en expediente:', result);
 
-        if (btn) {
-          btn.disabled = false;
-          btn.textContent = btnOriginalText;
-        }
-      }).catch(error => {
-        const errorMsg = document.createElement('div');
-        errorMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #f44336; color: white; padding: 15px; border-radius: 8px; z-index: 9999;';
-        errorMsg.textContent = `❌ Error: ${error.message}`;
-        document.body.appendChild(errorMsg);
-        setTimeout(() => errorMsg.remove(), 5000);
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = btnOriginalText;
+      }
+    }).catch(error => {
+      const errorMsg = document.createElement('div');
+      errorMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #f44336; color: white; padding: 15px; border-radius: 8px; z-index: 9999;';
+      errorMsg.textContent = `❌ Error: ${error.message}`;
+      document.body.appendChild(errorMsg);
+      setTimeout(() => errorMsg.remove(), 5000);
 
-        console.error('Error:', error);
-        if (btn) {
-          btn.disabled = false;
-          btn.textContent = btnOriginalText;
-        }
-      });
-    }, 300);
+      console.error('Error:', error);
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = btnOriginalText;
+      }
+    });
   },
 
   generarHistograma() {
