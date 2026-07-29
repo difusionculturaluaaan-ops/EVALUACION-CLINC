@@ -1721,6 +1721,7 @@ window.tests_egep5 = {
 
       if (!element) {
         alert('❌ No se encontró el informe para guardar');
+        console.error('❌ Elemento egep5-informe-contenido no encontrado');
         if (btn) {
           btn.disabled = false;
           btn.textContent = btnOriginalText;
@@ -1728,11 +1729,14 @@ window.tests_egep5 = {
         return;
       }
 
+      console.log('📄 Elemento encontrado, tamaño HTML:', element.innerHTML.length, 'caracteres');
+      console.log('📄 Primeros 200 caracteres:', element.innerHTML.substring(0, 200));
+
       const opt = {
         margin: 10,
         filename: `EGEP5_${fecha}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, logging: false },
+        html2canvas: { scale: 2, logging: true },
         jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
         pagebreak: { mode: ['avoid-all', 'css'] }
       };
