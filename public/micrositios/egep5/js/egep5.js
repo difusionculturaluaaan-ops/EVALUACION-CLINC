@@ -2000,13 +2000,22 @@ window.tests_egep5 = {
       .pdf-page-2 { page-break-before: always; margin-top: 0; padding: 12px !important; }
       .section-card { margin-bottom: 8px !important; padding: 10px !important; }
       @media print {
-        body { margin: 0; padding: 0; }
+        body { margin: 0; padding: 0; line-height: 1.2; }
         .container { margin: 0; }
-        header { padding: 12px !important; }
-        .info-grid { gap: 6px !important; }
-        .section-title { font-size: 0.85em !important; }
-        table { font-size: 0.8em !important; }
-        th, td { padding: 5px !important; }
+        header { padding: 8px 12px !important; }
+        header h1 { font-size: 1.4em !important; margin: 2px 0 !important; }
+        .subtitle { font-size: 0.75em !important; }
+        .info-grid { gap: 4px !important; }
+        .info-item { font-size: 0.75em !important; }
+        .info-label { font-size: 0.65em !important; }
+        .info-value { padding: 2px 4px !important; margin-top: 1px !important; }
+        .section-title { font-size: 0.75em !important; margin-bottom: 6px !important; padding-bottom: 3px !important; }
+        .section-card { margin-bottom: 4px !important; padding: 6px !important; }
+        table { font-size: 0.65em !important; margin-top: 4px !important; }
+        th, td { padding: 2px 3px !important; border-bottom: 0.5px solid var(--border-color) !important; }
+        th { padding: 3px 3px !important; }
+        .status-badge { padding: 1px 4px !important; font-size: 0.6em !important; }
+        .score-box { font-size: 0.75em !important; padding: 1px 3px !important; }
       }
     </style>
 
@@ -2187,7 +2196,7 @@ window.tests_egep5 = {
               PERFIL BAREMADO DE EVALUACIÓN<br>
               <span style="font-weight: normal; font-size: 0.7em;">España | Baremo Clínico | Varones + Mujeres</span>
             </div>
-            <div class="chart-wrapper" style="width: 100%; height: 380px;">
+            <div class="chart-wrapper" style="width: 100%; height: 280px;">
               <svg viewBox="0 0 340 380" width="100%" height="380" style="font-family: 'Segoe UI', system-ui, sans-serif; background-color: #ffffff; display: block;">
                 <defs>
                   <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
