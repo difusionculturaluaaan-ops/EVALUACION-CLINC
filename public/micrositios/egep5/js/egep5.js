@@ -1912,12 +1912,12 @@ window.tests_egep5 = {
     }
 
     const opt = {
-      margin: [12, 12, 15, 12],
+      margin: [5, 5, 5, 5],
       filename: `EGEP5_${paciente_nombre}_${new Date().toISOString().split('T')[0]}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, allowTaint: true },
+      html2canvas: { scale: 2, useCORS: true, allowTaint: true, logging: false },
       jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
-      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+      pagebreak: { mode: 'avoid-all' }
     };
 
     html2pdf().set(opt).from(contenedorPDF).save();

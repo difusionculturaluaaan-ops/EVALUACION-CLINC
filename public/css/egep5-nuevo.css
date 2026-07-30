@@ -1067,3 +1067,83 @@ textarea {
     height: 16px;
   }
 }
+
+/* ========== MEDIA PRINT: PDF OPTIMIZATION ========== */
+@media print {
+  /* Contenedores principales */
+  .egep5-container {
+    max-width: 100% !important;
+    padding: 8mm !important;
+  }
+
+  /* Ocultar UI no esencial */
+  header, .egep5-tabs, .egep5-instruction, .button-group, .btn, button {
+    display: none !important;
+  }
+
+  /* Control de saltos de página */
+  .egep5-card {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    box-shadow: none !important;
+    border: 0.5px solid #999 !important;
+    margin-bottom: 6mm !important;
+    padding: 4mm !important;
+  }
+
+  /* CRÍTICO: Reducir canvas del histograma */
+  #egep5-histograma {
+    max-height: 100px !important;
+    height: 100px !important;
+    display: block !important;
+  }
+
+  /* Tablas comprimidas */
+  .criteria-table-content,
+  .symptoms-table-content,
+  .egep5-events-table {
+    font-size: 0.65rem !important;
+    width: 100% !important;
+  }
+
+  .criteria-table-content th,
+  .criteria-table-content td,
+  .symptoms-table-content th,
+  .symptoms-table-content td,
+  .egep5-events-table th,
+  .egep5-events-table td {
+    padding: 2px 3px !important;
+    border-bottom: 0.5px solid #ccc !important;
+  }
+
+  .criteria-table-content th,
+  .symptoms-table-content th,
+  .egep5-events-table th {
+    background: #f0f0f0 !important;
+    font-weight: bold !important;
+  }
+
+  /* Textos comprimidos */
+  .section-title, h3, h4 {
+    font-size: 0.8rem !important;
+    margin: 0 0 3mm 0 !important;
+    padding: 2mm 0 !important;
+  }
+
+  .section-card {
+    margin: 2mm 0 !important;
+    padding: 3mm !important;
+  }
+
+  /* Preservar colores exactos */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* Ajuste de línea */
+  body {
+    line-height: 1.1 !important;
+  }
+}
