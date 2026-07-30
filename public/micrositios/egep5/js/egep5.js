@@ -1996,8 +1996,8 @@ window.tests_egep5 = {
       .score-box { display: inline-block; min-width: 24px; text-align: center; font-weight: bold; background: #e9ecef; padding: 2px 6px; border-radius: 3px; }
       .profile-container { background: #faf9f9; border: 1px solid var(--border-color); border-radius: 6px; padding: 12px; page-break-inside: avoid; break-inside: avoid; }
       .chart-wrapper { background: white; border: 1px solid var(--border-color); border-radius: 4px; }
-      .pdf-page-1 { page-break-inside: avoid; break-inside: avoid; padding: 15px !important; }
-      .pdf-page-2 { page-break-before: always; page-break-inside: avoid; break-inside: avoid; margin-top: 0; padding: 15px !important; }
+      .pdf-page-1 { padding: 12px !important; }
+      .pdf-page-2 { page-break-before: always; margin-top: 0; padding: 12px !important; }
       .section-card { margin-bottom: 8px !important; padding: 10px !important; }
       @media print {
         body { margin: 0; padding: 0; }
@@ -2135,53 +2135,53 @@ window.tests_egep5 = {
                 'Se cumplen satisfactoriamente todos los criterios diagnósticos del A al G según los estándares DSM-5 / EGEP-5.' :
                 'El paciente no cumple todos los criterios requeridos para el diagnóstico de TEPT según DSM-5.'}
             </p>
-          </div>
+        </div>
+        </div>
+
+      <div class="pdf-page-2">
+        <!-- PÁGINA 2: ESPECIFICACIONES + GRÁFICO -->
+        <div style="display: block; padding: 15px;">
 
           <!-- ESPECIFICACIONES DIAGNÓSTICAS (Solo si cumple TEPT) -->
           ${this.resultados.tept === 'SI' ? `
-          <div class="section-card" style="background-color: #faf9f9; border-top: 3px solid var(--primary);">
-            <div class="section-title" style="font-size: 0.95em;">Especificaciones Diagnósticas</div>
-            <p style="font-size: 0.8em; color: var(--text-muted); margin-bottom: 12px;">
+          <div class="section-card" style="background-color: #faf9f9; border-top: 3px solid var(--primary); margin-bottom: 12px;">
+            <div class="section-title" style="font-size: 0.85em;">Especificaciones Diagnósticas</div>
+            <p style="font-size: 0.7em; color: var(--text-muted); margin-bottom: 8px;">
               <em>Evaluadas al cumplirse el diagnóstico completo de TEPT:</em>
             </p>
 
             <!-- Con Síntomas Disociativos -->
-            <div style="margin-bottom: 12px; padding: 8px; background: #fff; border-radius: 4px; border: 1px solid var(--border-color);">
-              <strong style="font-size: 0.85em; color: var(--primary);">Con síntomas disociativos:</strong>
-              <div style="margin-left: 10px; margin-top: 4px; font-size: 0.85em;">
-                <div>
-                  <span class="status-badge ${this.respuestas.items_47_49[0] > 0 ? 'status-yes' : 'status-no'}">
+            <div style="margin-bottom: 8px; padding: 6px; background: #fff; border-radius: 3px; border: 1px solid var(--border-color); font-size: 0.75em;">
+              <strong style="color: var(--primary);">Con síntomas disociativos:</strong>
+              <div style="margin-left: 8px; margin-top: 2px;">
+                <div style="margin-bottom: 2px;">
+                  <span class="status-badge ${this.respuestas.items_47_49[0] > 0 ? 'status-yes' : 'status-no'}" style="font-size: 0.7em;">
                     ${this.respuestas.items_47_49[0] > 0 ? 'SÍ' : 'NO'}
                   </span>
-                  <strong>Despersonalización:</strong> Responde afirmativamente al <em>Ítem 47</em>.
+                  <strong>Despersonalización:</strong> Ítem 47.
                 </div>
-                <div style="margin-top: 4px;">
-                  <span class="status-badge ${(this.respuestas.items_47_49[1] > 0 || this.respuestas.items_47_49[2] > 0) ? 'status-yes' : 'status-no'}">
+                <div>
+                  <span class="status-badge ${(this.respuestas.items_47_49[1] > 0 || this.respuestas.items_47_49[2] > 0) ? 'status-yes' : 'status-no'}" style="font-size: 0.7em;">
                     ${(this.respuestas.items_47_49[1] > 0 || this.respuestas.items_47_49[2] > 0) ? 'SÍ' : 'NO'}
                   </span>
-                  <strong>Desrealización:</strong> Responde afirmativamente al <em>Ítem 48 o 49</em>.
+                  <strong>Desrealización:</strong> Ítem 48 o 49.
                 </div>
               </div>
             </div>
 
             <!-- Con Expresión Retardada -->
-            <div style="padding: 8px; background: #fff; border-radius: 4px; border: 1px solid var(--border-color);">
-              <strong style="font-size: 0.85em; color: var(--primary);">Con expresión retardada:</strong>
-              <div style="margin-left: 10px; margin-top: 4px; font-size: 0.85em;">
-                <span class="status-badge ${this.respuestas.symptom_onset === '3m' ? 'status-yes' : 'status-no'}">
+            <div style="padding: 6px; background: #fff; border-radius: 3px; border: 1px solid var(--border-color); font-size: 0.75em;">
+              <strong style="color: var(--primary);">Con expresión retardada:</strong>
+              <div style="margin-left: 8px; margin-top: 2px;">
+                <span class="status-badge ${this.respuestas.symptom_onset === '3m' ? 'status-yes' : 'status-no'}" style="font-size: 0.7em;">
                   ${this.respuestas.symptom_onset === '3m' ? 'SÍ' : 'NO'}
                 </span>
-                Ha marcado <em>"6 meses o más después del acontecimiento"</em> en el <em>Ítem 51</em>.
+                Ítem 51: "6 meses o más después del acontecimiento".
               </div>
             </div>
           </div>
           ` : ''}
-        </div>
-        </div>
 
-      <div class="pdf-page-2">
-        <!-- PÁGINA 2: GRÁFICO PERFIL PROFESIONAL -->
-        <div style="display: block; padding: 20px;">
           <div class="profile-container">
             <div class="baremo-header" style="text-align: center; font-size: 0.8em; font-weight: bold; color: white; background: var(--primary); padding: 8px; border-radius: 4px; margin-bottom: 10px;">
               PERFIL BAREMADO DE EVALUACIÓN<br>
