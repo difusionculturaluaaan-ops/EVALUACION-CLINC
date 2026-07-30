@@ -1996,8 +1996,18 @@ window.tests_egep5 = {
       .score-box { display: inline-block; min-width: 24px; text-align: center; font-weight: bold; background: #e9ecef; padding: 2px 6px; border-radius: 3px; }
       .profile-container { background: #faf9f9; border: 1px solid var(--border-color); border-radius: 6px; padding: 12px; page-break-inside: avoid; break-inside: avoid; }
       .chart-wrapper { background: white; border: 1px solid var(--border-color); border-radius: 4px; }
-      .pdf-page-1 { page-break-inside: avoid; break-inside: avoid; }
-      .pdf-page-2 { page-break-before: always; page-break-inside: avoid; break-inside: avoid; margin-top: 0; }
+      .pdf-page-1 { page-break-inside: avoid; break-inside: avoid; padding: 15px !important; }
+      .pdf-page-2 { page-break-before: always; page-break-inside: avoid; break-inside: avoid; margin-top: 0; padding: 15px !important; }
+      .section-card { margin-bottom: 8px !important; padding: 10px !important; }
+      @media print {
+        body { margin: 0; padding: 0; }
+        .container { margin: 0; }
+        header { padding: 12px !important; }
+        .info-grid { gap: 6px !important; }
+        .section-title { font-size: 0.85em !important; }
+        table { font-size: 0.8em !important; }
+        th, td { padding: 5px !important; }
+      }
     </style>
 
     <div class="container">
