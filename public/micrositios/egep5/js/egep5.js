@@ -2000,22 +2000,25 @@ window.tests_egep5 = {
       .pdf-page-2 { page-break-before: always; margin-top: 0; padding: 12px !important; }
       .section-card { margin-bottom: 8px !important; padding: 10px !important; }
       @media print {
-        body { margin: 0; padding: 0; line-height: 1.2; }
-        .container { margin: 0; }
-        header { padding: 8px 12px !important; }
-        header h1 { font-size: 1.4em !important; margin: 2px 0 !important; }
-        .subtitle { font-size: 0.75em !important; }
-        .info-grid { gap: 4px !important; }
-        .info-item { font-size: 0.75em !important; }
-        .info-label { font-size: 0.65em !important; }
-        .info-value { padding: 2px 4px !important; margin-top: 1px !important; }
-        .section-title { font-size: 0.75em !important; margin-bottom: 6px !important; padding-bottom: 3px !important; }
-        .section-card { margin-bottom: 4px !important; padding: 6px !important; }
-        table { font-size: 0.65em !important; margin-top: 4px !important; }
-        th, td { padding: 2px 3px !important; border-bottom: 0.5px solid var(--border-color) !important; }
-        th { padding: 3px 3px !important; }
-        .status-badge { padding: 1px 4px !important; font-size: 0.6em !important; }
-        .score-box { font-size: 0.75em !important; padding: 1px 3px !important; }
+        * { margin: 0; padding: 0; }
+        body { margin: 0; padding: 0; line-height: 1.1; }
+        .container { margin: 0 !important; max-width: 750px !important; width: 100% !important; }
+        header { padding: 6px 8px !important; margin: 0 !important; }
+        header h1 { font-size: 1.3em !important; margin: 0 !important; line-height: 1; }
+        .subtitle { font-size: 0.7em !important; margin: 0 !important; }
+        .pdf-page-1 { padding: 8px !important; margin: 0 !important; }
+        .pdf-page-2 { padding: 8px !important; margin: 0 !important; }
+        .info-grid { gap: 2px !important; }
+        .info-item { font-size: 0.7em !important; margin: 0 !important; }
+        .info-label { font-size: 0.6em !important; margin: 0 !important; }
+        .info-value { padding: 1px 2px !important; margin: 1px 0 !important; }
+        .section-title { font-size: 0.7em !important; margin: 0 0 4px 0 !important; padding-bottom: 2px !important; border-bottom: 1px solid var(--accent-bg) !important; }
+        .section-card { margin: 0 0 3px 0 !important; padding: 4px !important; border: 0.5px solid var(--border-color) !important; }
+        table { font-size: 0.6em !important; margin: 2px 0 !important; width: 100% !important; }
+        th, td { padding: 1px 2px !important; border-bottom: 0.5px solid var(--border-color) !important; }
+        .status-badge { padding: 0.5px 2px !important; font-size: 0.55em !important; }
+        .score-box { font-size: 0.65em !important; padding: 0.5px 2px !important; }
+        .profile-container { margin: 2px 0 !important; padding: 4px !important; }
       }
     </style>
 
