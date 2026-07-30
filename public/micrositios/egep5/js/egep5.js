@@ -1994,9 +1994,10 @@ window.tests_egep5 = {
       .status-yes { background: #d4edda; color: #155724; }
       .status-no { background: #f8d7da; color: #721c24; }
       .score-box { display: inline-block; min-width: 24px; text-align: center; font-weight: bold; background: #e9ecef; padding: 2px 6px; border-radius: 3px; }
-      .profile-container { background: #faf9f9; border: 1px solid var(--border-color); border-radius: 6px; padding: 12px; }
+      .profile-container { background: #faf9f9; border: 1px solid var(--border-color); border-radius: 6px; padding: 12px; page-break-inside: avoid; break-inside: avoid; }
       .chart-wrapper { background: white; border: 1px solid var(--border-color); border-radius: 4px; }
-      @media print { .content-grid { display: grid; grid-template-columns: 1fr 1fr; } }
+      .pdf-page-1 { page-break-inside: avoid; break-inside: avoid; }
+      .pdf-page-2 { page-break-before: always; page-break-inside: avoid; break-inside: avoid; margin-top: 0; }
     </style>
 
     <div class="container">
@@ -2005,8 +2006,9 @@ window.tests_egep5 = {
         <div class="subtitle">Evaluación Global del Estrés Postraumático (DSM-5) · HOJA DE CORRECCIÓN</div>
       </header>
 
-      <div class="content-grid">
-        <div>
+      <div class="pdf-page-1">
+        <!-- PÁGINA 1: DIAGNÓSTICO Y CRITERIOS -->
+        <div style="display: block; padding: 20px;">
           <!-- DATOS DEL PACIENTE -->
           <div class="section-card">
             <div class="section-title">Datos del Evaluado</div>
@@ -2165,9 +2167,11 @@ window.tests_egep5 = {
           </div>
           ` : ''}
         </div>
+        </div>
 
-        <!-- GRÁFICO PERFIL PROFESIONAL -->
-        <div>
+      <div class="pdf-page-2">
+        <!-- PÁGINA 2: GRÁFICO PERFIL PROFESIONAL -->
+        <div style="display: block; padding: 20px;">
           <div class="profile-container">
             <div class="baremo-header" style="text-align: center; font-size: 0.8em; font-weight: bold; color: white; background: var(--primary); padding: 8px; border-radius: 4px; margin-bottom: 10px;">
               PERFIL BAREMADO DE EVALUACIÓN<br>
@@ -2264,6 +2268,7 @@ window.tests_egep5 = {
             <div style="margin-top: 4px;">— Línea punteada (Pc 50): Promedio normal de la población</div>
             <div>— Línea negra sólida: Puntuación real del paciente evaluado</div>
           </div>
+        </div>
         </div>
       </div>
     </div>
