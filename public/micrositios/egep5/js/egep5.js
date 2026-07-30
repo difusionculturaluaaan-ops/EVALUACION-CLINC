@@ -1756,29 +1756,8 @@ window.tests_egep5 = {
       btn.textContent = '⏳ Guardando...';
     }
 
-    const data = [];
-    data.push(...this.respuestas.items_27_31);
-    data.push(...this.respuestas.items_32_33);
-    data.push(...this.respuestas.items_34_40);
-    data.push(...this.respuestas.items_41_46);
-    data.push(this.respuestas.symptom_duration || 0, this.respuestas.symptom_onset || 0);
-    data.push(...this.respuestas.items_52_58);
-
     const totalIntensidad = this.resultados.pd.I + this.resultados.pd.E + this.resultados.pd.C + this.resultados.pd.A;
-    const { criterios, tept } = this.resultados;
 
-    const subescalas = {
-      reexperimentacion: this.resultados.pd.I,
-      evitacion: this.resultados.pd.E,
-      cognitivas_animo: this.resultados.pd.C,
-      activacion: this.resultados.pd.A,
-      funcionamiento: this.respuestas.items_52_58.filter(x => x > 0).length,
-      intensidad_total: totalIntensidad,
-      criterios_dsm5: criterios,
-      tept_presente: tept
-    };
-
-    // Guardar JSON en expediente (patrón CUIDA)
     // Armar array de respuestas (compatible con sistema)
     const data = [];
     data.push(...this.respuestas.items_27_31);
@@ -1794,7 +1773,14 @@ window.tests_egep5 = {
       data: data,
       total: totalIntensidad,
       subescalas: {
-        ...subescalas,
+        reexperimentacion: this.resultados.pd.I,
+        evitacion: this.resultados.pd.E,
+        cognitivas_animo: this.resultados.pd.C,
+        activacion: this.resultados.pd.A,
+        funcionamiento: this.respuestas.items_52_58.filter(x => x > 0).length,
+        intensidad_total: totalIntensidad,
+        criterios_dsm5: this.resultados.criterios,
+        tept_presente: this.resultados.tept,
         _respuestas_completas: this.respuestas,
         _datos_paciente: {
           fecha: document.getElementById('m_fecha')?.value || new Date().toISOString().split('T')[0],
