@@ -1098,27 +1098,31 @@ textarea {
     display: block !important;
   }
 
-  /* Contenedor flexible vertical para gráfico grande */
+  /* Contenedor flexible vertical - SIN BORDES */
   .profile-container {
     display: flex !important;
     flex-direction: column !important;
     gap: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     height: auto !important;
   }
 
-  /* Gráfico GRANDE y protagonista */
+  /* Gráfico GRANDE - 85% de la página */
   .chart-wrapper {
     margin: 0 !important;
     padding: 0 !important;
-    height: 200mm !important;
+    height: 220mm !important;
     width: 100% !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     flex: 1 !important;
+    border: none !important;
+    background: white !important;
   }
 
   .chart-wrapper svg {
@@ -1126,11 +1130,13 @@ textarea {
     width: 100% !important;
   }
 
-  /* Header del gráfico más compacto */
+  /* Header del gráfico MÍNIMO */
   .baremo-header {
-    font-size: 0.7rem !important;
-    padding: 4mm !important;
-    margin-bottom: 4mm !important;
+    font-size: 0.65rem !important;
+    padding: 3mm !important;
+    margin-bottom: 3mm !important;
+    border: none !important;
+    border-radius: 0 !important;
   }
 
   /* Tablas comprimidas */

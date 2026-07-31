@@ -2133,64 +2133,23 @@ window.tests_egep5 = {
             </div>
           </div>
 
-          <!-- DIAGNÓSTICO FINAL -->
-          <div class="section-card" style="border-left: 4px solid ${this.resultados.tept === 'SI' ? '#28a745' : '#dc3545'};">
-            <div class="section-title" style="color: ${this.resultados.tept === 'SI' ? '#155724' : '#721c24'};">Diagnóstico Global</div>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <span style="font-weight: bold; font-size: 1.05em;">DIAGNÓSTICO DE TEPT:</span>
-              <span class="status-badge ${this.resultados.tept === 'SI' ? 'status-yes' : 'status-no'}" style="font-size: 0.95em; padding: 6px 14px;">
-                ${this.resultados.tept === 'SI' ? 'CUMPLE CRITERIOS (SÍ)' : 'NO CUMPLE CRITERIOS'}
-              </span>
-            </div>
-            <p style="font-size: 0.85em; color: var(--text-muted);">
-              ${this.resultados.tept === 'SI' ?
-                'Se cumplen satisfactoriamente todos los criterios diagnósticos del A al G según los estándares DSM-5 / EGEP-5.' :
-                'El paciente no cumple todos los criterios requeridos para el diagnóstico de TEPT según DSM-5.'}
-            </p>
-        </div>
+          <!-- DIAGNÓSTICO FINAL (Comprimido a 1 línea) -->
+          <div style="font-size: 0.8em; font-weight: bold; color: var(--primary); padding: 6px 0; margin-bottom: 4px; border-bottom: 1px solid var(--accent-bg);">
+            DIAGNÓSTICO DE TEPT: <span class="status-badge ${this.resultados.tept === 'SI' ? 'status-yes' : 'status-no'}" style="font-size: 0.85em; margin-left: 8px;">
+              ${this.resultados.tept === 'SI' ? 'CUMPLE CRITERIOS (SÍ)' : 'NO CUMPLE CRITERIOS'}
+            </span> — ${this.resultados.tept === 'SI' ? 'Todos los criterios A-G confirmados.' : 'Criterios no cumplidos.'}
+          </div>
         </div>
 
       <div class="pdf-page-2">
         <!-- PÁGINA 2: ESPECIFICACIONES + GRÁFICO -->
         <div style="display: block; padding: 15px;">
 
-          <!-- ESPECIFICACIONES DIAGNÓSTICAS (Solo si cumple TEPT) -->
+          <!-- ESPECIFICACIONES DIAGNÓSTICAS (3 líneas compactas - Solo si cumple TEPT) -->
           ${this.resultados.tept === 'SI' ? `
-          <div class="section-card" style="background-color: #faf9f9; border-top: 3px solid var(--primary); margin-bottom: 12px;">
-            <div class="section-title" style="font-size: 0.85em;">Especificaciones Diagnósticas</div>
-            <p style="font-size: 0.7em; color: var(--text-muted); margin-bottom: 8px;">
-              <em>Evaluadas al cumplirse el diagnóstico completo de TEPT:</em>
-            </p>
-
-            <!-- Con Síntomas Disociativos -->
-            <div style="margin-bottom: 8px; padding: 6px; background: #fff; border-radius: 3px; border: 1px solid var(--border-color); font-size: 0.75em;">
-              <strong style="color: var(--primary);">Con síntomas disociativos:</strong>
-              <div style="margin-left: 8px; margin-top: 2px;">
-                <div style="margin-bottom: 2px;">
-                  <span class="status-badge ${this.respuestas.items_47_49[0] > 0 ? 'status-yes' : 'status-no'}" style="font-size: 0.7em;">
-                    ${this.respuestas.items_47_49[0] > 0 ? 'SÍ' : 'NO'}
-                  </span>
-                  <strong>Despersonalización:</strong> Ítem 47.
-                </div>
-                <div>
-                  <span class="status-badge ${(this.respuestas.items_47_49[1] > 0 || this.respuestas.items_47_49[2] > 0) ? 'status-yes' : 'status-no'}" style="font-size: 0.7em;">
-                    ${(this.respuestas.items_47_49[1] > 0 || this.respuestas.items_47_49[2] > 0) ? 'SÍ' : 'NO'}
-                  </span>
-                  <strong>Desrealización:</strong> Ítem 48 o 49.
-                </div>
-              </div>
-            </div>
-
-            <!-- Con Expresión Retardada -->
-            <div style="padding: 6px; background: #fff; border-radius: 3px; border: 1px solid var(--border-color); font-size: 0.75em;">
-              <strong style="color: var(--primary);">Con expresión retardada:</strong>
-              <div style="margin-left: 8px; margin-top: 2px;">
-                <span class="status-badge ${this.respuestas.symptom_onset === '3m' ? 'status-yes' : 'status-no'}" style="font-size: 0.7em;">
-                  ${this.respuestas.symptom_onset === '3m' ? 'SÍ' : 'NO'}
-                </span>
-                Ítem 51: "6 meses o más después del acontecimiento".
-              </div>
-            </div>
+          <div style="font-size: 0.6em; color: var(--text-muted); padding: 2px 0 6px 0; margin-bottom: 4px;">
+            <div style="font-weight: bold; color: var(--primary); margin-bottom: 2px;">Especificaciones:</div>
+            <div>• <span class="status-badge ${this.respuestas.items_47_49[0] > 0 ? 'status-yes' : 'status-no'}" style="font-size: 0.55em;">Despersonalización</span> Ítem 47 | <span class="status-badge ${(this.respuestas.items_47_49[1] > 0 || this.respuestas.items_47_49[2] > 0) ? 'status-yes' : 'status-no'}" style="font-size: 0.55em;">Desrealización</span> Ítem 48-49 | <span class="status-badge ${this.respuestas.symptom_onset === '3m' ? 'status-yes' : 'status-no'}" style="font-size: 0.55em;">Expresión retardada</span> Ítem 51</div>
           </div>
           ` : ''}
 
