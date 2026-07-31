@@ -2199,8 +2199,8 @@ window.tests_egep5 = {
               PERFIL BAREMADO DE EVALUACIÓN<br>
               <span style="font-weight: normal; font-size: 0.7em;">España | Baremo Clínico | Varones + Mujeres</span>
             </div>
-            <div class="chart-wrapper" style="width: 100%; height: 280px;">
-              <svg viewBox="0 0 340 380" width="100%" height="380" style="font-family: 'Segoe UI', system-ui, sans-serif; background-color: #ffffff; display: block;">
+            <div class="chart-wrapper" style="width: 100%; height: 220px; margin-bottom: 8px;">
+              <svg viewBox="0 0 340 380" width="100%" height="220" style="font-family: 'Segoe UI', system-ui, sans-serif; background-color: #ffffff; display: block;">
                 <defs>
                   <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
                     <feDropShadow dx="1" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity="0.25"/>
@@ -2285,7 +2285,7 @@ window.tests_egep5 = {
               </svg>
             </div>
           </div>
-          <div style="font-size: 0.7em; margin-top: 12px; color: var(--text-muted); line-height: 1.5; padding: 8px; border-top: 1px solid var(--border-color);">
+          <div style="font-size: 0.7em; margin-top: 16px; color: var(--text-muted); line-height: 1.5; padding: 8px; border-top: 1px solid var(--border-color); page-break-inside: avoid;">
             <div><strong style="color: var(--primary);">Cómo interpretar:</strong></div>
             <div style="margin-top: 4px;">— Línea punteada (Pc 50): Promedio normal de la población</div>
             <div>— Línea negra sólida: Puntuación real del paciente evaluado</div>
