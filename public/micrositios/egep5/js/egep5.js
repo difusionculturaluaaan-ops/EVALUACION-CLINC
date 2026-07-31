@@ -2194,12 +2194,13 @@ window.tests_egep5 = {
           </div>
           ` : ''}
 
-          <div class="profile-container">
-            <div class="baremo-header" style="text-align: center; font-size: 0.8em; font-weight: bold; color: white; background: var(--primary); padding: 8px; border-radius: 4px; margin-bottom: 10px;">
-              PERFIL BAREMADO DE EVALUACIÓN<br>
-              <span style="font-weight: normal; font-size: 0.7em;">España | Baremo Clínico | Varones + Mujeres</span>
-            </div>
-            <div class="chart-wrapper" style="width: 100%; height: 220px; margin-bottom: 8px;">
+          <div class="profile-container" style="display: flex; gap: 12px; align-items: flex-start;">
+            <div style="flex: 1; min-width: 0;">
+              <div class="baremo-header" style="text-align: center; font-size: 0.8em; font-weight: bold; color: white; background: var(--primary); padding: 8px; border-radius: 4px; margin-bottom: 10px;">
+                PERFIL BAREMADO DE EVALUACIÓN<br>
+                <span style="font-weight: normal; font-size: 0.7em;">España | Baremo Clínico | Varones + Mujeres</span>
+              </div>
+              <div class="chart-wrapper" style="width: 100%; height: 220px; margin-bottom: 0;">
               <svg viewBox="0 0 340 380" width="100%" height="220" style="font-family: 'Segoe UI', system-ui, sans-serif; background-color: #ffffff; display: block;">
                 <defs>
                   <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
@@ -2283,14 +2284,15 @@ window.tests_egep5 = {
                 <text x="305" y="380" font-size="9" font-weight="bold" text-anchor="middle" fill="#212529">PD: ${countF}</text>
 
               </svg>
+              </div>
+            </div>
+
+            <div style="flex: 0 0 140px; font-size: 0.7em; color: var(--text-muted); line-height: 1.4; padding: 6px; border-left: 1px solid var(--border-color); page-break-inside: avoid;">
+              <div><strong style="color: var(--primary); font-size: 0.75em;">Cómo interpretar:</strong></div>
+              <div style="margin-top: 4px;">— Línea punteada (Pc 50): Promedio normal</div>
+              <div>— Línea negra sólida: Puntuación del paciente</div>
             </div>
           </div>
-          <div style="font-size: 0.7em; margin-top: 16px; color: var(--text-muted); line-height: 1.5; padding: 8px; border-top: 1px solid var(--border-color); page-break-inside: avoid;">
-            <div><strong style="color: var(--primary);">Cómo interpretar:</strong></div>
-            <div style="margin-top: 4px;">— Línea punteada (Pc 50): Promedio normal de la población</div>
-            <div>— Línea negra sólida: Puntuación real del paciente evaluado</div>
-          </div>
-        </div>
         </div>
       </div>
     </div>

@@ -1098,16 +1098,28 @@ textarea {
     display: block !important;
   }
 
-  /* Gráfico perfil baremado - espaciado */
-  .chart-wrapper {
-    margin-bottom: 10mm !important;
+  /* Contenedor flexible para gráfico + interpretación */
+  .profile-container {
+    display: flex !important;
+    gap: 6mm !important;
+    align-items: flex-start !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
   }
 
-  /* Sección de interpretación - separada del gráfico */
-  div[style*="Cómo interpretar"] {
-    margin-top: 8mm !important;
+  /* Gráfico en columna izquierda */
+  .chart-wrapper {
+    margin-bottom: 0 !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Texto interpretación en columna derecha - estrecho */
+  .profile-container > div:last-child {
+    flex: 0 0 35mm !important;
+    border-left: 0.5mm solid #ccc !important;
+    padding-left: 4mm !important;
+    font-size: 0.65rem !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
   }
