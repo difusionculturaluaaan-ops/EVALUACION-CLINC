@@ -2142,27 +2142,15 @@ window.tests_egep5 = {
         </div>
 
       <div class="pdf-page-2">
-        <!-- PÁGINA 2: ESPECIFICACIONES + GRÁFICO -->
-        <div style="display: block; padding: 15px;">
+        <!-- PÁGINA 2: SOLO GRÁFICO (COMPLETO Y VISIBLE) -->
+        <div style="display: flex; flex-direction: column; padding: 8px; height: 100%; page-break-inside: avoid;">
 
-          <!-- ESPECIFICACIONES DIAGNÓSTICAS (3 líneas compactas - Solo si cumple TEPT) -->
-          ${this.resultados.tept === 'SI' ? `
-          <div style="font-size: 0.6em; color: var(--text-muted); padding: 2px 0 6px 0; margin-bottom: 4px;">
-            <div style="font-weight: bold; color: var(--primary); margin-bottom: 2px;">Especificaciones:</div>
-            <div>• <span class="status-badge ${this.respuestas.items_47_49[0] > 0 ? 'status-yes' : 'status-no'}" style="font-size: 0.55em;">Despersonalización</span> Ítem 47 | <span class="status-badge ${(this.respuestas.items_47_49[1] > 0 || this.respuestas.items_47_49[2] > 0) ? 'status-yes' : 'status-no'}" style="font-size: 0.55em;">Desrealización</span> Ítem 48-49 | <span class="status-badge ${this.respuestas.symptom_onset === '3m' ? 'status-yes' : 'status-no'}" style="font-size: 0.55em;">Expresión retardada</span> Ítem 51</div>
-          </div>
-          ` : ''}
-
-          <div style="font-size: 0.65em; color: var(--text-muted); line-height: 1.3; padding: 4px 0 8px 0; page-break-inside: avoid;">
-            <div><strong style="color: var(--primary); font-size: 0.7em;">Cómo interpretar:</strong> Línea punteada (Pc 50) = promedio normal | Línea negra = puntuación del paciente</div>
-          </div>
-
-          <div class="profile-container" style="display: flex; flex-direction: column; gap: 0;">
-            <div class="baremo-header" style="text-align: center; font-size: 0.75em; font-weight: bold; color: white; background: var(--primary); padding: 6px; border-radius: 3px; margin-bottom: 6px;">
+          <div class="profile-container" style="display: flex; flex-direction: column; gap: 0; flex: 1; page-break-inside: avoid;">
+            <div class="baremo-header" style="text-align: center; font-size: 0.7em; font-weight: bold; color: white; background: var(--primary); padding: 4px; border-radius: 3px; margin-bottom: 4px;">
               PERFIL BAREMADO DE EVALUACIÓN<br>
-              <span style="font-weight: normal; font-size: 0.65em;">España | Baremo Clínico | Varones + Mujeres</span>
+              <span style="font-weight: normal; font-size: 0.6em;">España | Baremo Clínico | Varones + Mujeres</span>
             </div>
-            <div class="chart-wrapper" style="width: 100%; height: 650px; margin-bottom: 0; flex: 1;">
+            <div class="chart-wrapper" style="width: 100%; height: 480px; margin-bottom: 6px; flex: 1;">
               <svg viewBox="0 0 340 380" width="100%" height="100%" style="font-family: 'Segoe UI', system-ui, sans-serif; background-color: #ffffff; display: block;">
                 <defs>
                   <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
@@ -2247,6 +2235,10 @@ window.tests_egep5 = {
 
               </svg>
               </div>
+
+            <div style="font-size: 0.6em; color: var(--text-muted); padding: 4px 0 0 0; border-top: 1px solid var(--border-color); margin-top: 4px;">
+              <div><strong style="color: var(--primary); font-size: 0.65em;">Cómo interpretar:</strong> Línea punteada = promedio (Pc 50) | Línea negra = puntuación del paciente</div>
+            </div>
             </div>
           </div>
         </div>
