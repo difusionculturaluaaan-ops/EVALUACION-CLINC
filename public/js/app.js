@@ -2181,8 +2181,8 @@ const app = {
           const mediaRef = (data.length * (prueba.tipo === 'PCLR' ? 0.2 : 0.2)).toFixed(1);
           promedioReferencia = mediaRef;
         }
-      } else if (['HAMILTON', 'ISRA', 'TDS'].includes(prueba.tipo)) {
-        // Hamilton, ISRA, TDS: total
+      } else if (['HAMILTON', 'ISRA'].includes(prueba.tipo)) {
+        // Hamilton, ISRA: total (promedio simple)
         if (Array.isArray(data) && data.length > 0) {
           const total = data.reduce((a, b) => a + (Number(b) || 0), 0);
           promedioPaciente = total.toFixed(1);
@@ -2344,6 +2344,92 @@ const app = {
             const containerHeight = parentElement.offsetHeight;
             parentElement.replaceChild(img, canvasElement);
             console.log(`Gráfico MMPI-2 convertido a imagen (${containerHeight}px)`);
+          }
+        }, 500);  // 500ms para que Chart.js termine completamente
+        return;
+      } else if (prueba.tipo === 'TDS') {
+        // TDS: gráfico de 10 factores con Paciente vs Referencia (valores normales)
+        const factoresConfig = {
+          F1: { label: 'F1: Somnolencia Excesiva', normal: 4 },
+          F2: { label: 'F2: Insomnio Intermedio', normal: 2 },
+          F3: { label: 'F3: Insomnio Inicial', normal: 2 },
+          F4: { label: 'F4: Apnea del Sueño', normal: 0 },
+          F5: { label: 'F5: Parasomnias Complejas', normal: 1 },
+          F6: { label: 'F6: Sonambulismo / Somniloquio', normal: 2 },
+          F7: { label: 'F7: Ronquido', normal: 1 },
+          F8: { label: 'F8: Piernas Inquietas / Pesadillas', normal: 1 },
+          F9: { label: 'F9: Uso de Medicamentos', normal: 0 },
+          F10: { label: 'F10: Parálisis al Dormir', normal: 0 }
+        };
+
+        const labels = Object.entries(factoresConfig).map(([_, cfg]) => cfg.label);
+        const valoresPaciente = Object.entries(factoresConfig).map(([key, _]) => {
+          const factor = resultado?.factores?.[key];
+          return factor ? (factor.suma || 0) : 0;
+        });
+        const valoresReferencia = Object.values(factoresConfig).map(cfg => cfg.normal);
+
+        const maxValor = Math.max(...valoresPaciente, ...valoresReferencia) + 2;
+        const ctx = canvasElement.getContext('2d');
+
+        canvasElement.chartInstance = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Paciente',
+                data: valoresPaciente,
+                backgroundColor: '#e74c3c',
+                borderColor: '#c0392b',
+                borderWidth: 1
+              },
+              {
+                label: 'Referencia (Normal)',
+                data: valoresReferencia,
+                backgroundColor: '#27ae60',
+                borderColor: '#229954',
+                borderWidth: 1
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: true,
+                position: 'top',
+                labels: { font: { size: 10 }, padding: 10 }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: maxValor,
+                ticks: { font: { size: 8 } },
+                grid: { color: 'rgba(0, 0, 0, 0.05)' }
+              },
+              x: {
+                ticks: { font: { size: 9 } }
+              }
+            }
+          }
+        });
+
+        setTimeout(() => {
+          if (canvasElement.chartInstance && canvasElement.parentNode) {
+            const imgSrc = canvasElement.toDataURL('image/png');
+            const img = document.createElement('img');
+            img.src = imgSrc;
+            img.style.width = '100%';
+            img.style.height = '100%';  // Altura dinámica del contenedor
+            img.style.display = 'block';
+
+            const parentElement = canvasElement.parentNode;
+            const containerHeight = parentElement.offsetHeight;
+            parentElement.replaceChild(img, canvasElement);
+            console.log(`Gráfico TDS convertido a imagen (${containerHeight}px)`);
           }
         }, 500);  // 500ms para que Chart.js termine completamente
         return;
