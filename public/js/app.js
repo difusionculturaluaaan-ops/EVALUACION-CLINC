@@ -31,7 +31,6 @@ const app = {
       }
     },
     'MMPI2RF': tests_mmpi2rf,
-    'TDS': tests_tds,
     'ISRA': {
       nombre: 'ISRA (Cognitivo + Fisiológico + Motor)',
       tipo: 'ISRA',
@@ -133,7 +132,6 @@ const app = {
     'mmpi': 'MMPI',
     'mmpi2': 'MMPI2',
     'mmpi2rf': 'MMPI2RF',
-    'tds': 'TDS',
     'isra': 'ISRA',
     'pclr': 'PCLR',
     'egep5': 'EGEP5',
@@ -211,7 +209,6 @@ const app = {
         'MMPI2PRO': 'mmpi-pro',
         'CUIDA': 'cuida',
         'ISRA': 'isra',
-        'TDS': 'tds',
         'PCLR': 'pclr',
         'SCID2': 'scid2',
         'EGEP5': 'egep5',
@@ -220,7 +217,7 @@ const app = {
       };
 
       // Ocultar todos los tests por defecto
-      document.querySelectorAll('[data-page="scl90r"], [data-page="hamilton"], [data-page="mmpi-pro"], [data-page="cuida"], [data-page="isra"], [data-page="tds"], [data-page="pclr"], [data-page="scid2"], [data-page="egep5"], [data-page="mbi"], [data-page="cisneros"]').forEach(btn => {
+      document.querySelectorAll('[data-page="scl90r"], [data-page="hamilton"], [data-page="mmpi-pro"], [data-page="cuida"], [data-page="isra"], [data-page="pclr"], [data-page="scid2"], [data-page="egep5"], [data-page="mbi"], [data-page="cisneros"]').forEach(btn => {
         btn.style.display = 'none';
       });
 
@@ -239,7 +236,7 @@ const app = {
     } catch (error) {
       console.error('Error al cargar tests habilitados:', error);
       // Si falla, mostrar todos los tests (fallback)
-      document.querySelectorAll('[data-page="scl90r"], [data-page="hamilton"], [data-page="mmpi-pro"], [data-page="cuida"], [data-page="isra"], [data-page="tds"], [data-page="pclr"], [data-page="scid2"], [data-page="egep5"], [data-page="mbi"], [data-page="cisneros"]').forEach(btn => {
+      document.querySelectorAll('[data-page="scl90r"], [data-page="hamilton"], [data-page="mmpi-pro"], [data-page="cuida"], [data-page="isra"], [data-page="pclr"], [data-page="scid2"], [data-page="egep5"], [data-page="mbi"], [data-page="cisneros"]').forEach(btn => {
         btn.style.display = 'block';
       });
     }
@@ -792,18 +789,6 @@ const app = {
     tests_cuida.init();
     const token = localStorage.getItem('auth_token') || '';
     window.location.href = `/cuida.html?paciente_id=${this.pacienteActivo.id}&token=${encodeURIComponent(token)}`;
-  },
-
-  /**
-   * Iniciar TDS-2 en micrositio profesional (independiente del TDS viejo)
-   */
-  iniciarTDS2() {
-    if (!this.pacienteActivo) {
-      this.mostrarToast('Primero debes crear o seleccionar un paciente', 'error');
-      return;
-    }
-    const token = localStorage.getItem('auth_token') || '';
-    window.location.href = `/tds.html?paciente_id=${this.pacienteActivo.id}&token=${encodeURIComponent(token)}`;
   },
 
   /**
@@ -1547,7 +1532,7 @@ const app = {
       const resultado = test.calcular();
 
       // Solo capturar evaluador para tests específicos (excluir CUIDA y MMPI)
-      const testsConEvaluador = ['hamilton', 'scl90r', 'isra', 'pcl-r', 'egep5', 'tds'];
+      const testsConEvaluador = ['hamilton', 'scl90r', 'isra', 'pcl-r', 'egep5'];
       let evaluador = null;
       if (testsConEvaluador.includes(testType.toLowerCase())) {
         evaluador = localStorage.getItem('nombre') || null;
@@ -4862,7 +4847,6 @@ const app = {
         'HAMILTON': 'hamD17',
         'SCL90R': 'scl90R',
         'ISRA': 'isra',
-        'TDS': 'tds',
         'PCLR': 'pclR',
         'EGEP5': 'egep5'
       };
