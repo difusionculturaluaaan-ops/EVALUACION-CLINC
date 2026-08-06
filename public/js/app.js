@@ -4897,6 +4897,7 @@ const app = {
       'MMPI2': '▲',
       'ISRA': '◆',
       'TDS': '★',
+      'TDS-2': '★',
       'PCLR': '◇',
       'EGEP5': '◌'
     };
@@ -4907,6 +4908,7 @@ const app = {
       'MMPI2': 'MMPI-2',
       'ISRA': 'ISRA (Ansiedad)',
       'TDS': 'TDS (Sueño)',
+      'TDS-2': 'TDS-2 (Sueño)',
       'PCLR': 'PCL-R (Psicopatía)',
       'EGEP5': 'EGEP-5 (TEPT)'
     };
