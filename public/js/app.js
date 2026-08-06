@@ -2368,97 +2368,10 @@ const app = {
           }
         }, 500);  // 500ms para que Chart.js termine completamente
         return;
-      } else {
-        // Fallback: promedio simple
-        if (Array.isArray(data) && data.length > 0) {
-          promedioPaciente = (data.reduce((a, b) => a + (Number(b) || 0), 0) / data.length).toFixed(1);
-          promedioReferencia = 0.5;
-        }
       }
 
-      // Labels simplificados: solo Paciente y Referencia
-      const labels = ['Paciente', 'Referencia'];
-      const valoresPaciente = [Number(promedioPaciente)];
-      const valoresReferencia = [Number(promedioReferencia)];
-
-      const maxValor = Math.max(Number(promedioPaciente), Number(promedioReferencia), 2) + 1;
-      const ctx = canvasElement.getContext('2d');
-
-      canvasElement.chartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              label: 'Paciente',
-              data: valoresPaciente,
-              backgroundColor: '#e74c3c',
-              borderColor: '#c0392b',
-              borderWidth: 2,
-              barPercentage: 0.6
-            },
-            {
-              label: 'Población Normal',
-              data: valoresReferencia,
-              backgroundColor: '#27ae60',
-              borderColor: '#229954',
-              borderWidth: 2,
-              barPercentage: 0.6
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          interaction: { mode: false },
-          onHover: false,
-          animation: {
-            duration: 0
-          },
-          plugins: {
-            legend: {
-              display: true,
-              position: 'top',
-              labels: { font: { size: 13 }, padding: 15, usePointStyle: true }
-            },
-            tooltip: {
-              enabled: false
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              max: maxValor,
-              ticks: { stepSize: Math.ceil(maxValor / 5), font: { size: 11 } },
-              grid: { color: 'rgba(0, 0, 0, 0.08)' }
-            },
-            x: {
-              grid: { display: false },
-              ticks: { font: { size: 11 }, maxRotation: 45, minRotation: 0 }
-            }
-          }
-        }
-      });
-
-      // Convertir a imagen estática después de renderizar (PATRÓN CONSISTENTE)
-      setTimeout(() => {
-        if (canvasElement.chartInstance) {
-          const imagenDataUrl = canvasElement.toDataURL('image/png');
-          const img = document.createElement('img');
-          img.src = imagenDataUrl;
-          img.style.width = '100%';
-          img.style.height = '100%';  // Altura dinámica del contenedor
-          img.style.display = 'block';
-
-          const parentElement = canvasElement.parentNode;
-          const containerHeight = parentElement.offsetHeight;
-          parentElement.replaceChild(img, canvasElement);
-          canvasElement.chartInstance.destroy();
-          console.log(`Gráfico convertido a imagen (${containerHeight}px)`);
-        }
-      }, 500);  // 500ms para que Chart.js termine completamente
-
-      console.log('Gráfica comparativa renderizada para', prueba.tipo);
+      // Si llegamos aquí, el test no tiene handler específico
+      console.log(`No hay handler gráfico específico para: ${prueba.tipo}`);
     } catch (error) {
       console.error('Error al renderizar gráfica:', error);
     }
