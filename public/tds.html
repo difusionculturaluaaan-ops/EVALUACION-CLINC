@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TDS — Test de Trastornos del Sueño</title>
+<title>TDS-2 — Test de Trastornos del Sueño</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
@@ -113,7 +113,7 @@ tr:nth-child(even){background:#f9f9f9}
     <button class="hdr-logo-mark" onclick="window.location.href='/'">
       EVALUACIÓN<br>PSICOLÓGICA
     </button>
-    <div class="hdr-title"><h1>TDS — Test de Trastornos del Sueño</h1><p>Evaluación de síntomas de trastornos del sueño (30 ítems)</p></div>
+    <div class="hdr-title"><h1>TDS-2 — Test de Trastornos del Sueño</h1><p>Evaluación de síntomas de trastornos del sueño (30 ítems)</p></div>
   </div>
   <nav class="tab-nav"><div class="tab-nav-inner">
     <button class="tb active" onclick="cambiarTab('datos')" id="tbn-datos">◇ Datos</button>
@@ -345,7 +345,7 @@ async function descargarYGuardarPDF() {
     const fecha = new Date().toISOString().split('T')[0];
     const opt = {
       margin: [7, 7, 7, 7],
-      filename: `TDS_${fecha}.pdf`,
+      filename: `TDS-2_${fecha}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2, logging: false, useCORS: true },
       jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
@@ -363,7 +363,7 @@ async function descargarYGuardarPDF() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              tipo_prueba: 'TDS',
+              tipo_prueba: 'TDS-2',
               datos: {
                 nombre: document.getElementById('f-nombre').value,
                 edad: document.getElementById('f-edad').value,
@@ -402,7 +402,7 @@ async function descargarYGuardarPDF() {
 
 function exportarJSON() {
   const datos = {
-    tipo: 'TDS',
+    tipo: 'TDS-2',
     nombre: document.getElementById('f-nombre').value,
     edad: document.getElementById('f-edad').value,
     sexo: document.getElementById('f-sexo').value,
@@ -412,7 +412,7 @@ function exportarJSON() {
   const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json;charset=utf-8' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
-  link.download = 'TDS_' + new Date().toISOString().split('T')[0] + '.json';
+  link.download = 'TDS-2_' + new Date().toISOString().split('T')[0] + '.json';
   link.click();
 }
 
