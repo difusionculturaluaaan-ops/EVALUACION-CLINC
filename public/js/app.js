@@ -2149,6 +2149,9 @@ const app = {
         return;
       }
 
+      // Guardar prueba actual para acceso posterior
+      this.pruebaActiva = prueba;
+
       // CASO ESPECIAL: TDS - Gráfico de 10 factores
       if (prueba.tipo === 'TDS') {
         const resultado = typeof prueba.resultado === 'string' ? JSON.parse(prueba.resultado) : prueba.resultado || {};
