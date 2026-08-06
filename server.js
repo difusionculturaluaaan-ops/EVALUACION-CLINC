@@ -26,8 +26,9 @@ app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 // Servir archivos estáticos desde public
 // SIMPLE Y ROBUSTO: dejar que express.static() maneje todo
 const publicPath = path.join(__dirname, 'public');
+const testsPath = path.join(__dirname, 'tests');
 
-app.use(express.static(publicPath, {
+const staticOptions = {
   // Asegurar que los archivos no se cacheen indefinidamente
   maxAge: '1d',
   setHeaders: (res, filePath) => {
@@ -44,7 +45,10 @@ app.use(express.static(publicPath, {
   },
   // Si un archivo no existe, NO intentar múltiples variantes
   dotfiles: 'allow'
-}));
+};
+
+app.use(express.static(publicPath, staticOptions));
+app.use('/tests', express.static(testsPath, staticOptions));
 
 // Headers para UTF-8 (solo para rutas API, no para archivos estáticos)
 app.use('/api', (req, res, next) => {

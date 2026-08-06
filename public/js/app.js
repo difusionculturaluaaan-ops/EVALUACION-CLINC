@@ -906,6 +906,45 @@ const app = {
   },
 
   /**
+   * Iniciar TDS-3 (Nuevo - versión mejorada)
+   */
+  iniciarTDS3() {
+    if (!this.pacienteActivo) {
+      this.mostrarToast('Primero debes crear o seleccionar un paciente', 'error');
+      return;
+    }
+    const token = localStorage.getItem('auth_token') || '';
+    const nombrePaciente = this.pacienteActivo.nombre ||
+                          this.pacienteActivo.name ||
+                          this.pacienteActivo.fullName ||
+                          'Paciente';
+
+    // Guardar datos del paciente para que el micrositio TDS-3 pueda acceder
+    localStorage.setItem('paciente_nombre', nombrePaciente);
+    localStorage.setItem('paciente_id', this.pacienteActivo.id);
+    sessionStorage.setItem('paciente_nombre', nombrePaciente);
+    sessionStorage.setItem('pacienteSeleccionado', this.pacienteActivo.id);
+
+    if (this.pacienteActivo.edad || this.pacienteActivo.age) {
+      const edad = this.pacienteActivo.edad || this.pacienteActivo.age;
+      localStorage.setItem('paciente_edad', edad);
+      sessionStorage.setItem('paciente_edad', edad);
+    }
+
+    if (this.pacienteActivo.sexo || this.pacienteActivo.gender) {
+      const sexo = this.pacienteActivo.sexo || this.pacienteActivo.gender;
+      localStorage.setItem('paciente_sexo', sexo);
+      sessionStorage.setItem('paciente_sexo', sexo);
+    }
+
+    const usuarioLogueado = localStorage.getItem('usuario_nombre') || localStorage.getItem('nombre') || 'Evaluador';
+    sessionStorage.setItem('usuario_nombre', usuarioLogueado);
+
+    console.log('TDS-3 - Paciente:', nombrePaciente, 'ID:', this.pacienteActivo.id);
+    window.location.href = `/tests/tds/index.html?paciente_id=${this.pacienteActivo.id}&token=${encodeURIComponent(token)}`;
+  },
+
+  /**
    * Construir páginas del MMPI-2-RF (paginación)
    */
   construirPaginasMMPI() {
