@@ -795,9 +795,9 @@ const app = {
   },
 
   /**
-   * Iniciar TDS en micrositio profesional
+   * Iniciar TDS-2 en micrositio profesional (independiente del TDS viejo)
    */
-  iniciarTDS() {
+  iniciarTDS2() {
     if (!this.pacienteActivo) {
       this.mostrarToast('Primero debes crear o seleccionar un paciente', 'error');
       return;
