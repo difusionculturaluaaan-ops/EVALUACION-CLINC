@@ -1885,35 +1885,35 @@ const app = {
     }
 
     let html = `
-      <div class="reporte-carta" style="font-family: Arial, sans-serif; color: #333; line-height: 1.2; max-width: 21.59cm; margin: 0 auto; padding: 1.27cm;">
+      <div class="reporte-carta" style="font-family: Arial, sans-serif; color: #333; line-height: 1.2; max-width: 21.59cm; margin: 0 auto; padding: 0.6cm 1cm;">
         <!-- ENCABEZADO PROFESIONAL -->
-        <div style="border-bottom: 2px solid #2c5aa0; padding-bottom: 6px; margin-bottom: 8px;">
-          <h1 style="color: #2c5aa0; margin: 0; font-size: 14px; font-weight: bold;">REPORTE DE EVALUACIÓN PSICOLÓGICA</h1>
+        <div style="border-bottom: 2px solid #2c5aa0; padding-bottom: 4px; margin-bottom: 6px;">
+          <h1 style="color: #2c5aa0; margin: 0; font-size: 13px; font-weight: bold;">REPORTE DE EVALUACIÓN PSICOLÓGICA</h1>
         </div>
 
         <!-- DATOS DEL PACIENTE -->
-        <div style="background: #f9f9f9; padding: 8px; margin-bottom: 10px; border-radius: 3px;">
-          <h3 style="margin: 0 0 6px 0; color: #2c5aa0; font-size: 12px; font-weight: bold; text-decoration: underline;">DATOS DEL PACIENTE</h3>
-          <table style="width: 100%; font-size: 13px; border-collapse: collapse; line-height: 1.4;">
+        <div style="background: #f9f9f9; padding: 6px; margin-bottom: 6px; border-radius: 3px;">
+          <h3 style="margin: 0 0 4px 0; color: #2c5aa0; font-size: 11px; font-weight: bold; text-decoration: underline;">DATOS DEL PACIENTE</h3>
+          <table style="width: 100%; font-size: 11px; border-collapse: collapse; line-height: 1.2;">
             <tr>
-              <td style="width: 18%; padding: 3px; color: #000; font-weight: bold;"><strong>Nombre:</strong></td>
-              <td style="padding: 3px; width: 32%; color: #000;">${paciente ? paciente.nombre : 'N/A'}</td>
-              <td style="width: 15%; padding: 3px; color: #000; font-weight: bold;"><strong>Edad:</strong></td>
-              <td style="padding: 3px; color: #000;">${paciente && paciente.edad ? paciente.edad : 'N/A'}</td>
+              <td style="width: 18%; padding: 2px; color: #000; font-weight: bold;"><strong>Nombre:</strong></td>
+              <td style="padding: 2px; width: 32%; color: #000;">${paciente ? paciente.nombre : 'N/A'}</td>
+              <td style="width: 15%; padding: 2px; color: #000; font-weight: bold;"><strong>Edad:</strong></td>
+              <td style="padding: 2px; color: #000;">${paciente && paciente.edad ? paciente.edad : 'N/A'}</td>
             </tr>
             <tr>
-              <td style="padding: 3px; color: #000; font-weight: bold;"><strong>Sexo:</strong></td>
-              <td style="padding: 3px; color: #000;">${paciente && paciente.sexo ? paciente.sexo : 'N/A'}</td>
-              <td style="padding: 3px; color: #000; font-weight: bold;"><strong>E. Civil:</strong></td>
-              <td style="padding: 3px; color: #000;">${paciente && paciente.estado_civil ? paciente.estado_civil : 'N/A'}</td>
+              <td style="padding: 2px; color: #000; font-weight: bold;"><strong>Sexo:</strong></td>
+              <td style="padding: 2px; color: #000;">${paciente && paciente.sexo ? paciente.sexo : 'N/A'}</td>
+              <td style="padding: 2px; color: #000; font-weight: bold;"><strong>E. Civil:</strong></td>
+              <td style="padding: 2px; color: #000;">${paciente && paciente.estado_civil ? paciente.estado_civil : 'N/A'}</td>
             </tr>
             <tr>
-              <td style="padding: 3px; color: #000; font-weight: bold;"><strong>Medicamentos:</strong></td>
-              <td colspan="3" style="padding: 3px; font-size: 13px; color: #000;">${paciente && paciente.medicamentos ? paciente.medicamentos : 'No especificado'}</td>
+              <td style="padding: 2px; color: #000; font-weight: bold;"><strong>Medicamentos:</strong></td>
+              <td colspan="3" style="padding: 2px; font-size: 11px; color: #000;">${paciente && paciente.medicamentos ? paciente.medicamentos : 'No especificado'}</td>
             </tr>
             <tr>
-              <td style="padding: 3px; color: #000; font-weight: bold;"><strong>Fecha:</strong></td>
-              <td colspan="3" style="padding: 3px; font-size: 13px; color: #000;">${new Date(prueba.fecha).toLocaleDateString('es-CO', { year: 'numeric', month: 'short', day: 'numeric' })}</td>
+              <td style="padding: 2px; color: #000; font-weight: bold;"><strong>Fecha:</strong></td>
+              <td colspan="3" style="padding: 2px; font-size: 11px; color: #000;">${new Date(prueba.fecha).toLocaleDateString('es-CO', { year: 'numeric', month: 'short', day: 'numeric' })}</td>
             </tr>
           </table>
         </div>
@@ -1922,14 +1922,14 @@ const app = {
         ${this.generarValidacionProfesional()}
 
         <!-- PRUEBA REALIZADA -->
-        <div style="background: #f0f4f8; padding: 6px; margin-bottom: 10px; border-radius: 3px;">
+        <div style="background: #f0f4f8; padding: 4px; margin-bottom: 6px; border-radius: 3px;">
           <h3 style="margin: 0; color: #2c5aa0; font-size: 10px; font-weight: bold;">PRUEBA: ${prueba.tipo}</h3>
         </div>
 
         <!-- RESULTADOS + INTERPRETACIÓN (AGRUPADOS) -->
-        <div style="page-break-inside: avoid; margin-bottom: 10px;">
+        <div style="page-break-inside: avoid; margin-bottom: 6px;">
           <!-- Gráfico PCL-R -->
-          <div style="margin-bottom: 20px; font-size: 9px;">
+          <div style="margin-bottom: 6px; font-size: 9px;">
             ${prueba.tipo === 'SCL90R' ? this.generarReporteSCL(prueba, subescalas) : prueba.tipo === 'PCLR' ? this.generarReportePCLR(prueba, subescalas) : prueba.tipo === 'SCID2' ? this.generarReporteSCID2(prueba, subescalas) : (prueba.tipo === 'MMPI2' || prueba.tipo === 'MMPI') ? this.generarReporteMMPI2(prueba, subescalas) : prueba.tipo === 'CUIDA' ? this.generarReporteCUIDA(prueba, subescalas) : prueba.tipo === 'ISRA' ? this.generarReporteISRA(prueba, subescalas) : prueba.tipo === 'MBI' ? this.generarReporteMBI(prueba, subescalas) : this.generarReporteGenerico(prueba, subescalas)}
           </div>
 
@@ -2222,21 +2222,7 @@ const app = {
             }
           });
 
-          // Convertir a imagen para PDF
-          setTimeout(() => {
-            if (canvasElement.chartInstance && canvasElement.parentNode) {
-              const imgSrc = canvasElement.toDataURL('image/png');
-              const img = document.createElement('img');
-              img.src = imgSrc;
-              img.style.width = '100%';
-              img.style.height = '100%';
-              img.style.display = 'block';
-
-              const parentElement = canvasElement.parentNode;
-              parentElement.replaceChild(img, canvasElement);
-              console.log(`Gráfico TDS convertido a imagen (10 factores)`);
-            }
-          }, 500);
+          console.log(`Gráfico TDS creado (10 factores, descargarPDF() lo capturará)`);
           return;
         }
       }
@@ -2895,9 +2881,9 @@ const app = {
           </table>
         </div>
 
-        <div style="margin: 4px 0 14px 0; padding: 6px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 3px; color: #333; page-break-inside: avoid;" class="reporte-analisis">
-          <h4 style="color: #333; font-size: 8px; margin: 0 0 4px 0; font-weight: bold;">Perfil de Subescalas (Paciente vs Población Normal)</h4>
-          <div style="position: relative; width: 100%; height: 260px;">
+        <div style="margin: 4px 0 6px 0; padding: 6px 8px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 3px; color: #333; page-break-inside: avoid;" class="reporte-analisis">
+          <h4 style="color: #333; font-size: 9px; margin: 0 0 4px 0; font-weight: bold;">Perfil de Subescalas (Paciente vs Población Normal)</h4>
+          <div style="position: relative; width: 100%; height: 180px;">
             <canvas id="chartPerfilComparativo" style="width: 100%; height: 100%;"></canvas>
           </div>
         </div>
@@ -3487,29 +3473,29 @@ const app = {
 
       return `
         <!-- VALIDACIÓN -->
-        <div id="validacion-profesional-section" style="background: #f0f4f8; padding: 8px; margin-top: 15px; margin-bottom: 10px; border: 1px solid #2c5aa0; border-radius: 3px;">
-          <h3 style="margin: 0 0 6px 0; color: #2c5aa0; font-size: 12px; font-weight: bold; border-bottom: 1px solid #2c5aa0; padding-bottom: 4px; text-decoration: underline;">VALIDACIÓN</h3>
+        <div id="validacion-profesional-section" style="background: #f0f4f8; padding: 6px; margin-top: 6px; margin-bottom: 6px; border: 1px solid #2c5aa0; border-radius: 3px;">
+          <h3 style="margin: 0 0 4px 0; color: #2c5aa0; font-size: 11px; font-weight: bold; border-bottom: 1px solid #2c5aa0; padding-bottom: 3px; text-decoration: underline;">VALIDACIÓN</h3>
 
-          <table style="width: 100%; font-size: 13px; border-collapse: collapse; line-height: 1.4; table-layout: fixed;">
+          <table style="width: 100%; font-size: 11px; border-collapse: collapse; line-height: 1.2; table-layout: fixed;">
             <tr>
-              <td style="width: 30%; padding: 3px; color: #000; font-weight: bold; word-wrap: break-word;"><strong>Evaluador:</strong></td>
-              <td style="padding: 3px; color: #000; word-wrap: break-word;">${nombre || '—'}</td>
-              <td style="width: 20%; padding: 3px; color: #000; font-weight: bold; word-wrap: break-word;"><strong>Cédula:</strong></td>
-              <td style="padding: 3px; color: #000; word-wrap: break-word;">${cedula || '—'}</td>
+              <td style="width: 30%; padding: 2px; color: #000; font-weight: bold; word-wrap: break-word;"><strong>Evaluador:</strong></td>
+              <td style="padding: 2px; color: #000; word-wrap: break-word;">${nombre || '—'}</td>
+              <td style="width: 20%; padding: 2px; color: #000; font-weight: bold; word-wrap: break-word;"><strong>Cédula:</strong></td>
+              <td style="padding: 2px; color: #000; word-wrap: break-word;">${cedula || '—'}</td>
             </tr>
             <tr>
-              <td style="padding: 3px; color: #000; font-weight: bold; word-wrap: break-word;"><strong>Especialidad:</strong></td>
-              <td colspan="3" style="padding: 3px; color: #000; word-wrap: break-word;">${especialidad || '—'}</td>
+              <td style="padding: 2px; color: #000; font-weight: bold; word-wrap: break-word;"><strong>Especialidad:</strong></td>
+              <td colspan="3" style="padding: 2px; color: #000; word-wrap: break-word;">${especialidad || '—'}</td>
             </tr>
             <tr>
-              <td style="padding: 3px; vertical-align: top; color: #000; font-weight: bold; word-wrap: break-word;"><strong>Diagnóstico:</strong></td>
-              <td colspan="3" style="padding: 3px; font-size: 13px; color: #000; word-wrap: break-word; white-space: normal; max-height: none;">${diagnostico || '—'}</td>
+              <td style="padding: 2px; vertical-align: top; color: #000; font-weight: bold; word-wrap: break-word;"><strong>Diagnóstico:</strong></td>
+              <td colspan="3" style="padding: 2px; font-size: 11px; color: #000; word-wrap: break-word; white-space: normal; max-height: none;">${diagnostico || '—'}</td>
             </tr>
           </table>
 
-          <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid #ddd; text-align: center;">
-            <p style="margin: 0; font-size: 9px; color: #666;">Validado</p>
-            <p style="margin: 2px 0 0 0; font-size: 8px; color: #999;">El evaluador se responsabiliza del contenido de este reporte</p>
+          <div style="margin-top: 4px; padding-top: 4px; border-top: 1px solid #ddd; text-align: center;">
+            <p style="margin: 0; font-size: 8px; color: #666;">Validado</p>
+            <p style="margin: 1px 0 0 0; font-size: 7px; color: #999;">El evaluador se responsabiliza del contenido de este reporte</p>
           </div>
         </div>
       `;
@@ -4351,7 +4337,7 @@ const app = {
       console.log('Generando PDF:', filename);
 
       const opt = {
-        margin: [5, 8, 5, 8],
+        margin: [10, 10, 15, 10],
         filename: filename,
         image: { type: 'jpeg', quality: 0.99 },
         html2canvas: { scale: 3, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', logging: false },
