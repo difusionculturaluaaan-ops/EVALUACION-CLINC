@@ -1930,7 +1930,7 @@ const app = {
         <div style="page-break-inside: avoid; margin-bottom: 6px;">
           <!-- Gráfico PCL-R -->
           <div style="margin-bottom: 6px; font-size: 9px;">
-            ${prueba.tipo === 'SCL90R' ? this.generarReporteSCL(prueba, subescalas) : prueba.tipo === 'PCLR' ? this.generarReportePCLR(prueba, subescalas) : prueba.tipo === 'SCID2' ? this.generarReporteSCID2(prueba, subescalas) : (prueba.tipo === 'MMPI2' || prueba.tipo === 'MMPI') ? this.generarReporteMMPI2(prueba, subescalas) : prueba.tipo === 'CUIDA' ? this.generarReporteCUIDA(prueba, subescalas) : prueba.tipo === 'ISRA' ? this.generarReporteISRA(prueba, subescalas) : prueba.tipo === 'MBI' ? this.generarReporteMBI(prueba, subescalas) : this.generarReporteGenerico(prueba, subescalas)}
+            ${prueba.tipo === 'SCL90R' ? this.generarReporteSCL(prueba, subescalas) : prueba.tipo === 'PCLR' ? this.generarReportePCLR(prueba, subescalas) : prueba.tipo === 'SCID2' ? this.generarReporteSCID2(prueba, subescalas) : (prueba.tipo === 'MMPI2' || prueba.tipo === 'MMPI') ? this.generarReporteMMPI2(prueba, subescalas) : prueba.tipo === 'CUIDA' ? this.generarReporteCUIDA(prueba, subescalas) : prueba.tipo === 'ISRA' ? this.generarReporteISRA(prueba, subescalas) : prueba.tipo === 'MBI' ? this.generarReporteMBI(prueba, subescalas) : prueba.tipo === 'TDS' ? this.generarReporteTDS(prueba, subescalas) : this.generarReporteGenerico(prueba, subescalas)}
           </div>
 
           <!-- INTERPRETACIÓN (dentro del contenedor principal) -->
@@ -2747,6 +2747,32 @@ const app = {
     }
 
     return html;
+  },
+
+  /**
+   * Generar reporte TDS con gráfico HTML+CSS de 10 factores
+   */
+  generarReporteTDS(prueba, subescalas) {
+    const resultado = typeof prueba.resultado === 'string' ? JSON.parse(prueba.resultado) : prueba.resultado || {};
+    const tieneFactores = resultado.factores && Object.keys(resultado.factores).length > 0;
+
+    if (!tieneFactores) {
+      return `
+        <div style="margin: 10px 0; padding: 12px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 3px; color: #856404;">
+          <p style="margin: 0; font-size: 9px; font-weight: bold;">Test sin completar</p>
+        </div>
+      `;
+    }
+
+    // Usar la función que genera gráfico HTML+CSS
+    const graficoHTML = this.generarGraficoTDSHTML(resultado);
+
+    return `
+      <div style="margin: 4px 0; padding: 6px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 3px; page-break-inside: avoid;">
+        <h4 style="color: #333; font-size: 9px; margin: 0 0 6px 0; font-weight: bold;">ANÁLISIS: TDS - Test de Trastornos del Sueño (10 Factores)</h4>
+        ${graficoHTML}
+      </div>
+    `;
   },
 
   generarReporteMBI(prueba, subescalas) {
