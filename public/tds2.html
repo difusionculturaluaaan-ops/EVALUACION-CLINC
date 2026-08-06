@@ -195,14 +195,23 @@
     }
 
     function descargarPDF() {
+      const content = document.getElementById('resultadosContent');
       const opt = {
-        margin: 10,
-        filename: `TDS-2_${document.getElementById('nombre').value}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        margin: [5, 5, 5, 5],
+        filename: `TDS-2_${document.getElementById('nombre').value || 'Paciente'}.pdf`,
+        image: { type: 'jpeg', quality: 0.95 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
       };
-      html2pdf().set(opt).from(document.getElementById('resultadosContent')).save();
+
+      // Reducir tamaño de fuente temporalmente para PDF
+      const originalStyle = content.style.fontSize;
+      content.style.fontSize = '11px';
+
+      html2pdf().set(opt).from(content).save().then(() => {
+        content.style.fontSize = originalStyle;
+      });
     }
 
     window.onload = inicializar;
