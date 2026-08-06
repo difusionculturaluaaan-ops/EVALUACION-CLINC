@@ -795,6 +795,18 @@ const app = {
   },
 
   /**
+   * Iniciar TDS en micrositio profesional
+   */
+  iniciarTDS() {
+    if (!this.pacienteActivo) {
+      this.mostrarToast('Primero debes crear o seleccionar un paciente', 'error');
+      return;
+    }
+    const token = localStorage.getItem('auth_token') || '';
+    window.location.href = `/tds.html?paciente_id=${this.pacienteActivo.id}&token=${encodeURIComponent(token)}`;
+  },
+
+  /**
    * Iniciar EGEP-5 en micrositio
    */
   iniciarEGEP5() {
