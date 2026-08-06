@@ -384,15 +384,19 @@ async function descargarYGuardarPDF() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              tipo_prueba: 'TDS-2',
-              datos: {
-                nombre: document.getElementById('f-nombre').value,
-                edad: document.getElementById('f-edad').value,
-                sexo: document.getElementById('f-sexo').value,
-                fecha: document.getElementById('f-fecha').value,
-                respuestas: respuestas
-              },
-              pdf_base64: base64
+              paciente_id: new URLSearchParams(window.location.search).get('paciente_id'),
+              tipo: 'TDS-2',
+              data: respuestas,
+              total: respuestas.reduce((a,b) => a+b, 0),
+              subescalas: {
+                _datos_paciente: {
+                  nombre: document.getElementById('f-nombre').value,
+                  edad: document.getElementById('f-edad').value,
+                  sexo: document.getElementById('f-sexo').value,
+                  fecha: document.getElementById('f-fecha').value
+                },
+                _pdf_base64: base64
+              }
             })
           }).then(r => r.json()).then(() => {
             btn.textContent = '✅ Completado';
