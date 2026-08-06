@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TDS — Test de Trastornos del Sueño</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
+:root {
+  --navy:#111827;
+  --blue:#5a8fd0;
+  --blue-light:#7da3d4;
+  --blue-dark:#3d5f9d;
+  --green:#10b981;
+  --red:#ef4444;
+  --cream:#f8fafb;
+  --white:#fff;
+  --text:#111827;
+  --muted:#4b5563;
+  --text-light:#9ca3af;
+  --border:#e5e7eb;
+  --shadow:0 4px 12px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh}
+
+.hdr{background:linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,.12)}
+.hdr-inner{max-width:960px;margin:0 auto;padding:20px 24px;display:flex;align-items:center;gap:28px}
+.hdr-logo-mark{width:80px;height:80px;background:rgba(255,255,255,.15);border-radius:10px;display:grid;place-items:center;font-size:9px;font-weight:700;color:#fff;line-height:1.2}
+.hdr-title{flex:1;text-align:center}
+.hdr h1{font-size:1.5rem;font-weight:700;color:#fff;letter-spacing:.02em}
+.hdr p{font-size:.78rem;color:rgba(255,255,255,.6);margin-top:4px}
+
+.tab-nav{background:rgba(90,143,208,.05);border-top:1px solid var(--border)}
+.tab-nav-inner{max-width:960px;margin:0 auto;display:flex}
+.tb{background:transparent;border:none;cursor:pointer;color:#fff;font-size:.8rem;font-weight:600;padding:12px 18px;border-bottom:2px solid transparent;transition:all .2s;text-transform:uppercase;letter-spacing:.04em;opacity:.7}
+.tb:hover{color:#fff;opacity:1}
+.tb.active{color:#fff;opacity:1;border-bottom-color:#fff;background:rgba(255,255,255,.1)}
+
+.screen{display:none}.screen.active{display:block}
+.wrap{max-width:960px;margin:0 auto;padding:28px 24px 100px}
+
+.card{background:var(--white);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:20px;border:1px solid var(--border)}
+.card-hdr{background:linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
+.card-hdr h3{font-size:.95rem;font-weight:700;color:#fff;letter-spacing:.02em}
+.card-body{padding:22px}
+
+.intro-hero{background:linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);padding:40px 40px;text-align:center}
+.logo-mark{font-size:3.5rem;font-weight:700;color:var(--green);letter-spacing:.08em;line-height:1}
+.logo-sub{font-size:.75rem;color:rgba(255,255,255,.6);letter-spacing:.15em;text-transform:uppercase;margin-top:8px}
+.intro-body{padding:32px 36px}
+.intro-body h2{font-size:1.2rem;color:var(--blue-dark);margin-bottom:10px;font-weight:700}
+.intro-body>p{font-size:.9rem;color:var(--muted);line-height:1.7;margin-bottom:24px}
+
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.fg .full{grid-column:1/-1}
+.fl{display:block;font-size:.73rem;font-weight:700;color:var(--blue-dark);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+input,select,textarea{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:8px;font-size:.92rem;color:var(--text);background:#fafaf8;outline:none}
+input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(90,143,208,.12);background:var(--white)}
+
+.instr{background:rgba(90,143,208,.05);border-left:3px solid var(--blue);border-radius:0 8px 8px 0;padding:14px 18px;margin-bottom:24px}
+.instr p{font-size:.87rem;line-height:1.7;color:var(--text)}
+
+.btn{display:inline-flex;align-items:center;gap:7px;border-radius:9px;padding:11px 22px;font-size:.92rem;font-weight:700;cursor:pointer;border:none;transition:all .18s;letter-spacing:.01em}
+.btn-navy{background:var(--blue);color:var(--white)}.btn-navy:hover{background:var(--blue-dark)}
+.btn-out{background:transparent;color:var(--blue);border:1.5px solid var(--border)}.btn-out:hover{border-color:var(--blue);background:rgba(90,143,208,.05)}
+.btn:active{transform:scale(.98)}
+
+.factor-group{margin-bottom:24px;padding:16px;background:#f9f9f9;border-left:4px solid var(--blue);border-radius:6px}
+.factor-label{font-weight:600;margin-bottom:12px;color:var(--blue-dark);font-size:.95rem}
+.item-row{margin-bottom:12px;padding:10px;background:white;border-radius:4px;border:1px solid var(--border)}
+.item-text{font-size:.88rem;font-weight:500;color:var(--text);margin-bottom:8px}
+.radio-group{display:flex;gap:12px;flex-wrap:wrap}
+.radio-group label{margin:0;display:flex;align-items:center;gap:6px;font-weight:normal;cursor:pointer;font-size:.85rem}
+.radio-group input{width:auto}
+
+.sub-bar{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1.5px solid var(--border);padding:11px 24px;display:flex;align-items:center;justify-content:space-between;gap:14px;z-index:200;box-shadow:0 -4px 20px rgba(0,0,0,.10)}
+.bi{font-size:.84rem;color:var(--muted)}.bi strong{color:var(--blue);font-weight:700}
+
+table{width:100%;border-collapse:collapse;margin:15px 0}
+th,td{padding:10px;text-align:left;border:1px solid var(--border);font-size:13px}
+th{background:var(--blue);color:white;font-weight:600}
+tr:nth-child(even){background:#f9f9f9}
+
+#tds-resultados-botones{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;padding:0 24px;position:fixed;bottom:60px;left:0;right:0;background:white;border-top:1px solid var(--border)}
+
+@media print{
+  .hdr,.tab-nav,.sub-bar,#tds-datos,#tds-cuestionario,.no-print,#tds-resultados-botones{display:none!important}
+  #tds-resultados{display:block!important;padding:0;max-width:100%;height:auto!important}
+  .wrap{padding:12px 16px 20px!important;max-width:100%!important}
+  body{background:white;height:auto!important}
+  .card{box-shadow:none;border:1px solid #ccc;break-inside:auto;page-break-inside:avoid;margin-bottom:16px}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  .card-hdr{background:linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%)!important;page-break-after:avoid}
+  .card-hdr h3{color:#fff!important;font-size:.9rem!important}
+  table{font-size:.85rem}
+  th{font-size:.8rem;padding:8px}
+  td{padding:7px}
+}
+
+@media(max-width:768px){
+  .wrap{padding:20px 16px 100px}
+  .fg{grid-template-columns:1fr}
+  .fg .full{grid-column:1}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-inner">
+    <button class="hdr-logo-mark" onclick="window.location.href='/'">
+      EVALUACIÓN<br>PSICOLÓGICA
+    </button>
+    <div class="hdr-title"><h1>TDS — Test de Trastornos del Sueño</h1><p>Evaluación de síntomas de trastornos del sueño (30 ítems)</p></div>
+  </div>
+  <nav class="tab-nav"><div class="tab-nav-inner">
+    <button class="tb active" onclick="cambiarTab('datos')" id="tbn-datos">◇ Datos</button>
+    <button class="tb" onclick="cambiarTab('cuestionario')" id="tbn-cuestionario">◆ Test</button>
+    <button class="tb" onclick="cambiarTab('resultados')" id="tbn-resultados">▲ Resultados</button>
+  </div></nav>
+</header>
+
+<!-- TAB DATOS -->
+<div id="tds-datos" class="screen active">
+  <div class="wrap" style="max-width:680px">
+    <div class="card">
+      <div class="intro-hero">
+      </div>
+      <div class="intro-body">
+        <h2>Datos del paciente</h2>
+        <p>Complete la información antes de iniciar el test.</p>
+        <div class="fg">
+          <div class="full"><label class="fl">Nombre</label><input id="f-nombre" type="text" placeholder="Nombre completo"></div>
+          <div><label class="fl">Edad</label><input id="f-edad" type="number" placeholder="Años"></div>
+          <div><label class="fl">Sexo</label><select id="f-sexo"><option value="">Seleccionar…</option><option>M</option><option>F</option></select></div>
+          <div><label class="fl">Fecha</label><input id="f-fecha" type="date"></div>
+        </div>
+        <div class="instr"><p>A continuación encontrará 30 preguntas sobre síntomas de trastornos del sueño. <strong>No hay respuestas correctas ni incorrectas.</strong> Responda con sinceridad según su experiencia.</p></div>
+        <button class="btn btn-navy" onclick="cambiarTab('cuestionario')">Iniciar test <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB CUESTIONARIO -->
+<div id="tds-cuestionario" class="screen">
+  <div class="wrap">
+    <div id="tds-items-container"></div>
+    <div style="text-align:center;margin-top:40px;padding-bottom:100px">
+      <button class="btn btn-navy" onclick="calcularResultados()">Calcular Resultados</button>
+    </div>
+  </div>
+  <div class="sub-bar">
+    <div><div class="bi">Respondidas: <strong id="bar-ct">0</strong> de <strong>30</strong></div></div>
+  </div>
+</div>
+
+<!-- TAB RESULTADOS -->
+<div id="tds-resultados" class="screen">
+  <div class="wrap">
+    <div id="tds-resultados-pdf" style="page-break-inside:avoid;break-inside:avoid">
+      <!-- Se renderiza aquí -->
+    </div>
+  </div>
+  <div id="tds-resultados-botones">
+    <button class="btn btn-navy" onclick="descargarYGuardarPDF()" style="margin-top:0">⊡ Guardar en Expediente</button>
+    <button class="btn btn-out" onclick="exportarJSON()">↓ Descargar JSON</button>
+    <button class="btn btn-out" onclick="cambiarTab('cuestionario')">⟲ Volver</button>
+  </div>
+</div>
+
+<script>
+const items = [
+  '[F1] 1. Tengo dificultad para conciliar el sueño',
+  '[F2] 2. Me despierto frecuentemente durante la noche',
+  '[F3] 3. Tengo dificultad para volver a dormir después de despertarme',
+  '[F4] 4. Tengo síntomas de apnea del sueño',
+  '[F5] 5. Experimento parasomnias (comportamientos anormales durante el sueño)',
+  '[F6] 6. Tengo episodios de sonambulismo',
+  '[F7] 7. Ronco regularmente',
+  '[F8] 8. Tengo síntomas de síndrome de piernas inquietas',
+  '[F9] 9. Utilizo medicamentos para dormir',
+  '[F10] 10. Experimento parálisis al despertar',
+  '[F1] 11. Tengo somnolencia diurna excesiva',
+  '[F2] 12. Sufro de insomnio que afecta mi productividad',
+  '[F3] 13. Mi sueño no es reparador',
+  '[F4] 14. He sido diagnosticado con apnea severa',
+  '[F5] 15. Mis parasomnias me causan malestar',
+  '[F6] 16. El sonambulismo interfiere con mi vida diaria',
+  '[F7] 17. Mi ronquido afecta a mi pareja o familia',
+  '[F8] 18. Los movimientos de mis piernas interfieren con mi sueño',
+  '[F9] 19. Dependo de medicamentos para poder dormir',
+  '[F10] 20. La parálisis al despertar me causa ansiedad',
+  '[F1] 21. La somnolencia diurna afecta mi seguridad (conducción, trabajo)',
+  '[F2] 22. Me despierto sin sensación de descanso',
+  '[F3] 23. Sufro de pesadillas recurrentes',
+  '[F4] 24. Tengo un sueño muy superficial',
+  '[F5] 25. He experimentado cambios en mis patrones de sueño',
+  '[F6] 26. El estrés afecta negativamente mi sueño',
+  '[F7] 27. Mis ritmos circadianos están desajustados',
+  '[F8] 28. El ambiente interfiere con mi capacidad de dormir',
+  '[F9] 29. Tengo hábitos de sueño irregulares',
+  '[F10] 30. Necesito intervención profesional para mi problema de sueño'
+];
+
+const factoresRef = { F1: 4, F2: 2, F3: 2, F4: 0, F5: 1, F6: 2, F7: 1, F8: 1, F9: 0, F10: 0 };
+const factoresLabels = {
+  F1: 'Somnolencia Diurna Excesiva',
+  F2: 'Insomnio Intermedio/Final',
+  F3: 'Insomnio Inicial',
+  F4: 'Apnea del Sueño',
+  F5: 'Parasomnias Complejas',
+  F6: 'Sonambulismo/Somniloquio',
+  F7: 'Ronquido',
+  F8: 'Síndrome Piernas Inquietas',
+  F9: 'Uso de Medicamentos',
+  F10: 'Parálisis al Dormir'
+};
+
+let respuestas = new Array(30).fill(0);
+let resultados = null;
+
+function inicializar() {
+  document.getElementById('f-fecha').valueAsDate = new Date();
+  renderItems();
+}
+
+function renderItems() {
+  const factoresConfig = {
+    F1: { items: [0, 10, 20] },
+    F2: { items: [1, 11, 21] },
+    F3: { items: [2, 12, 22] },
+    F4: { items: [3, 13, 23] },
+    F5: { items: [4, 14, 24] },
+    F6: { items: [5, 15, 25] },
+    F7: { items: [6, 16, 26] },
+    F8: { items: [7, 17, 27] },
+    F9: { items: [8, 18, 28] },
+    F10: { items: [9, 19, 29] }
+  };
+
+  let html = '';
+  Object.entries(factoresConfig).forEach(([key, config]) => {
+    html += `<div class="factor-group"><div class="factor-label">${key}: ${factoresLabels[key]}</div>`;
+    config.items.forEach(idx => {
+      const itemText = items[idx].replace(/^\[F\d+\]\s*/, '');
+      html += `
+        <div class="item-row">
+          <div class="item-text">${idx+1}. ${itemText}</div>
+          <div class="radio-group">
+            <label><input type="radio" name="i${idx}" value="0" onchange="respuestas[${idx}]=0;actualizarContador()"> NADA</label>
+            <label><input type="radio" name="i${idx}" value="1" onchange="respuestas[${idx}]=1;actualizarContador()"> UN POCO</label>
+            <label><input type="radio" name="i${idx}" value="2" onchange="respuestas[${idx}]=2;actualizarContador()"> MODERADO</label>
+            <label><input type="radio" name="i${idx}" value="3" onchange="respuestas[${idx}]=3;actualizarContador()"> BASTANTE</label>
+            <label><input type="radio" name="i${idx}" value="4" onchange="respuestas[${idx}]=4;actualizarContador()"> MUCHO</label>
+          </div>
+        </div>
+      `;
+    });
+    html += '</div>';
+  });
+  document.getElementById('tds-items-container').innerHTML = html;
+}
+
+function actualizarContador() {
+  const respondidas = respuestas.filter(r => r > 0).length;
+  document.getElementById('bar-ct').textContent = respondidas;
+}
+
+function calcularResultados() {
+  const factores = { F1: [0,10,20], F2: [1,11,21], F3: [2,12,22], F4: [3,13,23], F5: [4,14,24], F6: [5,15,25], F7: [6,16,26], F8: [7,17,27], F9: [8,18,28], F10: [9,19,29] };
+
+  let html = `
+    <div class="card">
+      <div class="card-hdr"><h3>Datos del Paciente</h3></div>
+      <div class="card-body">
+        <strong>Nombre:</strong> ${document.getElementById('f-nombre').value || 'No especificado'} |
+        <strong>Edad:</strong> ${document.getElementById('f-edad').value || 'No especificado'} años |
+        <strong>Sexo:</strong> ${document.getElementById('f-sexo').value || 'No especificado'} |
+        <strong>Fecha:</strong> ${document.getElementById('f-fecha').value || 'No especificado'}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><h3>Análisis: TDS (10 Factores)</h3></div>
+      <div class="card-body">
+        <table>
+          <tr>
+            <th>Factor</th>
+            <th style="text-align:center">Paciente</th>
+            <th style="text-align:center">Referencia</th>
+            <th>Gráfico Comparativo</th>
+          </tr>
+  `;
+
+  Object.entries(factores).forEach(([key, itemIndices], idx) => {
+    const suma = itemIndices.reduce((a,i) => a + respuestas[i], 0);
+    const ref = Object.values(factoresRef)[idx];
+    const pctP = (suma / 12) * 100;
+    const pctR = (ref / 12) * 100;
+    html += `
+      <tr>
+        <td>${key}: ${factoresLabels[key]}</td>
+        <td style="text-align:center;color:#e74c3c;font-weight:600">${suma}</td>
+        <td style="text-align:center;color:#27ae60;font-weight:600">${ref}</td>
+        <td style="display:flex;gap:4px;align-items:flex-end;height:35px;background:#f5f5f5;padding:4px;border-radius:3px">
+          <div style="flex:1;background:#27ae60;height:${pctR}%;border-radius:2px" title="Referencia"></div>
+          <div style="flex:1;background:#e74c3c;height:${pctP}%;border-radius:2px" title="Paciente"></div>
+        </td>
+      </tr>
+    `;
+  });
+
+  html += `
+        </table>
+        <p style="margin-top:16px;font-size:.85rem;color:var(--muted)">
+          <strong>Leyenda:</strong> <span style="display:inline-block;width:12px;height:12px;background:#27ae60;border-radius:2px;margin:0 4px"></span>Referencia
+          <span style="display:inline-block;width:12px;height:12px;background:#e74c3c;border-radius:2px;margin:0 4px"></span>Paciente
+        </p>
+      </div>
+    </div>
+  `;
+
+  resultados = { factores };
+  document.getElementById('tds-resultados-pdf').innerHTML = html;
+  cambiarTab('resultados');
+}
+
+function cambiarTab(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tb').forEach(t => t.classList.remove('active'));
+  document.getElementById('tds-'+name).classList.add('active');
+  document.getElementById('tbn-'+name).classList.add('active');
+}
+
+async function descargarYGuardarPDF() {
+  try {
+    const btn = event.target;
+    const textoOriginal = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '⏳ Procesando...';
+
+    // 1. Generar PDF
+    const fecha = new Date().toISOString().split('T')[0];
+    const opt = {
+      margin: [7, 7, 7, 7],
+      filename: `TDS_${fecha}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, logging: false, useCORS: true },
+      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
+      pagebreak: { mode: 'avoid-all' }
+    };
+
+    const pdfContainer = document.getElementById('tds-resultados-pdf');
+    await new Promise((resolve, reject) => {
+      html2pdf().set(opt).from(pdfContainer).outputPdf('blob').then(blob => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const base64 = reader.result.split(',')[1];
+          // 2. Guardar en expediente
+          fetch('/api/pruebas', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              tipo_prueba: 'TDS',
+              datos: {
+                nombre: document.getElementById('f-nombre').value,
+                edad: document.getElementById('f-edad').value,
+                sexo: document.getElementById('f-sexo').value,
+                fecha: document.getElementById('f-fecha').value,
+                respuestas: respuestas
+              },
+              pdf_base64: base64
+            })
+          }).then(r => r.json()).then(data => {
+            btn.textContent = '✅ Completado';
+            btn.style.backgroundColor = '#4CAF50';
+            const msg = document.createElement('div');
+            msg.style.cssText = 'position:fixed;top:20px;right:20px;background:#4CAF50;color:white;padding:15px 20px;border-radius:8px;z-index:9999;font-weight:bold';
+            msg.textContent = '✅ PDF descargado y datos guardados en expediente';
+            document.body.appendChild(msg);
+            setTimeout(() => msg.remove(), 4000);
+            setTimeout(() => {
+              btn.disabled = false;
+              btn.textContent = textoOriginal;
+              btn.style.backgroundColor = '';
+            }, 1500);
+            resolve();
+          }).catch(e => reject(e));
+        };
+        reader.readAsDataURL(blob);
+      }).catch(reject);
+    });
+  } catch (error) {
+    console.error('Error:', error);
+    const btn = event.target;
+    btn.disabled = false;
+    btn.textContent = '❌ Error';
+  }
+}
+
+function exportarJSON() {
+  const datos = {
+    tipo: 'TDS',
+    nombre: document.getElementById('f-nombre').value,
+    edad: document.getElementById('f-edad').value,
+    sexo: document.getElementById('f-sexo').value,
+    fecha: document.getElementById('f-fecha').value,
+    respuestas: respuestas
+  };
+  const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json;charset=utf-8' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'TDS_' + new Date().toISOString().split('T')[0] + '.json';
+  link.click();
+}
+
+window.onload = inicializar;
+</script>
+
+</body>
+</html>
