@@ -248,7 +248,7 @@ function renderItems() {
       const itemText = items[idx].replace(/^\[F\d+\]\s*/, '');
       html += `
         <div class="item-row">
-          <div class="item-text">${idx+1}. ${itemText}</div>
+          <div class="item-text">${itemText}</div>
           <div class="radio-group">
             <label><input type="radio" name="i${idx}" value="0" onchange="respuestas[${idx}]=0;actualizarContador()"> NADA</label>
             <label><input type="radio" name="i${idx}" value="1" onchange="respuestas[${idx}]=1;actualizarContador()"> UN POCO</label>
