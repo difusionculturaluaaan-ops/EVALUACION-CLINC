@@ -2152,80 +2152,20 @@ const app = {
       // Guardar prueba actual para acceso posterior
       this.pruebaActiva = prueba;
 
-      // CASO ESPECIAL: TDS - Gráfico de 10 factores
+      // CASO ESPECIAL: TDS - Gráfico HTML+CSS de 10 factores
       if (prueba.tipo === 'TDS') {
         const resultado = typeof prueba.resultado === 'string' ? JSON.parse(prueba.resultado) : prueba.resultado || {};
 
         if (resultado.factores) {
-          const factoresConfig = {
-            F1: { label: 'F1: Somnolencia', normal: 4 },
-            F2: { label: 'F2: Insomnio Inter', normal: 2 },
-            F3: { label: 'F3: Insomnio Inicial', normal: 2 },
-            F4: { label: 'F4: Apnea', normal: 0 },
-            F5: { label: 'F5: Parasomnias', normal: 1 },
-            F6: { label: 'F6: Sonambulismo', normal: 2 },
-            F7: { label: 'F7: Ronquido', normal: 1 },
-            F8: { label: 'F8: Inquietas', normal: 1 },
-            F9: { label: 'F9: Medicamentos', normal: 0 },
-            F10: { label: 'F10: Parálisis', normal: 0 }
-          };
+          // Generar HTML del gráfico
+          const graficoHTML = this.generarGraficoTDSHTML(resultado);
 
-          const labels = Object.values(factoresConfig).map(cfg => cfg.label);
-          const valoresPaciente = Object.keys(factoresConfig).map(key => {
-            const factor = resultado.factores[key];
-            return factor ? (factor.suma || 0) : 0;
-          });
-          const valoresReferencia = Object.values(factoresConfig).map(cfg => cfg.normal);
-
-          const maxValor = Math.max(...valoresPaciente, ...valoresReferencia) + 2;
-          const ctx = canvasElement.getContext('2d');
-
-          canvasElement.chartInstance = new Chart(ctx, {
-            type: 'bar',
-            data: {
-              labels: labels,
-              datasets: [
-                {
-                  label: 'Paciente',
-                  data: valoresPaciente,
-                  backgroundColor: '#e74c3c',
-                  borderColor: '#c0392b',
-                  borderWidth: 1
-                },
-                {
-                  label: 'Referencia (Normal)',
-                  data: valoresReferencia,
-                  backgroundColor: '#27ae60',
-                  borderColor: '#229954',
-                  borderWidth: 1
-                }
-              ]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: {
-                  display: true,
-                  position: 'top',
-                  labels: { font: { size: 10 }, padding: 10 }
-                }
-              },
-              scales: {
-                y: {
-                  beginAtZero: true,
-                  max: maxValor,
-                  ticks: { font: { size: 8 } },
-                  grid: { color: 'rgba(0, 0, 0, 0.05)' }
-                },
-                x: {
-                  ticks: { font: { size: 9 } }
-                }
-              }
-            }
-          });
-
-          console.log(`Gráfico TDS creado (10 factores, descargarPDF() lo capturará)`);
+          // Insertar en el contenedor del canvas (que será reemplazado)
+          const contenedor = canvasElement.parentNode;
+          if (contenedor) {
+            contenedor.innerHTML = graficoHTML;
+            console.log(`Gráfico TDS generado (10 factores, HTML+CSS - compatible con PDF)`);
+          }
           return;
         }
       }
@@ -4441,6 +4381,73 @@ const app = {
 
     // Generar PDF con los datos de validación
     setTimeout(() => this.descargarPDF(), 500);
+  },
+
+  /**
+   * Generar gráfico TDS con HTML+CSS (para pantalla y PDF)
+   */
+  generarGraficoTDSHTML(resultado) {
+    const factoresConfig = {
+      F1: { label: 'F1: Somnolencia', normal: 4 },
+      F2: { label: 'F2: Insomnio Inter', normal: 2 },
+      F3: { label: 'F3: Insomnio Inicial', normal: 2 },
+      F4: { label: 'F4: Apnea', normal: 0 },
+      F5: { label: 'F5: Parasomnias', normal: 1 },
+      F6: { label: 'F6: Sonambulismo', normal: 2 },
+      F7: { label: 'F7: Ronquido', normal: 1 },
+      F8: { label: 'F8: Inquietas', normal: 1 },
+      F9: { label: 'F9: Medicamentos', normal: 0 },
+      F10: { label: 'F10: Parálisis', normal: 0 }
+    };
+
+    let filas = '<tr><th style="text-align:left;padding:8px">Factor</th><th style="text-align:center;padding:8px">Paciente</th><th style="text-align:center;padding:8px">Referencia</th><th style="padding:8px;min-width:250px">Gráfico</th></tr>';
+
+    const maxValor = 5;
+
+    Object.entries(factoresConfig).forEach(([key, config]) => {
+      const factor = resultado.factores?.[key];
+      const valPaciente = factor?.suma || 0;
+      const valReferencia = config.normal;
+
+      // Calcular porcentaje para posicionar puntos
+      const pctPaciente = (valPaciente / maxValor) * 100;
+      const pctReferencia = (valReferencia / maxValor) * 100;
+
+      filas += `
+        <tr style="border-bottom:1px solid #e0e0e0">
+          <td style="padding:8px;font-weight:500;width:180px">${config.label}</td>
+          <td style="padding:8px;text-align:center;color:#e74c3c;font-weight:600">${valPaciente}</td>
+          <td style="padding:8px;text-align:center;color:#27ae60;font-weight:600">${valReferencia}</td>
+          <td style="padding:8px">
+            <div style="position:relative;height:30px;background:#f5f5f5;border-radius:3px;display:flex;align-items:center;overflow:visible">
+              <!-- Línea de escala -->
+              <div style="position:absolute;width:100%;height:1px;background:#ddd;top:50%"></div>
+              <!-- Punto Referencia (verde) -->
+              <div style="position:absolute;width:12px;height:12px;background:#27ae60;border-radius:50%;border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.2);left:${pctReferencia}%;transform:translateX(-50%);top:50%;transform:translateX(-50%) translateY(-50%);z-index:2"></div>
+              <!-- Punto Paciente (rojo) -->
+              <div style="position:absolute;width:12px;height:12px;background:#e74c3c;border-radius:50%;border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.2);left:${pctPaciente}%;transform:translateX(-50%) translateY(-50%);top:50%;z-index:3"></div>
+            </div>
+          </td>
+        </tr>
+      `;
+    });
+
+    return `
+      <div style="margin:20px 0;border:1px solid #ddd;border-radius:5px;overflow:hidden;page-break-inside:avoid">
+        <div style="background:#f8f9fa;padding:12px;border-bottom:1px solid #ddd">
+          <h4 style="margin:0;color:#333">Gráfico Comparativo: Paciente vs Referencia (TDS)</h4>
+          <p style="margin:4px 0 0 0;font-size:12px;color:#666">
+            <span style="display:inline-block;margin-right:20px"><span style="display:inline-block;width:12px;height:12px;background:#e74c3c;border-radius:50%;margin-right:6px;vertical-align:middle"></span>Paciente</span>
+            <span style="display:inline-block"><span style="display:inline-block;width:12px;height:12px;background:#27ae60;border-radius:50%;margin-right:6px;vertical-align:middle"></span>Referencia</span>
+          </p>
+        </div>
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:13px">
+            ${filas}
+          </table>
+        </div>
+      </div>
+    `;
   },
 
   /**
