@@ -941,7 +941,7 @@ const app = {
     sessionStorage.setItem('usuario_nombre', usuarioLogueado);
 
     console.log('TDS-3 - Paciente:', nombrePaciente, 'ID:', this.pacienteActivo.id);
-    window.location.href = `/tests/tds/index.html?paciente_id=${this.pacienteActivo.id}&token=${encodeURIComponent(token)}`;
+    window.location.href = `/tests/tds3/index.html?paciente_id=${this.pacienteActivo.id}&token=${encodeURIComponent(token)}`;
   },
 
   /**
