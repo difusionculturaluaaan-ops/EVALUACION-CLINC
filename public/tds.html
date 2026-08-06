@@ -242,6 +242,7 @@ const factoresLabels = {
 };
 
 let respuestas = new Array(30).fill(0);
+let authToken = '';  // Global para guardar token
 let resultados = null;
 
 async function inicializar() {
@@ -254,12 +255,12 @@ async function cargarDatosPaciente() {
   try {
     const params = new URLSearchParams(window.location.search);
     const pacienteId = params.get('paciente_id');
-    const token = params.get('token');
+    authToken = params.get('token');  // Guardar en variable global
 
-    if (!pacienteId || !token) return;
+    if (!pacienteId || !authToken) return;
 
     const response = await fetch(`/api/pacientes/${pacienteId}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
+      headers: { 'Authorization': `Bearer ${authToken}` }
     });
 
     if (!response.ok) return;
@@ -380,12 +381,11 @@ async function descargarYGuardarPDF() {
         const reader = new FileReader();
         reader.onload = () => {
           const base64 = reader.result.split(',')[1];
-          const token = new URLSearchParams(window.location.search).get('token');
           fetch('/api/pruebas', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
+              'Authorization': `Bearer ${authToken}`
             },
             body: JSON.stringify({
               paciente_id: new URLSearchParams(window.location.search).get('paciente_id'),
