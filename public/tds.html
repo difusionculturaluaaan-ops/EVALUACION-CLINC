@@ -380,9 +380,13 @@ async function descargarYGuardarPDF() {
         const reader = new FileReader();
         reader.onload = () => {
           const base64 = reader.result.split(',')[1];
+          const token = new URLSearchParams(window.location.search).get('token');
           fetch('/api/pruebas', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify({
               paciente_id: new URLSearchParams(window.location.search).get('paciente_id'),
               tipo: 'TDS-2',
