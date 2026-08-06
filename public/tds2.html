@@ -125,14 +125,39 @@
 
     function inicializar() {
       document.getElementById('fecha').valueAsDate = new Date();
-      document.getElementById('itemsContainer').innerHTML = items.map((item, idx) => `
-        <div class="item-group">
-          <div class="item-label">${item}</div>
-          <div class="radio-group">
-            ${[0,1,2,3,4].map(v => `<label><input type="radio" name="i${idx}" value="${v}" onchange="respuestas[${idx}]=${v}"> ${['Nada','Poco','Moderado','Bastante','Muy'][v]}</label>`).join('')}
-          </div>
-        </div>
-      `).join('');
+
+      const labels_opciones = ['NADA', 'UN POCO', 'MODERADO', 'BASTANTE', 'MUCHO'];
+      const factoresConfig = {
+        F1: { nombre: 'F1: Somnolencia Excesiva Diurna', items: [0, 10, 20] },
+        F2: { nombre: 'F2: Insomnio Intermedio / Final', items: [1, 11, 21] },
+        F3: { nombre: 'F3: Insomnio Inicial', items: [2, 12, 22] },
+        F4: { nombre: 'F4: Apnea del Sueño', items: [3, 13, 23] },
+        F5: { nombre: 'F5: Parasomnias Complejas', items: [4, 14, 24] },
+        F6: { nombre: 'F6: Sonambulismo / Somniloquio', items: [5, 15, 25] },
+        F7: { nombre: 'F7: Ronquido', items: [6, 16, 26] },
+        F8: { nombre: 'F8: Piernas Inquietas / Pesadillas', items: [7, 17, 27] },
+        F9: { nombre: 'F9: Uso de Medicamentos', items: [8, 18, 28] },
+        F10: { nombre: 'F10: Parálisis al Dormir', items: [9, 19, 29] }
+      };
+
+      let html = '';
+      Object.entries(factoresConfig).forEach(([key, config]) => {
+        html += `<div style="margin:20px 0;padding:15px;background:#e8eef7;border-radius:6px;border-left:4px solid #667eea;"><h4 style="margin:0 0 15px 0;color:#667eea;font-size:15px;">${config.nombre}</h4>`;
+        config.items.forEach(idx => {
+          const itemText = items[idx].replace(/^\[F\d+\]\s*/, '');
+          html += `
+            <div style="margin-bottom:15px;padding:12px;background:white;border-radius:4px;">
+              <div style="font-weight:500;margin-bottom:10px;color:#333;font-size:14px;">${idx + 1}. ${itemText}</div>
+              <div class="radio-group">
+                ${[0,1,2,3,4].map(v => `<label><input type="radio" name="i${idx}" value="${v}" onchange="respuestas[${idx}]=${v}"> ${labels_opciones[v]}</label>`).join('')}
+              </div>
+            </div>
+          `;
+        });
+        html += '</div>';
+      });
+
+      document.getElementById('itemsContainer').innerHTML = html;
     }
 
     function calcularResultados() {
