@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TDS-2 - Test de Trastornos del Sueño</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; background: #f5f5f5; }
+    .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 8px; margin-bottom: 30px; }
+    .header h1 { font-size: 28px; margin-bottom: 8px; }
+    .card { background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #333; }
+    .form-group input, .form-group select { width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+    .item-group { margin-bottom: 20px; padding: 15px; background: #f9f9f9; border-radius: 6px; border-left: 4px solid #667eea; }
+    .item-label { font-weight: 500; margin-bottom: 10px; color: #333; font-size: 14px; }
+    .radio-group { display: flex; gap: 15px; flex-wrap: wrap; }
+    .radio-group label { margin: 0; display: flex; align-items: center; gap: 6px; font-weight: normal; cursor: pointer; }
+    .radio-group input { width: auto; }
+    .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #eee; }
+    .tab { padding: 12px 20px; cursor: pointer; border: none; background: none; font-size: 14px; font-weight: 500; color: #999; border-bottom: 3px solid transparent; }
+    .tab.active { color: #667eea; border-bottom-color: #667eea; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .btn { padding: 12px 24px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; }
+    .btn:hover { background: #5568d3; }
+    table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+    th, td { padding: 10px; text-align: left; border: 1px solid #ddd; font-size: 13px; }
+    th { background: #667eea; color: white; font-weight: 600; }
+    tr:nth-child(even) { background: #f9f9f9; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>TDS-2: Test de Trastornos del Sueño</h1>
+      <p>Evaluación de síntomas (30 ítems, 10 factores)</p>
+    </div>
+
+    <div class="card">
+      <h3>Datos del Paciente</h3>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <div class="form-group">
+          <label>Nombre:</label>
+          <input type="text" id="nombre" placeholder="Nombre">
+        </div>
+        <div class="form-group">
+          <label>Edad:</label>
+          <input type="number" id="edad" placeholder="Edad">
+        </div>
+        <div class="form-group">
+          <label>Sexo:</label>
+          <select id="sexo">
+            <option>M</option><option>F</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Fecha:</label>
+          <input type="date" id="fecha">
+        </div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="cambiarTab('items', this)">Test (30 ítems)</button>
+      <button class="tab" onclick="cambiarTab('resultados', this)">Resultados</button>
+    </div>
+
+    <div id="items" class="tab-content active">
+      <div class="card" id="itemsContainer"></div>
+      <div class="card" style="text-align: center;">
+        <button class="btn" onclick="calcularResultados()">Calcular Resultados</button>
+      </div>
+    </div>
+
+    <div id="resultados" class="tab-content">
+      <div class="card" id="resultadosContent" style="display:none;">
+        <h3>Análisis: TDS-2 (10 Factores)</h3>
+        <div id="graficoHTML" style="margin: 20px 0;"></div>
+        <button class="btn" onclick="descargarPDF()" style="margin-top:20px;">Descargar PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script>
+    const items = ['1. Tengo dificultad para conciliar el sueño','2. Me despierto frecuentemente','3. Dificultad para volver a dormir','4. Apnea del sueño','5. Parasomnias complejas','6. Sonambulismo','7. Ronco regularmente','8. Síntomas de piernas inquietas','9. Utilizo medicamentos para dormir','10. Parálisis al despertar','11. Somnolencia diurna excesiva','12. Insomnio intermedio','13. Afecta mi productividad','14. Apnea severa','15. Parasomnias causan malestar','16. Sonambulismo peligroso','17. Ronquido afecta pareja','18. Movimientos interfieren sueño','19. Dependo de medicamentos','20. Parálisis causa ansiedad','21. Somnolencia afecta seguridad','22. Despierto sin descanso','23. Pesadillas recurrentes','24. Sueño superficial','25. Cambios en patrones','26. Estrés afecta sueño','27. Ritmos desajustados','28. Ambiente interfiere','29. Hábitos irregulares','30. Necesito intervención'];
+
+    const factoresRef = { F1: 4, F2: 2, F3: 2, F4: 0, F5: 1, F6: 2, F7: 1, F8: 1, F9: 0, F10: 0 };
+    let respuestas = new Array(30).fill(0);
+
+    function inicializar() {
+      document.getElementById('fecha').valueAsDate = new Date();
+      document.getElementById('itemsContainer').innerHTML = items.map((item, idx) => `
+        <div class="item-group">
+          <div class="item-label">${item}</div>
+          <div class="radio-group">
+            ${[0,1,2,3,4].map(v => `<label><input type="radio" name="i${idx}" value="${v}" onchange="respuestas[${idx}]=${v}"> ${['Nada','Poco','Moderado','Bastante','Muy'][v]}</label>`).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function calcularResultados() {
+      const factores = { F1: [0,10,20], F2: [1,11,21], F3: [2,12,22], F4: [3,13,23], F5: [4,14,24], F6: [5,15,25], F7: [6,16,26], F8: [7,17,27], F9: [8,18,28], F10: [9,19,29] };
+      const labels = ['F1: Somnolencia', 'F2: Insomnio Inter', 'F3: Insomnio Inicial', 'F4: Apnea', 'F5: Parasomnias', 'F6: Sonambulismo', 'F7: Ronquido', 'F8: Inquietas', 'F9: Medicamentos', 'F10: Parálisis'];
+
+      let html = '<table><tr style="background:#667eea;color:white;"><th>Factor</th><th style="text-align:center">Paciente</th><th style="text-align:center">Referencia</th><th>Gráfico</th></tr>';
+
+      Object.entries(factores).forEach(([key, items], idx) => {
+        const suma = items.reduce((a,i) => a + respuestas[i], 0);
+        const ref = Object.values(factoresRef)[idx];
+        const pctP = (suma / 12) * 100;
+        const pctR = (ref / 12) * 100;
+        html += `<tr><td>${labels[idx]}</td><td style="text-align:center;color:#e74c3c;font-weight:600">${suma}</td><td style="text-align:center;color:#27ae60;font-weight:600">${ref}</td><td style="position:relative;height:25px;background:#f5f5f5;border-radius:3px;"><div style="position:absolute;width:10px;height:10px;background:#27ae60;border-radius:50%;border:2px solid white;left:${pctR}%;top:50%;transform:translate(-50%,-50%);z-index:2"></div><div style="position:absolute;width:10px;height:10px;background:#e74c3c;border-radius:50%;border:2px solid white;left:${pctP}%;top:50%;transform:translate(-50%,-50%);z-index:3"></div></td></tr>`;
+      });
+
+      html += '</table>';
+      document.getElementById('graficoHTML').innerHTML = html;
+      document.getElementById('resultadosContent').style.display = 'block';
+    }
+
+    function cambiarTab(name, btn) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.getElementById(name).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    function descargarPDF() {
+      const opt = {
+        margin: 10,
+        filename: `TDS-2_${document.getElementById('nombre').value}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(document.getElementById('resultadosContent')).save();
+    }
+
+    window.onload = inicializar;
+  </script>
+</body>
+</html>
