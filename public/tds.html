@@ -225,6 +225,34 @@ let resultados = null;
 function inicializar() {
   document.getElementById('f-fecha').valueAsDate = new Date();
   renderItems();
+  cargarDatosPaciente();
+}
+
+async function cargarDatosPaciente() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const pacienteId = params.get('paciente_id');
+    const token = params.get('token');
+
+    if (!pacienteId || !token) return;
+
+    const response = await fetch(`/api/pacientes/${pacienteId}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!response.ok) return;
+
+    const paciente = await response.json();
+
+    // Auto-llenar datos
+    if (paciente.nombre) document.getElementById('f-nombre').value = paciente.nombre;
+    if (paciente.edad) document.getElementById('f-edad').value = paciente.edad;
+    if (paciente.sexo) document.getElementById('f-sexo').value = paciente.sexo;
+
+    console.log('✅ Datos del paciente cargados automáticamente');
+  } catch (error) {
+    console.log('Info: No se cargaron datos previos (nuevo test)');
+  }
 }
 
 function renderItems() {
