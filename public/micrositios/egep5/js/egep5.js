@@ -1726,12 +1726,12 @@ window.tests_egep5 = {
 
     const nombre_paciente = localStorage.getItem('paciente_nombre') || 'Paciente';
     const opt = {
-      margin: [7, 7, 7, 7],  // 7mm márgenes (profesional)
+      margin: [10, 10, 10, 10],
       filename: `EGEP-5_${nombre_paciente}_${new Date().toISOString().split('T')[0]}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, logging: false, useCORS: true },
+      image: { type: 'png', quality: 0.98 },
+      html2canvas: { scale: 3, logging: false, useCORS: true, allowTaint: false, windowHeight: 1200 },
       jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
-      pagebreak: { mode: 'avoid-all' }  // Mantener juntos los elementos
+      pagebreak: { mode: 'avoid-all', avoid: ['svg', '.chart-wrapper'] }
     };
 
     html2pdf().set(opt).from(pdfContainer).save();
@@ -1913,12 +1913,12 @@ window.tests_egep5 = {
     }
 
     const opt = {
-      margin: [5, 5, 5, 5],
+      margin: [10, 10, 10, 10],
       filename: `EGEP5_${paciente_nombre}_${new Date().toISOString().split('T')[0]}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, allowTaint: true, logging: false },
+      image: { type: 'png', quality: 0.98 },
+      html2canvas: { scale: 3, useCORS: true, allowTaint: false, logging: false, windowHeight: 1200 },
       jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
-      pagebreak: { mode: 'avoid-all' }
+      pagebreak: { mode: 'avoid-all', avoid: ['svg', '.chart-wrapper'] }
     };
 
     html2pdf().set(opt).from(contenedorPDF).save();
@@ -2020,6 +2020,9 @@ window.tests_egep5 = {
         .status-badge { padding: 0.5px 2px !important; font-size: 0.55em !important; }
         .score-box { font-size: 0.65em !important; padding: 0.5px 2px !important; }
         .profile-container { margin: 2px 0 !important; padding: 4px !important; }
+        .chart-wrapper { width: 100% !important; max-width: 100% !important; height: auto !important; }
+        .chart-wrapper svg { width: 100% !important; height: auto !important; max-width: 100% !important; }
+        svg { max-width: 100% !important; height: auto !important; }
       }
     </style>
 
