@@ -65,16 +65,10 @@ window.EGEP5_GRAFICOS = {
       g += `<text x="${ML - 9}" y="${Y(v) + 4}" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="9" fill="#5d6675">${v}</text>`;
     });
 
-    // Línea de perfil
-    const pts = cols.map((c, i) => `${X(i)},${Y(c.y)}`).join(' ');
-    g += `<polyline points="${pts}" fill="none" stroke="#3b82f6" stroke-width="1.6" stroke-linejoin="round" opacity=".55"/>`;
-
-    // Barras + puntos
+    // Barras (sin línea de perfil - patrón TDS-3)
     cols.forEach((c, i) => {
       const bw = Math.min(46, pw / cols.length - 16);
-      g += `<rect x="${X(i) - bw / 2}" y="${Y(c.y)}" width="${bw}" height="${MT + ph - Y(c.y)}" fill="${c.c}" opacity=".16" rx="3"/>`;
-      g += `<line x1="${X(i) - bw / 2}" y1="${Y(c.y)}" x2="${X(i) + bw / 2}" y2="${Y(c.y)}" stroke="${c.c}" stroke-width="2.5"/>`;
-      g += `<circle cx="${X(i)}" cy="${Y(c.y)}" r="4" fill="${c.c}" stroke="#ffffff" stroke-width="1.5"/>`;
+      g += `<rect x="${X(i) - bw / 2}" y="${Y(c.y)}" width="${bw}" height="${MT + ph - Y(c.y)}" fill="${c.c}" opacity=".75" rx="3"/>`;
       g += `<text x="${X(i)}" y="${Y(c.y) - 11}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10.5" font-weight="700" fill="${c.c}">${usaPc ? (c.pc === null ? '–' : c.pc) : c.v}</text>`;
       g += `<text x="${X(i)}" y="${MT + ph + 20}" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" font-weight="700" fill="#111827">${c.l}</text>`;
       g += `<text x="${X(i)}" y="${MT + ph + 36}" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#6b7280">PD ${c.v}/${c.max}</text>`;
