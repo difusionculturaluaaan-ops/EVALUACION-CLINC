@@ -59,7 +59,7 @@ h1, h2, h3 {
 .egep5-header {
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border);
-  padding: 18px 28px;
+  padding: 22px 28px;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -191,7 +191,7 @@ h1, h2, h3 {
 .egep5-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 26px 28px 80px;
+  padding: 28px 28px 80px;
   min-height: auto;
   width: 100%;
 }
@@ -253,7 +253,7 @@ h1, h2, h3 {
 .egep5-import-section {
   background: var(--bg-surface);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 14px;
   margin-bottom: 22px;
   overflow: hidden;
 }
@@ -299,7 +299,7 @@ h1, h2, h3 {
 .egep5-card {
   background: var(--bg-surface);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 14px;
   overflow: hidden;
 }
 
@@ -330,7 +330,7 @@ h1, h2, h3 {
 }
 
 .card-body {
-  padding: 20px;
+  padding: 24px;
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
