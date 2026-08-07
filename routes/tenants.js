@@ -31,8 +31,8 @@ router.get('/:id', async (req, res) => {
 // El tenant se obtiene del JWT en middleware de autenticación
 router.get('/tests-habilitados/list', async (req, res) => {
   try {
-    // tenant_id viene del middleware de autenticación en req.user.tenant_id
-    const tenantId = req.user?.tenant_id;
+    // tenant_id viene del middleware de autenticación en req.tenant_id
+    const tenantId = req.tenant_id;
 
     if (!tenantId) {
       return res.status(401).json({ error: 'No hay tenant asociado' });
