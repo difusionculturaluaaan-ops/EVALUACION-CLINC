@@ -1,5 +1,6 @@
 const express = require('express');
 const { getTenantById, query } = require('../db/schema');
+const middlewareAutenticacion = require('../middleware/autenticacion');
 const router = express.Router();
 
 // GET /api/tenants/:id - Obtener datos del tenant (requiere autenticación)
@@ -29,7 +30,7 @@ router.get('/:id', async (req, res) => {
 
 // GET /api/tenants/tests-habilitados - Obtener tests habilitados para el tenant actual
 // El tenant se obtiene del JWT en middleware de autenticación
-router.get('/tests-habilitados/list', async (req, res) => {
+router.get('/tests-habilitados/list', middlewareAutenticacion, async (req, res) => {
   try {
     // tenant_id viene del middleware de autenticación en req.tenant_id
     const tenantId = req.tenant_id;
