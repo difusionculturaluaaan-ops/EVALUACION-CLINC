@@ -47,7 +47,7 @@ async function createTables() {
         // Crear la columna si no existe
         await pool.query(`
           ALTER TABLE tenants
-          ADD COLUMN tests_habilitados JSONB DEFAULT '["SCL90R","HAMILTON","MMPI2PRO","CUIDA","ISRA","TDS","PCLR","SCID2","EGEP5"]'::jsonb
+          ADD COLUMN tests_habilitados JSONB DEFAULT '["SCL90R","HAMILTON","MMPI2PRO","CUIDA","ISRA","TDS3","PCLR","SCID2","EGEP5","MBI","CISNEROS"]'::jsonb
         `);
         console.log('✓ Columna tests_habilitados creada en tenants');
       }
@@ -960,7 +960,7 @@ async function deshabilitarTest(usuario_id, test_tipo) {
 
 async function inicializarTestsParaUsuario(usuario_id) {
   try {
-    const tests = ['scl90r', 'hamilton', 'mmpi2', 'isra-c', 'isra-f', 'isra-m', 'tds', 'pclr', 'egep5', 'scid2'];
+    const tests = ['scl90r', 'hamilton', 'mmpi2pro', 'isra-c', 'isra-f', 'isra-m', 'tds3', 'pclr', 'egep5', 'scid2', 'mbi', 'cuida', 'cisneros'];
 
     for (const test of tests) {
       await pool.query(
