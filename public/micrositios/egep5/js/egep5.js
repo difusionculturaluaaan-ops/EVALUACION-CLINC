@@ -1050,7 +1050,8 @@ window.tests_egep5 = {
     // 7. GRÁFICO DEL PERFIL (Tab 4)
     try {
       if (window.EGEP5_GRAFICOS && window.EGEP5_GRAFICOS.generarPerfil) {
-        const perfilHTML = window.EGEP5_GRAFICOS.generarPerfil(resultado);
+        const baremos = window.EGEP5_BAREMOS?.BAREMOS_ESPANA || null;
+        const perfilHTML = window.EGEP5_GRAFICOS.generarPerfil(resultado, baremos);
         const perfilEl = document.getElementById('egep5-perfil-grafico');
         if (perfilEl) perfilEl.innerHTML = perfilHTML;
       }
@@ -2151,7 +2152,7 @@ window.tests_egep5 = {
               <span style="font-weight: normal; font-size: 0.6em;">España | Baremo Clínico | Varones + Mujeres</span>
             </div>
             <div class="chart-wrapper" style="width: 100%; margin-bottom: 6px; flex: 1;">
-              ${window.EGEP5_GRAFICOS && window.EGEP5_GRAFICOS.generarPerfil ? window.EGEP5_GRAFICOS.generarPerfil(this.resultados) : '<p>⚠️ Error generando gráfico</p>'}
+              ${window.EGEP5_GRAFICOS && window.EGEP5_GRAFICOS.generarPerfil ? window.EGEP5_GRAFICOS.generarPerfil(this.resultados, window.EGEP5_BAREMOS?.BAREMOS_ESPANA || null) : '<p>⚠️ Error generando gráfico</p>'}
             </div>
             </div>
           </div>
