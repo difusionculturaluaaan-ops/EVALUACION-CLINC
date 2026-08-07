@@ -2011,25 +2011,13 @@ window.tests_egep5 = {
     doc.text('Perfil Baremado', marginX, y);
     y += 6;
 
-    const graficoDiv = document.getElementById('egep5-perfil-grafico');
-    if (graficoDiv && window.html2canvas) {
-      html2canvas(graficoDiv, { scale: 2, useCORS: true, allowTaint: true, logging: false }).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        const imgWidth = pageW - 2 * marginX;
-        const imgHeight = (imgWidth * canvas.height) / canvas.width;
-        if (y + imgHeight > pageH - 20) {
-          doc.addPage();
-          y = marginY;
-        }
-        doc.addImage(imgData, 'PNG', marginX, y, imgWidth, imgHeight);
-        doc.save(`EGEP5_${paciente_nombre}_${paciente_fecha}.pdf`);
-      }).catch(err => {
-        console.error('Error capturando gráfico:', err);
-        doc.save(`EGEP5_${paciente_nombre}_${paciente_fecha}.pdf`);
-      });
-    } else {
-      doc.save(`EGEP5_${paciente_nombre}_${paciente_fecha}.pdf`);
-    }
+    // Nota: Gráfico se agregará en versión posterior (pendiente optimización html2canvas)
+    doc.setFontSize(9);
+    doc.setTextColor(...MUTED);
+    doc.text('(Gráfico disponible en pantalla - versión mejorada en desarrollo)', marginX, y + 15);
+
+    // Guardar PDF sin gráfico para evitar congelamiento
+    doc.save(`EGEP5_${paciente_nombre}_${paciente_fecha}.pdf`);
   },
 
   generarInformeImprimible() {
