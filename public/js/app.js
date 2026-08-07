@@ -4828,6 +4828,30 @@ const app = {
     }
   },
 
+  async abrirEvaluacionTDS3(pruebaId) {
+    try {
+      const response = await fetch(`/api/pruebas/${pruebaId}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
+      });
+
+      if (!response.ok) {
+        this.mostrarToast('Error al cargar evaluación TDS-3', 'error');
+        return;
+      }
+
+      const prueba = await response.json();
+
+      // Obtener token para pasar en URL
+      const token = localStorage.getItem('auth_token');
+
+      // Abrir micrositio tds3 con modo=cargar, prueba_id y token
+      window.open(`/micrositios/tds3/?modo=cargar&prueba_id=${pruebaId}&token=${token}`, '_blank');
+    } catch (error) {
+      console.error('Error al abrir evaluación TDS-3:', error);
+      this.mostrarToast('Error al cargar evaluación TDS-3', 'error');
+    }
+  },
+
   async verPDFPrueba(pruebaId) {
     try {
       const response = await fetch(`/api/pruebas/${pruebaId}`, {
@@ -4984,7 +5008,7 @@ const app = {
           </div>
 
           <div class="estudio-actions">
-            <button class="btn-ver-reporte ${(prueba.tipo.toUpperCase().includes('CUIDA') || prueba.tipo.toUpperCase().includes('MMPI') || prueba.tipo === 'MBI' || prueba.tipo === 'CISNEROS' || prueba.tipo.toUpperCase().includes('EGEP')) ? 'oculto' : ''}" data-prueba-id="${prueba.id}" onclick="app.abrirReportePrueba(this.getAttribute('data-prueba-id'))">
+            <button class="btn-ver-reporte ${(prueba.tipo.toUpperCase().includes('CUIDA') || prueba.tipo.toUpperCase().includes('MMPI') || prueba.tipo === 'MBI' || prueba.tipo === 'CISNEROS' || prueba.tipo.toUpperCase().includes('EGEP') || prueba.tipo === 'TDS') ? 'oculto' : ''}" data-prueba-id="${prueba.id}" onclick="app.abrirReportePrueba(this.getAttribute('data-prueba-id'))">
               Ver Reporte
             </button>
             ${prueba.tipo.toUpperCase().includes('CUIDA') ? `
@@ -4999,6 +5023,11 @@ const app = {
             ` : ''}
             ${(prueba.tipo === 'MMPI2' || prueba.tipo === 'MMPI') ? `
               <button class="btn-abrir-evaluacion" onclick="app.abrirEvaluacionMMPI(${prueba.id})">
+                Abrir JSON
+              </button>
+            ` : ''}
+            ${prueba.tipo === 'TDS' ? `
+              <button class="btn-abrir-evaluacion" onclick="app.abrirEvaluacionTDS3(${prueba.id})">
                 Abrir JSON
               </button>
             ` : ''}

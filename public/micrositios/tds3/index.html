@@ -490,6 +490,53 @@ function saveState(){
   try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
 }
 
+async function cargarDesdePrueba(){
+  const params = new URL(window.location).searchParams;
+  const modo = params.get('modo');
+  const pruebaId = params.get('prueba_id');
+  const token = params.get('token');
+
+  if(modo !== 'cargar' || !pruebaId || !token) return;
+
+  try{
+    const response = await fetch(`/api/pruebas/${pruebaId}`, {
+      headers: {'Authorization': `Bearer ${token}`}
+    });
+
+    if(!response.ok) throw new Error(`HTTP ${response.status}`);
+    const prueba = await response.json();
+    console.log('✅ Prueba TDS-3 cargada:', prueba);
+
+    // Extraer datos del paciente
+    const subescalas = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas;
+
+    if(subescalas && subescalas._datos_paciente){
+      const dp = subescalas._datos_paciente;
+      console.log('👤 Datos del paciente:', dp);
+      if(dp.nombre) document.getElementById('datos-nombre').value = dp.nombre;
+      if(dp.edad) document.getElementById('datos-edad').value = dp.edad;
+      if(dp.sexo) document.getElementById('datos-sexo').value = dp.sexo;
+      if(dp.fecha) document.getElementById('datos-fecha').value = dp.fecha;
+      state.datos = Object.assign(state.datos, dp);
+    }
+
+    // Cargar respuestas desde prueba.data
+    if(prueba.data && Array.isArray(prueba.data)){
+      console.log('📝 Cargando respuestas:', prueba.data);
+      prueba.data.forEach((value, idx)=>{
+        if(value) state.respuestas[idx+1] = value;
+      });
+    }
+
+    bindDatosFields();
+    renderTest();
+    updateProgress();
+    console.log('✅ TDS-3 cargado desde expediente');
+  }catch(error){
+    console.error('❌ Error cargando TDS-3:', error);
+  }
+}
+
 /* ============ TABS ============ */
 document.querySelectorAll('.tab-btn').forEach(btn=>{
   btn.addEventListener('click', ()=> switchTab(btn.dataset.tab));
@@ -1001,9 +1048,12 @@ document.getElementById('theme-toggle').addEventListener('click', ()=>{
 /* ============ INIT ============ */
 initTheme();
 loadState();
-bindDatosFields();
-renderTest();
-updateProgress();
+(async () => {
+  await cargarDesdePrueba();
+  bindDatosFields();
+  renderTest();
+  updateProgress();
+})();
 </script>
 </body>
 </html>
