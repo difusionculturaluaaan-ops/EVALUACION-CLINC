@@ -65,7 +65,11 @@ window.EGEP5_GRAFICOS = {
       g += `<text x="${ML - 9}" y="${Y(v) + 4}" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="9" fill="#5d6675">${v}</text>`;
     });
 
-    // Barras (sin línea de perfil - patrón TDS-3)
+    // Línea de referencia población normal (discontinua)
+    const pts = cols.map((c, i) => `${X(i)},${Y(c.y)}`).join(' ');
+    g += `<polyline points="${pts}" fill="none" stroke="#9ca3af" stroke-width="2" stroke-dasharray="5 5" stroke-linejoin="round" opacity=".6"/>`;
+
+    // Barras del paciente
     cols.forEach((c, i) => {
       const bw = Math.min(46, pw / cols.length - 16);
       g += `<rect x="${X(i) - bw / 2}" y="${Y(c.y)}" width="${bw}" height="${MT + ph - Y(c.y)}" fill="${c.c}" opacity=".75" rx="3"/>`;
