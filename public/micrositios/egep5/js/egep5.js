@@ -1904,24 +1904,132 @@ window.tests_egep5 = {
       return;
     }
 
-    const paciente_nombre = document.getElementById('m_nombre')?.value || localStorage.getItem('paciente_nombre') || 'Paciente';
-    const contenedorPDF = document.getElementById('egep5-informe-contenido');
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+    const pageW = 210, pageH = 297, marginX = 16, marginY = 18;
+    let y = marginY;
+    const INK = [36, 28, 56], MUTED = [110, 100, 140], ACCENT = [139, 76, 122];
 
-    if (!contenedorPDF) {
-      alert('No se encontró el contenedor del informe');
-      return;
+    const paciente_nombre = document.getElementById('m_nombre')?.value || 'Paciente';
+    const paciente_fecha = document.getElementById('m_fecha')?.value || new Date().toISOString().split('T')[0];
+    const paciente_edad = document.getElementById('m_edad')?.value || '-';
+    const paciente_sexo = document.getElementById('m_sexo')?.value || '-';
+
+    // HEADER
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.setTextColor(...INK);
+    doc.text('EGEP-5', marginX, y);
+    y += 7;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(...MUTED);
+    doc.text('Evaluación Global del Estrés Postraumático · DSM-5', marginX, y);
+    y += 7;
+
+    doc.setDrawColor(...ACCENT);
+    doc.setLineWidth(0.5);
+    doc.line(marginX, y, pageW - marginX, y);
+    y += 8;
+
+    // DATOS DEL PACIENTE
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.setTextColor(...INK);
+    doc.text('Datos del Evaluado', marginX, y);
+    y += 6;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    const datosRows = [
+      ['Nombre:', paciente_nombre, 'Fecha:', paciente_fecha],
+      ['Edad:', paciente_edad, 'Sexo:', paciente_sexo],
+    ];
+    datosRows.forEach(row => {
+      doc.text(row[0], marginX, y);
+      doc.text(row[1], marginX + 45, y);
+      doc.text(row[2], marginX + 100, y);
+      doc.text(row[3], marginX + 145, y);
+      y += 6;
+    });
+    y += 4;
+
+    // DIAGNÓSTICO
+    const tept = this.resultados.tept === 'SI' ? 'CUMPLE CRITERIOS' : 'NO CUMPLE CRITERIOS';
+    const teptColor = this.resultados.tept === 'SI' ? [34, 197, 94] : [239, 68, 68];
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(...INK);
+    doc.text('Diagnóstico DSM-5:', marginX, y);
+    y += 6;
+
+    doc.setFillColor(...teptColor);
+    doc.rect(marginX, y - 4, 50, 8, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.text(tept, marginX + 25, y, { align: 'center' });
+    y += 10;
+
+    // TABLA DE SÍNTOMAS
+    doc.setTextColor(...INK);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.text('Intensidad de Síntomas', marginX, y);
+    y += 6;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    const pd = this.resultados.pd;
+    const Total = (pd.I || 0) + (pd.E || 0) + (pd.C || 0) + (pd.A || 0);
+
+    const sympRows = [
+      ['Intrusivos (I)', String(pd.I || 0), 'Evitación (E)', String(pd.E || 0)],
+      ['Cognitivas (C)', String(pd.C || 0), 'Activación (A)', String(pd.A || 0)],
+      ['TOTAL', String(Total), 'Funcionamiento (F)', String(pd.F || 0)],
+    ];
+
+    doc.autoTable({
+      startY: y,
+      margin: { left: marginX, right: marginX },
+      theme: 'plain',
+      styles: { fontSize: 8, textColor: INK, cellPadding: 2 },
+      columnStyles: { 0: { fontStyle: 'bold', textColor: MUTED, cellWidth: 45 }, 2: { fontStyle: 'bold', textColor: MUTED, cellWidth: 45 } },
+      body: sympRows,
+    });
+    y = doc.lastAutoTable.finalY + 8;
+
+    // GRÁFICO DEL PERFIL (convertir a imagen con html2canvas)
+    if (y > 200) {
+      doc.addPage();
+      y = marginY;
     }
 
-    const opt = {
-      margin: [10, 10, 10, 10],
-      filename: `EGEP5_${paciente_nombre}_${new Date().toISOString().split('T')[0]}.pdf`,
-      image: { type: 'png', quality: 0.98 },
-      html2canvas: { scale: 3, useCORS: true, allowTaint: false, logging: false, windowHeight: 1200 },
-      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
-      pagebreak: { mode: 'avoid-all', avoid: ['svg', '.chart-wrapper'] }
-    };
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(...INK);
+    doc.text('Perfil Baremado', marginX, y);
+    y += 6;
 
-    html2pdf().set(opt).from(contenedorPDF).save();
+    const graficoDiv = document.getElementById('egep5-perfil-grafico');
+    if (graficoDiv && window.html2canvas) {
+      html2canvas(graficoDiv, { scale: 2, useCORS: true, allowTaint: true, logging: false }).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const imgWidth = pageW - 2 * marginX;
+        const imgHeight = (imgWidth * canvas.height) / canvas.width;
+        if (y + imgHeight > pageH - 20) {
+          doc.addPage();
+          y = marginY;
+        }
+        doc.addImage(imgData, 'PNG', marginX, y, imgWidth, imgHeight);
+        doc.save(`EGEP5_${paciente_nombre}_${paciente_fecha}.pdf`);
+      }).catch(err => {
+        console.error('Error capturando gráfico:', err);
+        doc.save(`EGEP5_${paciente_nombre}_${paciente_fecha}.pdf`);
+      });
+    } else {
+      doc.save(`EGEP5_${paciente_nombre}_${paciente_fecha}.pdf`);
+    }
   },
 
   generarInformeImprimible() {
