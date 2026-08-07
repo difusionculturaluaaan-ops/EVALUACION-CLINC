@@ -109,7 +109,6 @@ const app = {
     'ISRA_F': tests_isra_f,
     'ISRA_M': tests_isra_m,
     'PCLR': tests_pclr,
-    'EGEP5': tests_egep5,
     'SCID2': tests_scid2,
     'CUIDA': {
       nombre: 'CUIDA (Evaluación de Cuidadores)',
