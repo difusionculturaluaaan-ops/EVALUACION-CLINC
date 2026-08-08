@@ -409,7 +409,13 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
 </div>
 
 <!-- ============ 3 · RESULTADOS ============ -->
-<div class="pane" id="p3"><div id="res"></div></div>
+<div class="pane" id="p3">
+  <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+    <button class="btn" onclick="descargarPDFResultados()" style="flex:1;min-width:150px">📄 Descargar PDF</button>
+    <button class="btn pri" onclick="guardarEnExpediente()" style="flex:1;min-width:150px;margin-left:auto">💾 Guardar en Expediente</button>
+  </div>
+  <div id="res"></div>
+</div>
 
 <!-- ============ 4 · PERFIL VISUAL ============ -->
 <div class="pane" id="p4"><div id="perf"></div></div>
@@ -1053,6 +1059,76 @@ function go(p){
   if(p==='p3'||p==='p4'||p==='p5') calc();
 }
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>go(t.dataset.p));
+
+function descargarPDFResultados(){
+  window.print();
+}
+
+function getURLParam(name){
+  const params=new URLSearchParams(window.location.search);
+  return params.get(name);
+}
+
+async function guardarEnExpediente(){
+  const o=corregir();
+
+  if(o.tept==='INC' || (obligatorios().filter(i=>valOf(i)).length===0 && nEventos()===0)){
+    toast('Primero debe completar y calcular los resultados','err');
+    return;
+  }
+
+  const paciente_id=getURLParam('paciente_id');
+  if(!paciente_id){
+    toast('No se encontró el ID del paciente','err');
+    return;
+  }
+
+  const btn=event.target;
+  const textOriginal=btn.textContent;
+  btn.disabled=true;
+  btn.textContent='⏳ Guardando...';
+
+  try{
+    const token=localStorage.getItem('authToken')||getURLParam('token');
+
+    const bodyToSend={
+      paciente_id,
+      tipo:'EGEP5',
+      data:Object.keys(S.resp).map(k=>({item:+k,respuesta:S.resp[k]})),
+      total:o.pd.Total,
+      subescalas:{
+        intrusivos:o.pd.I,
+        evitacion:o.pd.E,
+        cognitivos:o.pd.C,
+        activacion:o.pd.A,
+        funcionamiento:o.pd.F,
+        diagnostico:o.tept,
+        meta:S.meta
+      }
+    };
+
+    const res=await fetch('/api/pruebas',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':`Bearer ${token}`
+      },
+      body:JSON.stringify(bodyToSend)
+    });
+
+    if(!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
+
+    const result=await res.json();
+    toast('✓ Guardado en el expediente del paciente','ok');
+    btn.textContent=textOriginal;
+    btn.disabled=false;
+  }catch(err){
+    console.error('Error al guardar:',err);
+    alert(`Error al guardar en expediente: ${err.message}`);
+    btn.textContent=textOriginal;
+    btn.disabled=false;
+  }
+}
 
 load(); pintarMeta(); renderTest(); upd(); calc();
 </script>
