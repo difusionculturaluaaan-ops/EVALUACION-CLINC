@@ -853,6 +853,7 @@ function renderRes(o){
 
   h+=`<div class="btns no-print" style="justify-content:flex-end;margin-top:4px">
       <button class="btn" onclick="expJSON()">↑ Exportar JSON</button>
+      <button class="btn pri" onclick="guardarEnExpediente()">💾 Guardar en Expediente</button>
       <button class="btn pri" onclick="window.print()">⎙ Generar informe PDF</button></div>`;
   $('res').innerHTML=h;
 }
