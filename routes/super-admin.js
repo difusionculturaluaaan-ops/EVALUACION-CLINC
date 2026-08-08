@@ -22,6 +22,9 @@ const { upload, uploadLogo } = require('../middleware/cloudinary');
 
 const router = express.Router();
 
+// Test IDs válidos en el sistema
+const VALID_TEST_IDS = ['SCL90R', 'HAMILTON', 'MMPI2PRO', 'CUIDA', 'ISRA', 'TDS3', 'PCLR', 'SCID2', 'EGEP5', 'MBI', 'CISNEROS'];
+
 // POST /api/super-admin/login
 router.post('/login', async (req, res) => {
   try {
@@ -383,6 +386,14 @@ router.post('/tenants/:id/tests', autenticarSuperAdmin, async (req, res) => {
 
     if (!Array.isArray(tests) || tests.length === 0) {
       return res.status(400).json({ error: 'Debes proporcionar al menos un test' });
+    }
+
+    // Validar que todos los test IDs sean válidos
+    const invalidTests = tests.filter(test => !VALID_TEST_IDS.includes(test));
+    if (invalidTests.length > 0) {
+      return res.status(400).json({
+        error: `Test IDs inválidos: ${invalidTests.join(', ')}. Tests válidos: ${VALID_TEST_IDS.join(', ')}`
+      });
     }
 
     const result = await pool.query(
