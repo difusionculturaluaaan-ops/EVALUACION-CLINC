@@ -1242,8 +1242,35 @@ async function cargarDesdePrueba(){
 
     console.log('✅ Prueba cargada exitosamente. Respuestas:', Object.keys(S.resp).length);
     save();
+
+    // Actualizar UI para mostrar datos cargados
+    console.log('🎨 Actualizando interfaz...');
+    pintarMeta();      // Rellena campos del paciente
+    renderTest();      // Renderiza respuestas en formulario
+    upd();             // Actualiza estadísticas
+    calc();            // Calcula resultados automáticamente
+
+    // Mostrar confirmación
+    const numRespuestas=Object.keys(S.resp).length;
+    const msgSuccess=document.createElement('div');
+    msgSuccess.style.cssText='position:fixed;top:20px;right:20px;background:#22c55e;color:#fff;padding:15px 20px;border-radius:8px;z-index:9999;font-weight:bold;box-shadow:0 4px 12px rgba(0,0,0,0.3)';
+    msgSuccess.innerHTML=`✅ Evaluación cargada<br>Respuestas: ${numRespuestas}/58`;
+    document.body.appendChild(msgSuccess);
+    setTimeout(()=>msgSuccess.remove(),4000);
+
+    // Auto-navegar a pestaña de resultados si hay datos completos
+    if(numRespuestas>0){
+      setTimeout(()=>go('p3'), 500);
+    }
+
+    console.log('🎉 Carga completada y UI actualizada');
   }catch(err){
     console.error('❌ Error al cargar la prueba previa:',err);
+    const msgError=document.createElement('div');
+    msgError.style.cssText='position:fixed;top:20px;right:20px;background:#ef4444;color:#fff;padding:15px 20px;border-radius:8px;z-index:9999;font-weight:bold;box-shadow:0 4px 12px rgba(0,0,0,0.3)';
+    msgError.innerHTML=`❌ Error: ${err.message}`;
+    document.body.appendChild(msgError);
+    setTimeout(()=>msgError.remove(),4000);
   }
 }
 
