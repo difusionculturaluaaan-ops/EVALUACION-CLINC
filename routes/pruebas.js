@@ -8,7 +8,8 @@ const {
   obtenerPruebasPaciente,
   obtenerPruebasRango,
   getNormasByTest,
-  getNormasPoblacionGeneral
+  getNormasPoblacionGeneral,
+  isTestAuthorizedForTenant
 } = require('../db/schema');
 
 // POST: Guardar una nueva prueba (solo del tenant autenticado)
@@ -25,6 +26,12 @@ router.post('/', async (req, res) => {
     const paciente = await getPacienteByIdTenant(paciente_id, tenant_id);
     if (!paciente) {
       return res.status(404).json({ error: 'Paciente no encontrado' });
+    }
+
+    // Validar que el test esté autorizado para este tenant
+    const isAuthorized = await isTestAuthorizedForTenant(tenant_id, tipo);
+    if (!isAuthorized) {
+      return res.status(403).json({ error: `Test '${tipo}' no está autorizado para este tenant` });
     }
 
     // Validar que data es un array
@@ -92,6 +99,12 @@ router.put('/:id', async (req, res) => {
       return res.status(403).json({ error: 'Acceso denegado' });
     }
 
+    // Validar que el test esté autorizado (en caso de cambio de tipo)
+    const isAuthorized = await isTestAuthorizedForTenant(tenant_id, tipo);
+    if (!isAuthorized) {
+      return res.status(403).json({ error: `Test '${tipo}' no está autorizado para este tenant` });
+    }
+
     // Incluir metadatos en subescalas si se proporciona
     let subescalasActualizada = subescalas;
     if (metadatos) {
@@ -116,12 +129,21 @@ router.put('/:id', async (req, res) => {
 router.get('/comparativo/:paciente_id/:tipo', async (req, res) => {
   try {
     const tenant_id = req.tenant_id;
+    const tipo = req.params.tipo;
+
+    // Validar que el paciente pertenezca al tenant
     const paciente = await getPacienteByIdTenant(req.params.paciente_id, tenant_id);
     if (!paciente) {
       return res.status(404).json({ error: 'Paciente no encontrado' });
     }
 
-    const pruebas = await obtenerPruebasRango(req.params.paciente_id, req.params.tipo);
+    // Validar que el test esté autorizado para este tenant
+    const isAuthorized = await isTestAuthorizedForTenant(tenant_id, tipo);
+    if (!isAuthorized) {
+      return res.status(403).json({ error: `Test '${tipo}' no está autorizado para este tenant` });
+    }
+
+    const pruebas = await obtenerPruebasRango(req.params.paciente_id, tipo);
     res.json(pruebas);
   } catch (error) {
     console.error('Error al obtener historial:', error);

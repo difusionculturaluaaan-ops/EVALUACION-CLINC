@@ -696,6 +696,27 @@ async function actualizarTenantLogo(tenant_id, logo_url) {
   }
 }
 
+// ==================== VALIDACIÓN DE TESTS ====================
+
+async function isTestAuthorizedForTenant(tenant_id, test_type) {
+  try {
+    const result = await pool.query(
+      'SELECT tests_habilitados FROM tenants WHERE id = $1',
+      [tenant_id]
+    );
+
+    if (result.rows.length === 0) {
+      return false;
+    }
+
+    const tests = result.rows[0].tests_habilitados || [];
+    return tests.includes(test_type);
+  } catch (err) {
+    console.error('Error al validar autorización de test:', err);
+    return false;
+  }
+}
+
 // ==================== FUNCIONES SCID-II - ESTRUCTURA OFICIAL ====================
 
 async function obtenerEscalasSCID2(tenant_id) {
@@ -1019,6 +1040,7 @@ module.exports = {
   actualizarTenant,
   deleteTenant,
   actualizarTenantLogo,
+  isTestAuthorizedForTenant,
   obtenerEscalasSCID2,
   obtenerMapeoSCID2,
   inicializarMapeoSCID2,
