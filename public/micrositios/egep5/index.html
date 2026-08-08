@@ -1189,6 +1189,8 @@ async function cargarDesdePrueba(){
 
     if(modo!=='cargar'||!pruebaId||!token) return;
 
+    console.log('🔄 Cargando datos de prueba previa:', pruebaId);
+
     const res=await fetch(`/api/pruebas/${pruebaId}`,{
       headers:{'Authorization':`Bearer ${token}`}
     });
@@ -1196,24 +1198,52 @@ async function cargarDesdePrueba(){
     if(!res.ok) throw new Error(`Error ${res.status}`);
     const prueba=await res.json();
 
+    console.log('📊 Datos cargados:', prueba);
+
     if(prueba.tipo!=='EGEP5') return;
 
-    // Restaurar datos desde prueba
+    // Restaurar datos desde prueba.data (array de respuestas)
     S.resp={};
-    if(Array.isArray(prueba.data)){
-      prueba.data.forEach(item=>{
+    let dataArray=prueba.data;
+
+    // Si data es string JSON, parsearlo
+    if(typeof dataArray==='string'){
+      try{
+        dataArray=JSON.parse(dataArray);
+      }catch(e){
+        console.warn('Error parseando data:', e);
+        dataArray=[];
+      }
+    }
+
+    if(Array.isArray(dataArray)){
+      console.log('📝 Restaurando', dataArray.length, 'respuestas');
+      dataArray.forEach(item=>{
         S.resp[item.item]=item.respuesta;
       });
     }
 
-    // Restaurar meta
-    if(prueba.subescalas&&prueba.subescalas.meta){
-      S.meta=prueba.subescalas.meta;
+    // Restaurar meta desde subescalas
+    if(prueba.subescalas){
+      let subescalas=prueba.subescalas;
+      if(typeof subescalas==='string'){
+        try{
+          subescalas=JSON.parse(subescalas);
+        }catch(e){
+          console.warn('Error parseando subescalas:', e);
+        }
+      }
+
+      if(subescalas.meta){
+        S.meta=subescalas.meta;
+        console.log('👤 Meta restaurada:', S.meta);
+      }
     }
 
+    console.log('✅ Prueba cargada exitosamente. Respuestas:', Object.keys(S.resp).length);
     save();
   }catch(err){
-    console.warn('No se pudo cargar la prueba previa:',err);
+    console.error('❌ Error al cargar la prueba previa:',err);
   }
 }
 
