@@ -1888,7 +1888,7 @@ const app = {
         <div style="page-break-inside: avoid; margin-bottom: 6px;">
           <!-- Gráfico PCL-R -->
           <div style="margin-bottom: 6px; font-size: 9px;">
-            ${prueba.tipo === 'SCL90R' ? this.generarReporteSCL(prueba, subescalas) : prueba.tipo === 'PCLR' ? this.generarReportePCLR(prueba, subescalas) : prueba.tipo === 'SCID2' ? this.generarReporteSCID2(prueba, subescalas) : (prueba.tipo === 'MMPI2' || prueba.tipo === 'MMPI') ? this.generarReporteMMPI2(prueba, subescalas) : prueba.tipo === 'CUIDA' ? this.generarReporteCUIDA(prueba, subescalas) : prueba.tipo === 'ISRA' ? this.generarReporteISRA(prueba, subescalas) : prueba.tipo === 'MBI' ? this.generarReporteMBI(prueba, subescalas) : prueba.tipo === 'TDS' ? this.generarReporteTDS(prueba, subescalas) : this.generarReporteGenerico(prueba, subescalas)}
+            ${prueba.tipo === 'SCL90R' ? this.generarReporteSCL(prueba, subescalas) : prueba.tipo === 'PCLR' ? this.generarReportePCLR(prueba, subescalas) : prueba.tipo === 'SCID2' ? this.generarReporteSCID2(prueba, subescalas) : (prueba.tipo === 'MMPI2' || prueba.tipo === 'MMPI') ? this.generarReporteMMPI2(prueba, subescalas) : prueba.tipo === 'CUIDA' ? this.generarReporteCUIDA(prueba, subescalas) : prueba.tipo === 'ISRA' ? this.generarReporteISRA(prueba, subescalas) : prueba.tipo === 'MBI' ? this.generarReporteMBI(prueba, subescalas) : prueba.tipo === 'TDS' ? this.generarReporteTDS(prueba, subescalas) : prueba.tipo === 'EGEP5' ? this.generarReporteEGEP5(prueba, subescalas) : this.generarReporteGenerico(prueba, subescalas)}
           </div>
 
           <!-- INTERPRETACIÓN (dentro del contenedor principal) -->
@@ -2819,6 +2819,70 @@ const app = {
           </tr>
           ${this.generarFilasTabla(prueba, subescalas)}
         </table>
+      </div>
+    `;
+  },
+
+  /**
+   * Generar reporte EGEP-5 (JSON-only, sin PDF)
+   */
+  generarReporteEGEP5(prueba, subescalas) {
+    const diagnostico = subescalas?.diagnostico || 'N/A';
+    const total = prueba.total || 0;
+    const intrusivos = subescalas?.intrusivos || 0;
+    const evitacion = subescalas?.evitacion || 0;
+    const cognitivos = subescalas?.cognitivos || 0;
+    const activacion = subescalas?.activacion || 0;
+    const funcionamiento = subescalas?.funcionamiento || 0;
+
+    const colorDx = diagnostico === 'SI' ? '#ef4444' : diagnostico === 'NO' ? '#22c55e' : '#f59e0b';
+
+    return `
+      <div style="margin: 4px 0; padding: 8px; background: #f0f4f8; border-left: 4px solid ${colorDx}; border-radius: 3px; color: #333;">
+        <h4 style="color: #2c5aa0; font-size: 11px; margin: 0 0 6px 0; font-weight: bold;">DIAGNÓSTICO: TEPT (DSM-5)</h4>
+
+        <div style="background: white; padding: 6px; border-radius: 3px; margin-bottom: 6px; border: 1px solid #ddd;">
+          <p style="margin: 0; font-size: 10px; font-weight: bold; color: ${colorDx};">
+            ${diagnostico === 'SI' ? '✓ Se cumplen los criterios de TEPT' : diagnostico === 'NO' ? '✗ No se cumplen los criterios de TEPT' : '? Información incompleta'}
+          </p>
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; font-size: 9px; margin-bottom: 6px;">
+          <tr style="background: #e0e7ff;">
+            <th style="border: 1px solid #d1d5db; padding: 3px; text-align: left;">Escala</th>
+            <th style="border: 1px solid #d1d5db; padding: 3px; text-align: center;">PD</th>
+            <th style="border: 1px solid #d1d5db; padding: 3px; text-align: center;">Máx</th>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #d1d5db; padding: 3px;">Síntomas Intrusivos (I)</td>
+            <td style="border: 1px solid #d1d5db; padding: 3px; text-align: center; font-weight: bold;">${intrusivos}</td>
+            <td style="border: 1px solid #d1d5db; padding: 3px; text-align: center;">20</td>
+          </tr>
+          <tr style="background: #f9f9f9;">
+            <td style="border: 1px solid #d1d5db; padding: 3px;">Evitación (E)</td>
+            <td style="border: 1px solid #d1d5db; padding: 3px; text-align: center; font-weight: bold;">${evitacion}</td>
+            <td style="border: 1px solid #d1d5db; padding: 3px; text-align: center;">8</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #d1d5db; padding: 3px;">Alt. Cognitivas (C)</td>
+            <td style="border: 1px solid #d1d5db; padding: 3px; text-align: center; font-weight: bold;">${cognitivos}</td>
+            <td style="border: 1px solid #d1d5db; padding: 3px; text-align: center;">28</td>
+          </tr>
+          <tr style="background: #f9f9f9;">
+            <td style="border: 1px solid #d1d5db; padding: 3px;">Alt. Activación (A)</td>
+            <td style="border: 1px solid #d1d5db; padding: 3px; text-align: center; font-weight: bold;">${activacion}</td>
+            <td style="border: 1px solid #d1d5db; padding: 3px; text-align: center;">24</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #d1d5db; padding: 3px; font-weight: bold;">TOTAL</td>
+            <td style="border: 1px solid #d1d5db; padding: 3px; text-align: center; font-weight: bold; color: #2c5aa0;">${total}</td>
+            <td style="border: 1px solid #d1d5db; padding: 3px; text-align: center;">80</td>
+          </tr>
+        </table>
+
+        <p style="margin: 0; font-size: 8px; color: #666; line-height: 1.4;">
+          <strong>Nota:</strong> Para visualizar y editar el test completo, abra EGEP-5 desde el micrositio. El reporte aquí es un resumen de los resultados almacenados en formato JSON.
+        </p>
       </div>
     `;
   },
