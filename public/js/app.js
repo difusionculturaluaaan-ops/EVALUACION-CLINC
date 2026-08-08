@@ -207,6 +207,7 @@ const app = {
         'MMPI2PRO': 'mmpi-pro',
         'CUIDA': 'cuida',
         'ISRA': 'isra',
+        'EGEP5': 'egep5',
         'TDS3': 'tds3',
         'PCLR': 'pclr',
         'SCID2': 'scid2',
@@ -215,7 +216,7 @@ const app = {
       };
 
       // Ocultar todos los tests por defecto
-      document.querySelectorAll('[data-page="scl90r"], [data-page="hamilton"], [data-page="mmpi-pro"], [data-page="cuida"], [data-page="isra"], [data-page="tds3"], [data-page="pclr"], [data-page="scid2"], [data-page="mbi"], [data-page="cisneros"]').forEach(btn => {
+      document.querySelectorAll('[data-page="scl90r"], [data-page="hamilton"], [data-page="mmpi-pro"], [data-page="cuida"], [data-page="isra"], [data-page="egep5"], [data-page="tds3"], [data-page="pclr"], [data-page="scid2"], [data-page="mbi"], [data-page="cisneros"]').forEach(btn => {
         btn.style.display = 'none';
       });
 
@@ -234,7 +235,7 @@ const app = {
     } catch (error) {
       console.error('Error al cargar tests habilitados:', error);
       // Si falla, mostrar todos los tests (fallback)
-      document.querySelectorAll('[data-page="scl90r"], [data-page="hamilton"], [data-page="mmpi-pro"], [data-page="cuida"], [data-page="isra"], [data-page="tds3"], [data-page="pclr"], [data-page="scid2"], [data-page="mbi"], [data-page="cisneros"]').forEach(btn => {
+      document.querySelectorAll('[data-page="scl90r"], [data-page="hamilton"], [data-page="mmpi-pro"], [data-page="cuida"], [data-page="isra"], [data-page="egep5"], [data-page="tds3"], [data-page="pclr"], [data-page="scid2"], [data-page="mbi"], [data-page="cisneros"]').forEach(btn => {
         btn.style.display = 'block';
       });
     }
