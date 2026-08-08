@@ -1215,14 +1215,17 @@ async function cargarDesdePrueba(){
   }
 }
 
-initTheme();
-load();
-await cargarDesdePrueba();
-autocargarDatosPaciente();
-pintarMeta();
-renderTest();
-upd();
-calc();
+async function init(){
+  initTheme();
+  load();
+  await cargarDesdePrueba();
+  autocargarDatosPaciente();
+  pintarMeta();
+  renderTest();
+  upd();
+  calc();
+}
+init();
 </script>
 </body>
 </html>
