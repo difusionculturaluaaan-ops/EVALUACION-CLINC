@@ -4801,6 +4801,30 @@ const app = {
     }
   },
 
+  async abrirEvaluacionEGEP5(pruebaId) {
+    try {
+      const response = await fetch(`/api/pruebas/${pruebaId}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
+      });
+
+      if (!response.ok) {
+        this.mostrarToast('Error al cargar evaluación EGEP-5', 'error');
+        return;
+      }
+
+      const prueba = await response.json();
+
+      // Obtener token para pasar en URL
+      const token = localStorage.getItem('auth_token');
+
+      // Abrir micrositio egep5 con modo=cargar, prueba_id y token
+      window.open(`/micrositios/egep5/?modo=cargar&prueba_id=${pruebaId}&token=${token}`, '_blank');
+    } catch (error) {
+      console.error('Error al abrir evaluación EGEP-5:', error);
+      this.mostrarToast('Error al cargar evaluación EGEP-5', 'error');
+    }
+  },
+
   async verPDFPrueba(pruebaId) {
     try {
       const response = await fetch(`/api/pruebas/${pruebaId}`, {
@@ -4893,7 +4917,8 @@ const app = {
       'ISRA': '◆',
       'TDS': '★',
       'TDS-2': '★',
-      'PCLR': '◇'
+      'PCLR': '◇',
+      'EGEP5': '📋'
     };
 
     const nombres = {
@@ -4903,7 +4928,8 @@ const app = {
       'ISRA': 'ISRA (Ansiedad)',
       'TDS': 'TDS (Sueño)',
       'TDS-2': 'TDS-2 (Sueño)',
-      'PCLR': 'PCL-R (Psicopatía)'
+      'PCLR': 'PCL-R (Psicopatía)',
+      'EGEP5': 'EGEP-5'
     };
 
     container.innerHTML = pruebas.map(prueba => {
@@ -4979,6 +5005,11 @@ const app = {
             ` : ''}
             ${prueba.tipo.toUpperCase() === 'CISNEROS' ? `
               <button class="btn-abrir-evaluacion" onclick="app.verPDFPrueba(${prueba.id})">
+                Ver Resultados
+              </button>
+            ` : ''}
+            ${prueba.tipo.toUpperCase() === 'EGEP5' ? `
+              <button class="btn-abrir-evaluacion" onclick="app.abrirEvaluacionEGEP5(${prueba.id})">
                 Ver Resultados
               </button>
             ` : ''}
