@@ -998,7 +998,7 @@ function guardarEnExpediente(){
 
   const bodyToSend = {
     paciente_id: state.pacienteId,
-    tipo: 'TDS',
+    tipo: 'TDS3',
     data: data,
     total: globalScore,
     subescalas: {
@@ -1023,7 +1023,7 @@ function guardarEnExpediente(){
     }
   };
 
-  console.log('💾 Guardando TDS en expediente:', {paciente_id: state.pacienteId, tipo: 'TDS'});
+  console.log('💾 Guardando TDS3 en expediente:', {paciente_id: state.pacienteId, tipo: 'TDS3'});
 
   fetch('/api/pruebas', {
     method: 'POST',
