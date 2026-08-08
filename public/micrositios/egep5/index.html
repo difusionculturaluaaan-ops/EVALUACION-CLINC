@@ -269,7 +269,9 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
 <body>
 
 <div class="hdr">
-  <div class="logo">EVALUACIÓN<br>PSICOLÓGICA</div>
+  <button onclick="window.location.href='/'" style="background:none;border:none;cursor:pointer;padding:0;flex-shrink:0;display:flex;align-items:center;gap:14px;margin-right:20px;">
+    <div class="logo" style="margin:0">EVALUACIÓN<br>PSICOLÓGICA</div>
+  </button>
   <div class="hdr-mid">
     <h1>EGEP-5</h1>
     <p>Evaluación Global de Estrés Postraumático · Sistema de captura y corrección</p>
@@ -1130,7 +1132,22 @@ async function guardarEnExpediente(){
   }
 }
 
-load(); pintarMeta(); renderTest(); upd(); calc();
+function autocargarDatosPaciente(){
+  // Autocarga datos del paciente desde localStorage/sessionStorage
+  const nombre = sessionStorage.getItem('paciente_nombre') || localStorage.getItem('paciente_nombre') || '';
+  const edad = sessionStorage.getItem('paciente_edad') || localStorage.getItem('paciente_edad') || '';
+  const sexo = sessionStorage.getItem('paciente_sexo') || localStorage.getItem('paciente_sexo') || '';
+  const centro = sessionStorage.getItem('paciente_centro') || localStorage.getItem('paciente_centro') || '';
+  const evaluador = sessionStorage.getItem('usuario_nombre') || localStorage.getItem('usuario_nombre') || '';
+
+  if(nombre) S.meta.nombre = nombre;
+  if(edad) S.meta.edad = edad;
+  if(sexo) S.meta.sexo = sexo;
+  if(centro) S.meta.centro = centro;
+  if(evaluador) S.meta.evaluador = evaluador;
+}
+
+load(); autocargarDatosPaciente(); pintarMeta(); renderTest(); upd(); calc();
 </script>
 </body>
 </html>
