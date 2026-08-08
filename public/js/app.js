@@ -789,6 +789,41 @@ const app = {
     window.location.href = `/cuida.html?paciente_id=${this.pacienteActivo.id}&token=${encodeURIComponent(token)}`;
   },
 
+  iniciarEGEP5() {
+    if (!this.pacienteActivo) {
+      this.mostrarToast('Primero debes crear o seleccionar un paciente', 'error');
+      return;
+    }
+    const token = localStorage.getItem('auth_token') || '';
+    const nombrePaciente = this.pacienteActivo.nombre ||
+                          this.pacienteActivo.name ||
+                          this.pacienteActivo.fullName ||
+                          'Paciente';
+
+    localStorage.setItem('paciente_nombre', nombrePaciente);
+    localStorage.setItem('paciente_id', this.pacienteActivo.id);
+    sessionStorage.setItem('paciente_nombre', nombrePaciente);
+    sessionStorage.setItem('pacienteSeleccionado', this.pacienteActivo.id);
+
+    if (this.pacienteActivo.edad || this.pacienteActivo.age) {
+      const edad = this.pacienteActivo.edad || this.pacienteActivo.age;
+      localStorage.setItem('paciente_edad', edad);
+      sessionStorage.setItem('paciente_edad', edad);
+    }
+
+    if (this.pacienteActivo.sexo || this.pacienteActivo.gender) {
+      const sexo = this.pacienteActivo.sexo || this.pacienteActivo.gender;
+      localStorage.setItem('paciente_sexo', sexo);
+      sessionStorage.setItem('paciente_sexo', sexo);
+    }
+
+    const usuarioLogueado = localStorage.getItem('usuario_nombre') || localStorage.getItem('nombre') || 'Evaluador';
+    sessionStorage.setItem('usuario_nombre', usuarioLogueado);
+
+    console.log('EGEP-5 - Paciente:', nombrePaciente, 'ID:', this.pacienteActivo.id);
+    window.location.href = `/micrositios/egep5/?paciente_id=${this.pacienteActivo.id}&token=${encodeURIComponent(token)}`;
+  },
+
   iniciarMBI() {
     if (!this.pacienteActivo) {
       this.mostrarToast('Primero debes crear o seleccionar un paciente', 'error');
