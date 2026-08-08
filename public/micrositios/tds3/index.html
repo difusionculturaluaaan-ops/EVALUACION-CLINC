@@ -513,10 +513,10 @@ async function cargarDesdePrueba(){
     if(subescalas && subescalas._datos_paciente){
       const dp = subescalas._datos_paciente;
       console.log('👤 Datos del paciente:', dp);
-      if(dp.nombre) document.getElementById('datos-nombre').value = dp.nombre;
-      if(dp.edad) document.getElementById('datos-edad').value = dp.edad;
-      if(dp.sexo) document.getElementById('datos-sexo').value = dp.sexo;
-      if(dp.fecha) document.getElementById('datos-fecha').value = dp.fecha;
+      if(dp.nombre) document.getElementById('d-nombre').value = dp.nombre;
+      if(dp.edad) document.getElementById('d-edad').value = dp.edad;
+      if(dp.sexo) document.getElementById('d-sexo').value = dp.sexo;
+      if(dp.fecha) document.getElementById('d-fecha').value = dp.fecha;
       state.datos = Object.assign(state.datos, dp);
     }
 
