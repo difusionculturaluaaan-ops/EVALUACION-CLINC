@@ -23,7 +23,9 @@ const { upload, uploadLogo } = require('../middleware/cloudinary');
 const router = express.Router();
 
 // Test IDs válidos en el sistema
-const VALID_TEST_IDS = ['SCL90R', 'HAMILTON', 'MMPI2PRO', 'CUIDA', 'ISRA', 'TDS3', 'PCLR', 'SCID2', 'MBI', 'CISNEROS'];
+// IMPORTANTE: Agregar aquí TODO nuevo test que se cree, en MAYÚSCULAS, exactamente como lo referencias en app.js
+// Este array se usa para validar que solo tests autorizados puedan guardarse en la BD
+const VALID_TEST_IDS = ['SCL90R', 'HAMILTON', 'MMPI2PRO', 'CUIDA', 'ISRA', 'EGEP5', 'TDS3', 'PCLR', 'SCID2', 'MBI', 'CISNEROS'];
 
 // POST /api/super-admin/login
 router.post('/login', async (req, res) => {
