@@ -4980,7 +4980,7 @@ const app = {
           </div>
 
           <div class="estudio-actions">
-            <button class="btn-ver-reporte ${(prueba.tipo.toUpperCase().includes('CUIDA') || prueba.tipo.toUpperCase().includes('MMPI') || prueba.tipo === 'MBI' || prueba.tipo === 'CISNEROS' || prueba.tipo === 'TDS') ? 'oculto' : ''}" data-prueba-id="${prueba.id}" onclick="app.abrirReportePrueba(this.getAttribute('data-prueba-id'))">
+            <button class="btn-ver-reporte ${(prueba.tipo.toUpperCase().includes('CUIDA') || prueba.tipo.toUpperCase().includes('MMPI') || prueba.tipo === 'MBI' || prueba.tipo === 'CISNEROS' || prueba.tipo === 'TDS' || prueba.tipo === 'EGEP5') ? 'oculto' : ''}" data-prueba-id="${prueba.id}" onclick="app.abrirReportePrueba(this.getAttribute('data-prueba-id'))">
               Ver Reporte
             </button>
             ${prueba.tipo.toUpperCase().includes('CUIDA') ? `
