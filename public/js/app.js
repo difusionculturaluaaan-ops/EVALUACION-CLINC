@@ -1888,7 +1888,7 @@ const app = {
         <div style="page-break-inside: avoid; margin-bottom: 6px;">
           <!-- Gráfico PCL-R -->
           <div style="margin-bottom: 6px; font-size: 9px;">
-            ${prueba.tipo === 'SCL90R' ? this.generarReporteSCL(prueba, subescalas) : prueba.tipo === 'PCLR' ? this.generarReportePCLR(prueba, subescalas) : prueba.tipo === 'SCID2' ? this.generarReporteSCID2(prueba, subescalas) : (prueba.tipo === 'MMPI2' || prueba.tipo === 'MMPI') ? this.generarReporteMMPI2(prueba, subescalas) : prueba.tipo === 'CUIDA' ? this.generarReporteCUIDA(prueba, subescalas) : prueba.tipo === 'ISRA' ? this.generarReporteISRA(prueba, subescalas) : prueba.tipo === 'MBI' ? this.generarReporteMBI(prueba, subescalas) : prueba.tipo === 'TDS' ? this.generarReporteTDS(prueba, subescalas) : prueba.tipo === 'EGEP5' ? this.generarReporteEGEP5(prueba, subescalas) : this.generarReporteGenerico(prueba, subescalas)}
+            ${prueba.tipo === 'SCL90R' ? this.generarReporteSCL(prueba, subescalas) : prueba.tipo === 'PCLR' ? this.generarReportePCLR(prueba, subescalas) : prueba.tipo === 'SCID2' ? this.generarReporteSCID2(prueba, subescalas) : (prueba.tipo === 'MMPI2' || prueba.tipo === 'MMPI') ? this.generarReporteMMPI2(prueba, subescalas) : prueba.tipo === 'CUIDA' ? this.generarReporteCUIDA(prueba, subescalas) : prueba.tipo === 'ISRA' ? this.generarReporteISRA(prueba, subescalas) : prueba.tipo === 'MBI' ? this.generarReporteMBI(prueba, subescalas) : prueba.tipo === 'TDS3' ? this.generarReporteTDS(prueba, subescalas) : prueba.tipo === 'EGEP5' ? this.generarReporteEGEP5(prueba, subescalas) : this.generarReporteGenerico(prueba, subescalas)}
           </div>
 
           <!-- INTERPRETACIÓN (dentro del contenedor principal) -->
@@ -2110,8 +2110,8 @@ const app = {
       // Guardar prueba actual para acceso posterior
       this.pruebaActiva = prueba;
 
-      // CASO ESPECIAL: TDS - Gráfico HTML+CSS de 10 factores
-      if (prueba.tipo === 'TDS') {
+      // CASO ESPECIAL: TDS3 - Gráfico HTML+CSS de 10 factores
+      if (prueba.tipo === 'TDS3') {
         const resultado = typeof prueba.resultado === 'string' ? JSON.parse(prueba.resultado) : prueba.resultado || {};
 
         if (resultado.factores) {
@@ -3333,7 +3333,7 @@ const app = {
         <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 8px;">${Number(mediaRef).toFixed(1)}</td>
         <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 7px; ${estado.color}">${estado.texto}</td>
       </tr>`;
-    } else if (['HAMILTON', 'ISRA', 'TDS'].includes(prueba.tipo)) {
+    } else if (['HAMILTON', 'ISRA', 'TDS3'].includes(prueba.tipo)) {
       const total = prueba.total || (Array.isArray(data) ? data.reduce((a, b) => a + (b || 0), 0) : 0);
       const mediaRef = data.length * (normasLocales?.media_por_item || 0.5);
       const estado = this.compararConReferencia(total, mediaRef);
@@ -3629,7 +3629,7 @@ const app = {
       },
       'HAMILTON': { media_por_item: 1.5 },
       'ISRA': { media_por_item: 0.5 },
-      'TDS': { media_por_item: 0.8 }
+      'TDS3': { media_por_item: 0.8 }
     };
     return normas[tipoTest] || {};
   },
@@ -4915,7 +4915,7 @@ const app = {
       'HAMILTON': '●',
       'MMPI2': '▲',
       'ISRA': '◆',
-      'TDS': '★',
+      'TDS3': '★',
       'TDS-2': '★',
       'PCLR': '◇',
       'EGEP5': '📋'
@@ -4926,7 +4926,7 @@ const app = {
       'HAMILTON': 'Hamilton (HAM-D)',
       'MMPI2': 'MMPI-2',
       'ISRA': 'ISRA (Ansiedad)',
-      'TDS': 'TDS (Sueño)',
+      'TDS3': 'TDS-3 (Sueño)',
       'TDS-2': 'TDS-2 (Sueño)',
       'PCLR': 'PCL-R (Psicopatía)',
       'EGEP5': 'EGEP-5'
@@ -4980,7 +4980,7 @@ const app = {
           </div>
 
           <div class="estudio-actions">
-            <button class="btn-ver-reporte ${(prueba.tipo.toUpperCase().includes('CUIDA') || prueba.tipo.toUpperCase().includes('MMPI') || prueba.tipo === 'MBI' || prueba.tipo === 'CISNEROS' || prueba.tipo === 'TDS' || prueba.tipo === 'EGEP5') ? 'oculto' : ''}" data-prueba-id="${prueba.id}" onclick="app.abrirReportePrueba(this.getAttribute('data-prueba-id'))">
+            <button class="btn-ver-reporte ${(prueba.tipo.toUpperCase().includes('CUIDA') || prueba.tipo.toUpperCase().includes('MMPI') || prueba.tipo === 'MBI' || prueba.tipo === 'CISNEROS' || prueba.tipo === 'TDS3' || prueba.tipo === 'EGEP5') ? 'oculto' : ''}" data-prueba-id="${prueba.id}" onclick="app.abrirReportePrueba(this.getAttribute('data-prueba-id'))">
               Ver Reporte
             </button>
             ${prueba.tipo.toUpperCase().includes('CUIDA') ? `
@@ -4993,7 +4993,7 @@ const app = {
                 Abrir JSON
               </button>
             ` : ''}
-            ${prueba.tipo === 'TDS' ? `
+            ${prueba.tipo === 'TDS3' ? `
               <button class="btn-abrir-evaluacion" onclick="app.abrirEvaluacionTDS3(${prueba.id})">
                 Abrir JSON
               </button>
