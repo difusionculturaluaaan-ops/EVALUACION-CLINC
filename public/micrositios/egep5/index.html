@@ -1178,8 +1178,51 @@ function updateThemeButton(theme){
   if(btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
 }
 
+async function cargarDesdePrueba(){
+  try{
+    const params=new URLSearchParams(window.location.search);
+    const modo=params.get('modo');
+    const pruebaId=params.get('prueba_id');
+    const token=params.get('token');
+
+    if(modo!=='cargar'||!pruebaId||!token) return;
+
+    const res=await fetch(`/api/pruebas/${pruebaId}`,{
+      headers:{'Authorization':`Bearer ${token}`}
+    });
+
+    if(!res.ok) throw new Error(`Error ${res.status}`);
+    const prueba=await res.json();
+
+    if(prueba.tipo!=='EGEP5') return;
+
+    // Restaurar datos desde prueba
+    S.resp={};
+    if(Array.isArray(prueba.data)){
+      prueba.data.forEach(item=>{
+        S.resp[item.item]=item.respuesta;
+      });
+    }
+
+    // Restaurar meta
+    if(prueba.subescalas&&prueba.subescalas.meta){
+      S.meta=prueba.subescalas.meta;
+    }
+
+    save();
+  }catch(err){
+    console.warn('No se pudo cargar la prueba previa:',err);
+  }
+}
+
 initTheme();
-load(); autocargarDatosPaciente(); pintarMeta(); renderTest(); upd(); calc();
+load();
+await cargarDesdePrueba();
+autocargarDatosPaciente();
+pintarMeta();
+renderTest();
+upd();
+calc();
 </script>
 </body>
 </html>
