@@ -264,6 +264,17 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
   .stat{border-color:#ccc!important;background:#fff!important;padding:8px 6px}.stat .n{color:#111!important;font-size:18pt}
   .sect-h .tag{background:#fff;color:#111;border-color:#999}
 }
+
+/* ---------- LIGHT MODE ---------- */
+html[data-theme="light"]{
+  --bg:#f8f9fa; --bg-2:#f0f2f5; --surface:#fff; --surface-2:#f5f7fa; --surface-3:#efefef;
+  --border:#e0e3e8; --border-soft:#ececec;
+  --text:#1a1d23; --text-dim:#495057; --text-mute:#6c757d;
+  --accent:#3b82f6; --accent-2:#2563eb; --accent-soft:rgba(59,130,246,.12); --accent-line:rgba(59,130,246,.32);
+  --green:#16a34a; --green-soft:rgba(22,163,74,.10); --green-line:rgba(22,163,74,.28);
+  --red:#dc2626; --red-soft:rgba(220,38,38,.10); --red-line:rgba(220,38,38,.28);
+  --amber:#d97706; --amber-soft:rgba(217,119,6,.10);
+}
 </style>
 </head>
 <body>
@@ -277,6 +288,7 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
     <p>Evaluación Global de Estrés Postraumático · Sistema de captura y corrección</p>
   </div>
   <div class="badge" id="badge">58 ítems · DSM-5</div>
+  <button id="themeToggle" onclick="toggleTheme()" style="background:none;border:none;cursor:pointer;padding:8px;font-size:20px;display:flex;align-items:center;justify-content:center;border-radius:6px;transition:all .2s;hover:background:var(--surface-2);" title="Cambiar tema">🌙</button>
 </div>
 
 <div class="tabs no-print" role="tablist">
@@ -1147,6 +1159,26 @@ function autocargarDatosPaciente(){
   if(evaluador) S.meta.evaluador = evaluador;
 }
 
+function initTheme(){
+  const savedTheme = localStorage.getItem('egep5_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  updateThemeButton(savedTheme);
+}
+
+function toggleTheme(){
+  const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem('egep5_theme', newTheme);
+  updateThemeButton(newTheme);
+}
+
+function updateThemeButton(theme){
+  const btn = $('themeToggle');
+  if(btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+}
+
+initTheme();
 load(); autocargarDatosPaciente(); pintarMeta(); renderTest(); upd(); calc();
 </script>
 </body>
