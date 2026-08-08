@@ -1,5 +1,5 @@
 const express = require('express');
-const { getTenantById, query } = require('../db/schema');
+const { getTenantById, pool } = require('../db/schema');
 const middlewareAutenticacion = require('../middleware/autenticacion');
 const router = express.Router();
 
@@ -15,7 +15,7 @@ router.get('/tests-habilitados/list', middlewareAutenticacion, async (req, res) 
       return res.status(401).json({ error: 'No hay tenant asociado' });
     }
 
-    const result = await query(
+    const result = await pool.query(
       'SELECT tests_habilitados FROM tenants WHERE id = $1',
       [tenantId]
     );
