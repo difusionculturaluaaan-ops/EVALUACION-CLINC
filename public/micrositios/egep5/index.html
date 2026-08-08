@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EGEP-5 · Sistema de Evaluación Psicológica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c10; --bg-2:#0d1015; --surface:#12161d; --surface-2:#171c24; --surface-3:#1c222b;
+  --border:#232a34; --border-soft:#1a2029;
+  --text:#e6eaf0; --text-dim:#8b95a5; --text-mute:#5d6675;
+  --accent:#3b82f6; --accent-2:#60a5fa; --accent-soft:rgba(59,130,246,.12); --accent-line:rgba(59,130,246,.32);
+  --green:#22c55e; --green-soft:rgba(34,197,94,.10); --green-line:rgba(34,197,94,.28);
+  --red:#ef4444; --red-soft:rgba(239,68,68,.10); --red-line:rgba(239,68,68,.28);
+  --amber:#f59e0b; --amber-soft:rgba(245,158,11,.10);
+  --serif:'DM Serif Display',Georgia,serif;
+  --sans:'DM Sans',system-ui,-apple-system,sans-serif;
+  --mono:'JetBrains Mono','SF Mono',monospace;
+  --r:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--serif);font-weight:400;letter-spacing:.01em}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px;border-radius:4px}
+
+/* ---------- HEADER & TABS ---------- */
+.hdr{background:var(--bg-2);border-bottom:1px solid var(--border);padding:18px 28px;display:flex;align-items:center;gap:20px;position:relative}
+.logo{width:66px;height:66px;border-radius:14px;background:linear-gradient(150deg,#4b8ef7,#2563eb 60%,#1e40af);display:flex;align-items:center;justify-content:center;text-align:center;font-size:8px;font-weight:700;letter-spacing:.06em;line-height:1.3;color:#fff;flex:none;box-shadow:0 4px 20px rgba(37,99,235,.28)}
+.hdr-mid{flex:1;text-align:center}
+.hdr-mid h1{font-size:30px}
+.hdr-mid p{color:var(--text-dim);font-size:12.5px;margin-top:3px}
+.badge{font-family:var(--mono);font-size:11px;color:var(--accent-2);background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:6px;padding:5px 11px;white-space:nowrap}
+.tabs{background:var(--bg-2);border-bottom:1px solid var(--border);display:flex;gap:4px;padding:0 28px;overflow-x:auto;position:sticky;top:0;z-index:50}
+.tab{background:none;border:none;border-bottom:2px solid transparent;padding:14px 14px 12px;color:var(--text-mute);cursor:pointer;display:flex;align-items:center;gap:9px;white-space:nowrap;font-size:13.5px;transition:color .15s}
+.tab:hover{color:var(--text-dim)}
+.tab.on{color:var(--text);border-bottom-color:var(--accent)}
+.tab .n{width:19px;height:19px;border-radius:5px;background:var(--surface-3);color:var(--text-mute);font-family:var(--mono);font-size:10px;display:flex;align-items:center;justify-content:center;flex:none}
+.tab.on .n{background:var(--accent-soft);color:var(--accent-2)}
+
+/* ---------- LAYOUT & CARDS ---------- */
+.wrap{max-width:1340px;margin:0 auto;padding:26px 28px 80px}
+.pane{display:none}.pane.on{display:block;animation:fade .2s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+@media(max-width:980px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:22px}
+.card-h{background:var(--surface-2);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.card-h h2{font-size:17px;display:flex;align-items:center;gap:10px}
+.card-h .hint{color:var(--text-mute);font-size:11.5px}
+.gl{color:var(--accent);font-size:10px}
+.card-b{padding:20px}
+.note{background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:var(--r);padding:14px 18px;display:flex;gap:13px;margin-bottom:22px;font-size:13px;color:var(--text-dim);line-height:1.6}
+.note b{color:var(--text)}
+.note .i{width:20px;height:20px;border-radius:5px;background:var(--accent);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px}
+
+/* ---------- FORM & BUTTONS ---------- */
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.frow{grid-template-columns:1fr}}
+.f{margin-bottom:16px}
+.f label{display:block;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-mute);margin-bottom:7px;font-weight:500}
+.f input,.f select,.f textarea{width:100%;background:var(--bg-2);border:1px solid var(--border);border-radius:7px;padding:10px 12px;color:var(--text);transition:border-color .15s}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--accent);outline:none}
+.f textarea{resize:vertical;min-height:88px;line-height:1.6}
+.btns{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:1px solid var(--border);background:var(--surface-2);border-radius:7px;padding:9px 15px;cursor:pointer;font-size:13px;font-weight:500;transition:all .15s;display:inline-flex;align-items:center;gap:7px}
+.btn:hover{background:var(--surface-3);border-color:#313a47}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.pri:hover{background:#2f76ee}
+.btn.dgr{color:var(--red);border-color:var(--red-line);background:var(--red-soft)}
+.btn.dgr:hover{background:rgba(239,68,68,.18)}
+
+/* ---------- PROGRESO ---------- */
+.prog-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px}
+.prog-top span{color:var(--text-dim);font-size:13px}
+.prog-top .v{font-family:var(--mono);font-size:14px}
+.prog-top .v b{color:var(--accent-2)}
+.bar{height:6px;background:var(--bg-2);border-radius:99px;overflow:hidden;border:1px solid var(--border-soft)}
+.bar>i{display:block;height:100%;background:linear-gradient(90deg,#2563eb,#60a5fa);border-radius:99px;width:0;transition:width .3s}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
+.stat{border-radius:99px;padding:16px 10px;text-align:center;border:1px solid;border-radius:9px}
+.stat .n{font-family:var(--mono);font-size:24px;font-weight:700;line-height:1}
+.stat .l{font-size:11px;color:var(--text-dim);margin-top:6px}
+.stat.g{background:var(--green-soft);border-color:var(--green-line)}.stat.g .n{color:var(--green)}
+.stat.r{background:var(--red-soft);border-color:var(--red-line)}.stat.r .n{color:var(--red)}
+.stat.b{background:var(--accent-soft);border-color:var(--accent-line)}.stat.b .n{color:var(--accent-2)}
+
+/* ---------- SECCIONES DE ITEMS Y ALTO CONTRASTE ---------- */
+.sect-h{display:flex;align-items:center;gap:12px;margin:26px 0 14px;padding-bottom:9px;border-bottom:1px solid var(--border-soft)}
+.sect-h .tag{font-family:var(--mono);font-size:10px;letter-spacing:.06em;background:var(--accent-soft);color:var(--accent-2);border:1px solid var(--accent-line);border-radius:5px;padding:3px 8px}
+.sect-h h3{font-size:16px}
+.sect-h .rng{font-family:var(--mono);font-size:11px;color:var(--text-mute);margin-left:auto}
+
+.it{display:flex;align-items:center;gap:14px;padding:9px 12px;border:1px solid var(--border-soft);border-bottom:none;background:var(--surface)}
+.it:first-of-type{border-radius:8px 8px 0 0}
+.it:last-of-type{border-radius:0 0 8px 8px;border-bottom:1px solid var(--border-soft)}
+.it:nth-child(even){background:var(--surface-2)}
+.it.done{border-left:2px solid var(--accent-line)}
+.it .num{font-family:var(--mono);font-size:11.5px;color:var(--text-mute);width:34px;flex:none}
+.it.done .num{color:var(--accent-2)}
+.it .txt{flex:1;min-width:0;font-size:13.5px;color:var(--text);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.it .ctl{display:flex;gap:6px;flex:none;align-items:center}
+
+.sn{border:1px solid var(--border);background:var(--bg-2);border-radius:6px;width:36px;height:29px;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--text-mute);cursor:pointer;transition:all .12s}
+.sn:hover{border-color:#37414f;color:var(--text-dim)}
+.sn.on-si{background:var(--green-soft);border-color:var(--green-line);color:var(--green)}
+.sn.on-no{background:var(--red-soft);border-color:var(--red-line);color:var(--red)}
+.gm{display:flex;gap:3px;padding-left:10px;margin-left:6px;border-left:1px solid var(--border-soft)}
+.gm .g{width:26px;height:29px;border:1px solid var(--border);background:var(--bg-2);border-radius:5px;font-family:var(--mono);font-size:11px;color:var(--text-mute);cursor:pointer;transition:all .12s}
+.gm .g:hover{border-color:#37414f}
+.gm .g.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+.gm.off{opacity:.28;pointer-events:none}
+
+/* Eventos 1-11 (Contenedor con scroll responsivo) */
+.ev-scroll-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.ev-table-min {
+  min-width: 620px;
+}
+.ev-head{display:grid;grid-template-columns:34px 1fr 90px 90px 90px 110px;gap:8px;padding:0 12px 9px;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text);text-align:center;align-items:end}
+.ev-head .l{text-align:left}
+.ev{display:grid;grid-template-columns:34px 1fr 90px 90px 90px 110px;gap:8px;align-items:center;padding:8px 12px;border:1px solid var(--border-soft);border-bottom:none;background:var(--surface)}
+.ev:first-of-type{border-radius:8px 8px 0 0}
+.ev:last-of-type{border-radius:0 0 8px 8px;border-bottom:1px solid var(--border-soft)}
+.ev:nth-child(even){background:var(--surface-2)}
+.ev .num{font-family:var(--mono);font-size:11.5px;color:var(--text-mute)}
+.ev.mk .num{color:var(--accent-2)}
+.ev .txt{font-size:13.5px;color:var(--text);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* CAJAS DE VERIFICACIÓN ALTO CONTRASTE */
+.cb {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #6b7280;
+  background: #1f2937;
+  border-radius: 6px;
+  cursor: pointer;
+  margin: 0 auto;
+  display: block;
+  transition: all .15s;
+  color: transparent;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+}
+.cb:hover { border-color: #93c5fd; background: #374151; }
+.cb.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* radios */
+.rad{display:flex;flex-wrap:wrap;gap:7px;padding:11px 12px;border:1px solid var(--border-soft);border-radius:0 0 8px 8px;background:var(--bg-2);margin-top:-1px}
+.rad button{border:1px solid var(--border);background:var(--surface);border-radius:6px;padding:7px 12px;font-size:12px;color:var(--text-dim);cursor:pointer;transition:all .12s}
+.rad button:hover{border-color:#37414f;color:var(--text)}
+.rad button.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-2);font-weight:500}
+.qh{display:flex;align-items:center;gap:14px;padding:10px 12px;border:1px solid var(--border-soft);border-radius:8px 8px 0 0;background:var(--surface);margin-top:12px}
+.qh .num{font-family:var(--mono);font-size:11.5px;color:var(--text-mute);width:34px;flex:none}
+.qh.done .num{color:var(--accent-2)}
+.qh .txt{font-size:13.5px;color:var(--text);font-weight:500}
+
+/* ---------- RESULTADOS & PERFIL ---------- */
+.tbl-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:480px}
+.tbl th{text-align:left;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-mute);font-weight:500;padding:0 12px 10px;border-bottom:1px solid var(--border)}
+.tbl td{padding:11px 12px;border-bottom:1px solid var(--border-soft)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl .mono{font-family:var(--mono);font-size:12.5px}
+.tbl .sc{color:var(--text-mute);font-family:var(--mono);font-size:11px}
+.pill{display:inline-block;font-family:var(--mono);font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:5px;border:1px solid}
+.pill.si{background:var(--green-soft);border-color:var(--green-line);color:var(--green)}
+.pill.no{background:var(--red-soft);border-color:var(--red-line);color:var(--red)}
+.pill.inc{background:var(--amber-soft);border-color:rgba(245,158,11,.3);color:var(--amber)}
+.pill.nt{background:var(--surface-3);border-color:var(--border);color:var(--text-mute)}
+
+.dx{border-radius:var(--r);padding:24px;text-align:center;border:1px solid;margin-bottom:22px}
+.dx .k{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-mute);margin-bottom:9px}
+.dx .v{font-family:var(--serif);font-size:30px;line-height:1.15}
+.dx .s{font-size:12.5px;color:var(--text-dim);margin-top:9px;max-width:560px;margin-inline:auto;line-height:1.6}
+.dx.si{background:var(--red-soft);border-color:var(--red-line)}.dx.si .v{color:#f87171}
+.dx.no{background:var(--green-soft);border-color:var(--green-line)}.dx.no .v{color:#4ade80}
+.dx.inc{background:var(--amber-soft);border-color:rgba(245,158,11,.3)}.dx.inc .v{color:var(--amber)}
+
+.esp{display:flex;align-items:center;gap:11px;padding:12px 14px;border:1px solid var(--border-soft);border-radius:8px;background:var(--bg-2);margin-bottom:9px}
+.esp .dot{width:9px;height:9px;border-radius:99px;background:var(--surface-3);border:1px solid var(--border);flex:none}
+.esp.on{border-color:var(--accent-line);background:var(--accent-soft)}
+.esp.on .dot{background:var(--accent);border-color:var(--accent);box-shadow:0 0 8px var(--accent)}
+.esp .t{font-size:13px}
+.esp .d{font-family:var(--mono);font-size:10.5px;color:var(--text-mute);margin-left:auto;flex:none}
+
+.chart{background:var(--bg-2);border:1px solid var(--border-soft);border-radius:8px;padding:18px 10px 10px}
+.chart svg{width:100%;height:auto;display:block}
+.lgd{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;margin-top:14px;font-size:11.5px;color:var(--text-mute)}
+.lgd i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:middle}
+
+.empty{text-align:center;padding:60px 20px;color:var(--text-mute)}
+.empty .b{font-family:var(--serif);font-size:19px;color:var(--text-dim);margin-bottom:7px}
+.empty .s{font-size:13px;max-width:400px;margin:0 auto;line-height:1.6}
+
+/* ---------- INTERPRETACIÓN & UTILES ---------- */
+.interp{font-size:14px;line-height:1.75;color:var(--text-dim)}
+.interp h4{font-family:var(--serif);font-size:16px;color:var(--text);margin:22px 0 9px;font-weight:400}
+.interp h4:first-child{margin-top:0}
+.interp p{margin-bottom:11px}
+.interp b{color:var(--text);font-weight:500}
+.interp ul{margin:0 0 11px 19px}
+.interp li{margin-bottom:5px}
+.interp .q{border-left:2px solid var(--accent-line);padding-left:14px;color:var(--text-mute);font-size:12.5px;margin:16px 0}
+
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:11px 18px;font-size:13px;z-index:200;opacity:0;transition:all .25s;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.toast.on{transform:translateX(-50%) translateY(0);opacity:1}
+.toast.ok{border-color:var(--green-line)}.toast.err{border-color:var(--red-line)}
+
+.foot{text-align:center;padding:26px;color:var(--text-mute);font-size:11px;line-height:1.7;border-top:1px solid var(--border-soft);margin-top:30px}
+
+/* ---------- REGLAS DE IMPRESIÓN (PDF) ---------- */
+@media print{
+  @page{size:A4;margin:10mm 12mm}
+  body{background:#fff;color:#111;font-size:9pt}
+  .tabs,.hdr .badge,.btns,.no-print,.note,.foot{display:none!important}
+  
+  .hdr{background:#fff;border-bottom:2px solid #111;padding:0 0 6px;margin-bottom:10px}
+  .logo{display:none}
+  .hdr-mid{text-align:left}.hdr-mid h1{font-size:16pt;color:#111;margin:0}.hdr-mid p{color:#555;font-size:9pt;margin:2px 0 0}
+  .wrap{max-width:none;padding:0}
+  
+  /* Control de páginas en PDF: p1 y p3 fluyen seguidos en la Página 1 */
+  .pane{display:block!important;page-break-before:auto!important;margin-bottom:10px}
+  .pane#p1{page-break-before:avoid!important;margin-bottom:10px}
+  .pane#p2{display:none!important} 
+  .pane#p3{page-break-before:avoid!important;margin-bottom:10px}
+  .pane#p4{page-break-before:always!important}
+  .pane#p5{page-break-before:always!important}
+  
+  /* Bloque ultra-compacto de Datos del Evaluado en 3 columnas para PDF */
+  #p1 .card{background:#fff;border:1px solid #999;box-shadow:none;margin-bottom:10px}
+  #p1 .card-h{background:#f2f2f2;border-bottom:1px solid #999;padding:5px 12px}
+  #p1 .card-h h2{color:#111;font-size:10pt;font-weight:700}
+  #p1 .card-b{padding:8px 12px}
+  #p1 .grid2{display:block}
+  #p1 .frow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px 12px;margin-bottom:4px}
+  #p1 .frow:last-child{margin-bottom:0}
+  #p1 .f{margin-bottom:2px}
+  #p1 .f label{color:#555;font-size:7.5pt;margin-bottom:2px;letter-spacing:0;font-weight:600}
+  #p1 .f input,#p1 .f select,#p1 .f textarea{background:#fff;border:1px solid #ccc;color:#111;padding:2px 6px;font-size:9pt;height:24px;border-radius:4px}
+  
+  /* Formato compacto de tarjetas de resultados */
+  .card{background:#fff;border:1px solid #bbb;box-shadow:none;page-break-inside:avoid;margin-bottom:10px}
+  .card-h{background:#f2f2f2;border-bottom:1px solid #bbb;padding:6px 12px}.card-h h2{color:#111;font-size:10.5pt}
+  .card-b{padding:8px 12px}
+  .tbl td,.tbl th{border-color:#ddd;color:#111;padding:5px 8px}
+  .tbl .sc{color:#666}
+  .dx{border:1.5px solid #111;background:#fff!important;padding:12px;margin-bottom:10px}.dx .v{color:#111!important;font-size:18pt;line-height:1.2}.dx .s,.dx .k{color:#444;font-size:8.5pt}
+  .pill{border-color:#888!important;color:#111!important;background:#fff!important;padding:1px 6px}
+  .pill.si{background:#e8f6ec!important}.pill.no{background:#fdeaea!important}
+  .pill.inc{background:#fdf3e2!important}
+  .chart{background:#fff;border-color:#ccc;padding:10px}
+  .interp{color:#222;font-size:9.5pt}.interp h4{color:#111;margin:12px 0 4px}.interp b{color:#000}
+  .esp{background:#fff;border-color:#ccc;padding:6px 10px;margin-bottom:5px}
+  .stat{border-color:#ccc!important;background:#fff!important;padding:8px 6px}.stat .n{color:#111!important;font-size:18pt}
+  .sect-h .tag{background:#fff;color:#111;border-color:#999}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="logo">EVALUACIÓN<br>PSICOLÓGICA</div>
+  <div class="hdr-mid">
+    <h1>EGEP-5</h1>
+    <p>Evaluación Global de Estrés Postraumático · Sistema de captura y corrección</p>
+  </div>
+  <div class="badge" id="badge">58 ítems · DSM-5</div>
+</div>
+
+<div class="tabs no-print" role="tablist">
+  <button class="tab on" role="tab" aria-selected="true" data-p="p1"><span class="n">1</span> Ingreso de Datos</button>
+  <button class="tab" role="tab" aria-selected="false" data-p="p2"><span class="n">2</span> Aplicar Test</button>
+  <button class="tab" role="tab" aria-selected="false" data-p="p3"><span class="n">3</span> Resultados</button>
+  <button class="tab" role="tab" aria-selected="false" data-p="p4"><span class="n">4</span> Perfil Visual</button>
+  <button class="tab" role="tab" aria-selected="false" data-p="p5"><span class="n">5</span> Interpretación</button>
+</div>
+
+<div class="wrap">
+
+<!-- ============ 1 · INGRESO DE DATOS ============ -->
+<div class="pane on" id="p1">
+  <div class="note no-print">
+    <div class="i">i</div>
+    <div><b>Instrucciones:</b> complete los datos del paciente. En la pestaña <b>Aplicar Test</b> podrá describir el evento precipitante (Ítem 12) y capturar las respuestas.</div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-h"><h2><span class="gl">■</span> Datos del Evaluado</h2></div>
+      <div class="card-b">
+        <div class="frow">
+          <div class="f"><label for="m_nombre">Nombre y apellidos</label><input id="m_nombre" placeholder="Apellido, Nombre"></div>
+          <div class="f"><label for="m_fecha">Fecha de evaluación</label><input type="date" id="m_fecha"></div>
+        </div>
+        <div class="frow">
+          <div class="f"><label for="m_edad">Edad</label><input id="m_edad" placeholder="Ej. 34" inputmode="numeric"></div>
+          <div class="f"><label for="m_sexo">Sexo</label><select id="m_sexo"><option value="">—</option><option>Varón</option><option>Mujer</option><option>Otro / No especifica</option></select></div>
+        </div>
+        <div class="frow">
+          <div class="f"><label for="m_centro">Centro</label><input id="m_centro" placeholder="Ej. Clínica X"></div>
+          <div class="f"><label for="m_evaluador">Responsable de la evaluación</label><input id="m_evaluador" placeholder="Nombre del psicólogo"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COLUMNA 2: Herramientas del sistema -->
+    <div class="no-print">
+      <div class="card">
+        <div class="card-h"><h2><span class="gl">▲</span> Progreso de Respuestas</h2></div>
+        <div class="card-b">
+          <div class="prog-top"><span>Ítems respondidos</span><span class="v"><b id="pg_n">0</b> <i>/ 46</i></span></div>
+          <div class="bar"><i id="pg_bar"></i></div>
+          <div class="stats">
+            <div class="stat b"><div class="n" id="st_ev">0</div><div class="l">Acontecimientos</div></div>
+            <div class="stat g"><div class="n" id="st_si">0</div><div class="l">Sí</div></div>
+            <div class="stat r"><div class="n" id="st_no">0</div><div class="l">No</div></div>
+          </div>
+          <div class="btns">
+            <button class="btn pri" onclick="go('p3');calc()">→ Calcular Resultados</button>
+            <button class="btn" onclick="pick(impJSON)">↓ Importar JSON</button>
+            <button class="btn dgr" onclick="limpiar()">× Limpiar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h2><span class="gl">◆</span> Material del Instrumento</h2><span class="hint">integrado</span></div>
+        <div class="card-b">
+          <p style="font-size:12.5px;color:var(--text-dim);line-height:1.65;margin-bottom:14px">
+            Los <b>enunciados del test y los baremos normativos ya están integrados</b> en el sistema. La herramienta es 100% autónoma y lista para operar sin dependencias externas.
+          </p>
+          <div style="margin-top:14px;display:flex;gap:9px;flex-wrap:wrap">
+            <span class="pill si">Enunciados: Integrados</span>
+            <span class="pill si">Baremos: Integrados</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 2 · APLICAR TEST ============ -->
+<div class="pane" id="p2">
+  <div class="note no-print">
+    <div class="i">i</div>
+    <div><b>Captura:</b> marque las respuestas del paciente. En los ítems 27 a 49, el <b>grado de molestia</b> (0 = Ninguna … 4 = Extrema) se habilita solo al marcar <b>Sí</b>.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h2><span class="gl">■</span> Sección 1 · Acontecimientos</h2><span class="hint">ítems 1–26</span></div>
+    <div class="card-b">
+      <div class="sect-h" style="margin-top:0"><span class="tag">A</span><h3>Historia de acontecimientos</h3><span class="rng">ítems 1–11</span></div>
+      
+      <!-- TABLA CON SCROLL RESPONSIVO PARA MÓVILES -->
+      <div class="ev-scroll-container">
+        <div class="ev-table-min">
+          <div class="ev-head"><span></span><span class="l">Acontecimiento</span><span>Me sucedió</span><span>Lo presencié</span><span>Alguien<br>cercano</span><span>¿El más<br>impactante?</span></div>
+          <div id="evs"></div>
+        </div>
+      </div>
+      
+      <!-- ITEM 12 (Descripción) -->
+      <div class="f" style="margin-top:18px; margin-bottom:0; padding-top:10px; border-top:1px solid var(--border-soft)"><label for="m_evento" style="color:var(--text);font-weight:700">Ítem 12: Descripción del Acontecimiento</label><textarea id="m_evento" placeholder="Describa brevemente el acontecimiento precipitante..."></textarea></div>
+
+      <div class="sect-h"><span class="tag">A</span><h3>Caracterización del acontecimiento</h3><span class="rng">ítems 13–15</span></div>
+      <div id="q13"></div><div id="q14"></div><div id="q15"></div>
+
+      <div class="sect-h"><span class="tag">A</span><h3>Reacción y naturaleza del suceso</h3><span class="rng">ítems 16–26</span></div>
+      <div id="s1626"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h2><span class="gl">■</span> Sección 2 · Síntomas</h2><span class="hint">ítems 27–51</span></div>
+    <div class="card-b">
+      <div class="sect-h" style="margin-top:0"><span class="tag">I</span><h3>Síntomas intrusivos</h3><span class="rng">ítems 27–31 · PD 0–20</span></div>
+      <div id="sI"></div>
+      <div class="sect-h"><span class="tag">E</span><h3>Evitación</h3><span class="rng">ítems 32–33 · PD 0–8</span></div>
+      <div id="sE"></div>
+      <div class="sect-h"><span class="tag">C</span><h3>Alteraciones cognitivas y del estado de ánimo</h3><span class="rng">ítems 34–40 · PD 0–28</span></div>
+      <div id="sC"></div>
+      <div class="sect-h"><span class="tag">A</span><h3>Alteraciones en la activación y reactividad</h3><span class="rng">ítems 41–46 · PD 0–24</span></div>
+      <div id="sA"></div>
+      <div class="sect-h"><span class="tag">D</span><h3>Síntomas disociativos</h3><span class="rng">ítems 47–49 · especificación</span></div>
+      <div id="sD"></div>
+      <div class="sect-h"><span class="tag">F</span><h3>Duración y latencia</h3><span class="rng">ítems 50–51</span></div>
+      <div id="q50"></div><div id="q51"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h2><span class="gl">■</span> Sección 3 · Funcionamiento</h2><span class="hint">ítems 52–58 · PD 0–7</span></div>
+    <div class="card-b"><div id="sF"></div></div>
+  </div>
+
+  <div class="btns no-print" style="justify-content:flex-end">
+    <button class="btn pri" onclick="go('p3');calc()">→ Calcular Resultados</button>
+  </div>
+</div>
+
+<!-- ============ 3 · RESULTADOS ============ -->
+<div class="pane" id="p3"><div id="res"></div></div>
+
+<!-- ============ 4 · PERFIL VISUAL ============ -->
+<div class="pane" id="p4"><div id="perf"></div></div>
+
+<!-- ============ 5 · INTERPRETACIÓN ============ -->
+<div class="pane" id="p5"><div id="intp"></div></div>
+
+<div class="foot">
+  EGEP-5 · Sistema de Evaluación Global de Estrés Postraumático (DSM-5)
+</div>
+
+<div class="toast" id="toast"></div>
+<input type="file" id="fpick" accept=".json,application/json" style="display:none">
+
+<script>
+/* =========================================================================
+   EGEP-5 · Motor de captura y corrección (Datos Normativos Integrados)
+   (Arquitectura Monolítica basada en Funciones Puras)
+   ========================================================================= */
+
+const DEFAULT_TEXTS = {
+  eventos: {
+    1: "Accidente grave de tráfico",
+    2: "Desastre natural (terremoto, inundación, incendio)",
+    3: "Violencia de pareja o doméstica",
+    4: "Abuso o agresión sexual",
+    5: "Enfermedad grave o lesión seria",
+    6: "Muerte traumática de un ser querido",
+    7: "Combate militar o zona de guerra",
+    8: "Tortura o cautiverio",
+    9: "Accidente grave con lesiones",
+    10: "Amenaza de muerte o lesión grave",
+    11: "Otro acontecimiento traumático"
+  },
+  items: {
+    13: "Valore la gravedad del acontecimiento",
+    14: "¿Cuándo sufrió ese acontecimiento por primera vez?",
+    15: "Ese acontecimiento ocurrió...",
+    16: "Sintió intenso miedo, desamparo u horror",
+    17: "Actuaba o se sentía como si el acontecimiento estuviera sucediendo nuevamente",
+    18: "Tenía reacciones físicas intensas (sudor, aceleración cardíaca)",
+    19: "Tuvo dificultad para respirar o sensación de asfixia",
+    20: "Perdió momentáneamente la conciencia o se desconectó",
+    21: "Tuvo sensaciones de adormecimiento o despersonalización",
+    22: "Tuvo dificultades para hablar o movimiento",
+    23: "Experimentó parálisis temporal",
+    24: "Tuvo amnesia (no recuerda partes del evento)",
+    25: "Sintió confusión durante el evento",
+    26: "Creyó que iba a morir o sufrir un daño grave",
+    27: "Recuerdos desagradables o repetitivos sobre el acontecimiento",
+    28: "Sueños desagradables o repetitivos sobre el acontecimiento",
+    29: "Actuaba o sentía como si el acontecimiento estuviera sucediendo de nuevo",
+    30: "Se sentía molesto cuando algo le recordaba el acontecimiento",
+    31: "Tenía reacciones físicas fuertes (sudor, aceleración cardíaca) cuando algo le recordaba",
+    32: "Evitaba pensamientos o conversaciones sobre el acontecimiento",
+    33: "Evitaba actividades, lugares o personas que le recordaban el acontecimiento",
+    34: "Tuvo dificultad en recordar partes importantes del acontecimiento",
+    35: "Tiene creencias muy negativas sobre sí mismo, otras personas o el mundo",
+    36: "Se culpaba injustificadamente a sí mismo o a otras personas",
+    37: "Tiene sentimientos negativos persistentes (miedo, ira, culpa, vergüenza)",
+    38: "Ha disminuido bastante su interés en las actividades que antes disfrutaba",
+    39: "Se siente distanciado de otras personas",
+    40: "Tiene dificultad en experimentar emociones positivas",
+    41: "Ha estado irritable o ha tenido arrebatos de ira",
+    42: "Ha actuado de forma temeraria o autodestructiva",
+    43: "Ha estado constantemente en guardia o alerta",
+    44: "Se sobresaltaba con facilidad",
+    45: "Ha tenido dificultad en concentrarse",
+    46: "Ha tenido dificultad en conciliar o mantener el sueño",
+    47: "Ha actuado de forma impulsiva o sin pensar en las consecuencias",
+    48: "Ha tenido comportamientos autodestructivos o autolesivos",
+    49: "Ha mostrado una disminución significativa en su responsabilidad",
+    50: "¿Desde cuándo experimenta estos problemas?",
+    51: "¿Cuánto tiempo tardaron en aparecer estos problemas tras el acontecimiento?",
+    52: "Consultar con un profesional de la salud",
+    53: "Tomar medicación más de una vez por semana",
+    54: "Usar alcohol o drogas para hacer frente a los síntomas",
+    55: "Impacto negativo en la vida laboral o académica",
+    56: "Impacto negativo en las relaciones sociales",
+    57: "Impacto negativo en las relaciones familiares o de pareja",
+    58: "Impacto negativo en otros aspectos importantes de la vida"
+  }
+};
+
+const DEFAULT_BAREMOS = {
+  nombre: "Baremos Generales",
+  _instrucciones: "Tabla normativa extraída del manual EGEP-5. Conversión de PD a Percentiles.",
+  filas: [
+    { pc: 99, I: "19-20", E: "8", C: "25-28", A: "22-24", Total: "70-80", F: "7" },
+    { pc: 98, I: "18", E: "", C: "24", A: "21", Total: "68-69", F: "" },
+    { pc: 97, I: "17", E: "", C: "", A: "", Total: "66-67", F: "" },
+    { pc: 96, I: "", E: "", C: "23", A: "20", Total: "64-65", F: "" },
+    { pc: 95, I: "", E: "7", C: "", A: "", Total: "62-63", F: "" },
+    { pc: 90, I: "16", E: "6", C: "21-22", A: "18-19", Total: "57-61", F: "6" },
+    { pc: 85, I: "14-15", E: "5", C: "19-20", A: "16-17", Total: "52-56", F: "5" },
+    { pc: 80, I: "13", E: "", C: "18", A: "15", Total: "48-51", F: "" },
+    { pc: 75, I: "12", E: "4", C: "16-17", A: "14", Total: "44-47", F: "4" },
+    { pc: 70, I: "11", E: "", C: "15", A: "13", Total: "41-43", F: "" },
+    { pc: 65, I: "10", E: "3", C: "14", A: "12", Total: "38-40", F: "" },
+    { pc: 60, I: "9", E: "", C: "13", A: "11", Total: "35-37", F: "3" },
+    { pc: 55, I: "8", E: "", C: "12", A: "10", Total: "32-34", F: "" },
+    { pc: 50, I: "7", E: "2", C: "10-11", A: "9", Total: "29-31", F: "" },
+    { pc: 45, I: "6", E: "", C: "9", A: "8", Total: "26-28", F: "" },
+    { pc: 40, I: "5", E: "", C: "8", A: "7", Total: "23-25", F: "2" },
+    { pc: 35, I: "4", E: "1", C: "6-7", A: "6", Total: "20-22", F: "" },
+    { pc: 30, I: "3", E: "", C: "5", A: "5", Total: "17-19", F: "" },
+    { pc: 25, I: "2", E: "", C: "4", A: "4", Total: "14-16", F: "" },
+    { pc: 20, I: "1", E: "", C: "3", A: "3", Total: "11-13", F: "1" },
+    { pc: 15, I: "", E: "", C: "2", A: "2", Total: "8-10", F: "" },
+    { pc: 10, I: "0", E: "0", C: "1", A: "1", Total: "5-7", F: "" },
+    { pc: 5, I: "", E: "", C: "0", A: "0", Total: "2-4", F: "0" },
+    { pc: 4, I: "", E: "", C: "", A: "", Total: "", F: "" },
+    { pc: 3, I: "", E: "", C: "", A: "", Total: "", F: "" },
+    { pc: 2, I: "", E: "", C: "", A: "", Total: "", F: "" },
+    { pc: 1, I: "", E: "", C: "", A: "", Total: "0-1", F: "" }
+  ]
+};
+
+const ESC = {
+  I:{nom:'Síntomas intrusivos',      items:[27,28,29,30,31],          max:20, crit:'B', umbral:1, color:'#60a5fa'},
+  E:{nom:'Evitación',                items:[32,33],                    max:8,  crit:'C', umbral:1, color:'#34d399'},
+  C:{nom:'Alt. cognitivas y del estado de ánimo', items:[34,35,36,37,38,39,40], max:28, crit:'D', umbral:2, color:'#fbbf24'},
+  A:{nom:'Alt. en la activación y reactividad',   items:[41,42,43,44,45,46],    max:24, crit:'E', umbral:2, color:'#f87171'}
+};
+const DISOC = [47,48,49];
+const FUNC  = [52,53,54,55,56,57,58];
+const SN1626 = [16,17,18,19,20,21,22,23,24,25,26];
+
+const OPC = {
+  13:{lbl:'Gravedad del acontecimiento', o:[['leve','Leve'],['mod','Moderada'],['grave','Grave'],['extrema','Extrema']]},
+  14:{lbl:'Primera vez que sufrió el acontecimiento', o:[['infancia','En la infancia o adolescencia'],['mas3m','Hace más de 3 meses'],['1a3m','Hace más de 1 mes pero menos de 3'],['ultimo_mes','En el último mes']]},
+  15:{lbl:'Frecuencia del acontecimiento', o:[['unica','En una única ocasión'],['varias','En varias ocasiones'],['repetida','De forma repetida o reiterada']]},
+  50:{lbl:'Tiempo experimentando los problemas', o:[['menos1m','Desde hace menos de 1 mes'],['1a3m','Desde hace más de 1 mes y menos de 3'],['mas3m','Desde hace más de 3 meses']]},
+  51:{lbl:'Latencia de aparición tras el acontecimiento', o:[['inmediato','Nada más ocurrir el acontecimiento'],['primeros6m','Durante los 6 primeros meses'],['6m_mas','6 meses o más después']]}
+};
+
+let S = nuevo();
+function nuevo(){ return {meta:{}, ev:{}, resp:{}, textos: DEFAULT_TEXTS, baremos: DEFAULT_BAREMOS}; }
+
+const KEY='egep5_v1';
+function save(){ 
+  try { localStorage.setItem(KEY, JSON.stringify(S)); } 
+  catch(e) { console.error("Error al guardar en localStorage:", e); toast("Error al guardar el progreso local", "err"); } 
+}
+function load(){
+  try { 
+    const r = localStorage.getItem(KEY); 
+    if(r) {
+      S = Object.assign(nuevo(), JSON.parse(r)); 
+      S.textos = DEFAULT_TEXTS;
+      S.baremos = DEFAULT_BAREMOS; 
+    }
+  } catch(e) { console.warn("No se pudo cargar el progreso previo. Iniciando en blanco.", e); }
+}
+
+const $=id=>document.getElementById(id);
+function toast(m,t){ const el=$('toast'); el.textContent=m; el.className='toast on '+(t||''); clearTimeout(el._t); el._t=setTimeout(()=>el.className='toast',2600); }
+function txtItem(n){ return (S.textos&&S.textos.items&&S.textos.items[n])||null; }
+function txtEv(n){ return (S.textos&&S.textos.eventos&&S.textos.eventos[n])||null; }
+function esc(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+function renderEv(){
+  let h='';
+  for(let n=1;n<=11;n++){
+    const e=S.ev[n]||{}; const mk=(e.s||e.p||e.c)?' mk':'';
+    const t=txtEv(n);
+    h+=`<div class="ev${mk}"><span class="num">#${n}</span>`+
+       `<span class="txt${t?'':' ph'}">${t?esc(t):'Acontecimiento '+n}</span>`+
+       ['s','p','c','i'].map(k=>`<button class="cb btn-ev${e[k]?' on':''}" aria-pressed="${!!e[k]}" data-item="${n}" data-tipo="${k}" aria-label="Acontecimiento ${n} ${k==='s'?'Me sucedió':k==='p'?'Lo presencié':k==='c'?'Alguien cercano':'¿El más impactante?'}">✓</button>`).join('')+
+       `</div>`;
+  }
+  $('evs').innerHTML=h;
+}
+
+function tEv(n, k) { 
+  S.ev[n] = S.ev[n] || {}; 
+  const estadoPrevio = S.ev[n][k]; 
+  
+  if (k === 'i') {
+    for (let j = 1; j <= 11; j++) {
+      if (S.ev[j]) S.ev[j].i = false;
+    }
+    S.ev[n].i = !estadoPrevio;
+  } else {
+    S.ev[n].s = false; 
+    S.ev[n].p = false; 
+    S.ev[n].c = false; 
+    S.ev[n][k] = !estadoPrevio; 
+  }
+  
+  renderEv(); 
+  upd(); 
+}
+
+function itemSN(n, conGrado){
+  const r=S.resp[n]; const v=conGrado?(r&&r.si):r; const g=conGrado?(r&&r.g):null;
+  const t=txtItem(n); const done=v?' done':'';
+  let h=`<div class="it${done}"><span class="num">#${n}</span>`+
+        `<span class="txt${t?'':' ph'}">${t?esc(t):'Ítem '+n+' — leer en el ejemplar'}</span><span class="ctl">`+
+        `<button class="sn btn-sn${v==='SI'?' on-si':''}" aria-pressed="${v==='SI'}" data-item="${n}" data-val="SI" data-grado="${!!conGrado}" aria-label="Ítem ${n} Sí">Sí</button>`+
+        `<button class="sn btn-sn${v==='NO'?' on-no':''}" aria-pressed="${v==='NO'}" data-item="${n}" data-val="NO" data-grado="${!!conGrado}" aria-label="Ítem ${n} No">No</button>`;
+  if(conGrado){
+    h+=`<span class="gm${v==='SI'?'':' off'}">`;
+    for(let i=0;i<=4;i++) h+=`<button class="g btn-g${g===i?' on':''}" aria-pressed="${g===i}" data-item="${n}" data-grado-val="${i}" title="${['Ninguna','Leve','Moderada','Grave','Extrema'][i]}" aria-label="Ítem ${n} grado ${i}">${i}</button>`;
+    h+=`</span>`;
+  }
+  return h+`</span></div>`;
+}
+function setSN(n,v,cg){
+  if(cg){ const r=S.resp[n]||{si:null,g:null};
+    r.si = r.si===v ? null : v;
+    if(r.si!=='SI') r.g=null;
+    S.resp[n]=r;
+  } else { S.resp[n] = S.resp[n]===v ? null : v; }
+  renderTest(); upd();
+}
+function setG(n,g){ const r=S.resp[n]||{si:'SI',g:null}; r.g = r.g===g ? null : g; S.resp[n]=r; renderTest(); upd(); }
+
+function renderQ(n, cont){
+  const cfg=OPC[n]; const v=S.resp[n]; const t=txtItem(n);
+  let h=`<div class="qh${v?' done':''}"><span class="num">#${n}</span>`+
+        `<span class="txt${t?'':' ph'}">${t?esc(t):cfg.lbl}</span></div><div class="rad">`;
+  h+=cfg.o.map(([k,l])=>`<button class="btn-q ${v===k?'on':''}" aria-pressed="${v===k}" data-item="${n}" data-val="${k}">${l}</button>`).join('');
+  $(cont).innerHTML=h+`</div>`;
+}
+function setQ(n,k){ S.resp[n] = S.resp[n]===k ? null : k; renderTest(); upd(); }
+
+function renderTest(){
+  renderEv();
+  ['13','14','15'].forEach(n=>renderQ(+n,'q'+n));
+  $('s1626').innerHTML = SN1626.map(n=>itemSN(n,false)).join('');
+  $('sI').innerHTML = ESC.I.items.map(n=>itemSN(n,true)).join('');
+  $('sE').innerHTML = ESC.E.items.map(n=>itemSN(n,true)).join('');
+  $('sC').innerHTML = ESC.C.items.map(n=>itemSN(n,true)).join('');
+  $('sA').innerHTML = ESC.A.items.map(n=>itemSN(n,true)).join('');
+  $('sD').innerHTML = DISOC.map(n=>itemSN(n,true)).join('');
+  ['50','51'].forEach(n=>renderQ(+n,'q'+n));
+  $('sF').innerHTML = FUNC.map(n=>itemSN(n,false)).join('');
+}
+
+function obligatorios(){
+  const a=[13,14,15].concat(SN1626);
+  Object.values(ESC).forEach(e=>a.push(...e.items));
+  return a.concat(DISOC,[50,51],FUNC);
+}
+function valOf(n){ const r=S.resp[n]; return (r&&typeof r==='object')?r.si:r; }
+function upd(){
+  const obl=obligatorios();
+  const n=obl.filter(i=>valOf(i)).length;
+  $('pg_n').textContent=n; $('pg_bar').style.width=(n/obl.length*100)+'%';
+  $('st_si').textContent=obl.filter(i=>valOf(i)==='SI').length;
+  $('st_no').textContent=obl.filter(i=>valOf(i)==='NO').length;
+  $('st_ev').textContent=nEventos();
+  save();
+}
+function nEventos(){ let c=0; for(let i=1;i<=11;i++){const e=S.ev[i]||{}; if(e.s||e.p||e.c) c++;} return c; }
+
+function pdEscala(items, respuestas){
+  return items.reduce((s,n)=>{ const r=respuestas[n]; return s + ((r&&r.si==='SI'&&typeof r.g==='number')?r.g:0); },0);
+}
+function critSint(items, umbral, respuestas){
+  const valores = items.map(n=>(respuestas[n]&&typeof respuestas[n]==='object')?respuestas[n].si:respuestas[n]);
+  const si = valores.filter(v=>v==='SI').length;
+  const pend = valores.some(v=>!v);
+  if(si>=umbral) return {r:'SI', n:si};
+  if(pend) return {r:'INC', n:si};
+  return {r:'NO', n:si};
+}
+function corregirAlgoritmo(respuestas, evTotales){
+  const o={crit:{}, pd:{}, nsint:{}};
+  o.nEv=evTotales;
+
+  if(!respuestas[14]) o.crit.A={r:'INC'};
+  else o.crit.A={r:(evTotales>=1 && respuestas[14]!=='ultimo_mes')?'SI':'NO'};
+
+  for(const k of ['I','E','C','A']){
+    const e=ESC[k];
+    const c=critSint(e.items, e.umbral, respuestas);
+    o.crit[e.crit]={r:c.r};
+    o.nsint[k]=c.n;
+    o.pd[k]=pdEscala(e.items, respuestas);
+  }
+  o.pd.Total = o.pd.I+o.pd.E+o.pd.C+o.pd.A;
+
+  o.crit.F = !respuestas[50] ? {r:'INC'} : {r:(respuestas[50]!=='menos1m')?'SI':'NO'};
+
+  const g=critSint(FUNC,2,respuestas);
+  o.crit.G={r:g.r}; o.pd.F=g.n;
+
+  const rs=['A','B','C','D','E','F','G'].map(k=>o.crit[k].r);
+  o.tept = rs.includes('NO') ? 'NO' : (rs.includes('INC') ? 'INC' : 'SI');
+
+  const val = (n) => (respuestas[n]&&typeof respuestas[n]==='object')?respuestas[n].si:respuestas[n];
+  o.desper  = val(47)==='SI';
+  o.desreal = val(48)==='SI' || val(49)==='SI';
+  o.disoc   = o.desper || o.desreal;
+  o.retard  = respuestas[51]==='6m_mas';
+  return o;
+}
+function corregir(){
+  return corregirAlgoritmo(S.resp, nEventos());
+}
+
+function rango(v){
+  if(v===null||v===undefined||v==='') return null;
+  const s=String(v).trim();
+  if(s==='-'||s==='—') return null;
+  const m=s.match(/^(\d+)\s*[-–]\s*(\d+)$/);
+  if(m) return [+m[1],+m[2]];
+  if(/^\d+$/.test(s)) return [+s,+s];
+  return null;
+}
+function pcDe(escala, pd){
+  const b=S.baremos;
+  if(!b||!Array.isArray(b.filas)) return null;
+  for(const f of b.filas){
+    const r=rango(f[escala]);
+    if(r && pd>=r[0] && pd<=r[1]) return f.pc;
+  }
+  return null;
+}
+function banda(pc){
+  if(pc===null) return {t:'—', c:'var(--text-mute)'};
+  if(pc>=85) return {t:'Alto', c:'#f87171'};
+  if(pc>=60) return {t:'Medio-alto', c:'#fbbf24'};
+  if(pc>=40) return {t:'Medio', c:'#8b95a5'};
+  if(pc>=15) return {t:'Medio-bajo', c:'#60a5fa'};
+  return {t:'Bajo', c:'#34d399'};
+}
+
+const P=r=>`<span class="pill ${r==='SI'?'si':r==='NO'?'no':'inc'}">${r==='INC'?'INCOMPL.':r}</span>`;
+const CRITDESC={
+  A:'Exposición a acontecimiento traumático',
+  B:'Síntomas intrusivos (I)',
+  C:'Evitación (E)',
+  D:'Alteraciones cognitivas y del estado de ánimo (C)',
+  E:'Alteraciones en la activación y reactividad (A)',
+  F:'Duración',
+  G:'Funcionamiento (F)'
+};
+const CRITREGLA={
+  A:'≥1 acontecimiento en ítems 1–11 y el ítem 14 no es «En el último mes»',
+  B:'≥1 síntoma (ítems 27–31)',
+  C:'≥1 síntoma (ítems 32–33)',
+  D:'≥2 síntomas (ítems 34–40)',
+  E:'≥2 síntomas (ítems 41–46)',
+  F:'El ítem 50 no es «Desde hace menos de 1 mes»',
+  G:'≥2 áreas afectadas (ítems 52–58)'
+};
+
+function calc(){
+  const obl=obligatorios();
+  if(obl.filter(i=>valOf(i)).length===0 && nEventos()===0){
+    $('res').innerHTML=`<div class="empty"><div class="b">Todavía no hay respuestas</div><div class="s">Capture el protocolo en la pestaña «Aplicar Test» y vuelva aquí para corregir.</div></div>`;
+    $('perf').innerHTML=$('res').innerHTML;
+    $('intp').innerHTML=$('res').innerHTML;
+    return;
+  }
+  const o=corregir();
+  renderRes(o); renderPerf(o); renderIntp(o);
+}
+
+function renderRes(o){
+  const dxc = o.tept==='SI'?'si':o.tept==='NO'?'no':'inc';
+  const dxt = o.tept==='SI'?'Se cumplen los criterios de TEPT'
+            : o.tept==='NO'?'No se cumplen los criterios de TEPT'
+            : 'Información incompleta';
+  const dxs = o.tept==='SI'?'Se cumplen simultáneamente los criterios A a G del DSM-5. El diagnóstico debe confirmarse mediante juicio clínico y entrevista.'
+            : o.tept==='NO'?'Al menos un criterio diagnóstico no se cumple. Las puntuaciones de intensidad siguen siendo informativas sobre la gravedad sintomatológica.'
+            : 'Faltan respuestas necesarias para resolver uno o más criterios. Revise los ítems pendientes antes de emitir una conclusión.';
+
+  let h=`<div class="dx ${dxc}"><div class="k">Diagnóstico de TEPT · DSM-5</div><div class="v">${dxt}</div><div class="s">${dxs}</div></div>`;
+
+  h+=`<div class="card"><div class="card-h"><h2><span class="gl">■</span> Criterios diagnósticos</h2><span class="hint">DSM-5</span></div><div class="card-b" style="padding:20px 8px">
+      <div class="tbl-wrap"><table class="tbl"><thead><tr><th style="width:32px"></th><th>Criterio</th><th>Regla de corrección</th><th style="width:110px;text-align:right">Resultado</th></tr></thead><tbody>`;
+  ['A','B','C','D','E','F','G'].forEach(k=>{
+    h+=`<tr><td class="mono" style="color:var(--accent-2)">${k}</td><td>${CRITDESC[k]}</td><td class="sc">${CRITREGLA[k]}</td><td style="text-align:right">${P(o.crit[k].r)}</td></tr>`;
+  });
+  h+=`</tbody></table></div></div></div>`;
+
+  h+=`<div class="grid2">`;
+  h+=`<div class="card"><div class="card-h"><h2><span class="gl">▲</span> Intensidad de los síntomas</h2><span class="hint">${S.baremos?esc(S.baremos.nombre||'baremos cargados'):'sin baremos'}</span></div><div class="card-b" style="padding:20px 8px">
+      <div class="tbl-wrap"><table class="tbl"><thead><tr><th style="width:30px"></th><th>Escala</th><th style="text-align:center">N.º sínt.</th><th style="text-align:center">PD</th><th style="text-align:center">Pc</th><th style="text-align:right">Nivel</th></tr></thead><tbody>`;
+  ['I','E','C','A'].forEach(k=>{
+    const e=ESC[k], pd=o.pd[k], pc=pcDe(k,pd), b=banda(pc);
+    h+=`<tr><td class="mono" style="color:${e.color}">${k}</td><td>${e.nom}</td>
+        <td class="mono" style="text-align:center">${o.nsint[k]}<span class="sc"> / ${e.items.length}</span></td>
+        <td class="mono" style="text-align:center;color:var(--text)">${pd}<span class="sc"> / ${e.max}</span></td>
+        <td class="mono" style="text-align:center;color:${pc===null?'var(--text-mute)':'var(--accent-2)'}">${pc===null?'—':pc}</td>
+        <td style="text-align:right;color:${b.c};font-size:12px">${b.t}</td></tr>`;
+  });
+  const pcT=pcDe('Total',o.pd.Total), bT=banda(pcT);
+  h+=`<tr style="border-top:1px solid var(--border)"><td class="mono" style="color:var(--text)">Σ</td><td><b>Total (I+E+C+A)</b></td><td style="text-align:center" class="sc">—</td>
+      <td class="mono" style="text-align:center;color:var(--text);font-weight:700">${o.pd.Total}<span class="sc"> / 80</span></td>
+      <td class="mono" style="text-align:center;color:${pcT===null?'var(--text-mute)':'var(--accent-2)'};font-weight:700">${pcT===null?'—':pcT}</td>
+      <td style="text-align:right;color:${bT.c};font-size:12px">${bT.t}</td></tr>`;
+  const pcF=pcDe('F',o.pd.F), bF=banda(pcF);
+  h+=`<tr><td class="mono" style="color:#a78bfa">F</td><td>Áreas de funcionamiento afectadas</td><td style="text-align:center" class="sc">—</td>
+      <td class="mono" style="text-align:center;color:var(--text)">${o.pd.F}<span class="sc"> / 7</span></td>
+      <td class="mono" style="text-align:center;color:${pcF===null?'var(--text-mute)':'var(--accent-2)'}">${pcF===null?'—':pcF}</td>
+      <td style="text-align:right;color:${bF.c};font-size:12px">${bF.t}</td></tr>`;
+  h+=`</tbody></table></div></div></div>`;
+
+  h+=`<div><div class="card"><div class="card-h"><h2><span class="gl">◆</span> Especificaciones</h2><span class="hint">solo si se cumple TEPT</span></div><div class="card-b">`;
+  if(o.tept!=='SI') h+=`<p style="font-size:12.5px;color:var(--text-mute);margin-bottom:14px;line-height:1.6">Las especificaciones solo se completan cuando la persona cumple los criterios para TEPT. Se muestran a título informativo.</p>`;
+  h+=`<div class="esp${o.desper?' on':''}"><span class="dot"></span><span class="t">Con síntomas disociativos · <b>Despersonalización</b></span><span class="d">ítem 47</span></div>`;
+  h+=`<div class="esp${o.desreal?' on':''}"><span class="dot"></span><span class="t">Con síntomas disociativos · <b>Desrealización</b></span><span class="d">ítem 48 o 49</span></div>`;
+  h+=`<div class="esp${o.retard?' on':''}" style="margin-bottom:0"><span class="dot"></span><span class="t">Con <b>expresión retardada</b></span><span class="d">ítem 51</span></div>`;
+  h+=`</div></div>`;
+
+  h+=`<div class="card"><div class="card-h"><h2><span class="gl">■</span> Datos del protocolo</h2></div><div class="card-b" style="padding:20px 8px">
+      <div class="tbl-wrap"><table class="tbl"><tbody>
+      ${fila('Evaluado', S.meta.nombre)}
+      ${fila('Edad / Sexo', [S.meta.edad,S.meta.sexo].filter(Boolean).join(' · '))}
+      ${fila('Fecha', S.meta.fecha)}
+      ${fila('Centro', S.meta.centro)}
+      ${fila('Responsable', S.meta.evaluador)}
+      ${fila('Acontecimientos marcados', o.nEv+' de 11')}
+      ${fila('Ítems respondidos', obligatorios().filter(i=>valOf(i)).length+' de 46')}
+      </tbody></table></div></div></div>`;
+  h+=`</div></div>`;
+
+  h+=`<div class="btns no-print" style="justify-content:flex-end;margin-top:4px">
+      <button class="btn" onclick="expJSON()">↑ Exportar JSON</button>
+      <button class="btn pri" onclick="window.print()">⎙ Generar informe PDF</button></div>`;
+  $('res').innerHTML=h;
+}
+function fila(k,v){ return `<tr><td class="sc" style="width:190px">${k}</td><td>${v?esc(v):'<span class="sc">—</span>'}</td></tr>`; }
+
+function renderPerf(o){
+  const usaPc = !!S.baremos;
+  const cols=[
+    {k:'I', l:'I', n:ESC.I.nom, v:o.pd.I, max:20, c:ESC.I.color},
+    {k:'E', l:'E', n:ESC.E.nom, v:o.pd.E, max:8,  c:ESC.E.color},
+    {k:'C', l:'C', n:ESC.C.nom, v:o.pd.C, max:28, c:ESC.C.color},
+    {k:'A', l:'A', n:ESC.A.nom, v:o.pd.A, max:24, c:ESC.A.color},
+    {k:'Total', l:'Total', n:'Puntuación total', v:o.pd.Total, max:80, c:'#c084fc'},
+    {k:'F', l:'F', n:'Funcionamiento', v:o.pd.F, max:7, c:'#a78bfa'}
+  ];
+  cols.forEach(c=>{ c.pc = usaPc ? pcDe(c.k,c.v) : null; c.y = usaPc ? c.pc : Math.round(c.v/c.max*100); });
+
+  const W=760,H=380,ML=52,MR=22,MT=22,MB=64;
+  const pw=W-ML-MR, ph=H-MT-MB;
+  const X=i=>ML+pw*(i+.5)/cols.length;
+  const Y=v=>MT+ph-(ph*Math.min(Math.max(v,0),100)/100);
+
+  let g='';
+  const bandas=[[85,100,'rgba(248,113,113,.07)'],[60,85,'rgba(251,191,36,.05)'],[15,40,'rgba(96,165,250,.05)'],[0,15,'rgba(52,211,153,.05)']];
+  bandas.forEach(([a,b,c])=>{ g+=`<rect x="${ML}" y="${Y(b)}" width="${pw}" height="${Y(a)-Y(b)}" fill="${c}"/>`; });
+  [0,10,20,30,40,50,60,70,80,90,100].forEach(v=>{
+    g+=`<line x1="${ML}" y1="${Y(v)}" x2="${W-MR}" y2="${Y(v)}" stroke="${v===50?'#2f3947':'#1a2029'}" stroke-width="1" ${v===50?'stroke-dasharray="4 4"':''}/>`;
+    g+=`<text x="${ML-9}" y="${Y(v)+4}" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="9" fill="#5d6675">${v}</text>`;
+  });
+  const pts=cols.map((c,i)=>`${X(i)},${Y(c.y)}`).join(' ');
+  g+=`<polyline points="${pts}" fill="none" stroke="#3b82f6" stroke-width="1.6" stroke-linejoin="round" opacity=".55"/>`;
+  cols.forEach((c,i)=>{
+    const bw=Math.min(46, pw/cols.length-16);
+    g+=`<rect x="${X(i)-bw/2}" y="${Y(c.y)}" width="${bw}" height="${MT+ph-Y(c.y)}" fill="${c.c}" opacity=".16" rx="3"/>`;
+    g+=`<line x1="${X(i)-bw/2}" y1="${Y(c.y)}" x2="${X(i)+bw/2}" y2="${Y(c.y)}" stroke="${c.c}" stroke-width="2.5"/>`;
+    g+=`<circle cx="${X(i)}" cy="${Y(c.y)}" r="4" fill="${c.c}" stroke="#0a0c10" stroke-width="1.5"/>`;
+    g+=`<text x="${X(i)}" y="${Y(c.y)-11}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10.5" font-weight="700" fill="${c.c}">${usaPc?(c.pc===null?'—':c.pc):c.v}</text>`;
+    g+=`<text x="${X(i)}" y="${MT+ph+20}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" font-weight="700" fill="#e6eaf0">${c.l}</text>`;
+    g+=`<text x="${X(i)}" y="${MT+ph+36}" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#5d6675">PD ${c.v}/${c.max}</text>`;
+  });
+  g+=`<line x1="${ML}" y1="${MT+ph}" x2="${W-MR}" y2="${MT+ph}" stroke="#232a34" stroke-width="1"/>`;
+  g+=`<text x="14" y="${MT+ph/2}" text-anchor="middle" transform="rotate(-90 14 ${MT+ph/2})" font-family="DM Sans,sans-serif" font-size="10" fill="#5d6675" letter-spacing="1">${usaPc?'PERCENTIL':'% DEL MÁXIMO'}</text>`;
+
+  let h='';
+  h+=`<div class="card"><div class="card-h"><h2><span class="gl">▲</span> Perfil de intensidad sintomatológica</h2><span class="hint">${usaPc?esc(S.baremos.nombre||'baremos cargados'):'escala relativa'}</span></div><div class="card-b">
+      <div class="chart"><svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Perfil EGEP-5">${g}</svg></div>
+      <div class="lgd">
+        <span><i style="background:rgba(248,113,113,.5)"></i>Alto (Pc ≥ 85)</span>
+        <span><i style="background:rgba(251,191,36,.5)"></i>Medio-alto (60–84)</span>
+        <span><i style="background:rgba(139,149,165,.4)"></i>Medio (40–59)</span>
+        <span><i style="background:rgba(96,165,250,.5)"></i>Medio-bajo (15–39)</span>
+        <span><i style="background:rgba(52,211,153,.5)"></i>Bajo (&lt; 15)</span>
+      </div></div></div>`;
+
+  h+=`<div class="card"><div class="card-h"><h2><span class="gl">■</span> Detalle por escala</h2></div><div class="card-b" style="padding:20px 8px">
+      <div class="tbl-wrap"><table class="tbl"><thead><tr><th style="width:30px"></th><th>Escala</th><th>Ítems</th><th style="text-align:center">PD</th><th style="text-align:center">Pc</th><th style="text-align:right">Nivel</th></tr></thead><tbody>`;
+  cols.forEach(c=>{
+    const b=banda(c.pc);
+    const its = ESC[c.k] ? `${ESC[c.k].items[0]}–${ESC[c.k].items.slice(-1)[0]}` : (c.k==='F'?'52–58':'27–46');
+    h+=`<tr><td class="mono" style="color:${c.c}">${c.l}</td><td>${c.n}</td><td class="sc">${its}</td>
+        <td class="mono" style="text-align:center;color:var(--text)">${c.v}<span class="sc"> / ${c.max}</span></td>
+        <td class="mono" style="text-align:center;color:${c.pc===null?'var(--text-mute)':'var(--accent-2)'}">${c.pc===null?'—':c.pc}</td>
+        <td style="text-align:right;color:${b.c};font-size:12px">${b.t}</td></tr>`;
+  });
+  h+=`</tbody></table></div></div></div>`;
+  h+=`<div class="btns no-print" style="justify-content:flex-end"><button class="btn" onclick="go('p5')">Ver interpretación →</button></div>`;
+  $('perf').innerHTML=h;
+}
+
+function renderIntp(o){
+  const nom=S.meta.nombre||'La persona evaluada';
+  const fallan=['A','B','C','D','E','F','G'].filter(k=>o.crit[k].r==='NO');
+  const incompl=['A','B','C','D','E','F','G'].filter(k=>o.crit[k].r==='INC');
+
+  let h=`<div class="card"><div class="card-h"><h2><span class="gl">◆</span> Interpretación asistida</h2><span class="hint">borrador · requiere revisión clínica</span></div><div class="card-b"><div class="interp">`;
+
+  h+=`<h4>Datos de la evaluación</h4><p>${esc(nom)}${S.meta.edad?`, ${esc(S.meta.edad)} años`:''}${S.meta.sexo?`, ${esc(S.meta.sexo.toLowerCase())}`:''}. Evaluación aplicada${S.meta.fecha?` el ${esc(S.meta.fecha)}`:''}${S.meta.centro?` en ${esc(S.meta.centro)}`:''}${S.meta.evaluador?`, a cargo de ${esc(S.meta.evaluador)}`:''}.</p>`;
+
+  h+=`<h4>Historia de acontecimientos</h4><p>Se marcaron <b>${o.nEv} de 11</b> categorías de acontecimientos traumáticos a lo largo de la vida. `;
+  h+= o.nEv>=3 ? `Un número elevado de categorías sugiere <b>exposición múltiple</b>, un factor a considerar en el diseño de la intervención por su relación con la revictimización.` : o.nEv===0 ? `No se marcó ninguna categoría, por lo que el criterio A no puede cumplirse.` : `El acontecimiento precipitante se caracteriza en los ítems 12 a 26.`;
+  h+=`</p>`;
+  if(S.meta.evento) h+=`<div class="q"><b>Acontecimiento referido:</b> ${esc(S.meta.evento)}</div>`;
+  if(S.resp[13]||S.resp[15]){
+    const g13=(OPC[13].o.find(x=>x[0]===S.resp[13])||[])[1];
+    const g15=(OPC[15].o.find(x=>x[0]===S.resp[15])||[])[1];
+    h+=`<p>${g13?`La persona valora la gravedad del acontecimiento como <b>${g13.toLowerCase()}</b>. `:''}${g15?`Refiere que ocurrió <b>${g15.toLowerCase()}</b>.`:''}</p>`;
+  }
+
+  h+=`<h4>Sintomatología postraumática</h4>`;
+  const orden=['I','E','C','A'].map(k=>({k, pct:o.pd[k]/ESC[k].max, pd:o.pd[k], n:ESC[k].nom, ns:o.nsint[k], ni:ESC[k].items.length})).sort((a,b)=>b.pct-a.pct);
+  h+=`<p>Puntuación directa total de intensidad: <b>${o.pd.Total} sobre 80</b>${pcDe('Total',o.pd.Total)!==null?` (percentil <b>${pcDe('Total',o.pd.Total)}</b>, nivel ${banda(pcDe('Total',o.pd.Total)).t.toLowerCase()})`:''}. Distribución por grupos de síntomas, de mayor a menor peso relativo:</p><ul>`;
+  orden.forEach(x=>{
+    const pc=pcDe(x.k,x.pd);
+    h+=`<li><b>${x.n} (${x.k})</b>: ${x.ns} de ${x.ni} síntomas presentes · PD ${x.pd}/${ESC[x.k].max}${pc!==null?` · Pc ${pc}`:''}</li>`;
+  });
+  h+=`</ul>`;
+  if(orden[0].pd>0) h+=`<p>El grupo que concentra mayor malestar es <b>${orden[0].n.toLowerCase()}</b>, lo que sugiere priorizar la intervención sobre esa clase de síntomas.</p>`;
+  else h+=`<p>No se registra intensidad sintomatológica en ninguna de las cuatro escalas.</p>`;
+
+  h+=`<h4>Funcionamiento</h4><p>Se ven afectadas <b>${o.pd.F} de 7</b> áreas de funcionamiento evaluadas (ítems 52–58). `;
+  h+= o.pd.F>=4 ? `Una afectación extendida indica interferencia significativa en la vida cotidiana y refuerza la indicación de intervención.` : o.pd.F>=2 ? `Se alcanza el umbral del criterio G.` : `No se alcanza el umbral de 2 áreas requerido por el criterio G.`;
+  h+=`</p>`;
+
+  h+=`<h4>Conclusión diagnóstica</h4>`;
+  if(o.tept==='SI'){
+    h+=`<p>Los datos <b>cumplen los siete criterios (A–G) del DSM-5</b> para el trastorno de estrés postraumático.</p>`;
+    const es=[];
+    if(o.desper) es.push('despersonalización (ítem 47)');
+    if(o.desreal) es.push('desrealización (ítems 48/49)');
+    if(es.length) h+=`<p>Corresponde la especificación <b>«con síntomas disociativos»</b>: ${es.join(' y ')}.</p>`;
+    if(o.retard) h+=`<p>Corresponde la especificación <b>«con expresión retardada»</b>: los síntomas aparecieron 6 meses o más después del acontecimiento.</p>`;
+    if(!es.length && !o.retard) h+=`<p>No corresponde ninguna de las especificaciones contempladas.</p>`;
+  } else if(o.tept==='NO'){
+    h+=`<p><b>No se cumplen los criterios diagnósticos de TEPT.</b> No se alcanza el umbral en: ${fallan.map(k=>`<b>${k}</b> (${CRITDESC[k].toLowerCase()})`).join(', ')}.</p>`;
+    if(o.pd.Total>0) h+=`<p>Esto no invalida la relevancia clínica del cuadro: la escala aporta una evaluación global de la sintomatología postraumática más allá del diagnóstico categorial, y una puntuación total de ${o.pd.Total} indica malestar que puede requerir atención.</p>`;
+  } else {
+    h+=`<p><b>No es posible concluir.</b> Los criterios ${incompl.map(k=>`<b>${k}</b>`).join(', ')} quedan sin resolver por falta de respuestas. Complete los ítems pendientes antes de emitir un juicio diagnóstico.</p>`;
+  }
+
+  h+=`<div class="q" style="margin-top:22px">Este texto es un borrador generado a partir de la aplicación mecánica de las reglas de corrección. No sustituye la interpretación del profesional, que debe integrar la entrevista clínica, la historia del paciente y el resto de la evaluación. Consulte el capítulo de normas de interpretación del manual del EGEP-5.</div>`;
+  h+=`</div></div></div>`;
+
+  h+=`<div class="card no-print"><div class="card-h"><h2><span class="gl">■</span> Notas del evaluador</h2></div><div class="card-b">
+      <div class="f" style="margin-bottom:0"><textarea id="m_notas" style="min-height:130px" placeholder="Observaciones clínicas, contraste con otras fuentes, hipótesis, plan de intervención…"></textarea></div></div></div>`;
+  if(S.meta.notas) h+=`<div class="card" style="display:none"></div>`;
+
+
+  $('intp').innerHTML=h;
+  const nt=$('m_notas');
+  if(nt){ nt.value=S.meta.notas||''; nt.oninput=()=>{S.meta.notas=nt.value; save();}; }
+}
+
+function dl(obj, nombre){
+  const b=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=nombre; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function slug(){ return (S.meta.nombre||'protocolo').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'_').toLowerCase(); }
+function expJSON(){
+  const {textos, baremos, ...limpio}=S;
+  dl({instrumento:'EGEP-5', version:1, exportado:new Date().toISOString(), ...limpio}, `EGEP5_${slug()}.json`);
+  toast('Protocolo exportado','ok');
+}
+let _cb=null;
+function pick(cb){ _cb=cb; $('fpick').value=''; $('fpick').click(); }
+$('fpick').onchange=e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{ try{ _cb(JSON.parse(r.result)); }catch(err){ toast('El archivo no es un JSON válido','err'); } };
+  r.readAsText(f);
+};
+function impJSON(d){
+  if(!d || typeof d!=='object') return toast('Formato no reconocido','err');
+  S.meta=d.meta||{}; S.ev=d.ev||{}; S.resp=d.resp||{};
+  pintarMeta(); renderTest(); upd(); calc();
+  toast('Protocolo importado','ok');
+}
+function limpiar(){
+  if(!confirm('Se borrarán los datos y las respuestas de este protocolo. ¿Continuar?')) return;
+  S=nuevo();
+  pintarMeta(); renderTest(); upd(); calc();
+  toast('Protocolo limpiado');
+}
+
+const METAS={m_nombre:'nombre',m_fecha:'fecha',m_edad:'edad',m_sexo:'sexo',m_centro:'centro',m_evaluador:'evaluador',m_evento:'evento'};
+function pintarMeta(){ 
+  for(const id in METAS){ const el=$(id); if(el) el.value=S.meta[METAS[id]]||''; } 
+}
+for(const id in METAS){ 
+  const el=$(id);
+  if (el) {
+    el.addEventListener('input',e=>{ 
+      S.meta[METAS[id]]=e.target.value; 
+      save(); 
+    }); 
+  }
+}
+
+document.getElementById('p2').addEventListener('click', (e) => {
+  const btn = e.target.closest('button');
+  if (!btn) return; 
+
+  if (btn.classList.contains('btn-sn')) {
+    const n = parseInt(btn.dataset.item);
+    const val = btn.dataset.val;
+    const cg = btn.dataset.grado === 'true';
+    setSN(n, val, cg);
+  }
+  
+  if (btn.classList.contains('btn-g')) {
+    const n = parseInt(btn.dataset.item);
+    const g = parseInt(btn.dataset.gradoVal);
+    setG(n, g);
+  }
+
+  if (btn.classList.contains('btn-q')) {
+    const n = parseInt(btn.dataset.item);
+    const val = btn.dataset.val;
+    setQ(n, val);
+  }
+
+  if (btn.classList.contains('btn-ev')) {
+    const n = parseInt(btn.dataset.item);
+    const k = btn.dataset.tipo;
+    tEv(n, k);
+  }
+});
+
+function go(p){
+  document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('on',x.id===p));
+  document.querySelectorAll('.tab').forEach(x=>{
+    const isOn = x.dataset.p===p;
+    x.classList.toggle('on', isOn);
+    x.setAttribute('aria-selected', isOn);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(p==='p3'||p==='p4'||p==='p5') calc();
+}
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>go(t.dataset.p));
+
+load(); pintarMeta(); renderTest(); upd(); calc();
+</script>
+</body>
+</html>
