@@ -1091,7 +1091,9 @@ async function guardarEnExpediente(){
     return;
   }
 
-  const paciente_id=getURLParam('paciente_id');
+  const paciente_id=getURLParam('paciente_id') ||
+                   sessionStorage.getItem('pacienteSeleccionado') ||
+                   localStorage.getItem('paciente_id');
   if(!paciente_id){
     toast('No se encontró el ID del paciente','err');
     return;
