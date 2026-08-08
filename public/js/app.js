@@ -133,7 +133,6 @@ const app = {
     'mmpi2rf': 'MMPI2RF',
     'isra': 'ISRA',
     'pclr': 'PCLR',
-    'egep5': 'EGEP5',
     'scid2': 'SCID2',
     'cuida': 'CUIDA'
   },
@@ -211,13 +210,12 @@ const app = {
         'TDS3': 'tds3',
         'PCLR': 'pclr',
         'SCID2': 'scid2',
-        'EGEP5': 'egep5',
         'MBI': 'mbi',
         'CISNEROS': 'cisneros'
       };
 
       // Ocultar todos los tests por defecto
-      document.querySelectorAll('[data-page="scl90r"], [data-page="hamilton"], [data-page="mmpi-pro"], [data-page="cuida"], [data-page="isra"], [data-page="tds3"], [data-page="pclr"], [data-page="scid2"], [data-page="egep5"], [data-page="mbi"], [data-page="cisneros"]').forEach(btn => {
+      document.querySelectorAll('[data-page="scl90r"], [data-page="hamilton"], [data-page="mmpi-pro"], [data-page="cuida"], [data-page="isra"], [data-page="tds3"], [data-page="pclr"], [data-page="scid2"], [data-page="mbi"], [data-page="cisneros"]').forEach(btn => {
         btn.style.display = 'none';
       });
 
@@ -236,7 +234,7 @@ const app = {
     } catch (error) {
       console.error('Error al cargar tests habilitados:', error);
       // Si falla, mostrar todos los tests (fallback)
-      document.querySelectorAll('[data-page="scl90r"], [data-page="hamilton"], [data-page="mmpi-pro"], [data-page="cuida"], [data-page="isra"], [data-page="tds3"], [data-page="pclr"], [data-page="scid2"], [data-page="egep5"], [data-page="mbi"], [data-page="cisneros"]').forEach(btn => {
+      document.querySelectorAll('[data-page="scl90r"], [data-page="hamilton"], [data-page="mmpi-pro"], [data-page="cuida"], [data-page="isra"], [data-page="tds3"], [data-page="pclr"], [data-page="scid2"], [data-page="mbi"], [data-page="cisneros"]').forEach(btn => {
         btn.style.display = 'block';
       });
     }
@@ -789,50 +787,6 @@ const app = {
     tests_cuida.init();
     const token = localStorage.getItem('auth_token') || '';
     window.location.href = `/cuida.html?paciente_id=${this.pacienteActivo.id}&token=${encodeURIComponent(token)}`;
-  },
-
-  /**
-   * Iniciar EGEP-5 en micrositio
-   */
-  iniciarEGEP5() {
-    if (!this.pacienteActivo) {
-      this.mostrarToast('Primero debes crear o seleccionar un paciente', 'error');
-      return;
-    }
-    const token = localStorage.getItem('auth_token') || '';
-
-    // Obtener nombre del paciente (intentar múltiples propiedades)
-    const nombrePaciente = this.pacienteActivo.nombre ||
-                          this.pacienteActivo.name ||
-                          this.pacienteActivo.fullName ||
-                          'Paciente';
-
-    // Guardar datos del paciente en sesión y storage
-    localStorage.setItem('paciente_nombre', nombrePaciente);
-    localStorage.setItem('paciente_id', this.pacienteActivo.id);
-    sessionStorage.setItem('paciente_nombre', nombrePaciente);
-    sessionStorage.setItem('pacienteSeleccionado', this.pacienteActivo.id);
-
-    // Guardar edad (si existe)
-    if (this.pacienteActivo.edad || this.pacienteActivo.age) {
-      const edad = this.pacienteActivo.edad || this.pacienteActivo.age;
-      localStorage.setItem('paciente_edad', edad);
-      sessionStorage.setItem('paciente_edad', edad);
-    }
-
-    // Guardar sexo (si existe)
-    if (this.pacienteActivo.sexo || this.pacienteActivo.gender) {
-      const sexo = this.pacienteActivo.sexo || this.pacienteActivo.gender;
-      localStorage.setItem('paciente_sexo', sexo);
-      sessionStorage.setItem('paciente_sexo', sexo);
-    }
-
-    // Guardar nombre de usuario logueado (evaluador)
-    const usuarioLogueado = localStorage.getItem('usuario_nombre') || localStorage.getItem('nombre') || 'Evaluador';
-    sessionStorage.setItem('usuario_nombre', usuarioLogueado);
-
-    console.log('EGEP5 - Paciente:', nombrePaciente, 'ID:', this.pacienteActivo.id);
-    window.location.href = `/micrositios/egep5/?paciente_id=${this.pacienteActivo.id}&token=${encodeURIComponent(token)}`;
   },
 
   iniciarMBI() {
@@ -1571,7 +1525,7 @@ const app = {
       const resultado = test.calcular();
 
       // Solo capturar evaluador para tests específicos (excluir CUIDA y MMPI)
-      const testsConEvaluador = ['hamilton', 'scl90r', 'isra', 'pcl-r', 'egep5'];
+      const testsConEvaluador = ['hamilton', 'scl90r', 'isra', 'pcl-r'];
       let evaluador = null;
       if (testsConEvaluador.includes(testType.toLowerCase())) {
         evaluador = localStorage.getItem('nombre') || null;
@@ -1831,73 +1785,6 @@ const app = {
             return;
           } catch (error) {
             console.error('Error al procesar PDF CUIDA:', error);
-            contenido.innerHTML = '<p style="color: red; padding: 20px;">Error al cargar PDF: ' + error.message + '</p>';
-            modal.classList.add('active');
-          }
-        }
-      }
-
-      // PARA EGEP-5: Ocultar botón "Descargar Reporte" SIEMPRE
-      const tipoNormalized = (prueba.tipo || '').toUpperCase().replace(/[\s\-]/g, '');
-      if (tipoNormalized === 'EGEP5') {
-        console.log('✅ EGEP-5 detectado - tipo normalizado:', tipoNormalized);
-        console.log('EGEP-5 - Estructura completa de prueba:', prueba);
-        console.log('EGEP-5 - Keys en prueba:', Object.keys(prueba));
-
-        const btnDescargar = document.getElementById('btn-descargar-reporte');
-        if (btnDescargar) {
-          btnDescargar.style.display = 'none';
-        }
-
-        // Si existe PDF guardado, mostrar SOLO ese PDF
-        let pdfBase64 = prueba.pdf_base64;
-
-        // Si no está en prueba, buscar en subescalas
-        if (!pdfBase64 && prueba.subescalas) {
-          let subescalas = prueba.subescalas;
-          if (typeof subescalas === 'string') {
-            try {
-              subescalas = JSON.parse(subescalas);
-            } catch (e) {
-              console.log('Error parseando subescalas:', e);
-              subescalas = {};
-            }
-          }
-          pdfBase64 = subescalas?.pdf_base64;
-        }
-
-        if (pdfBase64) {
-          console.log('Mostrando PDF EGEP-5 desde base64');
-          console.log('   Tamaño base64:', pdfBase64.length);
-
-          // Crear blob desde base64
-          try {
-            const binaryString = atob(pdfBase64);
-            const len = binaryString.length;
-            const bytes = new Uint8Array(len);
-            for (let i = 0; i < len; i++) {
-              bytes[i] = binaryString.charCodeAt(i);
-            }
-            const blob = new Blob([bytes], { type: 'application/pdf' });
-            const blobUrl = URL.createObjectURL(blob);
-
-            console.log('Blob URL creado:', blobUrl);
-
-            // Mostrar PDF en viewer
-            contenido.innerHTML = `
-              <object
-                data="${blobUrl}"
-                type="application/pdf"
-                style="width: 100%; height: 85vh; border: none;">
-                <p>Tu navegador no puede mostrar PDFs. <a href="${blobUrl}" download="EGEP-5.pdf">Descargar PDF</a></p>
-              </object>
-            `;
-            modal.classList.add('active');
-
-            console.log('Modal abierto con PDF EGEP-5');
-            return;
-          } catch (error) {
-            console.error('Error al procesar PDF EGEP-5:', error);
             contenido.innerHTML = '<p style="color: red; padding: 20px;">Error al cargar PDF: ' + error.message + '</p>';
             modal.classList.add('active');
           }
@@ -2230,8 +2117,8 @@ const app = {
           const referencias = data.map((_, idx) => normasLocales?.escalas?.[idx]?.media || 50);
           promedioReferencia = (referencias.reduce((a, b) => a + b, 0) / referencias.length).toFixed(1);
         }
-      } else if (['PCLR', 'EGEP5'].includes(prueba.tipo)) {
-        // PCL-R y EGEP-5: total o promedio
+      } else if (['PCLR'].includes(prueba.tipo)) {
+        // PCL-R: total o promedio
         if (Array.isArray(data) && data.length > 0) {
           const total = data.reduce((a, b) => a + (Number(b) || 0), 0);
           promedioPaciente = total.toFixed(1);
@@ -3337,9 +3224,9 @@ const app = {
           <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 7px; ${estado.color}">${estado.texto}</td>
         </tr>`;
       });
-    } else if (['PCLR', 'EGEP5'].includes(prueba.tipo)) {
+    } else if (['PCLR'].includes(prueba.tipo)) {
       const total = prueba.total || (Array.isArray(data) ? data.reduce((a, b) => a + (b || 0), 0) : 0);
-      const mediaRef = data.length * (prueba.tipo === 'PCLR' ? 0.2 : 0.2);
+      const mediaRef = data.length * 0.2;
       const estado = this.compararConReferencia(total, mediaRef);
       filas += `<tr>
         <td style="border: 1px solid #ddd; padding: 3px; font-size: 8px;">Total</td>
@@ -3639,33 +3526,6 @@ const app = {
           { id: 18, nombre: 'Conducta delictiva juvenil', media: 0.1 },
           { id: 19, nombre: 'Revocación de libertad condicional', media: 0.1 },
           { id: 20, nombre: 'Conducta criminal versátil', media: 0.1 }
-        ]
-      },
-      'EGEP5': {
-        media_por_item: 0.2,
-        escalas: [
-          { id: 1, nombre: 'Recuerdos intrusivos', media: 0.2 },
-          { id: 2, nombre: 'Pesadillas', media: 0.2 },
-          { id: 3, nombre: 'Reacciones flashback', media: 0.2 },
-          { id: 4, nombre: 'Malestar con recordatorios', media: 0.2 },
-          { id: 5, nombre: 'Respuestas físicas', media: 0.2 },
-          { id: 6, nombre: 'Evitar pensamientos', media: 0.2 },
-          { id: 7, nombre: 'Evitar recordatorios', media: 0.2 },
-          { id: 8, nombre: 'Amnesia del evento', media: 0.1 },
-          { id: 9, nombre: 'Creencias negativas', media: 0.3 },
-          { id: 10, nombre: 'Culpa/Responsabilidad', media: 0.3 },
-          { id: 11, nombre: 'Culpa excesiva', media: 0.2 },
-          { id: 12, nombre: 'Cambios cognitivos', media: 0.3 },
-          { id: 13, nombre: 'Culpa de otros', media: 0.2 },
-          { id: 14, nombre: 'Pérdida de interés', media: 0.2 },
-          { id: 15, nombre: 'Sentimientos de desapego', media: 0.1 },
-          { id: 16, nombre: 'Afecto positivo limitado', media: 0.2 },
-          { id: 17, nombre: 'Hipervigilancia', media: 0.2 },
-          { id: 18, nombre: 'Sobresalto exagerado', media: 0.2 },
-          { id: 19, nombre: 'Conducta arriesgada', media: 0.1 },
-          { id: 20, nombre: 'Concentración deficiente', media: 0.3 },
-          { id: 21, nombre: 'Irritabilidad', media: 0.3 },
-          { id: 22, nombre: 'Problemas del sueño', media: 0.4 }
         ]
       },
       'HAMILTON': { media_por_item: 1.5 },
@@ -4794,16 +4654,6 @@ const app = {
     }
   },
 
-  async abrirEvaluacionEGEP5(pruebaId) {
-    try {
-      const token = localStorage.getItem('auth_token');
-      window.open(`/micrositios/egep5/?modo=cargar&prueba_id=${pruebaId}&token=${token}`, '_blank');
-    } catch (error) {
-      console.error('Error al abrir evaluación EGEP-5:', error);
-      this.mostrarToast('Error al cargar evaluación EGEP-5', 'error');
-    }
-  },
-
   async abrirEvaluacionMMPI(pruebaId) {
     try {
       const response = await fetch(`/api/pruebas/${pruebaId}`, {
@@ -4910,8 +4760,7 @@ const app = {
         'HAMILTON': 'hamD17',
         'SCL90R': 'scl90R',
         'ISRA': 'isra',
-        'PCLR': 'pclR',
-        'EGEP5': 'egep5'
+        'PCLR': 'pclR'
       };
 
       const metodo = mapeoInterpretacion[tipoTest];
@@ -4945,8 +4794,7 @@ const app = {
       'ISRA': '◆',
       'TDS': '★',
       'TDS-2': '★',
-      'PCLR': '◇',
-      'EGEP5': '◌'
+      'PCLR': '◇'
     };
 
     const nombres = {
@@ -4956,8 +4804,7 @@ const app = {
       'ISRA': 'ISRA (Ansiedad)',
       'TDS': 'TDS (Sueño)',
       'TDS-2': 'TDS-2 (Sueño)',
-      'PCLR': 'PCL-R (Psicopatía)',
-      'EGEP5': 'EGEP-5 (TEPT)'
+      'PCLR': 'PCL-R (Psicopatía)'
     };
 
     container.innerHTML = pruebas.map(prueba => {
@@ -5008,16 +4855,11 @@ const app = {
           </div>
 
           <div class="estudio-actions">
-            <button class="btn-ver-reporte ${(prueba.tipo.toUpperCase().includes('CUIDA') || prueba.tipo.toUpperCase().includes('MMPI') || prueba.tipo === 'MBI' || prueba.tipo === 'CISNEROS' || prueba.tipo.toUpperCase().includes('EGEP') || prueba.tipo === 'TDS') ? 'oculto' : ''}" data-prueba-id="${prueba.id}" onclick="app.abrirReportePrueba(this.getAttribute('data-prueba-id'))">
+            <button class="btn-ver-reporte ${(prueba.tipo.toUpperCase().includes('CUIDA') || prueba.tipo.toUpperCase().includes('MMPI') || prueba.tipo === 'MBI' || prueba.tipo === 'CISNEROS' || prueba.tipo === 'TDS') ? 'oculto' : ''}" data-prueba-id="${prueba.id}" onclick="app.abrirReportePrueba(this.getAttribute('data-prueba-id'))">
               Ver Reporte
             </button>
             ${prueba.tipo.toUpperCase().includes('CUIDA') ? `
               <button class="btn-abrir-evaluacion" onclick="app.abrirEvaluacionCUIDA(${prueba.id})">
-                Abrir JSON
-              </button>
-            ` : ''}
-            ${prueba.tipo.toUpperCase().includes('EGEP') ? `
-              <button class="btn-abrir-evaluacion" onclick="app.abrirEvaluacionEGEP5(${prueba.id})">
                 Abrir JSON
               </button>
             ` : ''}

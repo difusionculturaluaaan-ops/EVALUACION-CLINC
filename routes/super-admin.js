@@ -23,7 +23,7 @@ const { upload, uploadLogo } = require('../middleware/cloudinary');
 const router = express.Router();
 
 // Test IDs válidos en el sistema
-const VALID_TEST_IDS = ['SCL90R', 'HAMILTON', 'MMPI2PRO', 'CUIDA', 'ISRA', 'TDS3', 'PCLR', 'SCID2', 'EGEP5', 'MBI', 'CISNEROS'];
+const VALID_TEST_IDS = ['SCL90R', 'HAMILTON', 'MMPI2PRO', 'CUIDA', 'ISRA', 'TDS3', 'PCLR', 'SCID2', 'MBI', 'CISNEROS'];
 
 // POST /api/super-admin/login
 router.post('/login', async (req, res) => {

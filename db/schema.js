@@ -47,7 +47,7 @@ async function createTables() {
         // Crear la columna si no existe
         await pool.query(`
           ALTER TABLE tenants
-          ADD COLUMN tests_habilitados JSONB DEFAULT '["SCL90R","HAMILTON","MMPI2PRO","CUIDA","ISRA","TDS3","PCLR","SCID2","EGEP5","MBI","CISNEROS"]'::jsonb
+          ADD COLUMN tests_habilitados JSONB DEFAULT '["SCL90R","HAMILTON","MMPI2PRO","CUIDA","ISRA","TDS3","PCLR","SCID2","MBI","CISNEROS"]'::jsonb
         `);
         console.log('✓ Columna tests_habilitados creada en tenants');
       }
