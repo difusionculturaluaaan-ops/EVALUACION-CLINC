@@ -3,32 +3,8 @@ const { getTenantById, query } = require('../db/schema');
 const middlewareAutenticacion = require('../middleware/autenticacion');
 const router = express.Router();
 
-// GET /api/tenants/:id - Obtener datos del tenant (requiere autenticación)
-router.get('/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const tenant = await getTenantById(parseInt(id));
-
-    if (!tenant) {
-      return res.status(404).json({ error: 'Tenant no encontrado' });
-    }
-
-    // Retornar solo datos públicos del tenant
-    res.json({
-      id: tenant.id,
-      nombre: tenant.nombre,
-      slug: tenant.slug,
-      logo_url: tenant.logo_url || null,
-      estado: tenant.estado
-    });
-  } catch (error) {
-    console.error('Error al obtener tenant:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// GET /api/tenants/tests-habilitados - Obtener tests habilitados para el tenant actual
+// GET /api/tenants/tests-habilitados/list - Obtener tests habilitados para el tenant actual
+// IMPORTANTE: Ruta específica ANTES de /:id (orden importa en Express)
 // El tenant se obtiene del JWT en middleware de autenticación
 router.get('/tests-habilitados/list', middlewareAutenticacion, async (req, res) => {
   try {
@@ -56,6 +32,32 @@ router.get('/tests-habilitados/list', middlewareAutenticacion, async (req, res) 
     });
   } catch (error) {
     console.error('Error al obtener tests habilitados:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET /api/tenants/:id - Obtener datos del tenant (requiere autenticación)
+// IMPORTANTE: Ruta general DESPUÉS de rutas específicas
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const tenant = await getTenantById(parseInt(id));
+
+    if (!tenant) {
+      return res.status(404).json({ error: 'Tenant no encontrado' });
+    }
+
+    // Retornar solo datos públicos del tenant
+    res.json({
+      id: tenant.id,
+      nombre: tenant.nombre,
+      slug: tenant.slug,
+      logo_url: tenant.logo_url || null,
+      estado: tenant.estado
+    });
+  } catch (error) {
+    console.error('Error al obtener tenant:', error);
     res.status(500).json({ error: error.message });
   }
 });
