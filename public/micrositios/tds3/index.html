@@ -868,7 +868,7 @@ function generatePDF(){
     doc.roundedRect(marginX+chartLabelW, yRef, refFillW, 2.6, 1, 1, 'F');
     doc.setGState(new doc.GState({opacity:1}));
     doc.setFontSize(6.6); doc.setTextColor(...MUTED);
-    doc.text(r.pct.toFixed(0)+'% normal', marginX+chartLabelW+chartBarW+3, yRef+2.3);
+    doc.text(r.pct.toFixed(0)+'%', marginX+chartLabelW+chartBarW+3, yRef+2.3);
     y += 11;
   });
   y += 3;
