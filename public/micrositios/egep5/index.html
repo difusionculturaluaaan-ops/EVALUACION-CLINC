@@ -565,7 +565,7 @@ const OPC = {
 };
 
 let S = nuevo();
-function nuevo(){ return {meta:{}, ev:{}, resp:{}, textos: DEFAULT_TEXTS, baremos: DEFAULT_BAREMOS}; }
+function nuevo(){ return {meta:{}, ev:{}, resp:{}, textos: DEFAULT_TEXTS, baremos: DEFAULT_BAREMOS, pruebaId: null}; }
 
 const KEY='egep5_v1';
 function save(){ 
@@ -1124,8 +1124,12 @@ async function guardarEnExpediente(){
       }
     };
 
-    const res=await fetch('/api/pruebas',{
-      method:'POST',
+    // 🔴 CRÍTICO: Si estamos editando una prueba existente, usar PUT; si es nueva, usar POST
+    const endpoint = S.pruebaId ? `/api/pruebas/${S.pruebaId}` : '/api/pruebas';
+    const method = S.pruebaId ? 'PUT' : 'POST';
+
+    const res=await fetch(endpoint,{
+      method,
       headers:{
         'Content-Type':'application/json',
         'Authorization':`Bearer ${token}`
@@ -1200,6 +1204,9 @@ async function cargarDesdePrueba(){
     const prueba=await res.json();
 
     console.log('📊 Datos cargados:', prueba);
+
+    // 🔴 CRÍTICO: Guardar pruebaId para hacer PUT en lugar de POST al guardar
+    S.pruebaId = pruebaId;
 
     if(prueba.tipo!=='EGEP5') return;
 
