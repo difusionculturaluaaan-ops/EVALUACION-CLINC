@@ -891,10 +891,10 @@ function renderPerf(o){
     g+=`<circle cx="${X(i)}" cy="${Y(c.y)}" r="4" fill="${c.c}" stroke="#0a0c10" stroke-width="1.5"/>`;
     g+=`<text x="${X(i)}" y="${Y(c.y)-11}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10.5" font-weight="700" fill="${c.c}">${usaPc?(c.pc===null?'—':c.pc):c.v}</text>`;
     g+=`<text x="${X(i)}" y="${MT+ph+20}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" font-weight="700" fill="#e6eaf0">${c.l}</text>`;
-    g+=`<text x="${X(i)}" y="${MT+ph+36}" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#5d6675">PD ${c.v}/${c.max}</text>`;
+    g+=`<text x="${X(i)}" y="${MT+ph+36}" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#2d2419">PD ${c.v}/${c.max}</text>`;
   });
   g+=`<line x1="${ML}" y1="${MT+ph}" x2="${W-MR}" y2="${MT+ph}" stroke="#232a34" stroke-width="1"/>`;
-  g+=`<text x="14" y="${MT+ph/2}" text-anchor="middle" transform="rotate(-90 14 ${MT+ph/2})" font-family="DM Sans,sans-serif" font-size="10" fill="#5d6675" letter-spacing="1">${usaPc?'PERCENTIL':'% DEL MÁXIMO'}</text>`;
+  g+=`<text x="14" y="${MT+ph/2}" text-anchor="middle" transform="rotate(-90 14 ${MT+ph/2})" font-family="DM Sans,sans-serif" font-size="10" fill="#2d2419" letter-spacing="1">${usaPc?'PERCENTIL':'% DEL MÁXIMO'}</text>`;
 
   let h='';
   h+=`<div class="card"><div class="card-h"><h2><span class="gl">▲</span> Perfil de intensidad sintomatológica</h2><span class="hint">${usaPc?esc(S.baremos.nombre||'baremos cargados'):'escala relativa'}</span></div><div class="card-b">
