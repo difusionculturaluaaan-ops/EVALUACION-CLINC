@@ -4731,6 +4731,11 @@ const app = {
    */
   async abrirEvaluacionCUIDA(pruebaId) {
     try {
+      if (!this.pacienteActivo) {
+        this.mostrarToast('Selecciona un paciente primero', 'error');
+        return;
+      }
+
       const response = await fetch(`/api/pruebas/${pruebaId}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
       });
@@ -4742,11 +4747,20 @@ const app = {
 
       const prueba = await response.json();
 
+      // 🔐 CRÍTICO: Validar que la prueba pertenece al paciente actual
+      if (prueba.paciente_id !== this.pacienteActivo.id) {
+        console.error('🚨 INTENTO DE ACCESO NO AUTORIZADO:', {
+          prueba_paciente_id: prueba.paciente_id,
+          usuario_paciente_id: this.pacienteActivo.id
+        });
+        this.mostrarToast('⚠️ Acceso denegado: Esta prueba no pertenece al paciente seleccionado', 'error');
+        return;
+      }
+
       // Obtener token para pasar en URL
       const token = localStorage.getItem('auth_token');
 
       // Abrir cuida.html con modo=cargar, prueba_id y token
-      // cuida.html hará fetch directo a la API para obtener los datos
       window.open(`/cuida.html?modo=cargar&prueba_id=${pruebaId}&token=${token}`, '_blank');
     } catch (error) {
       console.error('Error al abrir evaluación CUIDA:', error);
@@ -4756,6 +4770,11 @@ const app = {
 
   async abrirEvaluacionMMPI(pruebaId) {
     try {
+      if (!this.pacienteActivo) {
+        this.mostrarToast('Selecciona un paciente primero', 'error');
+        return;
+      }
+
       const response = await fetch(`/api/pruebas/${pruebaId}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
       });
@@ -4766,6 +4785,16 @@ const app = {
       }
 
       const prueba = await response.json();
+
+      // 🔐 CRÍTICO: Validar que la prueba pertenece al paciente actual
+      if (prueba.paciente_id !== this.pacienteActivo.id) {
+        console.error('🚨 INTENTO DE ACCESO NO AUTORIZADO:', {
+          prueba_paciente_id: prueba.paciente_id,
+          usuario_paciente_id: this.pacienteActivo.id
+        });
+        this.mostrarToast('⚠️ Acceso denegado: Esta prueba no pertenece al paciente seleccionado', 'error');
+        return;
+      }
 
       // Obtener token para pasar en URL
       const token = localStorage.getItem('auth_token');
@@ -4780,6 +4809,11 @@ const app = {
 
   async abrirEvaluacionTDS3(pruebaId) {
     try {
+      if (!this.pacienteActivo) {
+        this.mostrarToast('Selecciona un paciente primero', 'error');
+        return;
+      }
+
       const response = await fetch(`/api/pruebas/${pruebaId}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
       });
@@ -4790,6 +4824,16 @@ const app = {
       }
 
       const prueba = await response.json();
+
+      // 🔐 CRÍTICO: Validar que la prueba pertenece al paciente actual
+      if (prueba.paciente_id !== this.pacienteActivo.id) {
+        console.error('🚨 INTENTO DE ACCESO NO AUTORIZADO:', {
+          prueba_paciente_id: prueba.paciente_id,
+          usuario_paciente_id: this.pacienteActivo.id
+        });
+        this.mostrarToast('⚠️ Acceso denegado: Esta prueba no pertenece al paciente seleccionado', 'error');
+        return;
+      }
 
       // Obtener token para pasar en URL
       const token = localStorage.getItem('auth_token');
@@ -4804,6 +4848,11 @@ const app = {
 
   async abrirEvaluacionEGEP5(pruebaId) {
     try {
+      if (!this.pacienteActivo) {
+        this.mostrarToast('Selecciona un paciente primero', 'error');
+        return;
+      }
+
       const response = await fetch(`/api/pruebas/${pruebaId}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
       });
@@ -4814,6 +4863,16 @@ const app = {
       }
 
       const prueba = await response.json();
+
+      // 🔐 CRÍTICO: Validar que la prueba pertenece al paciente actual (seguridad multitenant)
+      if (prueba.paciente_id !== this.pacienteActivo.id) {
+        console.error('🚨 INTENTO DE ACCESO NO AUTORIZADO:', {
+          prueba_paciente_id: prueba.paciente_id,
+          usuario_paciente_id: this.pacienteActivo.id
+        });
+        this.mostrarToast('⚠️ Acceso denegado: Esta prueba no pertenece al paciente seleccionado', 'error');
+        return;
+      }
 
       // Obtener token para pasar en URL
       const token = localStorage.getItem('auth_token');
