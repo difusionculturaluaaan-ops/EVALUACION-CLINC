@@ -890,7 +890,7 @@ function renderPerf(o){
     g+=`<line x1="${X(i)-bw/2}" y1="${Y(c.y)}" x2="${X(i)+bw/2}" y2="${Y(c.y)}" stroke="${c.c}" stroke-width="2.5"/>`;
     g+=`<circle cx="${X(i)}" cy="${Y(c.y)}" r="4" fill="${c.c}" stroke="#0a0c10" stroke-width="1.5"/>`;
     g+=`<text x="${X(i)}" y="${Y(c.y)-11}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10.5" font-weight="700" fill="${c.c}">${usaPc?(c.pc===null?'—':c.pc):c.v}</text>`;
-    g+=`<text x="${X(i)}" y="${MT+ph+20}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" font-weight="700" fill="#e6eaf0">${c.l}</text>`;
+    g+=`<text x="${X(i)}" y="${MT+ph+20}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" font-weight="700" fill="#2d2419">${c.l}</text>`;
     g+=`<text x="${X(i)}" y="${MT+ph+36}" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#2d2419">PD ${c.v}/${c.max}</text>`;
   });
   g+=`<line x1="${ML}" y1="${MT+ph}" x2="${W-MR}" y2="${MT+ph}" stroke="#232a34" stroke-width="1"/>`;
