@@ -1215,6 +1215,20 @@ async function cargarDesdePrueba(){
       }
     }
 
+    // 🔐 CRÍTICO: Validar que la prueba pertenece al paciente correcto
+    const paciente_id = getURLParam('paciente_id') ||
+                        sessionStorage.getItem('pacienteSeleccionado') ||
+                        localStorage.getItem('paciente_id');
+
+    if(paciente_id && String(prueba.paciente_id) !== String(paciente_id)) {
+      console.error('🚨 INTENTO DE CARGA CROSS-PACIENTE DETECTADO:', {
+        prueba_paciente_id: prueba.paciente_id,
+        usuario_paciente_id: paciente_id
+      });
+      showNotification('🚨 ACCESO DENEGADO: Esta prueba no pertenece al paciente actual', 'error');
+      return;
+    }
+
     if(Array.isArray(dataArray)){
       console.log('📝 Restaurando', dataArray.length, 'respuestas');
       dataArray.forEach(item=>{

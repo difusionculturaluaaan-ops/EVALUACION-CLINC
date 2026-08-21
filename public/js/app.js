@@ -4772,7 +4772,7 @@ const app = {
       const token = localStorage.getItem('auth_token');
 
       // Abrir cuida.html con modo=cargar, prueba_id y token
-      window.open(`/cuida.html?modo=cargar&prueba_id=${pruebaId}&token=${token}`, '_blank');
+      window.open(`/cuida.html?modo=cargar&prueba_id=${pruebaId}&paciente_id=${this.pacienteActivo.id}&token=${token}`, '_blank');
     } catch (error) {
       console.error('Error al abrir evaluación CUIDA:', error);
       this.mostrarToast('Error al cargar evaluación CUIDA', 'error');
@@ -4811,7 +4811,7 @@ const app = {
       const token = localStorage.getItem('auth_token');
 
       // Abrir mmpi-pro.html con modo=cargar, prueba_id y token
-      window.open(`/mmpi-pro.html?modo=cargar&prueba_id=${pruebaId}&token=${token}`, '_blank');
+      window.open(`/mmpi-pro.html?modo=cargar&prueba_id=${pruebaId}&paciente_id=${this.pacienteActivo.id}&token=${token}`, '_blank');
     } catch (error) {
       console.error('Error al abrir evaluación MMPI:', error);
       this.mostrarToast('Error al cargar evaluación MMPI-2-RF', 'error');
@@ -4850,7 +4850,7 @@ const app = {
       const token = localStorage.getItem('auth_token');
 
       // Abrir micrositio tds3 con modo=cargar, prueba_id y token
-      window.open(`/micrositios/tds3/?modo=cargar&prueba_id=${pruebaId}&token=${token}`, '_blank');
+      window.open(`/micrositios/tds3/?modo=cargar&prueba_id=${pruebaId}&paciente_id=${this.pacienteActivo.id}&token=${token}`, '_blank');
     } catch (error) {
       console.error('Error al abrir evaluación TDS-3:', error);
       this.mostrarToast('Error al cargar evaluación TDS-3', 'error');
@@ -4900,7 +4900,7 @@ const app = {
       const token = localStorage.getItem('auth_token');
 
       // Abrir micrositio egep5 con modo=cargar, prueba_id y token
-      window.open(`/micrositios/egep5/?modo=cargar&prueba_id=${pruebaId}&token=${token}`, '_blank');
+      window.open(`/micrositios/egep5/?modo=cargar&prueba_id=${pruebaId}&paciente_id=${this.pacienteActivo.id}&token=${token}`, '_blank');
     } catch (error) {
       console.error('Error al abrir evaluación EGEP-5:', error);
       this.mostrarToast('Error al cargar evaluación EGEP-5', 'error');

@@ -387,14 +387,21 @@ async function crearPacienteTenant(tenant_id, datos) {
   return crearPaciente({ tenant_id, ...datos });
 }
 
-async function actualizarPaciente(id, datos) {
+async function actualizarPaciente(id, datos, tenant_id = null) {
   try {
-    const result = await pool.query(
-      `UPDATE pacientes SET nombre = $1, edad = $2, sexo = $3, estado_civil = $4,
+    let query = `UPDATE pacientes SET nombre = $1, edad = $2, sexo = $3, estado_civil = $4,
        medicamentos = $5, observaciones = $6, actualizado_en = CURRENT_TIMESTAMP
-       WHERE id = $7 RETURNING *`,
-      [datos.nombre, datos.edad, datos.sexo, datos.estado_civil, datos.medicamentos, datos.observaciones, id]
-    );
+       WHERE id = $7`;
+    let params = [datos.nombre, datos.edad, datos.sexo, datos.estado_civil, datos.medicamentos, datos.observaciones, id];
+
+    // Agregar validación tenant_id si se proporciona (CRÍTICO para seguridad multitenant)
+    if (tenant_id !== null) {
+      query += ' AND tenant_id = $8';
+      params.push(tenant_id);
+    }
+
+    query += ' RETURNING *';
+    const result = await pool.query(query, params);
     return result.rows[0] || null;
   } catch (err) {
     console.error(err);
@@ -419,13 +426,20 @@ async function toggleStatusPaciente(id) {
   }
 }
 
-async function deletePaciente(id) {
+async function deletePaciente(id, tenant_id = null) {
   try {
     // Las pruebas se eliminarán automáticamente por ON DELETE CASCADE
-    const result = await pool.query(
-      'DELETE FROM pacientes WHERE id = $1 RETURNING id',
-      [id]
-    );
+    let query = 'DELETE FROM pacientes WHERE id = $1';
+    let params = [id];
+
+    // Agregar validación tenant_id si se proporciona (CRÍTICO para seguridad multitenant)
+    if (tenant_id !== null) {
+      query += ' AND tenant_id = $2';
+      params.push(tenant_id);
+    }
+
+    query += ' RETURNING id';
+    const result = await pool.query(query, params);
     return result.rows.length > 0;
   } catch (err) {
     console.error(err);
@@ -474,6 +488,19 @@ async function getPruebasByPaciente(paciente_id, tenant_id) {
 async function getPruebaById(id) {
   try {
     const result = await pool.query('SELECT * FROM pruebas WHERE id = $1', [id]);
+    return result.rows[0] || null;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+}
+
+async function obtenerPruebaByIdTenant(id, tenant_id) {
+  try {
+    const result = await pool.query(
+      'SELECT * FROM pruebas WHERE id = $1 AND tenant_id = $2',
+      [id, tenant_id]
+    );
     return result.rows[0] || null;
   } catch (err) {
     console.error(err);
@@ -1026,6 +1053,7 @@ module.exports = {
   obtenerPruebasPaciente: getPruebasByPaciente,
   getPruebaById,
   obtenerPruebaById: getPruebaById,
+  obtenerPruebaByIdTenant,
   crearPrueba,
   guardarPrueba,
   obtenerPruebasRango,

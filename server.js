@@ -14,6 +14,7 @@ const adminRoutes = require('./routes/admin');
 const tenantsRoutes = require('./routes/tenants');
 const usuarioTestsRoutes = require('./routes/usuario-tests');
 const middlewareAutenticacion = require('./middleware/autenticacion');
+const middlewareTenantIsolation = require('./middleware/tenant-isolation');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -61,12 +62,12 @@ app.use('/api', (req, res, next) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/super-admin', superAdminRoutes);
 
-// Rutas protegidas (requieren autenticación)
-app.use('/api/pacientes', middlewareAutenticacion, pacientesRoutes);
-app.use('/api/pruebas', middlewareAutenticacion, pruebasRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/tenants', middlewareAutenticacion, tenantsRoutes);
-app.use('/api/usuario-tests', middlewareAutenticacion, usuarioTestsRoutes);
+// Rutas protegidas (requieren autenticación + aislamiento de tenant)
+app.use('/api/pacientes', middlewareAutenticacion, middlewareTenantIsolation, pacientesRoutes);
+app.use('/api/pruebas', middlewareAutenticacion, middlewareTenantIsolation, pruebasRoutes);
+app.use('/api/admin', middlewareAutenticacion, middlewareTenantIsolation, adminRoutes);
+app.use('/api/tenants', middlewareAutenticacion, middlewareTenantIsolation, tenantsRoutes);
+app.use('/api/usuario-tests', middlewareAutenticacion, middlewareTenantIsolation, usuarioTestsRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

@@ -1401,6 +1401,13 @@ if (modoCargar) {
 
       const prueba = await response.json();
 
+      // 🔐 CRÍTICO: Validar que la prueba pertenece al paciente correcto
+      const paciente_id = new URLSearchParams(window.location.search).get('paciente_id') || sessionStorage.getItem('pacienteSeleccionado') || localStorage.getItem('paciente_id');
+
+      if(paciente_id && String(prueba.paciente_id) !== String(paciente_id)) {
+        throw new Error('🚨 ACCESO DENEGADO: Esta prueba no pertenece al paciente seleccionado');
+      }
+
       let subescalasData = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas;
 
       // Extraer metadatos si están guardados dentro de subescalas

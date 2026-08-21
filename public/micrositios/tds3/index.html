@@ -507,6 +507,23 @@ async function cargarDesdePrueba(){
     const prueba = await response.json();
     console.log('✅ Prueba TDS-3 cargada:', prueba);
 
+    // 🔐 CRÍTICO: Validar que la prueba pertenece al paciente correcto
+    const params2 = new URL(window.location).searchParams;
+    const paciente_id = params2.get('paciente_id') || sessionStorage.getItem('pacienteSeleccionado') || localStorage.getItem('paciente_id');
+
+    if(paciente_id && String(prueba.paciente_id) !== String(paciente_id)) {
+      console.error('🚨 INTENTO DE CARGA CROSS-PACIENTE DETECTADO:', {
+        prueba_paciente_id: prueba.paciente_id,
+        usuario_paciente_id: paciente_id
+      });
+      const msgError = document.createElement('div');
+      msgError.style.cssText = 'position:fixed;top:20px;right:20px;background:#ef4444;color:#fff;padding:15px 20px;border-radius:8px;z-index:9999;font-weight:bold;box-shadow:0 4px 12px rgba(0,0,0,0.3)';
+      msgError.innerHTML = '🚨 ACCESO DENEGADO: Esta prueba no pertenece al paciente actual';
+      document.body.appendChild(msgError);
+      setTimeout(()=>msgError.remove(),5000);
+      return;
+    }
+
     // Extraer datos del paciente
     const subescalas = typeof prueba.subescalas === 'string' ? JSON.parse(prueba.subescalas) : prueba.subescalas;
 

@@ -87,6 +87,7 @@ router.put('/:id', async (req, res) => {
 
     const { nombre, edad, sexo, estado_civil, medicamentos, observaciones } = req.body;
 
+    // CRÍTICO: Pasar tenant_id a actualizarPaciente para validación fail-closed
     const actualizado = await actualizarPaciente(req.params.id, {
       nombre: nombre || paciente.nombre,
       edad: edad !== undefined ? edad : paciente.edad,
@@ -94,7 +95,7 @@ router.put('/:id', async (req, res) => {
       estado_civil: estado_civil || paciente.estado_civil,
       medicamentos: medicamentos || paciente.medicamentos,
       observaciones: observaciones || paciente.observaciones
-    });
+    }, tenant_id);
 
     res.json(actualizado);
   } catch (error) {
@@ -129,7 +130,8 @@ router.delete('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Paciente no encontrado' });
     }
 
-    const eliminado = await deletePaciente(req.params.id);
+    // CRÍTICO: Pasar tenant_id a deletePaciente para validación fail-closed
+    const eliminado = await deletePaciente(req.params.id, tenant_id);
     if (!eliminado) {
       return res.status(400).json({ error: 'No se pudo eliminar el paciente' });
     }

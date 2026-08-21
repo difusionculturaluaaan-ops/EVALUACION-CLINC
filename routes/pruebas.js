@@ -5,6 +5,7 @@ const {
   getPacienteByIdTenant,
   guardarPrueba,
   obtenerPruebaById,
+  obtenerPruebaByIdTenant,
   obtenerPruebasPaciente,
   obtenerPruebasRango,
   getNormasByTest,
@@ -60,15 +61,11 @@ router.post('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const tenant_id = req.tenant_id;
-    const prueba = await obtenerPruebaById(req.params.id);
+    // CRÍTICO: Validar tenant_id en BD para evitar access control bypass
+    const prueba = await obtenerPruebaByIdTenant(req.params.id, tenant_id);
 
     if (!prueba) {
       return res.status(404).json({ error: 'Prueba no encontrada' });
-    }
-
-    // Validar que la prueba pertenezca al tenant
-    if (prueba.tenant_id !== tenant_id) {
-      return res.status(403).json({ error: 'Acceso denegado' });
     }
 
     res.json(prueba);
@@ -88,15 +85,10 @@ router.put('/:id', async (req, res) => {
       return res.status(400).json({ error: 'Datos incompletos' });
     }
 
-    // Obtener prueba existente
-    const prueba = await obtenerPruebaById(req.params.id);
+    // CRÍTICO: Obtener prueba validando tenant_id en BD
+    const prueba = await obtenerPruebaByIdTenant(req.params.id, tenant_id);
     if (!prueba) {
       return res.status(404).json({ error: 'Prueba no encontrada' });
-    }
-
-    // Validar que pertenezca al tenant
-    if (prueba.tenant_id !== tenant_id) {
-      return res.status(403).json({ error: 'Acceso denegado' });
     }
 
     // Validar que el test esté autorizado (en caso de cambio de tipo)
@@ -194,19 +186,16 @@ router.put('/:id/estado', async (req, res) => {
       return res.status(400).json({ error: 'Estado inválido' });
     }
 
-    // Validar que la prueba pertenezca al tenant
-    const prueba = await obtenerPruebaById(id);
+    // CRÍTICO: Validar que la prueba pertenezca al tenant en BD
+    const prueba = await obtenerPruebaByIdTenant(id, tenant_id);
     if (!prueba) {
       return res.status(404).json({ error: 'Prueba no encontrada' });
     }
-    if (prueba.tenant_id !== tenant_id) {
-      return res.status(403).json({ error: 'Acceso denegado' });
-    }
 
-    // Actualizar estado
+    // Actualizar estado (con validación tenant_id en WHERE)
     const result = await pool.query(
-      'UPDATE pruebas SET estado = $1, actualizado_en = NOW() WHERE id = $2 RETURNING *',
-      [estado, id]
+      'UPDATE pruebas SET estado = $1, actualizado_en = NOW() WHERE id = $2 AND tenant_id = $3 RETURNING *',
+      [estado, id, tenant_id]
     );
 
     res.json(result.rows[0]);
@@ -222,13 +211,10 @@ router.delete('/:id', async (req, res) => {
     const tenant_id = req.tenant_id;
     const { id } = req.params;
 
-    // Validar que la prueba pertenezca al tenant
-    const prueba = await obtenerPruebaById(id);
+    // CRÍTICO: Validar que la prueba pertenezca al tenant en BD
+    const prueba = await obtenerPruebaByIdTenant(id, tenant_id);
     if (!prueba) {
       return res.status(404).json({ error: 'Prueba no encontrada' });
-    }
-    if (prueba.tenant_id !== tenant_id) {
-      return res.status(403).json({ error: 'Acceso denegado' });
     }
 
     // Solo permitir eliminar borradores
@@ -236,8 +222,8 @@ router.delete('/:id', async (req, res) => {
       return res.status(400).json({ error: 'No se pueden eliminar pruebas oficiales' });
     }
 
-    // Eliminar
-    await pool.query('DELETE FROM pruebas WHERE id = $1', [id]);
+    // Eliminar (con validación tenant_id en WHERE - fail-closed security)
+    await pool.query('DELETE FROM pruebas WHERE id = $1 AND tenant_id = $2', [id, tenant_id]);
 
     res.json({ success: true, message: 'Prueba eliminada' });
   } catch (error) {
