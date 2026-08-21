@@ -1234,7 +1234,7 @@ async function cargarDesdePrueba(){
         prueba_paciente_id: prueba.paciente_id,
         usuario_paciente_id: paciente_id
       });
-      showNotification('🚨 ACCESO DENEGADO: Esta prueba no pertenece al paciente actual', 'error');
+      alert('🚨 ACCESO DENEGADO: Esta prueba no pertenece al paciente actual');
       return;
     }
 
