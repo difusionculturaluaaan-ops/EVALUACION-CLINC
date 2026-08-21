@@ -1245,7 +1245,7 @@ async function cargarDesdePrueba(){
       });
     }
 
-    // Restaurar meta desde subescalas
+    // 🔴 CRÍTICO: Restaurar metadatos DIRECTAMENTE en el DOM (patrón MBI)
     if(prueba.subescalas){
       let subescalas=prueba.subescalas;
       if(typeof subescalas==='string'){
@@ -1256,24 +1256,45 @@ async function cargarDesdePrueba(){
         }
       }
 
-      if(subescalas.meta){
-        S.meta=subescalas.meta;
-        console.log('👤 Meta restaurada:', S.meta);
+      // Cargar metadatos: primero desde meta, sino desde _json en subescalas
+      let metadatos = subescalas.meta;
+
+      // Si no hay meta directo, buscar en _json (patrón CUIDA/MBI)
+      if (!metadatos && subescalas._json) {
+        try {
+          const jsonData = typeof subescalas._json === 'string' ? JSON.parse(subescalas._json) : subescalas._json;
+          metadatos = jsonData.metadatos;
+        } catch(e) {
+          console.warn('Error extrayendo metadatos de _json:', e);
+        }
+      }
+
+      // Cargar metadatos DIRECTAMENTE en el DOM (NO usar S.meta ni sessionStorage)
+      if(metadatos){
+        console.log('👤 Metadatos restaurados:', metadatos);
+        // Llenar DIRECTAMENTE los campos del formulario
+        const m_nombre = document.querySelector('input[id="m_nombre"]') || document.querySelector('input[placeholder*="nombre"]');
+        const m_edad = document.querySelector('input[id="m_edad"]') || document.querySelector('input[placeholder*="edad"]');
+        const m_sexo = document.querySelector('select[id="m_sexo"]') || document.querySelector('select[placeholder*="sexo"]');
+        const m_centro = document.querySelector('input[id="m_centro"]') || document.querySelector('input[placeholder*="centro"]');
+        const m_evaluador = document.querySelector('input[id="m_evaluador"]') || document.querySelector('input[placeholder*="evaluador"]');
+
+        if(m_nombre) m_nombre.value = metadatos.nombre || metadatos.paciente_nombre || '';
+        if(m_edad) m_edad.value = metadatos.edad || '';
+        if(m_sexo) m_sexo.value = metadatos.sexo || '';
+        if(m_centro) m_centro.value = metadatos.centro || '';
+        if(m_evaluador) m_evaluador.value = metadatos.evaluador || '';
+
+        // También guardar en S.meta para ser consistente
+        S.meta = metadatos;
       }
     }
-
-    // 🔴 CRÍTICO: Limpiar sessionStorage para que pintarMeta() no use datos viejos
-    sessionStorage.removeItem('paciente_nombre');
-    sessionStorage.removeItem('paciente_edad');
-    sessionStorage.removeItem('paciente_sexo');
-    sessionStorage.removeItem('paciente_centro');
 
     console.log('✅ Prueba cargada exitosamente. Respuestas:', Object.keys(S.resp).length);
     save();
 
     // Actualizar UI para mostrar datos cargados
     console.log('🎨 Actualizando interfaz...');
-    pintarMeta();      // Rellena campos del paciente (desde S.meta, no desde sessionStorage)
     renderTest();      // Renderiza respuestas en formulario
     upd();             // Actualiza estadísticas
     calc();            // Calcula resultados automáticamente
