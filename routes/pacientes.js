@@ -28,7 +28,18 @@ router.get('/', async (req, res) => {
       pacientes = await getPacientesByTenant(tenant_id);
     }
 
-    console.log(`🔍 [AUDITORIA] Retornando ${pacientes.length} pacientes para tenant_id=${tenant_id}`);
+    // 🔴 AUDITORIA CRÍTICA: Verificar que TODOS los pacientes pertenecen al tenant correcto
+    const pacientesIncorrectos = pacientes.filter(p => String(p.tenant_id) !== String(tenant_id));
+    if (pacientesIncorrectos.length > 0) {
+      console.error(`🚨 [CRÍTICO] FUGA DE DATOS MULTITENANT DETECTADA:`);
+      console.error(`   Tenant solicitado: ${tenant_id}`);
+      console.error(`   Pacientes de OTROS tenants retornados: ${pacientesIncorrectos.length}`);
+      pacientesIncorrectos.forEach(p => {
+        console.error(`   - Paciente ${p.id} "${p.nombre}" (tenant_id=${p.tenant_id})`);
+      });
+    }
+
+    console.log(`🔍 [AUDITORIA] GET /pacientes - Retornando ${pacientes.length} pacientes para tenant_id=${tenant_id}. Correctos: ${pacientes.length - pacientesIncorrectos.length}, Incorrectos: ${pacientesIncorrectos.length}`);
     res.json(pacientes);
   } catch (error) {
     console.error('Error al obtener pacientes:', error);
