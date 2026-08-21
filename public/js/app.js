@@ -4750,7 +4750,7 @@ const app = {
       const prueba = await response.json();
 
       // 🔐 CRÍTICO: Validar seguridad multitenant
-      if (prueba.tenant_id !== currentTenantId) {
+      if (String(prueba.tenant_id) !== String(currentTenantId)) {
         console.error('🚨 ACCESO A OTRO TENANT DETECTADO:', {
           prueba_tenant_id: prueba.tenant_id,
           usuario_tenant_id: currentTenantId
@@ -4878,7 +4878,7 @@ const app = {
       const prueba = await response.json();
 
       // 🔐 CRÍTICO: Validar seguridad multitenant - prueba debe estar en mismo tenant Y paciente
-      if (prueba.tenant_id !== currentTenantId) {
+      if (String(prueba.tenant_id) !== String(currentTenantId)) {
         console.error('🚨 ACCESO A OTRO TENANT DETECTADO:', {
           prueba_tenant_id: prueba.tenant_id,
           usuario_tenant_id: currentTenantId
