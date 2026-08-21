@@ -4736,6 +4736,8 @@ const app = {
         return;
       }
 
+      const currentTenantId = localStorage.getItem('tenant_id');
+
       const response = await fetch(`/api/pruebas/${pruebaId}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
       });
@@ -4747,7 +4749,16 @@ const app = {
 
       const prueba = await response.json();
 
-      // 🔐 CRÍTICO: Validar que la prueba pertenece al paciente actual
+      // 🔐 CRÍTICO: Validar seguridad multitenant
+      if (prueba.tenant_id !== currentTenantId) {
+        console.error('🚨 ACCESO A OTRO TENANT DETECTADO:', {
+          prueba_tenant_id: prueba.tenant_id,
+          usuario_tenant_id: currentTenantId
+        });
+        this.mostrarToast('🚨 ACCESO DENEGADO: Datos de otro cliente. Incidente reportado.', 'error');
+        return;
+      }
+
       if (prueba.paciente_id !== this.pacienteActivo.id) {
         console.error('🚨 INTENTO DE ACCESO NO AUTORIZADO:', {
           prueba_paciente_id: prueba.paciente_id,
@@ -4853,6 +4864,8 @@ const app = {
         return;
       }
 
+      const currentTenantId = localStorage.getItem('tenant_id');
+
       const response = await fetch(`/api/pruebas/${pruebaId}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
       });
@@ -4864,7 +4877,16 @@ const app = {
 
       const prueba = await response.json();
 
-      // 🔐 CRÍTICO: Validar que la prueba pertenece al paciente actual (seguridad multitenant)
+      // 🔐 CRÍTICO: Validar seguridad multitenant - prueba debe estar en mismo tenant Y paciente
+      if (prueba.tenant_id !== currentTenantId) {
+        console.error('🚨 ACCESO A OTRO TENANT DETECTADO:', {
+          prueba_tenant_id: prueba.tenant_id,
+          usuario_tenant_id: currentTenantId
+        });
+        this.mostrarToast('🚨 ACCESO DENEGADO: Datos de otro cliente. Incidente reportado.', 'error');
+        return;
+      }
+
       if (prueba.paciente_id !== this.pacienteActivo.id) {
         console.error('🚨 INTENTO DE ACCESO NO AUTORIZADO:', {
           prueba_paciente_id: prueba.paciente_id,
