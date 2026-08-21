@@ -1083,6 +1083,8 @@ function getURLParam(name){
 }
 
 async function guardarEnExpediente(){
+  // 🔴 CRÍTICO: Forzar recálculo ANTES de guardar (asegurar que o.pd tiene valores)
+  calc();
   const o=corregir();
 
   if(o.tept==='INC' || (obligatorios().filter(i=>valOf(i)).length===0 && nEventos()===0)){
