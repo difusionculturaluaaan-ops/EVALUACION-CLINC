@@ -16,6 +16,10 @@ router.get('/', async (req, res) => {
   try {
     const tenant_id = req.tenant_id; // Del middleware de autenticación
     const { q } = req.query;
+
+    // 🔴 AUDITORIA: Loguear qué tenant_id se está usando
+    console.log(`🔍 [AUDITORIA] GET /pacientes - tenant_id: ${tenant_id}, usuario: ${req.usuario?.email}, query: ${q || 'none'}`);
+
     let pacientes;
 
     if (q) {
@@ -24,6 +28,7 @@ router.get('/', async (req, res) => {
       pacientes = await getPacientesByTenant(tenant_id);
     }
 
+    console.log(`🔍 [AUDITORIA] Retornando ${pacientes.length} pacientes para tenant_id=${tenant_id}`);
     res.json(pacientes);
   } catch (error) {
     console.error('Error al obtener pacientes:', error);

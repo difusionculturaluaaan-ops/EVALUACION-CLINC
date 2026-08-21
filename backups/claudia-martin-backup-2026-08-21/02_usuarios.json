@@ -1,0 +1,13 @@
+[
+  {
+    "id": 8,
+    "tenant_id": 12,
+    "nombre": "Claudia Martín del Campo",
+    "email": "claudiamartindelcampomaldonado@gmail.com",
+    "password_hash": "$2b$10$o4oi0ha.FMb4if/a5FZ2iOhqLw3SEodYtI7ZXDxXTpw2i.ElV4L1.",
+    "rol": "admin",
+    "estado": "activo",
+    "ultimo_acceso": "2026-08-21T09:26:17.942Z",
+    "creado_en": "2026-06-03T09:09:06.476Z"
+  }
+]

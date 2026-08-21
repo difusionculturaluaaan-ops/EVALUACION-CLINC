@@ -1,0 +1,15 @@
+{
+  "tenant": {
+    "id": 12,
+    "nombre": "Psicóloga Claudia Martín del Campo",
+    "slug": "Psyché"
+  },
+  "backupDate": "2026-08-21T03:42:00.518Z",
+  "statistics": {
+    "usuarios": 1,
+    "pacientes": 13,
+    "pruebas": 29
+  },
+  "backupPath": "backups\\claudia-martin-backup-2026-08-21",
+  "note": "BACKUP COMPLETO PRE-REFACTORIZACIÓN DE SEGURIDAD"
+}

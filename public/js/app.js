@@ -4393,6 +4393,10 @@ const app = {
    */
   async loadDashboard() {
     try {
+      const tenant_id = localStorage.getItem('tenant_id');
+      const token = localStorage.getItem('auth_token');
+      console.log('🔍 [AUDITORIA] loadDashboard:', { tenant_id, token: token?.substring(0, 20) + '...' });
+
       const pacientes = await api.getPacientes();
 
       // Pacientes recientes (últimos 5)
