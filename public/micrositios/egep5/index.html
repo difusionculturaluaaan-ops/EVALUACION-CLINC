@@ -1325,9 +1325,28 @@ async function cargarDesdePrueba(){
 
 async function init(){
   initTheme();
+
+  // 🔴 CRÍTICO: Detectar si es modo cargar o prueba nueva
+  const params=new URLSearchParams(window.location.search);
+  const modo=params.get('modo');
+  const pruebaId=params.get('prueba_id');
+
+  // Si es prueba NUEVA (sin modo=cargar), limpiar localStorage primero
+  // para evitar que datos viejos contaminen la interfaz
+  if(modo!=='cargar' || !pruebaId){
+    // Limpiar datos de prueba anterior (pero no tema/configuración)
+    localStorage.removeItem('S');
+    sessionStorage.clear();
+  }
+
   load();
   await cargarDesdePrueba();
-  autocargarDatosPaciente();
+
+  // Solo autocarga si NO es una carga de prueba previa
+  if(modo!=='cargar'){
+    autocargarDatosPaciente();
+  }
+
   pintarMeta();
   renderTest();
   upd();
