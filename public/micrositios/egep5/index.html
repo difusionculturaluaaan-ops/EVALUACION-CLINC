@@ -1262,12 +1262,18 @@ async function cargarDesdePrueba(){
       }
     }
 
+    // 🔴 CRÍTICO: Limpiar sessionStorage para que pintarMeta() no use datos viejos
+    sessionStorage.removeItem('paciente_nombre');
+    sessionStorage.removeItem('paciente_edad');
+    sessionStorage.removeItem('paciente_sexo');
+    sessionStorage.removeItem('paciente_centro');
+
     console.log('✅ Prueba cargada exitosamente. Respuestas:', Object.keys(S.resp).length);
     save();
 
     // Actualizar UI para mostrar datos cargados
     console.log('🎨 Actualizando interfaz...');
-    pintarMeta();      // Rellena campos del paciente
+    pintarMeta();      // Rellena campos del paciente (desde S.meta, no desde sessionStorage)
     renderTest();      // Renderiza respuestas en formulario
     upd();             // Actualiza estadísticas
     calc();            // Calcula resultados automáticamente
