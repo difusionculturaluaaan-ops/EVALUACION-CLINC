@@ -61,13 +61,20 @@ router.post('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const tenant_id = req.tenant_id;
+    const prueba_id = req.params.id;
+
+    // 🔴 AUDITORIA: Loguear qué se está pidiendo
+    console.log(`🔍 [AUDITORIA] GET /pruebas/:id - prueba_id: ${prueba_id}, tenant_id: ${tenant_id}, usuario: ${req.usuario?.email}`);
+
     // CRÍTICO: Validar tenant_id en BD para evitar access control bypass
-    const prueba = await obtenerPruebaByIdTenant(req.params.id, tenant_id);
+    const prueba = await obtenerPruebaByIdTenant(prueba_id, tenant_id);
 
     if (!prueba) {
+      console.log(`🔍 [AUDITORIA] Prueba NO encontrada (probablemente de otro tenant) - prueba_id: ${prueba_id}, tenant_id: ${tenant_id}`);
       return res.status(404).json({ error: 'Prueba no encontrada' });
     }
 
+    console.log(`🔍 [AUDITORIA] Retornando prueba - id: ${prueba.id}, prueba.tenant_id: ${prueba.tenant_id}, req.tenant_id: ${tenant_id}, match: ${prueba.tenant_id === tenant_id}`);
     res.json(prueba);
   } catch (error) {
     console.error('Error al obtener prueba:', error);
